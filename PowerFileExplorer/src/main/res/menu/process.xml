@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/open"
+        android:title="@string/open" 
+		android:icon="@drawable/install"/>
+    <item
+        android:id="@+id/backup"
+        android:title="@string/backup" 
+		android:icon="@drawable/backup"/>
+    <item
+        android:id="@+id/unins"
+        android:title="@string/uninstall" 
+		android:icon="@drawable/uninstall"/>
+    <item
+        android:id="@+id/info"
+        android:title="@string/properties" 
+		android:icon="@drawable/operation_button_info"/>
+	<item
+        android:id="@+id/detail"
+        android:title="Detail" 
+		android:icon="@drawable/advancedsettings"/>
+	<item
+        android:id="@+id/play"
+        android:title="@string/play" 
+		/>
+    <item
+        android:id="@+id/share"
+        android:title="@string/share" 
+		android:icon="@drawable/ic_action_share_white"/>
+    <item
+        android:id="@+id/kill"
+        android:title="@string/kill" 
+		android:icon="@drawable/delete"/>
+</menu>

@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
+	
+	<ImageButton 
+		android:id="@+id/sep"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:layout_gravity="center"
+		android:background="@drawable/ic_list_more"
+	/>
+	
+    <!--ImageView 
+	android:id="@+id/search"
+	android:src="@drawable/filer_mdpi"
+	android:layout_width="40dp"
+	android:layout_height="40dp"
+	android:layout_toLeftOf="@+id/addFolder"
+	android:background="@color/lightyellow"
+	android:onClick="search"
+	android:gravity="center"
+	android:padding="0dp"
+	android:enabled="true"
+	android:clickable="true"
+	android:longClickable="true" 
+	android:focusable="true"
+	android:layout_gravity="center"
+		
+	/-->
+
+	<TextView
+		android:id="@+id/name"
+		android:clickable="true"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@drawable/ripple"
+		android:minEms="1"
+		android:gravity="center"
+		android:textSize="16sp"
+		android:textStyle="normal"
+		android:textAlignment="center"
+		android:layout_margin="0dp"
+		android:paddingTop="4dp"
+		android:paddingBottom="4dp"
+		android:text="" />
+</LinearLayout>

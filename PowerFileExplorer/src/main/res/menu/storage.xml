@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item
+        android:id="@+id/sdcard"
+        android:title="SdCard"
+		android:icon="@drawable/root"/>
+	
+    <item
+        android:id="@+id/microsd"
+        android:title="MicroSD" 
+		android:icon="@drawable/ic_launcher_microsd"/>
+	
+    <item
+        android:id="@+id/otg"
+        android:title="OTG"
+		android:showAsAction="never"
+		android:visibility="invisible"
+		android:icon="@drawable/ic_root_usb"/>
+	
+    <item
+        android:id="@+id/newFolder"
+        android:title="New Folder" 
+		android:icon="@drawable/ic_action_new"/>
+
+    <item
+        android:id="@+id/newFile"
+        android:title="New File" 
+		android:icon="@drawable/ic_action_new"/>
+	
+</menu>

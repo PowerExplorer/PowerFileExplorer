@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="empty_string"></string>
+<string name="just_dash"> - </string>
+<string name="r_bit">r</string>
+<string name="w_bit">w</string>
+<string name="x_bit">x</string>
+<string name="s_bit">s</string>
+<string name="t_bit">t</string>
+<string name="zero_percent">0%</string>
+<string name="r_title">R</string>
+<string name="g_title">G</string>
+<string name="b_title">B</string>
+</resources>

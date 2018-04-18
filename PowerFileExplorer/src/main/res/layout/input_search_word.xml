@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dip"
+    android:orientation="vertical">
+
+    <TextView 
+        android:id="@+id/label"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/search_word"
+        android:gravity="left"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+    <EditText
+        android:id="@+id/search_word"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:scrollHorizontally="true"
+        android:autoText="false"
+        android:capitalize="none"
+        android:gravity="fill_horizontal"
+        android:maxLength="30"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+		android:singleLine="true"
+	 />
+
+</LinearLayout>

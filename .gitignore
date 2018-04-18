@@ -7,11 +7,19 @@
 
 # Java class files
 *.class
+*.o
+*.a
+*.so
+*.d
+*.jar
+*.aar
+*.7z
 
 # Generated files
 bin/
 gen/
 out/
+libs/
 
 # Gradle files
 .gradle/
@@ -25,6 +33,8 @@ proguard/
 
 # Log Files
 *.log
+*.bak
+*~
 
 # Android Studio Navigation editor temp files
 .navigation/

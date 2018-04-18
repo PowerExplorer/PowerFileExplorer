@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" 
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent" >
+
+	<LinearLayout
+	  android:orientation="horizontal" 
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+     >
+
+   	 <LinearLayout
+  	    android:orientation="vertical" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+        android:layout_weight="1"
+     >
+        <TextView
+      	  android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/title"
+      	  android:textSize="20sp"
+		  android:textColor="@android:color/secondary_text_light"
+         />
+        <TextView
+      	  android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/summary"
+		  android:textColor="@android:color/secondary_text_light"
+         />
+	  </LinearLayout>
+
+      <ImageButton
+        android:id="@+id/up"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_back"
+	  />
+      <ImageButton
+        android:id="@+id/down"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_forward"
+	  />
+      <ImageButton
+        android:id="@+id/remove"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete"
+	  />
+	</LinearLayout>
+
+</LinearLayout>

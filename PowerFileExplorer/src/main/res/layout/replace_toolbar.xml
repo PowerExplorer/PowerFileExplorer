@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/replace"
+	    android:orientation="horizontal"
+	    android:layout_gravity="center_horizontal|center_vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:visibility="gone"
+	>
+		<jp.sblo.pandora.jota.text.EditText
+		    android:id="@+id/edtReplaceWord"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:focusable="true"
+			android:textSize="14sp"
+			android:layout_weight="1"
+			android:gravity="bottom"
+			android:hint="@string/button_replace"
+			android:textColorHint="#FF808080"
+		/>
+
+		<Button
+		    android:id="@+id/btnReplace"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/button_replace"
+			android:layout_gravity="center_horizontal"
+		/>
+		<Button
+		    android:id="@+id/btnReplaceAll"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/button_replace_all"
+			android:layout_gravity="center_horizontal"
+		/>
+	</LinearLayout>

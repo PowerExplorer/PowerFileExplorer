@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="wrap_content"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:paddingLeft="2dp"
+	android:paddingTop="0dp"
+	android:paddingRight="2dp"
+	android:paddingBottom="0dp"
+	tools:context=".ExplorerActivity"
+>
+
+	<LinearLayout
+		android:id="@+id/top"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:padding="0dp"
+	>
+
+		<ViewFlipper
+			android:id="@+id/flipper_top"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:gravity="center_vertical"
+			android:layout_weight="100" >
+
+			<Spinner
+				android:id="@+id/appType"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:fillViewport="true"
+				android:drawSelectorOnTop="true" />
+
+			<LinearLayout
+				android:id="@+id/quicksearch"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:orientation="horizontal"
+				android:fillViewport="true"
+				android:layout_margin="0dp"
+			>
+				<EditText
+					android:id="@+id/search_box"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:paddingLeft="12dp"
+					android:paddingRight="12dp"
+					android:layout_weight="100"
+					android:paddingBottom="8dp"
+					android:hint="Search"
+					android:textSize="15sp"
+					android:textStyle="normal"
+					android:singleLine="true"
+					android:imeOptions="actionDone"
+				/>
+
+				<ImageButton
+					android:id="@+id/clear"
+
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="center"
+					android:gravity="center"
+					android:background="@drawable/ripple"
+					android:layout_weight="1"
+					android:text="Clear"
+					android:singleLine="true"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
+					android:src="@drawable/ic_close_black_48dp" />
+			</LinearLayout>
+		</ViewFlipper>
+
+		<ImageButton
+			android:id="@+id/search"
+
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:background="@drawable/ripple"
+			android:text="Search"
+			android:textSize="24sp"
+			android:textStyle="normal"
+			android:singleLine="true"
+			android:paddingLeft="8dp"
+			android:paddingRight="8dp"
+			android:src="@drawable/ic_action_search" />
+
+
+	</LinearLayout>
+
+	<View
+		android:id="@+id/horizontalDivider0"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_below="@+id/top"
+		android:background="?android:attr/dividerVertical" />
+
+	<TextView
+		android:id="@+id/selectionStatus"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/horizontalDivider0"
+		android:textSize="10sp"
+		android:textStyle="normal"
+		android:paddingLeft="2dp"
+		android:paddingTop="0dp"
+		android:paddingRight="2dp"
+		android:paddingBottom="0dp"
+		android:gravity="left"
+		android:text="" 
+		android:textAppearance="?android:textAppearanceSmall"/>
+
+	<View
+		android:id="@+id/horizontalDivider12"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_below="@+id/selectionStatus"
+		android:background="?android:attr/dividerVertical" />
+
+	<LinearLayout
+		android:id="@+id/status"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_gravity="center"
+		android:layout_below="@+id/horizontalDivider12"
+		android:padding="0dp"
+	>
+
+		<ImageButton 
+			android:id="@+id/allCbx"
+			android:layout_width="32dp"
+			android:layout_height="match_parent"
+			android:background="@drawable/ripple"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
+			android:longClickable="true" 
+			android:focusable="true"
+
+			android:src="@drawable/dot"
+		/>
+
+		<ImageButton
+			android:layout_width="54dp"
+			android:layout_height="match_parent"
+			android:id="@+id/icons"
+			android:background="@drawable/ripple"
+			android:layout_centerVertical="true"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
+			android:layout_gravity="center_vertical"
+			android:src="@drawable/ic_more_vert_black_48dp"/>
+
+
+		<TextView
+			android:id="@+id/allName"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="44"
+			android:textSize="15sp"
+			android:textStyle="normal"
+			android:paddingLeft="3dp"
+			android:paddingRight="0dp"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
+			android:layout_gravity="left|center"
+			android:text="Name" 
+			android:background="@drawable/ripple"
+			android:textAppearance="?android:textAppearanceMedium" />
+
+		<TextView
+			android:id="@+id/allDate"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:textSize="15sp"
+			android:textStyle="normal"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
+			android:gravity="center_horizontal|center"
+			android:layout_gravity="center_horizontal|center"
+			android:layout_weight="28"
+			android:text="Date"
+			android:background="@drawable/ripple"
+			android:textAppearance="?android:textAppearanceMedium"/>
+
+		<TextView
+			android:id="@+id/allSize"
+
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:textSize="15sp"
+			android:textStyle="normal"
+			android:paddingLeft="0dp"
+			android:paddingTop="2dp"
+			android:paddingRight="2dp"
+			android:paddingBottom="2dp"
+			android:gravity="right|center"
+			android:layout_gravity="right|center"
+			android:layout_weight="28"
+			android:text="Size" 
+			android:background="@drawable/ripple"
+			android:textAppearance="?android:textAppearanceMedium"/>
+	</LinearLayout>
+
+	<View
+		android:id="@+id/horizontalDivider7"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_below="@+id/status"
+		android:background="?android:attr/dividerVertical" />
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@+id/horizontalDivider7"
+		android:layout_above="@+id/horizontalDivider6">
+		
+		<android.support.v4.widget.SwipeRefreshLayout 
+			android:id="@+id/swipe_refresh_layout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+		>
+			<com.l4digital.fastscroll.FastScrollRecyclerView
+				android:id="@+id/listView1"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				app:bubbleColor="#ff00bb00"
+				app:bubbleTextColor="#ffffffff"
+				app:handleColor="#ff808080"
+				app:trackColor="#ffbbbbbb"
+				app:hideScrollbar="true"
+				app:showTrack="true" />
+			<!--<ListView
+				android:id="@+id/listView1"
+				android:layout_width="match_parent"
+				android:layout_height="fill_parent"
+				android:listSelector="@drawable/ripple"
+				android:drawSelectorOnTop="true"
+				android:longClickable="true" 
+			/>-->
+		</android.support.v4.widget.SwipeRefreshLayout>
+		<LinearLayout 
+			android:id="@+id/nofilelayout" 
+			android:layout_width="match_parent" 
+			android:layout_height="match_parent" 
+			android:gravity="center"
+			android:layout_gravity="center"
+			android:orientation="vertical"
+			android:visibility="gone">
+			<ImageView android:id="@+id/image" 
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" 
+				android:layout_centerHorizontal="true" 
+				android:layout_gravity="center"
+				android:src="@drawable/ic_insert_drive_file_white_36dp"/>
+			<TextView 
+				style="@android:style/TextAppearance.Medium" 
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/nofiletext"
+				android:layout_marginTop="10dp"
+				android:layout_below="@id/image"
+				android:fontFamily="sans-serif-medium"
+				android:layout_centerHorizontal="true"
+				android:layout_gravity="center"
+				android:text="@string/nofiles"/>
+		</LinearLayout>
+	</FrameLayout>
+
+	<View
+		android:id="@+id/horizontalDivider6"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="?android:attr/dividerVertical"
+		android:layout_above="@+id/right_scroll"
+	/>
+
+	<HorizontalScrollView
+		android:id="@+id/right_scroll"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_weight="1"
+		android:layout_gravity="center_vertical"
+		android:fillViewport="true"
+		android:scrollbars="none" 
+	>
+
+		<LinearLayout
+			android:id="@+id/commands"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/moreLeft"
+				android:layout_width="32dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="More"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+
+				android:paddingBottom="0dp"
+				android:paddingTop="10dp"
+				android:drawablePadding="2dp"
+				android:layout_alignBaseline="@+id/compresss"
+			/>
+
+			<Button
+				android:id="@+id/copys"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Copy"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_content_copy_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/cuts"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Cut"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_content_cut_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/deletes_pastes"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Delete"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_delete_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/renames"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Rename"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_rename_white"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/compresss"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Compress"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_zip_box_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/shares"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Share"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_share_white"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/hides"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Hide"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_visibility_off_black_48dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/addScreens"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Create Shortcut"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_create_shortcut"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/favourites"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Favorite"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/add_to_favorites_48"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/encrypts"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Encrypt"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_lock_lock"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/infos"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Info"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_info"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/moreRight"
+				android:layout_width="32dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="More"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				
+				android:paddingBottom="0dp"
+				android:paddingTop="10dp"
+				android:drawablePadding="0dp"
+				android:layout_alignBaseline="@+id/compresss"
+			/>
+
+		</LinearLayout>
+
+	</HorizontalScrollView>
+</RelativeLayout>

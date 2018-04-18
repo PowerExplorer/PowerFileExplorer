@@ -1,0 +1,150 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listitem"
+	android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+	android:paddingTop="0dp">
+
+    <ImageButton 
+		android:id="@+id/cbx"
+		android:layout_width="32dp"
+		android:layout_height="match_parent"
+		android:background="@drawable/ripple"
+		android:gravity="center"
+		android:src="@drawable/dot"
+	/>
+
+	<ImageView 
+		android:id="@+id/icon"
+		android:layout_width="54dp"
+		android:layout_height="58dp"
+		android:gravity="center"
+		android:paddingTop="2dp"
+		android:paddingBottom="2dp"
+	/>
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center_vertical"
+		android:paddingLeft="3dp"
+		android:paddingTop="0dp"
+		android:paddingRight="1dp"
+		android:paddingBottom="0dp"
+	>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_gravity="center"
+			android:layout_weight="1"
+			android:padding="0dp"
+		>
+			<TextView 
+				android:id="@+id/name"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="100"
+				android:singleLine="false"
+				android:layout_gravity="center_vertical"
+				android:maxLines="2"
+				android:textSize="15sp"
+				android:padding="0dp"
+				android:textAppearance="?android:textAppearanceMedium"
+			/>
+
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/more"
+				android:background="@drawable/ripple"
+				android:layout_gravity="center_vertical"
+				android:paddingLeft="15dp"
+				android:paddingRight="15dp"
+				android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"/>
+
+
+
+		</LinearLayout>
+
+		<!--android:onClick="moreAction"
+
+		The duplicateParentState attribute on this ImageView, along with the state list
+		drawable in the src attribute causes its image to change when its parent
+		is checked or unchecked.
+		android:textColor="@color/hideable_text_color"
+		android:duplicateParentState="true"
+		android:minHeight="?android:listPreferredItemHeight"
+
+		To use the standard radio or checkmark image, set the src to
+		?android:listChoiceIndicatorMultiple or ?android:listChoiceIndicatorSingle. These
+		are system theme attributes that reference a state list drawable.
+		-->
+
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_gravity="center"
+			android:paddingBottom="4dp"
+		>
+
+			<TextView android:id="@+id/attr"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="32"
+				android:singleLine="true"
+				
+				android:padding="0dp"
+				android:textSize="11sp"
+				android:gravity="left"
+				android:textAppearance="?android:textAppearanceSmall"
+			/>
+
+			<TextView android:id="@+id/type"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="12"
+				android:singleLine="true"
+				
+				android:padding="0dp"
+				android:textSize="11sp"
+				android:gravity="center_horizontal"
+				android:textAppearance="?android:textAppearanceSmall"
+			/>
+
+			<TextView android:id="@+id/lastModified"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="29"
+				android:singleLine="true"
+				
+				android:padding="0dp"
+				android:textSize="11sp"
+				android:gravity="center_horizontal"
+				android:textAppearance="?android:textAppearanceSmall"
+			/>
+
+			<TextView android:id="@+id/items"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="27"
+				android:singleLine="true"
+
+				
+				android:padding="0dp"
+				android:textSize="11sp"
+				android:gravity="right"
+
+				android:textAppearance="?android:textAppearanceSmall"
+			/>
+
+		</LinearLayout>
+	</LinearLayout>
+
+</LinearLayout>

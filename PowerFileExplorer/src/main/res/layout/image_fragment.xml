@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:clickable="true"
+>
+    <!--<com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>-->
+    <com.ortiz.touch.TouchImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+		android:scaleType="centerInside"
+		android:minWidth="480dp"
+        android:minHeight="480dp"
+        android:src="@drawable/placeholder_image" />
+	<ImageView
+		android:id="@+id/videoPlayImage"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/default_video"
+		android:layout_gravity="center"
+		android:scaleType="fitCenter"
+		android:minWidth="128dp"
+        android:minHeight="128dp"
+	/> 
+
+	<TextView
+		android:id="@+id/centerInfo"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:background="#3D000000"
+		android:gravity="center"
+		android:padding="10dp"
+		android:textColor="@android:color/white"
+		android:textSize="18sp"
+		android:textStyle="bold"
+		android:visibility="gone" 
+	/>
+
+</FrameLayout>

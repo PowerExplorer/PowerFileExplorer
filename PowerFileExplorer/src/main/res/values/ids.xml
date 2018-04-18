@@ -1,0 +1,8 @@
+<resources>
+  <item type="id" name="undo" />
+  <item type="id" name="redo" />
+  <item type="id" name="directintent" />
+  <item type="id" name="cancelselection" />
+  <item type="id" name="showime" />
+  <item type="id" name="menu" />
+</resources>

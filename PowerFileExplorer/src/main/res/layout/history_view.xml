@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<Button
+	    android:id="@+id/banner"
+		android:layout_width="288dip"
+		android:layout_height="36dip"
+		android:background="@drawable/banner"
+		android:gravity="center_horizontal"
+	/>
+	<ScrollView 
+		android:id="@+id/ScrollView01" 
+		android:layout_width="match_parent"
+		android:layout_height="0dip"
+		android:layout_weight="1"
+	>
+	    <TextView
+			android:id="@+id/message"
+	        android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textColor="#111"
+			android:background="#EEE"
+			
+	 	/>
+	</ScrollView>
+
+</LinearLayout>

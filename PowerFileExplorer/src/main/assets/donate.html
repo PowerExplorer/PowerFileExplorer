@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>about Jota Text Editor</title>
+    <style type="text/css">
+    <!--
+    BODY{
+	background-color: #3B5F7B;
+	color: #CEDBDF;
+	font-family: Helvetica, Arial, Verdana, sans-serif;
+	line-height: 125%;
+    }
+	A:link {
+	    color:#00FFFF;
+	    font-style:normal;
+	    text-decoration:underline;
+	}
+	a:visited {
+   		color:#F04CF0;
+   		text-decoration:underline;
+   	}
+    -->
+    </style>
+</head>
+
+<body>
+    <img alt="icon" src="icon.png" /><span style="font-size: 20pt">Jota Text Editor</span><br />
+    <p id='version' ></p>
+    <span style="color: #ffff66" id='stars'></span>
+	
+	<p>
+	Thank you for using Jota Text Editor. 
+    </p>
+    <p>
+        You can support future development by donating so that Jota remains as free software.</p>
+    <p>
+        From this page, you can donate via Google Play Store.<br />
+    <br />
+    <strong><span style="font-size: 16pt; color: #ff0033">&lt;&lt;&lt;Important Notice&gt;&gt;&gt;<br />
+    </span></strong>
+    - This is NOT a donation given to a registered charity, but a support for a developer.</p>
+    <p>
+    - Donator will get the right to use "Beta testing feature".</p>
+    <p>
+    - If you want to put your name on about-page, send a mail with your order-ID and
+        your
+        nickname for me.</p>
+    <p>
+    - Google gets 30% of your donation.</p>
+    <p>
+    - You can't donate anonymous. Personal informations are NOT used for any purpose.</p>
+    <p>
+    - You can donate only one time. 
+    </p>
+    <p>
+    - Transaction may take a minute or two. Please wait while "wait" message is shown.
+    </p>
+    <p>
+
+	<button type="button" style="WIDTH: 100%; HEIGHT: 100px" onclick="startBilling()" >Donate</button>
+	<hr/>
+    - If you donated after 12/04/2011, push below button to re-activate your donation.
+	<button type="button" style="WIDTH: 100%; HEIGHT: 100px" onclick="confirmBilling2()" >Re-Activate</button>
+    <br/>
+	<hr/>
+    - If you donated before 12/04/2011, input your order-id (15-numbers) in the order mail from Google and push below button to re-activate your donation.
+	<form name="form1">
+	<input type="text" name="orderid" style="WIDTH: 100%; HEIGHT: 50px">
+	</form>
+	<button type="button" style="WIDTH: 100%; HEIGHT: 100px" onclick="confirmBilling1(document.form1.orderid.value)" >Re-Activate</button>
+	<hr/>
+    - If you donated from other than Google Play Store or you contributed for Jota, please mail to developer. I'll send you the activation code.
+    <br />
+    <br />
+
+    Copyright (C) 2011, Jiro and Aquamarine Networks.<br />
+    <a href="http://pandora.sblo.jp">http://pandora.sblo.jp/</a><br />
+    </p>
+	<script type="text/javascript">
+	function setItem( key ){
+		document.getElementById( key ).appendChild(document.createTextNode( jscallback.getAboutStrings( key ) ));
+	}
+	function setTag( key ){
+		document.getElementById( key ).innerHTML =  jscallback.getAboutStrings( key ) ;
+	}
+	function startBilling( ){
+		jscallback.startBilling() ;
+	}
+	function confirmBilling1( orderid ){
+		jscallback.confirmBilling1(orderid) ;
+	}
+	function confirmBilling2( ){
+		jscallback.confirmBilling2() ;
+	}
+    setItem('version');
+    setTag('stars');
+	</script>
+
+</body>
+</html>

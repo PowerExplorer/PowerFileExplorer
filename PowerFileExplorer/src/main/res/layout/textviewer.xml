@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+	
+>
+	<ImageView
+	    android:id="@+id/wallpaper"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:scaleType="matrix"
+		android:layout_above="@+id/horizontalDivider6"
+	/>
+	<View
+	    android:id="@+id/trasparencylayer"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:scaleType="matrix"
+		android:layout_above="@+id/horizontalDivider6"
+	/>
+
+	<LinearLayout 
+		android:id="@+id/content"
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+		android:paddingLeft="4dp"
+		android:paddingTop="0dp"
+		android:paddingRight="4dp"
+		android:paddingBottom="0dp"
+		android:layout_above="@+id/horizontalDivider6"
+	>
+		<LinearLayout
+	    	android:orientation="horizontal"
+	    	android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+			android:id="@+id/toolbarbase"
+	    >
+		    <HorizontalScrollView
+		    	android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+				android:fillViewport="true"
+		    	android:scrollbars="none"
+			>
+			    <LinearLayout
+					android:id="@+id/toolbar"
+			    	android:orientation="horizontal"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    >
+			    </LinearLayout>
+			</HorizontalScrollView>
+			<Button
+				android:id="@+id/menubutton"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/btn_menu"
+				android:layout_gravity="right"
+				android:gravity="right"
+			/>
+	    </LinearLayout>
+		
+		<View
+			android:id="@+id/horizontalDivider"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="?android:attr/dividerVertical" />
+		
+		<jp.sblo.pandora.jota.text.EditText
+			android:id="@+id/textedit"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:gravity="top|left"
+			android:scrollbars="vertical"
+			android:hint=""
+			android:textColorHint="#FF808080"
+			android:focusable="true"
+			android:focusableInTouchMode="true"
+			android:clickable="true"
+			android:background="@drawable/textfield_default"
+			android:textAppearance="?android:attr/textAppearanceMediumInverse"
+			android:textColor="#FF000000"
+			android:layout_weight="1"
+			android:inputType="textMultiLine"
+			android:maxLength="99999999"
+	    />
+
+	    <include layout="@layout/searchbar" />
+
+
+		
+	</LinearLayout>
+	<View
+		android:id="@+id/horizontalDivider6"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="?android:attr/dividerVertical"
+		android:layout_above="@+id/right_scroll"
+	/>
+	<HorizontalScrollView
+		android:id="@+id/right_scroll"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_weight="1"
+		android:layout_gravity="bottom"
+		android:fillViewport="true"
+		android:scrollbars="none" 
+	>
+
+		<LinearLayout
+			android:id="@+id/commands"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/moreLeft"
+				android:layout_width="32dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="More"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+
+				android:paddingBottom="0dp"
+				android:paddingTop="10dp"
+				android:drawablePadding="2dp"
+				android:layout_alignBaseline="@+id/compresss"
+			/>
+
+			<Button
+				android:id="@+id/copys"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Copy"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_content_copy_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/cuts"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Cut"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_content_cut_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/deletes_pastes"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Delete"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_delete_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/renames"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="Rename"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_rename_white"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="8dp"
+
+			/>
+
+			<Button
+				android:id="@+id/compresss"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Compress"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_zip_box_white_36dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/shares"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Share"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_share_white"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/hides"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Hide"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_visibility_off_black_48dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/addScreens"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Create Shortcut"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_create_shortcut"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/favourites"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Favorite"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/add_to_favorites_48"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/encrypts"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Encrypt"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_lock_lock"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/infos"
+				android:clickable="true"
+				android:layout_width="80dp"
+				android:layout_height="56dp"
+				android:text="Info"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_action_info"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+				android:textColor="#ffa0a0a0"
+				android:paddingBottom="0dp"
+				android:paddingTop="0dp"
+			/>
+
+			<Button
+				android:id="@+id/moreRight"
+				android:layout_width="32dp"
+				android:layout_height="56dp"
+				android:layout_gravity="center"
+				android:text="More"
+				android:singleLine="true"
+				android:background="@drawable/ripple"
+				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:gravity="center"
+				android:textSize="10sp"
+				android:textStyle="normal"
+
+				android:paddingBottom="0dp"
+				android:paddingTop="10dp"
+				android:drawablePadding="0dp"
+				android:layout_alignBaseline="@+id/compresss"
+			/>
+
+		</LinearLayout>
+
+	</HorizontalScrollView>
+</RelativeLayout>
+

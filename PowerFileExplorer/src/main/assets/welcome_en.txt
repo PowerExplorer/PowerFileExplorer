@@ -1,0 +1,5 @@
+Welcome to Jota Text Editor.
+
+Jota is an Open Source text editor for Android.
+
+(c)2011-2016, Aquamarine Networks.

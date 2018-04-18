@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+>
+    <include layout="@layout/search_toolbar" 
+	android:layout_width="1dip" 
+	android:layout_weight="1" 
+	android:layout_height="wrap_content"
+    />
+    <include layout="@layout/replace_toolbar" 
+	android:layout_width="1dip" 
+	android:layout_weight="1" 
+	android:layout_height="wrap_content"
+    />
+</LinearLayout>

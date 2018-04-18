@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+
+	<ScrollView 
+		android:id="@+id/scroll"
+		android:layout_width="wrap_content"
+		android:layout_height="405dp" 
+		android:fillViewport="true"
+	>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:orientation="vertical" >
+
+			<LinearLayout
+				android:id="@+id/titleLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+				android:paddingLeft="12dp"
+				android:paddingRight="12dp"
+				android:layout_gravity="center"
+				android:paddingTop="4dp"
+				android:paddingBottom="4dp"
+				android:gravity="center"
+			>
+
+				<TextView
+					android:id="@+id/titleLbl"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="100"
+					android:text="Compression"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:textSize="20sp" />
+
+				<ToggleButton
+					android:id="@+id/mode"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:textOn="Advanced"
+					android:textOff="Advanced"
+					android:checked="false"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:textSize="14sp" />
+			</LinearLayout>
+
+			<View
+				android:id="@+id/horizontalDivider0"
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:background="#ff0000ff" />
+
+			<LinearLayout
+				android:id="@+id/basicLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:paddingTop="4dp"
+				android:paddingBottom="0dp"
+				android:paddingLeft="6dp"
+				android:paddingRight="12dp"
+			>
+				<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+					
+				>
+
+					<TextView
+						android:id="@+id/filesLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentLeft="true"
+						android:minEms="4"
+						android:text="Files "
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:paddingLeft="6dp"
+						android:layout_alignBaseline="@+id/files"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/files"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_toRightOf="@+id/filesLbl"
+						android:layout_toLeftOf="@+id/filesBtn"
+						android:singleLine="true"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+
+					<Button
+						android:id="@+id/filesBtn"
+						android:layout_width="64dp"
+						android:layout_height="48dp"
+						android:layout_toLeftOf="@+id/historyBtn"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:text=" ... " />
+
+					<ImageButton
+						android:id="@+id/historyBtn"
+						android:layout_width="64dp"
+						android:layout_height="48dp"
+						android:layout_alignParentRight="true"
+						android:src="@drawable/ic_history_black_36dp"
+					/>
+				</RelativeLayout>
+
+				<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+					
+				>
+
+					<TextView
+						android:id="@+id/saveToLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentLeft="true"
+						android:text="File "
+						android:minEms="4"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:paddingLeft="6dp"
+						android:layout_alignBaseline="@+id/saveTo"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/saveTo"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_toRightOf="@+id/saveToLbl"
+						android:layout_toLeftOf="@+id/saveToBtn"
+						android:singleLine="true"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+
+					<Button
+						android:id="@+id/saveToBtn"
+						android:layout_width="64dp"
+						android:layout_height="48dp"
+						android:layout_toLeftOf="@+id/historySaveBtn"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:text=" ... " />
+
+					<ImageButton
+						android:id="@+id/historySaveBtn"
+						android:layout_width="64dp"
+						android:layout_height="48dp"
+						android:layout_alignParentRight="true"
+						android:src="@drawable/ic_history_black_36dp"
+					/>
+				</RelativeLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:layout_gravity="top"
+					android:gravity="top">
+					<TextView
+						android:id="@+id/typeLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="6dp"
+						android:layout_alignBaseline="@+id/type"
+						android:text="Type "
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="4"
+						android:layout_gravity="center_vertical"
+						android:gravity="center_vertical"
+						android:textSize="14sp" />
+
+					<RadioGroup
+						android:id="@+id/type"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal"
+						android:checkedButton="@+id/sevenz"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+					>
+						<RadioButton
+							android:text="zip "
+							android:tag="zip"
+							android:id="@+id/zip"
+							android:textSize="14sp" 
+							android:textAppearance="?android:attr/textAppearanceLarge"
+						/>
+						<RadioButton
+							android:text="7z "
+							android:tag="7z"
+							android:id="@+id/sevenz"
+							android:textSize="14sp" 
+							android:checked="true"
+							android:textAppearance="?android:attr/textAppearanceLarge" />
+
+						<RadioButton
+							android:text="tbz2 "
+							android:tag="tbz2"
+							android:id="@+id/tbz2"
+							android:textSize="14sp" 
+							android:textAppearance="?android:attr/textAppearanceLarge" />
+
+						<RadioButton
+							android:text="tgz "
+							android:tag="tgz"
+							android:id="@+id/tgz" 
+							android:textSize="14sp" 
+							android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+						<RadioButton
+							android:text="txz "
+							android:tag="txz"
+							android:id="@+id/txz"
+							android:textSize="14sp"  
+							android:textAppearance="?android:attr/textAppearanceLarge"/>
+						<RadioButton
+							android:text="tar "
+							android:tag="tar"
+							android:id="@+id/tar"
+							android:textSize="14sp"  
+							android:textAppearance="?android:attr/textAppearanceLarge"/>
+						<RadioButton
+							android:text="zpaq "
+							android:tag="zpaq"
+							android:id="@+id/zpaq"
+							android:textSize="14sp" 
+							android:textAppearance="?android:attr/textAppearanceLarge" />
+					</RadioGroup>
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" >
+					<TextView
+						android:id="@+id/levelLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignBaseline="@+id/level"
+						android:paddingLeft="6dp"
+						android:singleLine="true"
+						android:text="Level "
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="4"
+						android:layout_gravity="bottom"
+						android:gravity="bottom"
+						android:textSize="14sp" />
+					<Spinner
+						android:id="@+id/level"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:drawSelectorOnTop="true"
+						android:layout_gravity="bottom"
+						android:gravity="bottom"
+						android:textSize="14sp" 
+					/>
+				</LinearLayout>
+
+				<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:paddingLeft="6dp"
+					
+				>
+					<TextView
+						android:id="@+id/passwordCB"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentLeft="true"
+						android:text="Password"
+						android:minEms="4"
+						android:layout_alignBaseline="@+id/encryptFileNamesCB"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+
+					<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_toRightOf="@+id/passwordCB"
+						android:layout_toLeftOf="@+id/encryptFileNamesCB"
+						android:orientation="horizontal" >
+
+						<net.gnu.p7zip.ShowHidePasswordEditText
+							android:id="@+id/password"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							app:drawable_hide="@drawable/ic_visibility_off_black_48dp"
+							app:drawable_show="@drawable/ic_visibility_black_48dp"
+							app:showPasswordVisibilityIndicator="true"
+							android:textAppearance="?android:attr/textAppearanceLarge"
+							android:textSize="14sp" />
+					</LinearLayout>
+
+					<CheckBox
+						android:id="@+id/encryptFileNamesCB"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentRight="true"
+						android:text="Encrypt file names"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:enabled="false"
+						android:textSize="14sp" />
+
+				</RelativeLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:layout_gravity="center_vertical"
+					android:gravity="center_vertical"
+				>
+					
+					<TextView
+						android:id="@+id/volumeLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignBaseline="@+id/volumeUnit"
+						android:layout_alignParentLeft="true"
+						android:paddingLeft="6dp"
+						android:singleLine="true"
+						android:text="Volume"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="4"
+						android:textSize="14sp" />
+					<EditText
+						android:id="@+id/volumeVal"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_toLeftOf="@+id/volumeUnit"
+						android:layout_toRightOf="@+id/volumeLbl"
+						android:layout_alignBaseline="@+id/volumeUnit"
+						android:inputType="number"
+						android:singleLine="true"
+						android:text=""
+						android:minEms="5"
+						android:maxEms="9"
+						android:textSize="14sp" />
+
+					<RadioGroup
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_alignParentRight="true"
+						android:orientation="horizontal"
+						android:checkedButton="@+id/mb"
+						android:id="@+id/volumeUnit">
+						<RadioButton
+							android:text="B "
+							android:tag="b"
+							android:id="@+id/b"
+							android:textSize="14sp" 
+						/>
+						<RadioButton
+							android:text="KB "
+							android:tag="k"
+							android:id="@+id/kb" 
+							android:textSize="14sp" />
+						<RadioButton
+							android:id="@+id/mb"
+							android:text="MB"
+							android:tag="m"
+							android:checked="true"
+							android:textSize="14sp" />
+					</RadioGroup>
+
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" >
+					<TextView
+						android:id="@+id/excludeLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="6dp"
+						android:text="Exclude"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="4"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/exclude"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text=""
+						android:textSize="14sp" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+				>
+					<CheckBox
+						android:id="@+id/solidArchiveCB"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Solid Archive "
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:checked="true"
+						android:minEms="7"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/solidArchiveET"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text="-mse"
+						android:minEms="4"
+						android:textSize="14sp" />
+
+					<TextView
+						android:id="@+id/solidArchiveParameterInfo"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text=" -ms[off | on | [e] [{N}f] [{N}(b|k|m|g)]"
+						android:layout_alignBaseline="@+id/solidArchive"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+
+				</LinearLayout>
+
+				<CheckBox
+					android:id="@+id/deleteFilesAfterArchivingCB"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Delete files after archiving"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:textSize="14sp" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/advancedLayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:visibility="gone"
+				android:paddingTop="10dp"
+				android:paddingBottom="0dp"
+				android:paddingLeft="6dp"
+				android:paddingRight="12dp"
+			>
+				<CheckBox
+					android:id="@+id/testCB"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Test archived files"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:textSize="14sp" />
+
+				<CheckBox
+					android:id="@+id/createSeparateArchivesCB"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Create separate archives"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:textSize="14sp" />
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+				>
+					<CheckBox
+						android:id="@+id/archiveNameMaskCB"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Archive name mask"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="10"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/archiveNameMaskET"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text="YYYYMMDDhhmmss"
+						android:textSize="14sp" />
+				</LinearLayout>
+
+				<!--<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+				android:layout_gravity="bottom"
+				android:gravity="bottom"
+				>
+				<CheckBox
+				android:id="@+id/workingDirectoryCB"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:paddingLeft="6dp"
+				android:text="Working Directory  "
+				android:layout_alignBaseline="@+id/workingDirectoryET"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:minEms="10"
+				android:textSize="14sp" />
+				<EditText
+				android:id="@+id/workingDirectoryET"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_toLeftOf="@+id/workingDirectoryBtn"
+				android:layout_toRightOf="@+id/workingDirectoryCB"
+				android:singleLine="true"
+				android:text=""
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:textSize="14sp"
+				android:enabled="false"/>
+
+				<Button
+				android:id="@+id/workingDirectoryBtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:enabled="false"
+				android:text=" ... " />
+				</RelativeLayout>-->
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+				>
+					<TextView
+						android:id="@+id/otherParametersCB"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="6dp"
+						android:text="Other Parameters"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="7"
+						android:textSize="14sp" />
+					<EditText
+						android:id="@+id/otherParametersET"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text="-mqs=on"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+				</LinearLayout>
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+	
+
+	<TextView
+		android:id="@+id/status"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:ellipsize="middle"
+		android:paddingLeft="6dp"
+		android:text=""
+		android:lines="2"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textSize="14sp" />
+
+	<LinearLayout
+		android:id="@+id/buttons"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+
+		<Button
+			android:id="@+id/cancelDir"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Hide"
+			android:textSize="20sp" />
+
+		<Button
+			android:id="@+id/okDir"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Compress"
+			android:textSize="20sp" />
+	</LinearLayout>
+	
+</LinearLayout>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item android:title="@string/menu_file"
+		android:id="@+id/menu_file"
+		android:icon = "@drawable/ic_menu_archive"
+		android:alphabeticShortcut = "F">
+		<menu>
+			<item android:id="@+id/menu_file_history" 	
+				android:title="@string/menu_file_history" 
+				android:alphabeticShortcut = "H"
+			/>
+			<item android:id="@+id/menu_file_save" 		
+				android:title="@string/menu_file_save" 
+				android:alphabeticShortcut = "W"
+			/>
+			<item android:id="@+id/menu_file_saveas" 
+				android:title="@string/menu_file_saveas" 
+				android:alphabeticShortcut = "A"
+			/>
+			<item android:id="@+id/menu_file_open" 		
+				android:title="@string/menu_file_open" 
+				android:alphabeticShortcut = "O"
+			/>
+			<item android:id="@+id/menu_file_new" 		
+				android:title="@string/menu_file_new"		
+				android:alphabeticShortcut = "N"
+			/>
+			<item android:id="@+id/menu_file_view" 		
+				android:title="@string/menu_file_view"		
+				android:alphabeticShortcut = "U"
+			/>
+			<item android:id="@+id/menu_file_share" 		
+				android:title="@string/menu_file_share"		
+			/>
+			<item android:id="@+id/menu_file_charcode" 
+				android:title="@string/menu_file_charcode" 
+			/>
+			<item android:id="@+id/menu_file_lbcode" 
+				android:title="@string/menu_file_lbcode" 
+			/>
+			<item android:id="@+id/menu_file_shortcut" 
+				android:title="@string/menu_file_shortcut" 
+			/>
+			<item android:id="@+id/menu_file_property" 
+				android:title="@string/menu_file_property" 
+				android:alphabeticShortcut = "T"
+			/>
+			<item android:id="@+id/menu_file_quit" 
+				android:title="@string/menu_file_quit" 
+				android:alphabeticShortcut = "Q"
+			/>
+		</menu>
+
+	</item>
+
+
+	<item android:title="@string/menu_edit" 
+		android:id="@+id/menu_edit"
+		android:icon = "@drawable/ic_menu_edit"
+		android:alphabeticShortcut = "E">
+
+		<menu>
+			<item android:id="@+id/menu_edit_undo" 	
+				android:title="@string/menu_edit_undo" 
+				android:alphabeticShortcut = "Z"
+			/>
+			<item android:id="@+id/menu_edit_redo" 	
+				android:title="@string/label_redo" 
+				android:alphabeticShortcut = "Y"
+			/>
+			<item android:id="@+id/menu_edit_cut" 	
+				android:title="@string/cut" 
+				android:alphabeticShortcut = "X"
+			/>
+			<item android:id="@+id/menu_edit_copy" 	
+				android:title="@string/copy" 
+				android:alphabeticShortcut = "C"
+			/>
+			<item android:id="@+id/menu_edit_paste" 
+				android:title="@string/paste" 
+				android:alphabeticShortcut = "V"
+			/>
+			<item android:id="@+id/menu_edit_select_all" 
+				android:title="@string/selectAll" 
+				android:alphabeticShortcut = "L"
+			/>
+			<item android:id="@+id/menu_edit_jump" 	
+				android:title="@string/menu_edit_jump" 
+				android:alphabeticShortcut = "J"
+			/>
+			<item android:id="@+id/menu_search_byintent" 	
+				android:title="@string/menu_search_byintent" 
+				android:alphabeticShortcut = "R"
+			/>
+			<item android:id="@+id/menu_share" 	
+				android:title="@string/menu_share" 
+				android:alphabeticShortcut = "P"
+			/>
+			<item android:id="@+id/menu_share_screenshot" 	
+				android:title="@string/menu_share_screenshot" 
+			/>
+		</menu>
+
+	</item>
+
+	<item android:title="@string/menu_direct"
+		android:id="@+id/menu_direct"
+		android:icon = "@drawable/ic_menu_direct"
+		android:alphabeticShortcut = "d">
+
+	</item>
+
+	<item android:title="@string/menu_insert"
+		android:id="@+id/menu_insert"
+		android:icon = "@drawable/ic_menu_compose"
+		android:alphabeticShortcut = "I">
+
+	</item>
+
+	<item android:title="@string/menu_search"
+		android:id="@+id/menu_search"
+		android:icon = "@drawable/ic_action_search"
+		android:alphabeticShortcut = "S">
+
+	</item>
+
+	<item android:title="@string/menu_preferences" 
+		android:id="@+id/menu_preferences"
+		android:icon = "@drawable/ic_menu_preferences"
+	>
+
+	</item>
+
+	<item android:id="@+id/menu_toggle_log"
+
+		android:title="@string/sample_show_log" />
+	<!---
+	<item android:title="@string/menu_help" 
+	android:id="@+id/menu_help"
+	android:icon = "@drawable/ic_menu_help" >
+    <menu>
+	<item android:id="@+id/menu_help_help" 		
+	android:title="@string/menu_help_help" 
+	/>
+	<item android:id="@+id/menu_help_about"		
+	android:title="@string/menu_help_about" 
+	/>
+    </menu>
+
+	</item>
+	-->
+
+</menu>

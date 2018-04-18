@@ -1,0 +1,262 @@
+Please try Jota+.
+
+★New features of Jota+
+- Support multi-file feature!
+- Support external file systems! ( Dropbox, Box, SkyDrive, Google Drive etc )
+- Support root access!
+- Modern UI based on ICS!
+- Highlight searching words!
+- Fixed Phrase and Clipboard history.
+
+Touch the banner and try Jota+!
+
+--------------------
+[2016/09/11 v.0.2.37]
+Support Android 7.0.
+
+[2015/10/31 v.0.2.36]
+Support Android 6.0.
+
+[2014/09/20 v.0.2.35]
+Fixed some bugs.
+
+[2014/06/28 v.0.2.34]
+Support Android L preview release.
+
+[2013/08/23 v.0.2.33]
+Added Greek Resources. (Thanks to Ben_The_Greek!)
+
+[2013/04/06 v.0.2.31]
+Updated Korean resources. (Thanks to Noah!)
+
+[2012/11/18 v.0.2.30]
+Added Finnish reources. (Thanks to Jarkko Kallio!)
+
+[2012/10/22 v.0.2.29]
+Fixed some bugs.
+
+[2012/09/22 v.0.2.28]
+Added keyword file of Objective-C. (Thanks to JAM!)
+Added a Button to activate Jota+ (for donors).
+
+[2012/08/28 v.0.2.27]
+Unlocked all features for donors.
+Donation was stopped. 
+Please purchase the Jota+ to support developer.
+
+[2012/08/19 v.0.2.26]
+Added Keyword file of D Language and ruby (Thanks to BOOMER!)
+Fixed minor bugs.
+
+[2012/08/11 v.0.2.25]
+Fixed the bug that crashed when starting on Android1.6.
+Very sorry.
+
+[2012/08/10 v.0.2.24]
+Updated keyword file for Ocaml.(Lilian Besson!)
+Updated Russian resource.(Thanks to Anton C.!)
+Added support for wheel scroll of mouse.
+Added "save-as" onto Toolbar settings.
+Fixed bugs.
+
+[2012/07/15 v.0.2.23]
+Fixed the bug that crashes when save a file on Andorid1.6/2.1
+(Degraded on 0.2.22 Sorry!) 
+
+[2012/07/14 v.0.2.22]
+Added that removing non-exists file from recent files entry.
+Fixed the bug that created file won't be shown in MTP host.
+Updated Slovak Resources. (Thanks to Martin Jurík!!)
+
+[2012/07/07 v.0.2.21]
+Optimized Scroll-thumb for Jelly Bean(Android4.1)
+Fixed the bug that caret won't blink when line number is shown.
+
+[2012/06/30 v.0.2.20]
+Localized quotation marks of toolbar.
+(see toolbar settings)
+Fixed minor bugs.
+
+[2012/06/16 v.0.2.19]
+Fixed minor bug about IS01.
+
+[2012/06/09 v.0.2.18]
+Workaround for ICS updated Xperia.
+Added syntax file for TeX. (Thanks to MaQiYuan!)
+
+[2012/06/01 v.0.2.17]
+Keyword file for ActionScript.(Thanks to Alexandr Cojocari!)
+Added Spanish resource. (Thanks to Roberto A. Núñez!)
+Fixed minor bugs.
+
+[2012/05/06 v.0.2.16]
+Updated Korean resources. (Thanks to Noah!)
+Updated Russian resource. (Thanks to Anton Sadovnichenko!)
+Fixed minor bugs.
+
+[2012/04/14 v.0.2.15]
+Added Kill-Line command. (Like Ctrl-k on emacs)
+Added Slovak resources. (Thanks to Martin Jurík!)
+Added syntax file for Ocaml. (Thanks to Lilian Besson!)
+
+★From this version, Jota Text Editor is in Maintenance mode.
+  There won't be any new features.
+  Update with major bug fix, localize resources and syntax files only.
+
+[2012/04/08 v.0.2.14]
+Fixed a bug that soft-keyboard keeps to be shown when home button is pushed.
+Added a option to suppress saved/loaded message.
+Adjusted Settings Activties.
+
+[2012/03/31 v.0.2.13]
+- Re-activated "Hide Title-bar" Option on ICS.
+  (Menu button shows up on right-end of the Toolbar.)
+- Updated Korean resources. (Thanks to Noah!)
+
+[2012/03/25 v.0.2.11]
+- Add 'Launch by SL4A' Button on Toolbar.
+  ★see Toolbar settings.
+- Adjusted the size of toolbar button on Galaxy Nexus.
+- added syntax file for R language.(Thanks to Masashi Nakanishi!)
+- Updated Chinese resource(Thanks to EraserKing!)
+- Updated German resource(Thanks to Michael Wiedmann!)
+
+[2012/03/11 v.0.2.10]
+- Change [Remember last file] option to [Start up action].
+  ★See File Settings -> Start up Action.
+- Updated Chinese resources. (Thanks to EraserKing!)
+- Extensions of syntax highlight are no longer case sensitive.
+- Fixed the bug that delete key removes 2 characters (Honeycomb or later).
+
+[2012/03/04 v.0.2.09]
+- Updated Russian resource. (Thanks to Anton Sadovnichenko.)
+- Added Czech resource. (Thanks to Damián Šulista (@dosdroid)!)
+- Updated awk syntax file.(Thanks to Iain Tuddenham!)
+- Fixed minor bugs.
+
+[2012/02/25 v.0.2.08]
+- After use Font+/- button, keep font size when rotating screen.
+- fixed the bug that layout fails with large text on ICS.
+- fixed the bug that focus losts at bottom of the text.
+- add candidate of the font size settings.
+
+[2012/02/19 v.0.2.07]
+- updated Russian resource. (Thanks to Anton Sadovnichenko.)
+- fixed minor bug.
+
+[2012/02/05 v.0.2.06]
+- added def-files for Syntax Highlight.
+   Python by Benjamin Longuet
+- Updated Korean resources. (Thanks to Noah!)
+- Added font size up to 200.
+- fixed minor bugs.
+
+★Released Spell Checker Extension!
+  Search 'Jota' from Android Market.
+
+[2012/01/28 v.0.2.05]
+- added def-files for Syntax Highlight.
+   awk by Iain Tuddenham
+- fixed minor bugs.
+
+[2012/01/21 v.0.2.04]
+- added toolbar function. [Start/Stop to select text][Select a word]
+  see) preference - toolbar settings
+- added def-files for Syntax Highlight.
+   Lua by tnoguchi and Tarosa
+- Updated French resources.(Thanks to fpp!)
+- Updated polish resources.(Thanks to Mariusz!)
+
+★NEWS: I started support forum.
+　Preference - Misc. - Support forum.
+  https://code.google.com/p/jota-text-editor/issues/list
+
+[2012/01/14 v.0.2.03]
+- added def-files for Syntax Highlight.
+	Perl by Max Lyons.
+	JavaScript by Ruben Maes.
+	avr assembler by Kurt Schuster.
+     --- Thanks!
+- Fixed minor bugs.
+
+[2012/01/08 v.0.2.02]
+- Improved Syntax Highlight.(Beta Testing)
+  changed extension of def-file (*.conf)
+  added def-files for c/cpp/pas/php/sh/html.
+  (Thanks to Frank Wunderlich!)
+ ★filename and extension were changed, so if you made def-file at last version, be careful.
+ ★See Help Page for more detail.
+
+- Added backup/restore preferences. (Beta test for Donator)
+  (menu - Preferences - Misc. - Backup/Restore preferences)
+- Fixed minor bugs.
+- Updated German resources.(Thanks to Frank Wunderlich!)
+- Updated Dutch resources.(Thanks to Tim 'BNL' Beringen!)
+
+[2012/01/04 v.0.2.01]
+- Fixed the bug about IME. (Swype/Swiftkey X etc)
+
+[2012/01/04 v.0.2.00]
+- Added Syntax Highlight (Beta Testing)
+ ★Supported only Java.
+ ★See Help Page to customize definition file.
+ ★Please post definition files!
+
+- Added the option to process ctrl-key before IME.
+  (Menu-Input Settings-Dispatch CTRL-key before IME.)
+  This is for Honeycomb w/BT-KBD which CTRL does't work.
+- Fixed minor bugs.
+- Updated Korean resources. (Thanks to Noah!)
+
+[2011/12/29 v.0.1.27]
+- Fixed the bug of ContextMenu-SelectText. 
+- Fixed the bug that IME don't show correcly in Landscape Mode.
+- Fixed minor bugs.
+
+[2011/12/26 v.0.1.26]
+- Fixed the bug that crashes when opening a file.
+ ( I apologize to all of force-crashed user! )
+- Added confirmation dialog when clearing history.
+
+[2011/12/25 v.0.1.25]
+- Added toolbar functions.
+  Font+/- , Select Line/Block , Braces((){}[]etc)
+  (see Toolbar Settings)
+- Menu will be shown on ActionBar on Honeycomb/ICS.
+- "Hide TitleBar" option is no longer available on Honeycomb/ICS.
+- Added Preview Theme screen.
+- Fixed minor bugs.
+- Updated Korean Resource. (Thanks to Noah!)
+
+[2011/12/17 v.0.1.24]
+- Added the option to enlarge toolbar buttons.
+  (for Tablet users.)
+- Added the option to hide toolbar in landscape mode.
+- added the function to capture screen shot.
+  (Menu -> Edit -> Share screenshot)
+  ★Please use this for bug report or to appeal your wallpaper!
+  ★You can capture only Jota's screen.
+
+- Restructed Preference items.
+- Added Italian resources.
+  (Thanks to Paolo Stivanin!)
+
+
+[2011/12/12 v.0.1.23]
+- fixed the bug that crashes when search multiline.
+
+[2011/12/11 v.0.1.22]
+- added toolbar customize.
+- added shortcut customize.
+- added workaround for Galaxy Note.
+- fixed minor bugs.
+- updated Korean resources.(Thanks to Noah!)
+
+[2011/12/04 v.0.1.21]
+- added Wallpaper. (Beta test for donator)
+- added Toolbar.
+- added re-assign shortcut key.
+- added support \n,\t when replace.
+- fixed minor bugs.
+- changed Donation policy.
+

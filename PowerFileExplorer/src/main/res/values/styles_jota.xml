@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <style name="MyEditText">
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/textfield_default</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMediumInverse</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Theme.Normal" parent="android:Theme">
+
+    </style>
+    <style name="Theme.NoTitleBar" parent="android:Theme">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Dialog" parent="android:Theme.Dialog">
+        <item name="android:windowNoTitle">false</item>
+    </style>
+
+    <style name="Widget">
+        <item name="android:textAppearance">?android:attr/textAppearance</item>
+    </style>
+
+    <style name="Widget.Button">
+        <item name="android:background">@android:drawable/btn_default</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmallInverse</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+    </style>
+
+    <style name="Widget.Button.Small">
+        <item name="android:background">@drawable/btn_default_small</item>
+    </style>
+
+    <style name="Theme.Holo.NoTitleBar" parent="@android:style/Theme.Holo">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+</resources>

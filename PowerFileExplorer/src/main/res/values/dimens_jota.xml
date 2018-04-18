@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="caret_thick">2dp</dimen>
+    <!-- Width of the fastscroll thumb -->
+    <dimen name="fastscroll_thumb_width">48dp</dimen>
+    <!-- Height of the fastscroll thumb -->
+    <dimen name="fastscroll_thumb_height">52dp</dimen>
+    <dimen name="app_icon_size">32dip</dimen>
+    <dimen name="color_picker_size">100dip</dimen>
+</resources>

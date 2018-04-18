@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" 
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent" >
+
+
+  <LinearLayout
+    android:orientation="horizontal" 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+  >
+    <CheckBox
+      android:id="@+id/usetoolbar" 
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/label_show_toolbar"
+      android:layout_weight="1"
+     />
+    <CheckBox
+      android:id="@+id/bigbutton" 
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/label_toolbar_bigbutton"
+      android:layout_weight="1"
+     />
+  </LinearLayout>
+  <LinearLayout
+    android:orientation="horizontal" 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:gravity="bottom" 
+  >
+    <CheckBox
+      android:id="@+id/hidelandscape" 
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/label_toolbar_disable_in_landscape"
+        android:layout_weight="1"
+     />
+    <ImageButton
+      android:id="@+id/addtoolbar" 
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content" 
+      android:src="@drawable/ic_add"
+    />
+  </LinearLayout>
+ 
+
+  <ListView
+    android:id="@+id/list" 
+	android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1"
+   />
+
+</LinearLayout>

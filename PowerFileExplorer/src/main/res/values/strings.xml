@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+	
+	
+	<string name="volume_changing">zoom:%1$d%%</string>
+    <string name="brightness_changing">brightness:%1$d%%</string>
+    
+    
+    
+    <string name="send">Send</string>
+    
+    <string name="email">Email</string>
+    <string name="zip">Zip it</string>
+    <string name="encrypt">Encrypt</string>
+    <string name="decrypt">Decrypt</string>
+     
+    <string name="launch">Launch</string> 
+     
+    <string name="manage">Manage</string> 
+     
+    <string name="kill">Kill this</string> 
+    <string name="info">Process Info</string> 
+     
+    <string name="market">Market link</string> 
+	
+	<string name="tab_stream">Stream</string>
+    <string name="tab_messages">Messages</string>
+    <string name="tab_notifications">Notifications</string>
+    <string name="tab_photos">Photos</string>
+	
+    
+	<string name="key_internal_uri_extsdcard" translatable="false">key_internal_uri_extsdcard</string>
+	
+	
+	<string name="foreground_service_started">Service is in the foreground</string>
+    <string name="foreground_service_label">Sample Foreground Service</string>
+	
+	<string name="camera_unavailable"><b>Camera could not be opened.</b>\nThis occurs when the camera is not available (for example it is already in use) or if the system has denied access (for example when camera access has been disabled).</string>
+    <string name="permision_available_camera">Camera Permission has been granted. Preview can now be opened.</string>
+    <string name="permissions_not_granted">Permissions were not granted.</string>
+    <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
+    
+    <string name="app_name">Power File Explorer</string>
+
+</resources>

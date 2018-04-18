@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plugins_uri">market://search?q=pub:Ghost Squared</string>
+    <string name="smb_app_uri">market://search?q=pname:com.ghostsq.commander.samba</string>
+    <string name="sftp_app_uri">market://search?q=pname:com.ghostsq.commander.sftp</string>
+    <string name="donate_uri">https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=ghost.sq2@gmail.com&amp;item_name=donate</string>
+    <string name="help_uri">http://sites.google.com/site/ghostcommander1/info</string>
+    <string name="value_editor_activity">com.ghostsq.commander.Editor</string>
+</resources>
