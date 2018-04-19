@@ -135,8 +135,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	private static final String COMPRESS = CompressFragment.class.getSimpleName();
 	private static final String DECOMPRESS = DecompressFragment.class.getSimpleName();
 
-	CompressFragment compressFrag;
-	DecompressFragment decompressFrag;
+	private CompressFragment compressFrag;
+	private DecompressFragment decompressFrag;
 
 	private String currentDialog = "";
 	
@@ -679,7 +679,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
             utilsHandler.addCommonBookmarks();
             sharedPref.edit().putBoolean(KEY_PREFERENCE_BOOKMARKS_ADDED, true).commit();
         }
-
+		adapter = new DrawerAdapter(this, this, new ArrayList<Item>(0), this, sharedPref);
+        mDrawerList.setAdapter(adapter);
         //AppConfig.runInBackground(new AppConfig.CustomAsyncCallbacks() {
 			new AsyncTask<Void, Void, Void>() {
 				@Override
@@ -1303,8 +1304,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
         dataUtils.setList(sectionItems);
 
-        adapter = new DrawerAdapter(this, this, sectionItems, this, sharedPref);
-        mDrawerList.setAdapter(adapter);
+		adapter.clear();
+		adapter.addAll(sectionItems);
+        adapter.notifyDataSetChanged();
 		adapter.toggleChecked(selectedStorage);
     }
 	

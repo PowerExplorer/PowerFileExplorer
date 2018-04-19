@@ -38,7 +38,6 @@ repositories {
 		//url 'https://maven.fabric.io/public' 
 		//url 'https://dl.bintray.com/nuuneoi/maven/'
 		
-		
 	}
 	
 	flatDir {
@@ -149,12 +148,12 @@ dependencies{
 	//compile 'jp.wasabeef:richeditor-android:+'
 	//compile 'com.faendir:acra:+'
 	
-	compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
-    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
+	//compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
+    //compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
     //# Other ABIs: optional
     //compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.8.4'
     //compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.8.4'
-    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.8'
+    //compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.8'
     //compile 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.4'
     //# ExoPlayer as IMediaPlayer: optional, experimental
     //compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.4'
@@ -252,8 +251,6 @@ dependencies{
 	//compile 'com.roughike:bottom-bar:2.3.1'
     //compile 'com.google.android.exoplayer:extension-gvr:r+'
 	//compile 'com.github.tcking:giraffeplayer2:0.1.11-full'
-	//compile 'com.github.tcking:ijkplayer-x86:0.8.4'
-	//compile 'com.github.tcking:ijkplayer-armv7a:0.8.4'
 	//compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.9.0'
 	//compile 'android.arch.persistence.room:runtime:1.0.0'
 	//compile 'android.arch.persistence.room:compiler:1.0.0'

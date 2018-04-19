@@ -139,14 +139,6 @@ public class DataUtils {
         return -1;
     }
 
-    public void removeBook(int i) {
-		
-        synchronized (books) {
-            if (books.size() > i)
-                books.remove(i);
-        }
-    }
-
     public synchronized void removeAccount(OpenMode serviceType) {
         for (CloudStorage storage : accounts) {
             switch (serviceType) {
@@ -187,22 +179,32 @@ public class DataUtils {
         }
     }
 
-    public void addBook(String[] i) {
+    public void removeBook(int i) {
         synchronized (books) {
-            books.add(i);
+            if (books.size() > i)
+                books.remove(i);
         }
     }
 
-    public void addBook(final String[] i, boolean refreshdrawer) {
-		
+    public void addBook(String[] strs) {
         synchronized (books) {
-            books.add(i);
+            if (containsBooks(strs) < 0) {
+				books.add(strs);
+			}
+        }
+    }
+
+    public void addBook(final String[] strs, boolean refreshdrawer) {
+        synchronized (books) {
+			if (containsBooks(strs) < 0) {
+				books.add(strs);
+			}
         }
         if (refreshdrawer && dataChangeListener != null) {
 //            AppConfig.runInBackground(new Runnable() {
 //                @Override
 //                public void run() {
-                    dataChangeListener.onBookAdded(i, true);
+                    dataChangeListener.onBookAdded(strs, true);
 //                }
 //            });
         }

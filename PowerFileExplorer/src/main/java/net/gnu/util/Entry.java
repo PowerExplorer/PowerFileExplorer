@@ -1,12 +1,12 @@
 //package net.gnu.util;
 //import java.util.*;
 //
-//public class Entry<K, V> implements Map.Entry<K, V>{
+//public class Entry<K extends Comparable, V> implements Map.Entry<K, V>, Comparable<Entry<K, V>> {
 //
 //	private static final long serialVersionUID = 58875847614548649L;
 //	private K key;
 //	private V value;
-//
+//	
 //	public Entry(K key, V value) {
 //		this.key = key;
 //		this.value = value;
@@ -40,6 +40,11 @@
 //			&& (value == null ? e.getValue() == null : value.equals(e.getValue()));
 //	}
 //
+//	@Override
+//	public int compareTo(Entry<K, V> p1) {
+//		return key.compareTo(p1.getKey());
+//	}
+//	
 //	public int hashCode() {
 //		return (key == null ? 0 : key.hashCode())
 //			^ (value == null ? 0 : value.hashCode());
