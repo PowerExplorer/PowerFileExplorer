@@ -185,7 +185,6 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		totalTransferTV = (TextView)v.findViewById(R.id.netStatus);
 
 		allCbx = (ImageButton) v.findViewById(R.id.allCbx);
-		icons = (ImageButton) v.findViewById(R.id.icons);
 		allName = (TextView) v.findViewById(R.id.allName);
 		allDate = (TextView) v.findViewById(R.id.allDate);
 		allSize = (TextView) v.findViewById(R.id.allSize);
@@ -202,12 +201,6 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		interval = (TextView) v.findViewById(R.id.interval);
 		unit = (TextView) v.findViewById(R.id.unit);
 
-		allCbx.setOnClickListener(this);
-		icons.setOnClickListener(this);
-		allName.setOnClickListener(this);
-		allDate.setOnClickListener(this);
-		allSize.setOnClickListener(this);
-		allType.setOnClickListener(this);
 		enabled.setOnClickListener(this);
 		totalBtn.setOnClickListener(this);
 
@@ -311,9 +304,6 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 
 		appStatAdapter = new AppsAdapter(new ArrayList<AppStats>());
 
-//		listView = (ListView) v.findViewById(R.id.listView1);
-		//listView.setFastScrollEnabled(true);
-
 		listView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 		listView.setAdapter(appStatAdapter);
 		spanCount = AndroidUtils.getSharedPreference(getContext(), "SPAN_COUNT.DataTrackerFrag", 1);
@@ -405,10 +395,6 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		}
 	}
 	
-	public void refreshRecyclerViewLayoutManager() {
-
-	}
-
 	@Override
 	public void onClick(View v) {
 
@@ -512,7 +498,9 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				allType.setText("Download");
 				allDate.setText("Upload");
 				break;
-
+			case R.id.icons:
+				moreInPanel(v);
+				break;
 		}
 	}
 
@@ -1022,6 +1010,59 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				holder.cbx.setImageResource(R.drawable.dot);
 			}
 		}
+	}
+	
+	void updateStatus() {
+		selectionStatus1.setText(myChecked.size()  + "/" + appStatsList.size());
+	}
+
+	void rangeSelection() {
+		int min = Integer.MAX_VALUE, max = -1;
+		int cur = -3;
+		for (AppStats s : myChecked) {
+			cur = appStatsList.indexOf(s);
+			if (cur > max) {
+				max = cur;
+			}
+			if (cur < min && cur >= 0) {
+				min = cur;
+			}
+		}
+		myChecked.clear();
+		for (cur = min; cur <= max; cur++) {
+			myChecked.add(appStatsList.get(cur));
+		}
+		appStatAdapter.notifyDataSetChanged();
+		updateStatus();
+	}
+
+	void inversion() {
+		tempSelectedInList1.clear();
+		for (AppStats f : appStatsList) {
+			if (!myChecked.contains(f)) {
+				tempSelectedInList1.add(f);
+			}
+		}
+		myChecked.clear();
+		myChecked.addAll(tempSelectedInList1);
+		appStatAdapter.notifyDataSetChanged();
+		updateStatus();
+	}
+
+	void clearSelection() {
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(myChecked);
+		myChecked.clear();
+		appStatAdapter.notifyDataSetChanged();
+		updateStatus();
+	}
+
+	void undoClearSelection() {
+		myChecked.clear();
+		myChecked.addAll(tempSelectedInList1);
+		tempSelectedInList1.clear();
+		appStatAdapter.notifyDataSetChanged();
+		updateStatus();
 	}
 }
 

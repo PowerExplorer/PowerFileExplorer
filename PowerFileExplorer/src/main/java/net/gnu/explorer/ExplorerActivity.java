@@ -1167,7 +1167,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
     public void refreshDrawer() {
 
-        ArrayList<Item> sectionItems = new ArrayList<>();
+        final ArrayList<Item> sectionItems = new ArrayList<>();
         ArrayList<String> storageDirectories = getStorageDirectories();
         storage_count = 0;
         sectionItems.add(new SectionItem());
@@ -1304,10 +1304,17 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
         dataUtils.setList(sectionItems);
 
-		adapter.clear();
-		adapter.addAll(sectionItems);
-        adapter.notifyDataSetChanged();
-		adapter.toggleChecked(selectedStorage);
+		horizontalDivider5.post(new Runnable() {
+				@Override
+				public void run() {
+					adapter.clear();
+					adapter.addAll(sectionItems);
+					adapter.toggleChecked(selectedStorage);
+				}
+				
+			
+		});
+		
     }
 	
 	ContentFragment getCurrentContentFragment() {
@@ -1732,13 +1739,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
     @Override
     public void onHistoryAdded(String path) {
-
         utilsHandler.addHistory(path);
     }
 
     @Override
     public void onBookAdded(String[] path, boolean refreshdrawer) {
-
         utilsHandler.addBookmark(path[0], path[1]);
         if (refreshdrawer)
             refreshDrawer();
@@ -2595,32 +2600,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
         }
         //reload();
     }
-
-	void swap(View v) {
-		swap = !swap;
-		
-		AndroidUtils.setSharedPreference(this, "swap", swap);
-		final int leftVisible = left.getVisibility();
-		final int rightVisible = right.getVisibility();
-		final ViewGroup parent = (ViewGroup)left.getParent();
-
-//		left.setAnimation(AnimationUtils.loadAnimation(this, R.anim.shrink_from_top));
-//		right.setAnimation(AnimationUtils.loadAnimation(this, R.anim.shrink_from_top));
-		parent.removeView(left);
-		parent.removeView(right);
-//		left.setAnimation(AnimationUtils.loadAnimation(this, R.anim.grow_from_top));
-//		right.setAnimation(AnimationUtils.loadAnimation(this, R.anim.grow_from_top));
-		if (swap) {
-			parent.addView(right, 0);
-			parent.addView(left, 2);
-		} else {
-			parent.addView(left, 0);
-			parent.addView(right, 2);
-		}
-		left.setVisibility(rightVisible);
-		right.setVisibility(leftVisible);
-
-	}
 	
 	public void ok(View view) {
 		

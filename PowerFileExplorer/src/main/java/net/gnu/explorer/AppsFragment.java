@@ -1,80 +1,57 @@
 package net.gnu.explorer;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Environment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.amaze.filemanager.activities.ThemedActivity;
 import com.amaze.filemanager.filesystem.BaseFile;
-import com.amaze.filemanager.filesystem.HFile;
 import com.amaze.filemanager.filesystem.RootHelper;
 import com.amaze.filemanager.services.CopyService;
 import com.amaze.filemanager.services.DeleteTask;
+import com.amaze.filemanager.services.asynctasks.CopyFileCheck;
+import com.amaze.filemanager.utils.OpenMode;
+import com.amaze.filemanager.utils.ServiceWatcherUtil;
 import com.amaze.filemanager.utils.files.Futils;
-import com.amaze.filemanager.utils.PreferenceUtils;
-import net.gnu.androidutil.AndroidPathUtils;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import net.gnu.androidutil.AndroidUtils;
-import com.amaze.filemanager.utils.*;
-import android.support.v4.app.*;
-import com.amaze.filemanager.services.asynctasks.*;
-import net.gnu.androidutil.ImageThreadLoader;
-import android.widget.*;
-import java.util.*;
-import android.text.*;
-import android.view.animation.*;
-import android.widget.AdapterView.*;
-import android.os.*;
-import net.gnu.util.*;
-import android.os.AsyncTask.*;
-import android.graphics.drawable.*;
-import android.support.v4.widget.SwipeRefreshLayout;
-import net.gnu.explorer.AppsFragment.*;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.GridLayoutManager;
-import android.view.inputmethod.InputMethodManager;
 
 public class AppsFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -134,13 +111,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		Log.d(TAG, "onViewCreated " + savedInstanceState);
 		super.onViewCreated(v, savedInstanceState);
 
-		allCbx.setOnClickListener(this);
-		icons.setOnClickListener(this);
-		allName.setOnClickListener(this);
-		allDate.setOnClickListener(this);
-		allSize.setOnClickListener(this);
-		//allType.setOnClickListener(this);
-
+		
 		appType = (Spinner) v.findViewById(R.id.appType);
 		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(
 			activity, android.R.layout.simple_spinner_item, appTypeArr);
@@ -388,10 +359,6 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		appAdapter.notifyDataSetChanged();
 	}
 
-	public void refreshRecyclerViewLayoutManager() {
-
-	}
-
 	private class ItemSelectedListener implements OnItemSelectedListener {
 		public void onItemSelected(
 			AdapterView<?> parent, View view, int position, long id) {
@@ -519,178 +486,171 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		}
 	}
 
-	public void mainmenu(final View v) {
-		final PopupMenu popup = new PopupMenu(v.getContext(), v);
-        popup.inflate(R.menu.panel_commands);
-		final Menu menu = popup.getMenu();
-		if (!activity.multiFiles) {
-			menu.findItem(R.id.horizontalDivider5).setVisible(false);
-		}
-		MenuItem mi = menu.findItem(R.id.clearSelection);
-		if (selectedInList1.size() == 0) {
-			mi.setEnabled(false);
-		} else {
-			mi.setEnabled(true);
-		}
-		mi = menu.findItem(R.id.rangeSelection);
-		if (selectedInList1.size() > 1) {
-			mi.setEnabled(true);
-		} else {
-			mi.setEnabled(false);
-		}
-		mi = menu.findItem(R.id.undoClearSelection);
-		if (tempSelectedInList1.size() > 0) {
-			mi.setEnabled(true);
-		} else {
-			mi.setEnabled(false);
-		}
-		mi = menu.findItem(R.id.hide);
-		if (activity.left.getVisibility() == View.VISIBLE) {
-			mi.setTitle("Hide");
-		} else {
-			mi.setTitle("2 panels");
-		}
-		mi = menu.findItem(R.id.biggerequalpanel);
-		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
-			mi.setEnabled(false);
-		} else {
-			mi.setEnabled(true);
-			if (slidingTabsFragment.width <= 0) {
-				mi.setTitle("Wider panel");
-			} else {
-				mi.setTitle("2 panels equal");
+//	public void mainmenu(final View v) {
+//		final PopupMenu popup = new PopupMenu(v.getContext(), v);
+//        popup.inflate(R.menu.panel_commands);
+//		final Menu menu = popup.getMenu();
+//		if (!activity.multiFiles) {
+//			menu.findItem(R.id.horizontalDivider5).setVisible(false);
+//		}
+//		MenuItem mi = menu.findItem(R.id.clearSelection);
+//		if (selectedInList1.size() == 0) {
+//			mi.setEnabled(false);
+//		} else {
+//			mi.setEnabled(true);
+//		}
+//		mi = menu.findItem(R.id.rangeSelection);
+//		if (selectedInList1.size() > 1) {
+//			mi.setEnabled(true);
+//		} else {
+//			mi.setEnabled(false);
+//		}
+//		mi = menu.findItem(R.id.undoClearSelection);
+//		if (tempSelectedInList1.size() > 0) {
+//			mi.setEnabled(true);
+//		} else {
+//			mi.setEnabled(false);
+//		}
+//		mi = menu.findItem(R.id.hide);
+//		if (activity.left.getVisibility() == View.VISIBLE) {
+//			mi.setTitle("Hide");
+//		} else {
+//			mi.setTitle("2 panels");
+//		}
+//		mi = menu.findItem(R.id.biggerequalpanel);
+//		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
+//			mi.setEnabled(false);
+//		} else {
+//			mi.setEnabled(true);
+//			if (slidingTabsFragment.width <= 0) {
+//				mi.setTitle("Wider panel");
+//			} else {
+//				mi.setTitle("2 panels equal");
+//			}
+//		}
+//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//				public boolean onMenuItemClick(MenuItem item) {
+//					switch (item.getItemId()) {
+//						case R.id.rangeSelection:
+//							rangeSelection();
+//							break;
+//						case R.id.inversion:
+//							inversion();
+//							break;
+//						case R.id.clearSelection:
+//							clearSelection();
+//							break;
+//						case R.id.undoClearSelection:
+//							undoClearSelection();
+//							break;
+//						case R.id.swap:
+//							swap(v);
+//							break;
+//						case R.id.hide: 
+//							if (activity.right.getVisibility() == View.VISIBLE) {
+//								if (activity.swap) {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//								} else {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
+//								}
+//								activity.left.setVisibility(View.GONE);
+//							} else {
+//								if (activity.swap) {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//								} else {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
+//								}
+//								activity.right.setVisibility(View.VISIBLE);
+//							}
+//							break;
+//						case R.id.biggerequalpanel:
+//							if (activity.leftSize <= 0) {
+//								//mi.setTitle("Wider panel");
+//								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+//								params.weight = 2.0f;
+//								activity.left.setLayoutParams(params);
+//								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+//								params.weight = 1.0f;
+//								activity.right.setLayoutParams(params);
+//								activity.leftSize = 1;
+//								if (left == activity.left) {
+//									slidingTabsFragment.width = -1;
+//								} else {
+//									slidingTabsFragment.width = 1;
+//								}
+//							} else {
+//								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+//								params.weight = 1.0f;
+//								activity.left.setLayoutParams(params);
+//								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+//								params.weight = 1.0f;
+//								activity.right.setLayoutParams(params);
+//								activity.leftSize = 0;
+//								slidingTabsFragment.width = 0;
+//							}
+//							AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
+//					}
+//					appAdapter.notifyDataSetChanged();
+//					selectionStatus1.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
+//					return true;
+//				}
+//			});
+//		popup.show();
+//	}
+
+	void updateStatus() {
+		appAdapter.notifyDataSetChanged();
+		selectionStatus1.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
+	}
+	
+	void rangeSelection() {
+		int min = Integer.MAX_VALUE, max = -1;
+		int cur = -3;
+		for (AppInfo s : selectedInList1) {
+			cur = appList.indexOf(s);
+
+			if (cur > max) {
+				max = cur;
+			}
+			if (cur < min && cur >= 0) {
+				min = cur;
 			}
 		}
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-				public boolean onMenuItemClick(MenuItem item) {
-					switch (item.getItemId()) {
-						case R.id.rangeSelection:
-							int min = Integer.MAX_VALUE, max = -1;
-							int cur = -3;
-							for (AppInfo s : selectedInList1) {
-								cur = appList.indexOf(s);
+		selectedInList1.clear();
+		for (cur = min; cur <= max; cur++) {
+			selectedInList1.add(appList.get(cur));
+		}
+		updateStatus();
+	}
 
-								if (cur > max) {
-									max = cur;
-								}
-								if (cur < min && cur >= 0) {
-									min = cur;
-								}
-							}
-							selectedInList1.clear();
-							for (cur = min; cur <= max; cur++) {
-								selectedInList1.add(appList.get(cur));
-							}
-							break;
-						case R.id.inversion:
-							tempSelectedInList1.clear();
-							for (AppInfo f : appList) {
-								if (!selectedInList1.contains(f)) {
-									tempSelectedInList1.add(f);
-								}
-							}
-							selectedInList1.clear();
-							selectedInList1.addAll(tempSelectedInList1);
-							break;
-						case R.id.clearSelection:
-							tempSelectedInList1.clear();
-							tempSelectedInList1.addAll(selectedInList1);
-							selectedInList1.clear();
-							break;
-						case R.id.undoClearSelection:
-							selectedInList1.clear();
-							selectedInList1.addAll(tempSelectedInList1);
-							tempSelectedInList1.clear();
-							break;
-						case R.id.swap:
-//							ExplorerActivity.SPAN_COUNT = 3;
-//							AndroidUtils.setSharedPreference(getContext(), "SPAN_COUNT", ExplorerActivity.SPAN_COUNT);
-							activity.swap(v);
-							break;
-						case R.id.hide: 
-							if (activity.right.getVisibility() == View.VISIBLE) {
-								if (activity.swap) {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-								} else {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
-								}
-								activity.left.setVisibility(View.GONE);
-							} else {
-								if (activity.swap) {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-								} else {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
-								}
-								activity.right.setVisibility(View.VISIBLE);
-							}
-//							final FragmentManager supportFragManager = activity.getSupportFragmentManager();
-//							final FragmentTransaction transaction = supportFragManager.beginTransaction();
-//							transaction.setCustomAnimations(R.animator.fragment_slide_left_enter,
-//															R.animator.fragment_slide_left_exit,
-//															R.animator.fragment_slide_right_enter,
-//															R.animator.fragment_slide_right_exit);
-//							activity.leftCommands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-//							rightCommands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-//							if (!activity.slideFrag.isHidden()) {
-//								if (ExplorerActivity.SPAN_COUNT == 3)
-//									ExplorerActivity.SPAN_COUNT = 6;
-//								else
-//									ExplorerActivity.SPAN_COUNT = 2;
-//								transaction.hide(activity.slideFrag2);
-//								transaction.commit();
-//								activity.slideFrag.updateLayout(false);
-//								rightCommands.setVisibility(View.GONE);
-//								horizontalDivider6.setVisibility(View.GONE);
-//							} else {
-//								if (ExplorerActivity.SPAN_COUNT == 6)
-//									ExplorerActivity.SPAN_COUNT = 3;
-//								else
-//									ExplorerActivity.SPAN_COUNT = 2;
-//								transaction.show(activity.slideFrag);
-//								transaction.commit();
-//								activity.slideFrag2.updateLayout(false);
-//								activity.leftCommands.setVisibility(View.VISIBLE);
-//								activity.horizontalDivider11.setVisibility(View.VISIBLE);
-//							}
-							//AndroidUtils.setSharedPreference(getContext(), "SPAN_COUNT", ExplorerActivity.SPAN_COUNT);
-							break;
-						case R.id.biggerequalpanel:
-							if (activity.leftSize <= 0) {
-								//mi.setTitle("Wider panel");
-								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
-								params.weight = 2.0f;
-								activity.left.setLayoutParams(params);
-								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
-								params.weight = 1.0f;
-								activity.right.setLayoutParams(params);
-								activity.leftSize = 1;
-								if (left == activity.left) {
-									slidingTabsFragment.width = -1;
-								} else {
-									slidingTabsFragment.width = 1;
-								}
-							} else {
-								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
-								params.weight = 1.0f;
-								activity.left.setLayoutParams(params);
-								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
-								params.weight = 1.0f;
-								activity.right.setLayoutParams(params);
-								activity.leftSize = 0;
-								slidingTabsFragment.width = 0;
-							}
-							AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
-					}
-					appAdapter.notifyDataSetChanged();
-					selectionStatus1.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
-					return true;
-				}
-			});
-		popup.show();
+	void inversion() {
+		tempSelectedInList1.clear();
+		for (AppInfo f : appList) {
+			if (!selectedInList1.contains(f)) {
+				tempSelectedInList1.add(f);
+			}
+		}
+		selectedInList1.clear();
+		selectedInList1.addAll(tempSelectedInList1);
+		updateStatus();
+	}
+
+	void clearSelection() {
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
+		selectedInList1.clear();
+		updateStatus();
+	}
+
+	void undoClearSelection() {
+		selectedInList1.clear();
+		selectedInList1.addAll(tempSelectedInList1);
+		tempSelectedInList1.clear();
+		updateStatus();
 	}
 
 	public void mainmenu2(final View v) {
@@ -800,7 +760,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				appAdapter.notifyDataSetChanged();
 				break;
 			case R.id.icons:
-				mainmenu(p1);
+				moreInPanel(p1);
 				break;
 			case R.id.search:
 				searchMode = !searchMode;

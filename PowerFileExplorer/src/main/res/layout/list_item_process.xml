@@ -49,7 +49,7 @@
 			android:orientation="horizontal"
 			android:layout_gravity="center"
 			android:layout_weight="1"
-			android:padding="0dp"
+			android:paddingTop="2dp"
 		>
 			<TextView 
 				android:id="@+id/name"

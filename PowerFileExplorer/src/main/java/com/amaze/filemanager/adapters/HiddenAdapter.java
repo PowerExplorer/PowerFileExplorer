@@ -80,14 +80,15 @@ public class HiddenAdapter extends RecyclerArrayAdapter<HFile, HiddenAdapter.Vie
             image = (ImageButton) view.findViewById(R.id.delete_button);
             txtDesc = (TextView) view.findViewById(R.id.text2);
             row = (LinearLayout) view.findViewById(R.id.bookmarkrow);
-        }
+			image.setColorFilter(ExplorerActivity.TEXT_COLOR);
+			txtDesc.setTextColor(ExplorerActivity.TEXT_COLOR);
+		}
 
         void render(final int position, final HFile file) {
             txtTitle.setText(file.getName());
             final String path = file.getPath();
             txtDesc.setText(file.getReadablePath(path));
-
-            if (hide)
+			if (hide)
                 image.setVisibility(View.GONE);
 
             // TODO: move the listeners to the constructor

@@ -212,7 +212,7 @@
 			/>
 
 			<Button
-				android:id="@+id/addScreens"
+				android:id="@+id/shortcuts"
 				android:clickable="true"
 				android:layout_width="80dp"
 				android:layout_height="56dp"

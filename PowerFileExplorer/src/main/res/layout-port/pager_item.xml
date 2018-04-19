@@ -582,7 +582,7 @@
 				android:drawablePadding="0dp"
 			/>
 
-			<!--<Button
+			<Button
 				android:id="@+id/hides"
 				android:clickable="true"
 				android:layout_width="64dp"
@@ -598,10 +598,11 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="0dp"
 				android:drawablePadding="0dp"
-			/>-->
+				android:visibility="gone"
+			/>
 
-			<!--<Button
-				android:id="@+id/addScreens"
+			<Button
+				android:id="@+id/shortcuts"
 				android:clickable="true"
 				android:layout_width="64dp"
 				android:layout_height="56dp"
@@ -616,9 +617,10 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="0dp"
 				android:drawablePadding="0dp"
-			/>-->
+				android:visibility="gone"
+			/>
 
-			<!--<Button
+			<Button
 				android:id="@+id/favourites"
 				android:clickable="true"
 				android:layout_width="64dp"
@@ -634,9 +636,10 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="0dp"
 				android:drawablePadding="0dp"
-			/>-->
+				android:visibility="gone"
+			/>
 
-			<!--<Button
+			<Button
 				android:id="@+id/encrypts"
 				android:clickable="true"
 				android:layout_width="64dp"
@@ -652,7 +655,8 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="0dp"
 				android:drawablePadding="0dp"
-			/>-->
+				android:visibility="gone"
+			/>
 
 			<Button
 				android:id="@+id/infos"

@@ -1,12 +1,5 @@
 package net.gnu.explorer;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -16,14 +9,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,40 +31,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import net.gnu.androidutil.AndroidUtils;
-
-import net.gnu.util.Util;
-import com.amaze.filemanager.utils.*;
-import android.content.*;
-import android.preference.*;
-import android.content.pm.*;
-import android.support.v4.app.*;
-import android.widget.*;
-import android.text.*;
-import android.view.animation.*;
-import java.util.*;
-import android.widget.AdapterView.*;
-import android.support.v7.view.menu.*;
-import android.content.res.*;
-import android.support.v4.widget.SwipeRefreshLayout;
-import net.gnu.explorer.ProcessFragment.*;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.GridLayoutManager;
-import android.view.inputmethod.InputMethodManager;
 import com.amaze.filemanager.utils.files.Futils;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import net.gnu.androidutil.AndroidUtils;
+import net.gnu.util.Util;
 
 public class ProcessFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -75,7 +62,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 	private PackageManager pk;
 	private ArrayList<RunningAppProcessInfo> display_process = new ArrayList<RunningAppProcessInfo>();
 
-	
+
 	private ProcessAdapter adapter;
 	//HashSet<String> selectedInList1 = new HashSet<>();
 	private Drawable apkDrawable;
@@ -130,10 +117,6 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		}
 	}
 
-	public void refreshRecyclerViewLayoutManager() {
-
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView");
@@ -148,13 +131,6 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		pk = activity.getPackageManager();
 		apkDrawable = getResources().getDrawable(R.drawable.ic_doc_apk);
 
-		allCbx.setOnClickListener(this);
-		icons.setOnClickListener(this);
-		allName.setOnClickListener(this);
-		//allDate.setOnClickListener(this);
-		allSize.setOnClickListener(this);
-		allType.setOnClickListener(this);
-
 		processType = (Spinner) v.findViewById(R.id.processType);
 		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(
 			activity, android.R.layout.simple_spinner_item, appTypeArr);
@@ -163,7 +139,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		processType.setOnItemSelectedListener(new ItemSelectedListener());
 		processType.setSelection(3);
 
-		
+
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
 		searchET.addTextChangedListener(textSearch);
@@ -206,7 +182,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 					}
 				}});
 		final Bundle args = getArguments();
-		
+
 		if (args != null) {
 			title = args.getString("title");
 		}
@@ -353,8 +329,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			lpinfo.addAll(prevInfo);
 			prevInfo.clear();
 			prevInfo.addAll(tempInfo);
-			adapter.notifyDataSetChanged();
-			update_labels(getContext());
+			updateStatus();
 			//listView.setSelectionFromTop(index, top);
 			for (String kSt : killList) {
 				boolean exist = false;
@@ -517,218 +492,203 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			Collections.sort(templpinfo, processSorter);
 			lpinfo.clear();
 			lpinfo.addAll(templpinfo);
-			update_labels(getContext());
-			adapter.notifyDataSetChanged();
+			updateStatus();
 			if (mSwipeRefreshLayout.isRefreshing()) {
 				mSwipeRefreshLayout.setRefreshing(false);
 			}
 		}
 	}
 
-	public void mainmenu(final View v) {
-		final PopupMenu popup = new PopupMenu(v.getContext(), v);
-        popup.inflate(R.menu.panel_commands);
-		final Menu menu = popup.getMenu();
-		if (!activity.multiFiles) {
-			menu.findItem(R.id.horizontalDivider5).setVisible(false);
-		}
-		MenuItem mi = menu.findItem(R.id.clearSelection);
-		if (selectedInList1.size() == 0) {
-			mi.setEnabled(false);
-		} else {
-			mi.setEnabled(true);
-		}
-		mi = menu.findItem(R.id.rangeSelection);
-		if (selectedInList1.size() > 1) {
-			mi.setEnabled(true);
-		} else {
-			mi.setEnabled(false);
-		}
-		mi = menu.findItem(R.id.undoClearSelection);
-		if (tempSelectedInList1.size() > 0) {
-			mi.setEnabled(true);
-		} else {
-			mi.setEnabled(false);
-		}
-        mi = menu.findItem(R.id.hide);
-		if (activity.left.getVisibility() == View.VISIBLE) {
-			mi.setTitle("Hide");
-		} else {
-			mi.setTitle("2 panels");
-		}
-        mi = menu.findItem(R.id.biggerequalpanel);
-		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
-			mi.setEnabled(false);
-		} else {
-			mi.setEnabled(true);
-			if (slidingTabsFragment.width <= 0) {
-				mi.setTitle("Wider panel");
-			} else {
-				mi.setTitle("2 panels equal");
+//	public void mainmenu(final View v) {
+//		final PopupMenu popup = new PopupMenu(v.getContext(), v);
+//        popup.inflate(R.menu.panel_commands);
+//		final Menu menu = popup.getMenu();
+//		if (!activity.multiFiles) {
+//			menu.findItem(R.id.horizontalDivider5).setVisible(false);
+//		}
+//		MenuItem mi = menu.findItem(R.id.clearSelection);
+//		if (selectedInList1.size() == 0) {
+//			mi.setEnabled(false);
+//		} else {
+//			mi.setEnabled(true);
+//		}
+//		mi = menu.findItem(R.id.rangeSelection);
+//		if (selectedInList1.size() > 1) {
+//			mi.setEnabled(true);
+//		} else {
+//			mi.setEnabled(false);
+//		}
+//		mi = menu.findItem(R.id.undoClearSelection);
+//		if (tempSelectedInList1.size() > 0) {
+//			mi.setEnabled(true);
+//		} else {
+//			mi.setEnabled(false);
+//		}
+//        mi = menu.findItem(R.id.hide);
+//		if (activity.left.getVisibility() == View.VISIBLE) {
+//			mi.setTitle("Hide");
+//		} else {
+//			mi.setTitle("2 panels");
+//		}
+//        mi = menu.findItem(R.id.biggerequalpanel);
+//		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
+//			mi.setEnabled(false);
+//		} else {
+//			mi.setEnabled(true);
+//			if (slidingTabsFragment.width <= 0) {
+//				mi.setTitle("Wider panel");
+//			} else {
+//				mi.setTitle("2 panels equal");
+//			}
+//		}
+//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//				public boolean onMenuItemClick(MenuItem item) {
+//					switch (item.getItemId()) {
+//						case R.id.rangeSelection:
+//							rangeSelection();
+//							break;
+//						case R.id.inversion:
+//							inversion();
+//							break;
+//						case R.id.clearSelection:
+//							clearSelection();
+//							break;
+//						case R.id.undoClearSelection:
+//							undoClearSelection();
+//							break;
+//						case R.id.swap:
+////							ExplorerActivity.SPAN_COUNT = 3;
+////							AndroidUtils.setSharedPreference(getContext(), "SPAN_COUNT", ExplorerActivity.SPAN_COUNT);
+//							swap(v);
+//							break;
+//						case R.id.hide: 
+//							if (activity.right.getVisibility() == View.VISIBLE) {
+//								if (activity.swap) {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//								} else {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
+//								}
+//								activity.left.setVisibility(View.GONE);
+//							} else {
+//								if (activity.swap) {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
+//								} else {
+//									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
+//									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
+//								}
+//								activity.right.setVisibility(View.VISIBLE);
+//							}
+//							break;
+//						case R.id.biggerequalpanel:
+//							if (activity.leftSize <= 0) {
+//								//mi.setTitle("Wider panel");
+//								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+//								params.weight = 2.0f;
+//								activity.left.setLayoutParams(params);
+//								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+//								params.weight = 1.0f;
+//								activity.right.setLayoutParams(params);
+//								activity.leftSize = 1;
+//								if (left == activity.left) {
+//									slidingTabsFragment.width = -1;
+//								} else {
+//									slidingTabsFragment.width = 1;
+//								}
+//							} else {
+//								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+//								params.weight = 1.0f;
+//								activity.left.setLayoutParams(params);
+//								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+//								params.weight = 1.0f;
+//								activity.right.setLayoutParams(params);
+//								activity.leftSize = 0;
+//								slidingTabsFragment.width = 0;
+//							}
+//							AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
+//					}
+//					update_labels(getContext());
+//					return true;
+//				}
+//			});
+//		popup.show();
+//	}
+
+	void rangeSelection() {
+		int min = Integer.MAX_VALUE, max = -1;
+		int cur = -3;
+		for (String s : selectedInList1) {
+			//cur = lpinfo.indexOf(s);
+			int i = 0;
+			for (ProcessInfo pi : lpinfo) {
+				if (s.equals(pi.packageName)) {
+					cur = i;
+				} else {
+					i++;
+				}
+			}
+			if (cur > max) {
+				max = cur;
+			}
+			if (cur < min && cur >= 0) {
+				min = cur;
 			}
 		}
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-				public boolean onMenuItemClick(MenuItem item) {
-					switch (item.getItemId()) {
-						case R.id.rangeSelection:
-							int min = Integer.MAX_VALUE, max = -1;
-							int cur = -3;
-							for (String s : selectedInList1) {
-								//cur = lpinfo.indexOf(s);
-								int i = 0;
-								for (ProcessInfo pi : lpinfo) {
-									if (s.equals(pi.packageName)) {
-										cur = i;
-									} else {
-										i++;
-									}
-								}
-								if (cur > max) {
-									max = cur;
-								}
-								if (cur < min && cur >= 0) {
-									min = cur;
-								}
-							}
-							selectedInList1.clear();
-							for (cur = min; cur <= max; cur++) {
-								selectedInList1.add(lpinfo.get(cur).packageName);
-							}
-							adapter.notifyDataSetChanged();
-							break;
-						case R.id.inversion:
-							tempSelectedInList1.clear();
-							for (ProcessInfo f : lpinfo) {
-								if (!selectedInList1.contains(f.packageName)) {
-									tempSelectedInList1.add(f);
-								}
-							}
-							selectedInList1.clear();
-							for (ProcessInfo f : tempSelectedInList1) {
-								selectedInList1.add(f.packageName);
-							}
-							adapter.notifyDataSetChanged();
-							break;
-						case R.id.clearSelection:
-							tempSelectedInList1.clear();
-							String label;
-							ApplicationInfo appinfo;
-							for (RunningAppProcessInfo r : display_process) {
-								appinfo = null;
-								if (selectedInList1.contains(r.processName)) {
-									try {
-										appinfo = pk.getApplicationInfo(r.processName, 0);
-										label = appinfo.loadLabel(pk) + "";
-									} catch (NameNotFoundException e1) {	
-										//e1.printStackTrace();
-										label = r.processName.substring(r.processName.lastIndexOf(".") + 1);
-									}
-									if (appinfo != null) {
-										tempSelectedInList1.add(new ProcessInfo(r, label, r.processName, r.importance, r.pid, new File(appinfo.publicSourceDir).length(), appinfo));
-									} else {
-										tempSelectedInList1.add(new ProcessInfo(r, label, r.processName, r.importance, r.pid, 0, null));
-									}
-								}
-							}
-							selectedInList1.clear();
-							adapter.notifyDataSetChanged();
-							break;
-						case R.id.undoClearSelection:
-							selectedInList1.clear();
-							for (ProcessInfo f : tempSelectedInList1) {
-								selectedInList1.add(f.packageName);
-							}
-							tempSelectedInList1.clear();
-							adapter.notifyDataSetChanged();
-							break;
-						case R.id.swap:
-//							ExplorerActivity.SPAN_COUNT = 3;
-//							AndroidUtils.setSharedPreference(getContext(), "SPAN_COUNT", ExplorerActivity.SPAN_COUNT);
-							activity.swap(v);
-							break;
-						case R.id.hide: 
-							if (activity.right.getVisibility() == View.VISIBLE) {
-								if (activity.swap) {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-								} else {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
-								}
-								activity.left.setVisibility(View.GONE);
-							} else {
-								if (activity.swap) {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-								} else {
-									activity.left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
-									activity.right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
-								}
-								activity.right.setVisibility(View.VISIBLE);
-							}
-//							final FragmentManager supportFragManager = activity.getSupportFragmentManager();
-//							final FragmentTransaction transaction = supportFragManager.beginTransaction();
-//							transaction.setCustomAnimations(R.animator.fragment_slide_left_enter,
-//															R.animator.fragment_slide_left_exit,
-//															R.animator.fragment_slide_right_enter,
-//															R.animator.fragment_slide_right_exit);
-//							activity.leftCommands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-//							rightCommands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-//							if (!activity.slideFrag.isHidden()) {
-//								if (ExplorerActivity.SPAN_COUNT == 3)
-//									ExplorerActivity.SPAN_COUNT = 6;
-//								else
-//									ExplorerActivity.SPAN_COUNT = 2;
-//								transaction.hide(activity.slideFrag2);
-//								transaction.commit();
-//								activity.slideFrag.updateLayout(false);
-//								rightCommands.setVisibility(View.GONE);
-//								horizontalDivider6.setVisibility(View.GONE);
-//							} else {
-//								if (ExplorerActivity.SPAN_COUNT == 6)
-//									ExplorerActivity.SPAN_COUNT = 3;
-//								else
-//									ExplorerActivity.SPAN_COUNT = 2;
-//								transaction.show(activity.slideFrag);
-//								transaction.commit();
-//								activity.slideFrag2.updateLayout(false);
-//								activity.leftCommands.setVisibility(View.VISIBLE);
-//								activity.horizontalDivider11.setVisibility(View.VISIBLE);
-//							}
-							//AndroidUtils.setSharedPreference(getContext(), "SPAN_COUNT", ExplorerActivity.SPAN_COUNT);
-							break;
-						case R.id.biggerequalpanel:
-							if (activity.leftSize <= 0) {
-								//mi.setTitle("Wider panel");
-								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
-								params.weight = 2.0f;
-								activity.left.setLayoutParams(params);
-								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
-								params.weight = 1.0f;
-								activity.right.setLayoutParams(params);
-								activity.leftSize = 1;
-								if (left == activity.left) {
-									slidingTabsFragment.width = -1;
-								} else {
-									slidingTabsFragment.width = 1;
-								}
-							} else {
-								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
-								params.weight = 1.0f;
-								activity.left.setLayoutParams(params);
-								params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
-								params.weight = 1.0f;
-								activity.right.setLayoutParams(params);
-								activity.leftSize = 0;
-								slidingTabsFragment.width = 0;
-							}
-							AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
-					}
-					update_labels(getContext());
-					return true;
+		selectedInList1.clear();
+		for (cur = min; cur <= max; cur++) {
+			selectedInList1.add(lpinfo.get(cur).packageName);
+		}
+		updateStatus();
+	}
+
+	void inversion() {
+		tempSelectedInList1.clear();
+		for (ProcessInfo f : lpinfo) {
+			if (!selectedInList1.contains(f.packageName)) {
+				tempSelectedInList1.add(f);
+			}
+		}
+		selectedInList1.clear();
+		for (ProcessInfo f : tempSelectedInList1) {
+			selectedInList1.add(f.packageName);
+		}
+		updateStatus();
+	}
+
+	void clearSelection() {
+		tempSelectedInList1.clear();
+		String label;
+		ApplicationInfo appinfo;
+		for (RunningAppProcessInfo r : display_process) {
+			appinfo = null;
+			if (selectedInList1.contains(r.processName)) {
+				try {
+					appinfo = pk.getApplicationInfo(r.processName, 0);
+					label = appinfo.loadLabel(pk) + "";
+				} catch (NameNotFoundException e1) {	
+					//e1.printStackTrace();
+					label = r.processName.substring(r.processName.lastIndexOf(".") + 1);
 				}
-			});
-		popup.show();
+				if (appinfo != null) {
+					tempSelectedInList1.add(new ProcessInfo(r, label, r.processName, r.importance, r.pid, new File(appinfo.publicSourceDir).length(), appinfo));
+				} else {
+					tempSelectedInList1.add(new ProcessInfo(r, label, r.processName, r.importance, r.pid, 0, null));
+				}
+			}
+		}
+		selectedInList1.clear();
+		updateStatus();
+	}
+
+	void undoClearSelection() {
+		selectedInList1.clear();
+		for (ProcessInfo f : tempSelectedInList1) {
+			selectedInList1.add(f.packageName);
+		}
+		tempSelectedInList1.clear();
+		updateStatus();
 	}
 
 	public void fromActivity(final View v) {
@@ -815,7 +775,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 					allCbx.setImageResource(R.drawable.dot);
 				}
 				adapter.toggleChecked(all);
-				update_labels(getContext());
+				updateStatus();
 				break;
 			case R.id.allName:
 				if (allName.getText().toString().equals("Name ▲")) {
@@ -863,7 +823,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				adapter.notifyDataSetChanged();
 				break;
 			case R.id.icons:
-				mainmenu(p1);
+				moreInPanel(p1);
 				break;
 			case R.id.search:
 				searchMode = !searchMode;
@@ -950,14 +910,14 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		}
     };
 
-	private void update_labels(final Context context) {
-		if (context != null) {
-			final MemoryInfo mem_info = new ActivityManager.MemoryInfo();
-			((ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryInfo(mem_info);
-			diskStatus.setText(String.format("Available memory: %s B", Util.nf.format((mem_info.availMem)) + "/" + Util.nf.format(mem_info.totalMem)));
-			//numProc_label.setText("Number of processes: " + display_process.size());
-			selectionStatus1.setText(selectedInList1.size() + "/" + lpinfo.size() + "/" + display_process.size());
-		}
+	void updateStatus() {
+		final MemoryInfo mem_info = new ActivityManager.MemoryInfo();
+		final ActivityManager systemService = (ActivityManager)activity.getSystemService(Context.ACTIVITY_SERVICE);
+		systemService.getMemoryInfo(mem_info);
+		diskStatus.setText(String.format("Available memory: %s B", Util.nf.format((mem_info.availMem)) + "/" + Util.nf.format(mem_info.totalMem)));
+		//numProc_label.setText("Number of processes: " + display_process.size());
+		selectionStatus1.setText(selectedInList1.size() + "/" + lpinfo.size() + "/" + display_process.size());
+		adapter.notifyDataSetChanged();
 	}
 
 	private class ProcessAdapter extends RecyclerAdapter<ProcessInfo, ProcessAdapter.ViewHolder> implements OnClickListener, OnLongClickListener {
@@ -1000,7 +960,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				cbx.setOnLongClickListener(ProcessAdapter.this);
 			}
 		}
-		
+
 		@Override
 		public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 			View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_process, parent, false);
@@ -1072,15 +1032,14 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				holder.cbx.setImageResource(R.drawable.dot);
 			}
 		}
-		
+
 		public void toggleChecked(boolean checked, ProcessInfo packageInfo) {
 			if (checked) {
 				selectedInList1.add(packageInfo.packageName);
 			} else {
 				selectedInList1.remove(packageInfo.packageName);
 			}
-			notifyDataSetChanged();
-			update_labels(getContext());
+			updateStatus();
 			final boolean all = selectedInList1.size() == display_process.size();
 			allCbx.setSelected(all);
 			if (all) {

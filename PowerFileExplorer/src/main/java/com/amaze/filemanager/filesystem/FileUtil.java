@@ -313,16 +313,17 @@ public abstract class FileUtil {
      */
     static boolean deleteFile(@NonNull final File file, Context context) {
         // First try the normal deletion.
-        if (file == null) return true;
+        if (file == null || !file.exists()) return true;
         boolean fileDelete = deleteFilesInFolder(file, context);
         if (file.delete() || fileDelete)
             return true;
 
         // Try with Storage Access Framework.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && FileUtil.isOnExtSdCard(file, context)) {
-
             DocumentFile document = getDocumentFile(file, false, context);
-            return document.delete();
+			if (document != null) {
+				return document.delete();
+			}
         }
 
         // Try the Kitkat workaround.
@@ -602,7 +603,7 @@ public abstract class FileUtil {
         boolean totalSuccess = true;
         if (folder == null)
             return false;
-        if (folder.isDirectory()) {
+        if (folder.isDirectory()) {//TODO remove recursive
             for (File child : folder.listFiles()) {
                 deleteFilesInFolder(child, context);
             }

@@ -10,6 +10,7 @@ import net.gnu.util.*;
 import android.content.Context;
 import org.magiclen.magiccommand.Command;
 import android.os.AsyncTask;
+import net.gnu.explorer.ExplorerApplication;
 
 /**
  * <code>Andro7za</code> provided the 7za JNI interface.
@@ -59,22 +60,19 @@ public final class Andro7za {
 	public native String stringFromJNI(String outfile, String infile);
 	public native void closeStreamJNI();
 
-	public static final String PRIVATE_PATH = "/sdcard/.net.gnu.p7zip";
-	private String mOutfile = PRIVATE_PATH + "/7zaOut.txt";
-	private String mInfile = PRIVATE_PATH + "/7zaIn.txt";
-	private String listFile = PRIVATE_PATH + "/7zaFileList.txt";
+	//public static final String PRIVATE_PATH = "/sdcard/.net.gnu.explorer";
+	private String mOutfile = ExplorerApplication.PRIVATE_PATH + "/7zaOut.txt";
+	private String mInfile = ExplorerApplication.PRIVATE_PATH + "/7zaIn.txt";
+	private String listFile = ExplorerApplication.PRIVATE_PATH + "/7zaFileList.txt";
 
 	public Command command;
-	public static final String p7z_x86 = "/data/data/net.gnu.explorer/commands/x86/7z";
-	public static final String p7z_arm = "/data/data/net.gnu.explorer/commands/armeabi-v7a/7z";
+	public static final String DATA_DIR = "/data/data/net.gnu.explorer/";
+	public static final String p7z_x86 = DATA_DIR + "commands/x86/7z";
+	public static final String p7z_arm = DATA_DIR + "commands/armeabi-v7a/7z";
 
 	AsyncTask task;
 
 	public Andro7za() {
-		String sPath = PRIVATE_PATH;
-		mOutfile = sPath + "/7zaOut.txt";
-		mInfile = sPath + "/7zaIn.txt";
-		listFile = sPath + "/7zaFileList.txt";
 	}
 
 	public Andro7za(Context ctx) {
@@ -85,10 +83,10 @@ public final class Andro7za {
 			Command command;
 
 			if (!new File(p7z_x86).exists()) {
-				command = new Command("mkdir", "/data/data/net.gnu.explorer/commands");//"/android_asset/"
+				command = new Command("mkdir", Andro7za.DATA_DIR + "commands");//"/android_asset/"
 				command.setCommandListener(new CommandListener(command));
 				command.run();
-				command = new Command("mkdir", "/data/data/net.gnu.explorer/commands/x86");//"/android_asset/"
+				command = new Command("mkdir", Andro7za.DATA_DIR + "commands/x86");//"/android_asset/"
 				command.setCommandListener(new CommandListener(command));
 				command.run();
 				FileUtil.is2File(ctx.getAssets().open("x86/7z"), p7z_x86);///android_asset/
@@ -101,14 +99,14 @@ public final class Andro7za {
 			}
 
 			if (!new File(p7z_arm).exists()) {
-				command = new Command("mkdir", "/data/data/net.gnu.explorer/commands");//"/android_asset/"
+				command = new Command("mkdir", Andro7za.DATA_DIR + "commands");//"/android_asset/"
 				command.setCommandListener(new CommandListener(command));
 				command.run();
-				command = new Command("mkdir", "/data/data/net.gnu.explorer/commands/armeabi-v7a");//"/android_asset/"
+				command = new Command("mkdir", Andro7za.DATA_DIR + "commands/armeabi-v7a");//"/android_asset/"
 				command.setCommandListener(new CommandListener(command));
 				command.run();
 				FileUtil.is2File(ctx.getAssets().open("armeabi-v7a/7z"), p7z_arm);///android_asset/
-				command = new Command("chmod", "777", "/data/data/net.gnu.explorer/commands/armeabi-v7a/7z");
+				command = new Command("chmod", "777", Andro7za.DATA_DIR + "commands/armeabi-v7a/7z");
 				command.setCommandListener(new CommandListener(command));
 				command.run();
 				command = new Command(p7z_arm, "i");
@@ -371,7 +369,11 @@ public final class Andro7za {
 		}
 		otherArgs.add(0, level);
 		otherArgs.add(0, "a");
-		otherArgs.add(0, p7z_x86);
+		if (true) {
+			otherArgs.add(0, p7z_arm);
+		} else {
+			otherArgs.add(0, p7z_x86);
+		}
 		otherArgs.add(archiveName);
 		otherArgs.add(fileListTmp2);
 		otherArgs.add(excludesTmp2);
@@ -558,8 +560,11 @@ public final class Andro7za {
 		otherArgs.add("-bb");
 		otherArgs.add(0, zArchive);
 		otherArgs.add(0, cmd);
-		otherArgs.add(0, p7z_x86);
-
+		if (true) {
+			otherArgs.add(0, p7z_arm);
+		} else {
+			otherArgs.add(0, p7z_x86);
+		}
 		command = new Command(otherArgs);//p7z + " " + cmd + " " + zArchive + " " + " -bb " + " " + password + " " + overwriteMode + " " +  pathToExtract + " " + otherArgs + includesTmp2 + excludesTmp2);
 		Log.d(TAG, "command: " + command);
 		CommandListener commandListener = new CommandListener(command, update);

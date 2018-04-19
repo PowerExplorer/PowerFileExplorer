@@ -339,13 +339,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
 		}
 
-		allCbx.setOnClickListener(this);
-		icons.setOnClickListener(this);
-		allName.setOnClickListener(this);
-		allDate.setOnClickListener(this);
-		allSize.setOnClickListener(this);
-		allType.setOnClickListener(this);
-
+		
 		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 					//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
@@ -568,7 +562,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 			if (changed) {
 				srcAdapter.notifyDataSetChanged();
-				selectionStatus1.setText(selectedInList1.size()  + "/" + dataSourceL1.size());
+				updateStatus();
 			}
 			if (mSwipeRefreshLayout.isRefreshing()) {
 				mSwipeRefreshLayout.setRefreshing(false);
@@ -1590,13 +1584,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 		public void onTextChanged(CharSequence s, int start, int end, int count) {
 		}
-	}
-
-	public void refreshRecyclerViewLayoutManager() {
-		setRecyclerViewLayoutManager();
-		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
 	}
 
 	void setRecyclerViewLayoutManager() {
@@ -3115,9 +3102,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 	}
 
-	private void moreInPanel(final View v) {
+	void moreInPanel(final View v) {
 		final PopupMenu popup = new PopupMenu(v.getContext(), v);
-        popup.inflate(R.menu.panel_commands);
+        popup.inflate(R.menu.explorer_commands);
 		final Menu menu = popup.getMenu();
 		if (!activity.multiFiles) {
 			menu.findItem(R.id.horizontalDivider5).setVisible(false);
@@ -3161,162 +3148,149 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				public boolean onMenuItemClick(MenuItem item) {
 					Log.d(TAG, item.getTitle() + ".");
 					switch (item.getItemId())  {
+						case R.id.history:
+							//if (ma != null)
+							GeneralDialogCreation.showHistoryDialog(activity.dataUtils, activity.getFutils(), ContentFragment.this, activity.getAppTheme());
+							break;
 						case (R.id.hiddenfiles):
-//							for (LayoutElement le : selectedInList1) {
-//								dataUtils.addHiddenFile(le.path);
-//										if (new File(le.path).isDirectory()) {
-//											File f1 = new File(le.path + "/.nomedia");
-//											if (!f1.exists()) {
-//												try {
-//													com.amaze.filemanager.filesystem.FileUtil.mkfile(f1, activity);
-//													//activity.mainActivityHelper.mkFile(new HFile(OpenMode.FILE, le.path), Frag.this);
-//												} catch (Exception e) {
-//													e.printStackTrace();
-//												}
-//											}
-//											Futils.scanFile(le.path, getActivity());
-//										}
-//							}
-//							updateList();
-							GeneralDialogCreation.showHiddenDialog(activity.dataUtils, activity.getFutils(), ContentFragment.this, activity.getAppTheme());
+							if (dataUtils.getHiddenfiles().size() == 0) {
+								showToast("There is no hidden file/folder");
+							} else {
+								GeneralDialogCreation.showHiddenDialog(activity.dataUtils, activity.getFutils(), ContentFragment.this, activity.getAppTheme());
+							}
 							break;
 						case R.id.rangeSelection:
-							int min = Integer.MAX_VALUE, max = -1;
-							int cur = -3;
-							for (LayoutElement s : selectedInList1) {
-								cur = dataSourceL1.indexOf(s);
-								if (cur > max) {
-									max = cur;
-								}
-								if (cur < min && cur >= 0) {
-									min = cur;
-								}
-							}
-							selectedInList1.clear();
-							for (cur = min; cur <= max; cur++) {
-								selectedInList1.add(dataSourceL1.get(cur));
-							}
-							srcAdapter.notifyDataSetChanged();
+							rangeSelection();
 							break;
 						case R.id.inversion:
-							tempSelectedInList1.clear();
-							for (LayoutElement f : dataSourceL1) {
-								if (!selectedInList1.contains(f)) {
-									tempSelectedInList1.add(f);
-								}
-							}
-							selectedInList1.clear();
-							selectedInList1.addAll(tempSelectedInList1);
-							srcAdapter.notifyDataSetChanged();
+							inversion();
 							break;
 						case R.id.clearSelection:
-							tempSelectedInList1.clear();
-							tempSelectedInList1.addAll(selectedInList1);
-							selectedInList1.clear();
-							srcAdapter.notifyDataSetChanged();
+							clearSelection();
 							break;
 						case R.id.undoClearSelection:
-							selectedInList1.clear();
-							selectedInList1.addAll(tempSelectedInList1);
-							tempSelectedInList1.clear();
-							srcAdapter.notifyDataSetChanged();
+							undoClearSelection();
 							break;
 						case R.id.swap:
-//							if (spanCount == 8) {
-//								spanCount = 4;
-//							}
-//							AndroidUtils.setSharedPreference(getContext(), "SPAN_COUNT", spanCount);
-							activity.swap(v);
+							swap(v);
 							break;
 						case R.id.hide: 
-							if (right.getVisibility() == View.VISIBLE && left.getVisibility() == View.VISIBLE) {
-								if (spanCount == 4) {
-									spanCount = 8;
-									setRecyclerViewLayoutManager();
-								}
-								if (activity.swap) {
-									left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-									right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-								} else {
-									left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
-									right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
-								}
-								if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT)
-									left.setVisibility(View.GONE);
-								else
-									right.setVisibility(View.GONE);
-							} else {
-								if (spanCount == 8) {
-									spanCount = 4;
-									setRecyclerViewLayoutManager();
-								}
-								if (activity.swap) {
-									left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-									right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_left));
-								} else {
-									left.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in_right));
-									right.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_out_right));
-								}
-								right.setVisibility(View.VISIBLE);
-							}
+							hide();
 							break;
 						case R.id.biggerequalpanel:
-							if (activity.leftSize <= 0) {
-								if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-									LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
-									params.weight = 1.0f;
-									activity.left.setLayoutParams(params);
-									params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
-									params.weight = 2.0f;
-									activity.right.setLayoutParams(params);
-									activity.leftSize = 1;
-									if (left == activity.left) {
-										slidingTabsFragment.width = 1;
-										//activity.leftSize = width.width;
-										activity.slideFrag2.width = -slidingTabsFragment.width;
-									} else {
-										slidingTabsFragment.width = -1;
-										//activity.leftSize = -width.width;
-										activity.slideFrag2.width = -slidingTabsFragment.width;
-									}
-								} else {
-									LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
-									params.weight = 2.0f;
-									activity.left.setLayoutParams(params);
-									params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
-									params.weight = 1.0f;
-									activity.right.setLayoutParams(params);
-									activity.leftSize = 1;
-									if (left == activity.left) {
-										slidingTabsFragment.width = -1;
-										//activity.leftSize = -width.width;
-										activity.slideFrag.width = -slidingTabsFragment.width;
-									} else {
-										slidingTabsFragment.width = 1;
-										//activity.leftSize = width.width;
-										activity.slideFrag.width = -slidingTabsFragment.width;
-									}
-								}
-							} else {
-								LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)left.getLayoutParams();
-								params.weight = 1.0f;
-								left.setLayoutParams(params);
-								params = (LinearLayout.LayoutParams)right.getLayoutParams();
-								params.weight = 1.0f;
-								right.setLayoutParams(params);
-								activity.leftSize = 0;
-								//width.width = 0;
-								activity.slideFrag.width = 0;
-								activity.slideFrag2.width = 0;
-							}
-							activity.curSelectionFrag2.setRecyclerViewLayoutManager();
-							activity.curExplorerFrag.setRecyclerViewLayoutManager();
-							AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
+							biggerequalpanel();
 
 					}
 					return true;
 				}
 			});
 		popup.show();
+	}
+
+//	void biggerequalpanel() {
+//		if (activity.leftSize <= 0) {
+//			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+//				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+//				params.weight = 1.0f;
+//				activity.left.setLayoutParams(params);
+//				params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+//				params.weight = 2.0f;
+//				activity.right.setLayoutParams(params);
+//				activity.leftSize = 1;
+//				if (left == activity.left) {
+//					slidingTabsFragment.width = 1;
+//					//activity.leftSize = width.width;
+//					activity.slideFrag2.width = -slidingTabsFragment.width;
+//				} else {
+//					slidingTabsFragment.width = -1;
+//					//activity.leftSize = -width.width;
+//					activity.slideFrag2.width = -slidingTabsFragment.width;
+//				}
+//			} else {
+//				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+//				params.weight = 2.0f;
+//				activity.left.setLayoutParams(params);
+//				params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+//				params.weight = 1.0f;
+//				activity.right.setLayoutParams(params);
+//				activity.leftSize = 1;
+//				if (left == activity.left) {
+//					slidingTabsFragment.width = -1;
+//					//activity.leftSize = -width.width;
+//					activity.slideFrag.width = -slidingTabsFragment.width;
+//				} else {
+//					slidingTabsFragment.width = 1;
+//					//activity.leftSize = width.width;
+//					activity.slideFrag.width = -slidingTabsFragment.width;
+//				}
+//			}
+//		} else {
+//			LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)left.getLayoutParams();
+//			params.weight = 1.0f;
+//			left.setLayoutParams(params);
+//			params = (LinearLayout.LayoutParams)right.getLayoutParams();
+//			params.weight = 1.0f;
+//			right.setLayoutParams(params);
+//			activity.leftSize = 0;
+//			//width.width = 0;
+//			activity.slideFrag.width = 0;
+//			activity.slideFrag2.width = 0;
+//		}
+//		activity.curSelectionFrag2.setRecyclerViewLayoutManager();
+//		activity.curExplorerFrag.setRecyclerViewLayoutManager();
+//		AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
+//	}
+	
+	void updateStatus() {
+		selectionStatus1.setText(selectedInList1.size()  + "/" + dataSourceL1.size());
+	}
+
+	void rangeSelection() {
+		int min = Integer.MAX_VALUE, max = -1;
+		int cur = -3;
+		for (LayoutElement s : selectedInList1) {
+			cur = dataSourceL1.indexOf(s);
+			if (cur > max) {
+				max = cur;
+			}
+			if (cur < min && cur >= 0) {
+				min = cur;
+			}
+		}
+		selectedInList1.clear();
+		for (cur = min; cur <= max; cur++) {
+			selectedInList1.add(dataSourceL1.get(cur));
+		}
+		srcAdapter.notifyDataSetChanged();
+		updateStatus();
+	}
+
+	void inversion() {
+		tempSelectedInList1.clear();
+		for (LayoutElement f : dataSourceL1) {
+			if (!selectedInList1.contains(f)) {
+				tempSelectedInList1.add(f);
+			}
+		}
+		selectedInList1.clear();
+		selectedInList1.addAll(tempSelectedInList1);
+		srcAdapter.notifyDataSetChanged();
+		updateStatus();
+	}
+
+	void clearSelection() {
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
+		selectedInList1.clear();
+		srcAdapter.notifyDataSetChanged();
+		updateStatus();
+	}
+
+	void undoClearSelection() {
+		selectedInList1.clear();
+		selectedInList1.addAll(tempSelectedInList1);
+		tempSelectedInList1.clear();
+		srcAdapter.notifyDataSetChanged();
+		updateStatus();
 	}
 }

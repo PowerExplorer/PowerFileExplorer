@@ -109,6 +109,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff;
 import com.amaze.filemanager.utils.color.ColorPreference;
 import android.view.inputmethod.InputMethodManager;
+import android.support.v7.widget.PopupMenu;
 
 public abstract class FileFrag extends Frag {
 
@@ -118,28 +119,15 @@ public abstract class FileFrag extends Frag {
 	SHOW_PERMISSIONS, SHOW_SIZE, SHOW_LAST_MODIFIED;
     public boolean GO_BACK_ITEM, SHOW_THUMBS, COLORISE_ICONS, SHOW_DIVIDERS, 
 	SHOW_HEADERS;
-	
+
 	public SwipeRefreshLayout mSwipeRefreshLayout;
     private DisplayMetrics displayMetrics;
-	//public ArrayList<LayoutElements> LIST_ELEMENTS;
-//    public com.amaze.filemanager.adapters.RecyclerAdapter adapter;
-	//public ActionMode mActionMode;
-    //public SharedPreferences sharedPref;
-	//public RecyclerView listView;
-	//public com.amaze.filemanager.adapters.RecyclerAdapter adapter;
-	//LoadList loadList;
-	private View nofilesview;
-//	public OpenMode openMode = OpenMode.FILE;
+	
 	public BitmapDrawable folder, apk, DARK_IMAGE, DARK_VIDEO;
 	public boolean IS_LIST = true;
 
-	//public String iconskin;
     public float[] color;
-//    public int skin_color;
-//    public int skinTwoColor;
-//    public int icon_skin_color;
-	private boolean addheader = false;
-	private boolean stopAnims = true;
+
 	public String home;//, currentPathTitle = "";//
 
 	//from ContentFragment
@@ -172,24 +160,21 @@ public abstract class FileFrag extends Frag {
 	ArrAdapter srcAdapter;
 	ImageThreadLoader imageLoader;
 
-//	SearchFileNameTask searchTask = null;
 	GridLayoutManager gridLayoutManager;
 	TextView diskStatus;
 	GridDividerItemDecoration dividerItemDecoration;
-	//	ViewGroup commands;
-//	View horizontalDivider;
-//	Button deletePastes;
+	
 	long lastScroll = System.currentTimeMillis();
 	protected InputMethodManager imm;
 	Resources res;
-	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		//Log.d(TAG, "onCreate " + savedInstanceState);
 		super.onCreate(savedInstanceState);
 		res = getResources();
-		
+
 		folder = new BitmapDrawable(res, BitmapFactory.decodeResource(res, R.drawable.ic_grid_folder_new));
 		ColorPreference colorPreference = activity.getColorPreference();
 		accentColor = colorPreference.getColor(ColorUsage.ACCENT);
@@ -205,8 +190,8 @@ public abstract class FileFrag extends Frag {
         SHOW_LAST_MODIFIED = sharedPref.getBoolean("showLastModified", true);
 		SHOW_HIDDEN = sharedPref.getBoolean("showHidden", false);
         COLORISE_ICONS = sharedPref.getBoolean("coloriseIcons", true);
-	
-		
+
+
 	}
 
 	@Override
@@ -244,10 +229,22 @@ public abstract class FileFrag extends Frag {
 		searchET = (EditText) v.findViewById(R.id.search_box);
 		topflipper = (ViewFlipper) v.findViewById(R.id.flipper_top);
 		quickLayout = (LinearLayout) v.findViewById(R.id.quicksearch);
+
+		icons.setOnClickListener(this);
+		allCbx.setOnClickListener(this);
+		allName.setOnClickListener(this);
+		if (allDate != null) {
+			allDate.setOnClickListener(this);
+		}
+		allSize.setOnClickListener(this);
+		if (allType != null) {
+			allType.setOnClickListener(this);
+		}
+
+
+
 	}
 
-	//public void updateList() {}
-	public void changeDir(final String curDir, final boolean doScroll) {}
 	@Override
     public void onResume() {
         //Log.d(TAG, "onResume " + currentPathTitle);
@@ -305,10 +302,198 @@ public abstract class FileFrag extends Frag {
         }.start();
     }
 
-	public abstract void refreshRecyclerViewLayoutManager();
+	void refreshRecyclerViewLayoutManager() {
+		setRecyclerViewLayoutManager();
+		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
+		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
+		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
+	}
 
 	void notifyDataSetChanged() {
 		srcAdapter.notifyDataSetChanged();
 	}
-	
+
+	void swap(View v) {
+		activity.swap = !activity.swap;
+
+		AndroidUtils.setSharedPreference(activity, "swap", activity.swap);
+		final int leftVisible = activity.left.getVisibility();
+		final int rightVisible = activity.right.getVisibility();
+		final ViewGroup parent = (ViewGroup)activity.left.getParent();
+
+//		left.setAnimation(AnimationUtils.loadAnimation(this, R.anim.shrink_from_top));
+//		right.setAnimation(AnimationUtils.loadAnimation(this, R.anim.shrink_from_top));
+		parent.removeView(activity.left);
+		parent.removeView(activity.right);
+//		left.setAnimation(AnimationUtils.loadAnimation(this, R.anim.grow_from_top));
+//		right.setAnimation(AnimationUtils.loadAnimation(this, R.anim.grow_from_top));
+		if (activity.swap) {
+			parent.addView(activity.right, 0);
+			parent.addView(activity.left, 2);
+		} else {
+			parent.addView(activity.left, 0);
+			parent.addView(activity.right, 2);
+		}
+		activity.left.setVisibility(rightVisible);
+		activity.right.setVisibility(leftVisible);
+
+	}
+
+	abstract void rangeSelection();
+	abstract void inversion();
+	abstract void clearSelection();
+	abstract void undoClearSelection();
+	abstract void updateStatus();
+	void setRecyclerViewLayoutManager() {}
+
+	void hide() throws Resources.NotFoundException {
+		if (right.getVisibility() == View.VISIBLE && left.getVisibility() == View.VISIBLE) {
+//			if (spanCount == 4) {
+//				spanCount = 8;
+//				setRecyclerViewLayoutManager();
+//			}
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+				activity.left.setVisibility(View.GONE);
+			} else {
+				activity.right.setVisibility(View.GONE);
+			}
+		} else {
+//			if (spanCount == 8) {
+//				spanCount = 4;
+//				setRecyclerViewLayoutManager();
+//			}
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+				activity.right.setVisibility(View.VISIBLE);
+			} else {
+				activity.left.setVisibility(View.VISIBLE);
+			}
+		}
+	}
+
+	void biggerequalpanel() {
+		if (activity.leftSize <= 0) {
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+				params.weight = 1.0f;
+				activity.left.setLayoutParams(params);
+				params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+				params.weight = 2.0f;
+				activity.right.setLayoutParams(params);
+				activity.leftSize = 1;
+				if (left == activity.left) {
+					slidingTabsFragment.width = 1;
+					//activity.leftSize = width.width;
+					activity.slideFrag2.width = -slidingTabsFragment.width;
+				} else {
+					slidingTabsFragment.width = -1;
+					//activity.leftSize = -width.width;
+					activity.slideFrag2.width = -slidingTabsFragment.width;
+				}
+			} else {
+				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+				params.weight = 2.0f;
+				activity.left.setLayoutParams(params);
+				params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+				params.weight = 1.0f;
+				activity.right.setLayoutParams(params);
+				activity.leftSize = 1;
+				if (left == activity.left) {
+					slidingTabsFragment.width = -1;
+					//activity.leftSize = -width.width;
+					activity.slideFrag.width = -slidingTabsFragment.width;
+				} else {
+					slidingTabsFragment.width = 1;
+					//activity.leftSize = width.width;
+					activity.slideFrag.width = -slidingTabsFragment.width;
+				}
+			}
+		} else {
+			LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)left.getLayoutParams();
+			params.weight = 1.0f;
+			left.setLayoutParams(params);
+			params = (LinearLayout.LayoutParams)right.getLayoutParams();
+			params.weight = 1.0f;
+			right.setLayoutParams(params);
+			activity.leftSize = 0;
+			//width.width = 0;
+			activity.slideFrag.width = 0;
+			activity.slideFrag2.width = 0;
+		}
+		activity.curSelectionFrag2.setRecyclerViewLayoutManager();
+		activity.curExplorerFrag.setRecyclerViewLayoutManager();
+		AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
+	}
+
+	void moreInPanel(final View v) {
+		final PopupMenu popup = new PopupMenu(v.getContext(), v);
+        popup.inflate(R.menu.panel_commands);
+		final Menu menu = popup.getMenu();
+		if (!activity.multiFiles) {
+			menu.findItem(R.id.horizontalDivider5).setVisible(false);
+		}
+		MenuItem mi = menu.findItem(R.id.clearSelection);
+		if (selectedInList1.size() == 0) {
+			mi.setEnabled(false);
+		} else {
+			mi.setEnabled(true);
+		}
+		mi = menu.findItem(R.id.rangeSelection);
+		if (selectedInList1.size() > 1) {
+			mi.setEnabled(true);
+		} else {
+			mi.setEnabled(false);
+		}
+		mi = menu.findItem(R.id.undoClearSelection);
+		if (tempSelectedInList1.size() > 0) {
+			mi.setEnabled(true);
+		} else {
+			mi.setEnabled(false);
+		}
+        mi = menu.findItem(R.id.hide);
+		if (activity.left.getVisibility() == View.VISIBLE) {
+			mi.setTitle("Hide");
+		} else {
+			mi.setTitle("2 panels");
+		}
+        mi = menu.findItem(R.id.biggerequalpanel);
+		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
+			mi.setEnabled(false);
+		} else {
+			mi.setEnabled(true);
+			if (slidingTabsFragment.width <= 0) {
+				mi.setTitle("Wider panel");
+			} else {
+				mi.setTitle("2 panels equal");
+			}
+		}
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+				public boolean onMenuItemClick(MenuItem item) {
+					switch (item.getItemId()) {
+						case R.id.rangeSelection:
+							rangeSelection();
+							break;
+						case R.id.inversion:
+							inversion();
+							break;
+						case R.id.clearSelection:
+							clearSelection();
+							break;
+						case R.id.undoClearSelection:
+							undoClearSelection();
+							break;
+						case R.id.swap:
+							swap(v);
+							break;
+						case R.id.hide: 
+							hide();
+							break;
+						case R.id.biggerequalpanel:
+							biggerequalpanel();
+					}
+					return true;
+				}
+			});
+		popup.show();
+	}
+
 }

@@ -32,11 +32,11 @@ limitations under the License.
 		android:title="Encrypt" 
 		android:showAsAction="always"
 		android:icon="@drawable/ic_material_dialog_fs_locked"/>
-	
-	<item android:id="@+id/history"
-		android:title="History" 
+
+	<item android:id="@+id/hiddenfiles"
+		android:icon="@drawable/ic_visibility_off_black_48dp"
 		android:showAsAction="always"
-		android:icon="@drawable/ic_history_black_36dp"/>
+		android:title="Hidden Files"/>
 	
 
 </menu>

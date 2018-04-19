@@ -1,43 +1,50 @@
 package net.gnu.explorer;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import java.util.*;
-import android.view.*;
-import android.support.v7.app.*;
-import android.widget.*;
-import android.content.*;
-import net.gnu.androidutil.*;
-import com.amaze.filemanager.utils.*;
-import com.amaze.filemanager.ui.icons.*;
-import android.net.Uri;
-import java.io.*;
-import com.amaze.filemanager.filesystem.*;
-import android.graphics.*;
-import android.util.*;
-import android.preference.*;
-import android.content.res.*;
-import com.tekinarslan.sample.PdfFragment;
-import net.gnu.texteditor.Main;
-import android.support.v4.app.*;
-import com.amaze.filemanager.ui.LayoutElement;
-import com.google.android.exoplayer2.demo.MediaPlayerFragment;
-import android.view.animation.AnimationUtils;
-import com.amaze.filemanager.services.asynctasks.CopyFileCheck;
-import com.amaze.filemanager.activities.ThemedActivity;
-import android.os.AsyncTask;
-import com.bumptech.glide.Glide;
-import com.amaze.filemanager.utils.files.Futils;
-import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
-import android.os.Build;
-import com.amaze.filemanager.services.DeleteTask;
-import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.DialogAction;
-import android.support.v7.view.menu.MenuPopupHelper;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.util.Log;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.Toast;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.amaze.filemanager.activities.ThemedActivity;
+import com.amaze.filemanager.filesystem.BaseFile;
+import com.amaze.filemanager.services.DeleteTask;
+import com.amaze.filemanager.services.asynctasks.CopyFileCheck;
+import com.amaze.filemanager.ui.LayoutElement;
+import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
+import com.amaze.filemanager.utils.DataUtils;
+import com.amaze.filemanager.utils.OpenMode;
+import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
+import com.amaze.filemanager.utils.files.Futils;
+import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.demo.MediaPlayerFragment;
+import com.tekinarslan.sample.PdfFragment;
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import net.gnu.androidutil.AndroidUtils;
+import net.gnu.texteditor.Main;
 //import org.geometerplus.android.fbreader.FBReader;
 
 public abstract class Frag extends Fragment implements View.OnTouchListener, View.OnClickListener, Cloneable, Serializable {
@@ -78,7 +85,8 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Vie
 	public OpenMode openMode = OpenMode.FILE;
 
 	protected boolean fake = false;
-
+	private Toast toast = null;
+    
 	public static final enum TYPE {
 		EMPTY, EXPLORER, SELECTION, TEXT, WEB, PDF, PHOTO, MEDIA, APP, TRAFFIC_STATS, PROCESS//FBReader, 
 		};
@@ -260,8 +268,36 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Vie
 			deletePastesBtn.setOnClickListener(this);
 			view.findViewById(R.id.renames).setOnClickListener(this);
 			view.findViewById(R.id.shares).setOnClickListener(this);
-			view.findViewById(R.id.moreLeft).setOnClickListener(this);
-			view.findViewById(R.id.moreRight).setOnClickListener(this);
+			final View moreLeft = view.findViewById(R.id.moreLeft);
+			moreLeft.setOnClickListener(this);
+			final View moreRight = view.findViewById(R.id.moreRight);
+			moreRight.setOnClickListener(this);
+			if (activity.leftSize != 0) {
+				moreLeft.setVisibility(View.GONE);
+				moreRight.setVisibility(View.GONE);
+				
+				View findViewById = view.findViewById(R.id.favourites);
+				findViewById.setVisibility(View.VISIBLE);
+				findViewById.setOnClickListener(this);
+				
+				findViewById = view.findViewById(R.id.hides);
+				findViewById.setOnClickListener(this);
+				findViewById.setVisibility(View.VISIBLE);
+				
+				findViewById = view.findViewById(R.id.encrypts);
+				findViewById.setOnClickListener(this);
+				findViewById.setVisibility(View.VISIBLE);
+				
+				findViewById = view.findViewById(R.id.shortcuts);
+				findViewById.setOnClickListener(this);
+				findViewById.setVisibility(View.VISIBLE);
+			} else {
+				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+					moreLeft.setVisibility(View.GONE);
+				} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+					moreRight.setVisibility(View.GONE);
+				}
+			}
 			//view.findViewById(R.id.favourites).setOnClickListener(this);
 			//view.findViewById(R.id.hides).setOnClickListener(this);
 			//view.findViewById(R.id.encrypts).setOnClickListener(this);
@@ -355,13 +391,21 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Vie
         }
     }
 
-	protected void showToast(CharSequence st) {
-		//Log.d(TAG, "showToast this.getContext()" + this + ", " + getActivity() + ", " + this.getContext());
-		//if ((fragActivity = getActivity()) != null)
-		Toast.makeText(fragActivity, st, Toast.LENGTH_LONG).show();
-		//else if (getContext() != null)
-		//Toast.makeText(getContext(), st, Toast.LENGTH_LONG).show();
-	}
+	protected void showToast(String message) {
+        if (this.toast == null) {
+            // Create toast if found null, it would he the case of first call only
+            this.toast = Toast.makeText(fragActivity, message, Toast.LENGTH_SHORT);
+        } else if (this.toast.getView() == null) {
+            // Toast not showing, so create new one
+            this.toast = Toast.makeText(fragActivity, message, Toast.LENGTH_SHORT);
+        } else {
+			this.toast.cancel();
+            // Updating toast message is showing
+            this.toast.setText(message);
+        }
+        // Showing toast finally
+        this.toast.show();
+    }
 
 	public void onClick(final View v) {
 		Log.d(TAG, "onClick v " + v + ", " + selectedInList1.size());
@@ -542,9 +586,23 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Vie
 									break;
 								case R.id.encrypts:
 									break;
-								case R.id.history:
-									//if (ma != null)
-									GeneralDialogCreation.showHistoryDialog(activity.dataUtils, activity.getFutils(), (ContentFragment)Frag.this, activity.getAppTheme());
+								case (R.id.hiddenfiles):
+									for (LayoutElement le : selectedInList1) {
+										activity.dataUtils.addHiddenFile(le.path);
+										if (new File(le.path).isDirectory()) {
+											File f1 = new File(le.path + "/.nomedia");
+											if (!f1.exists()) {
+												try {
+													com.amaze.filemanager.filesystem.FileUtil.mkfile(f1, activity);
+													//activity.mainActivityHelper.mkFile(new HFile(OpenMode.FILE, le.path), Frag.this);
+												} catch (Exception e) {
+													e.printStackTrace();
+												}
+											}
+											Futils.scanFile(le.path, getActivity());
+										}
+									}
+									updateList();
 									break;
 							}
 							return true;
