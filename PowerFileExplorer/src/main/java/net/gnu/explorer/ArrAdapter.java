@@ -70,18 +70,18 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 	private static final String TAG = "ArrAdapter";
 
 	private final int backgroundResource;
-	private final ContentFragment fileFrag;
-	
+	private final ContentFragment contentFrag;
+
 	public void toggleChecked(final boolean checked) {
 		if (checked) {
-			fileFrag.allCbx.setSelected(true);
-			fileFrag.selectedInList1.clear();
-			fileFrag.selectedInList1.addAll(fileFrag.dataSourceL1);
-			fileFrag.allCbx.setImageResource(R.drawable.ic_accept);
+			contentFrag.allCbx.setSelected(true);
+			contentFrag.selectedInList1.clear();
+			contentFrag.selectedInList1.addAll(contentFrag.dataSourceL1);
+			contentFrag.allCbx.setImageResource(R.drawable.ic_accept);
 		} else {
-			fileFrag.allCbx.setSelected(false);
-			fileFrag.selectedInList1.clear();
-			fileFrag.allCbx.setImageResource(R.drawable.dot);
+			contentFrag.allCbx.setSelected(false);
+			contentFrag.selectedInList1.clear();
+			contentFrag.allCbx.setImageResource(R.drawable.dot);
 		}
 		notifyDataSetChanged();
 	}
@@ -125,8 +125,8 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 
 	public ArrAdapter(final ContentFragment fileFrag, final ArrayList<LayoutElement> objects) {
 		super(objects);
-		this.fileFrag = fileFrag;
-		
+		this.contentFrag = fileFrag;
+
 		final int[] attrs = new int[]{R.attr.selectableItemBackground};
 		final TypedArray typedArray = fileFrag.activity.obtainStyledAttributes(attrs);
 		backgroundResource = typedArray.getResourceId(0, 0);
@@ -135,12 +135,12 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 
 	@Override
 	public int getItemViewType(final int position) {
-		if (fileFrag.dataSourceL1.size() == 0) {
+		if (contentFrag.dataSourceL1.size() == 0) {
 			return 0;
-		} else if (fileFrag.spanCount == 1 
-				   || (fileFrag.spanCount == 2 && (fileFrag.activity.right.getVisibility() == View.GONE || fileFrag.activity.left.getVisibility() == View.GONE))) {
+		} else if (contentFrag.spanCount == 1 
+				   || (contentFrag.spanCount == 2 && (contentFrag.activity.right.getVisibility() == View.GONE || contentFrag.activity.left.getVisibility() == View.GONE))) {
 			return 1;
-		} else if (fileFrag.spanCount == 2 && fileFrag.slidingTabsFragment.width >= 0) {
+		} else if (contentFrag.spanCount == 2 && contentFrag.slidingTabsFragment.width >= 0) {
 			return 2;
 		} else {
 			return 3;
@@ -180,7 +180,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		final ImageButton more = holder.more;
 		final View convertedView = holder.convertedView;
 
-		if (fileFrag.type == Frag.TYPE.EXPLORER) {
+		if (contentFrag.type == Frag.TYPE.EXPLORER) {
 			name.setText(fName);
 		} else {
 			name.setText(fPath);
@@ -199,31 +199,31 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		image.setOnLongClickListener(onLongClickListener);
 		more.setOnLongClickListener(onLongClickListener);
 
-		if (fileFrag.currentPathTitle == null || fileFrag.currentPathTitle.length() > 0) {
+		if (contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0) {
 			name.setEllipsize(TextUtils.TruncateAt.MIDDLE);
 		} else {
 			name.setEllipsize(TextUtils.TruncateAt.START);
 		}
-		
+
 		//Log.d("f.getAbsolutePath()", f.getAbsolutePath());
 		//Log.d("curSelectedFiles", curSelectedFiles.toString());
-		if (fileFrag.selectedInList1.contains(le)) {
+		if (contentFrag.selectedInList1.contains(le)) {
 			convertedView.setBackgroundColor(ExplorerActivity.SELECTED_IN_LIST);
 			cbx.setImageResource(R.drawable.ic_accept);
 			cbx.setSelected(true);
 			cbx.setEnabled(true);
-			if ((fileFrag.currentPathTitle == null || fileFrag.currentPathTitle.length() > 0) && fileFrag.selectedInList1.size() == fileFrag.dataSourceL1.size()) {
-				fileFrag.allCbx.setSelected(true);
-				fileFrag.allCbx.setImageResource(R.drawable.ic_accept);
+			if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0) && contentFrag.selectedInList1.size() == contentFrag.dataSourceL1.size()) {
+				contentFrag.allCbx.setSelected(true);
+				contentFrag.allCbx.setImageResource(R.drawable.ic_accept);
 			}
 		} else {
 			boolean inDataSource2 = false;
 			boolean isPartial = false;
 			//Log.d(TAG, "dataSource2" + Util.collectionToString(dataSourceL2, true, "\n"));
-			if (fileFrag.multiFiles && fileFrag.dataSourceL2 != null) {
+			if (contentFrag.multiFiles && contentFrag.dataSourceL2 != null) {
 				final String fPathD = fPath + "/";
 				String f2Path;
-				for (LayoutElement f2 : fileFrag.dataSourceL2) {
+				for (LayoutElement f2 : contentFrag.dataSourceL2) {
 					f2Path = f2.path;
 					if (f2.equals(le) || fPath.startsWith(f2Path + "/")) {
 						inDataSource2 = true;
@@ -240,37 +240,37 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				cbx.setImageResource(R.drawable.ic_accept);
 				cbx.setSelected(true);
 				cbx.setEnabled(false);
-				if ((fileFrag.currentPathTitle == null || fileFrag.currentPathTitle.length() > 0) && fileFrag.selectedInList1.size() == fileFrag.dataSourceL1.size()) {
-					fileFrag.allCbx.setSelected(true);
-					fileFrag.allCbx.setImageResource(R.drawable.ic_accept);
+				if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0) && contentFrag.selectedInList1.size() == contentFrag.dataSourceL1.size()) {
+					contentFrag.allCbx.setSelected(true);
+					contentFrag.allCbx.setImageResource(R.drawable.ic_accept);
 				}
 			} else if (isPartial) {
 				convertedView.setBackgroundColor(ExplorerActivity.IS_PARTIAL);
 				cbx.setImageResource(R.drawable.ready);
 				cbx.setSelected(false);
 				cbx.setEnabled(true);
-				fileFrag.allCbx.setSelected(false);
-				if (fileFrag.selectedInList1.size() == 0) {
-					fileFrag.allCbx.setImageResource(R.drawable.dot);
+				contentFrag.allCbx.setSelected(false);
+				if (contentFrag.selectedInList1.size() == 0) {
+					contentFrag.allCbx.setImageResource(R.drawable.dot);
 				} else {
-					fileFrag.allCbx.setImageResource(R.drawable.ready);
+					contentFrag.allCbx.setImageResource(R.drawable.ready);
 				}
 			} else {
 				convertedView.setBackgroundResource(backgroundResource);
-				if (fileFrag.selectedInList1.size() > 0) {
+				if (contentFrag.selectedInList1.size() > 0) {
 					cbx.setImageResource(R.drawable.ready);
-					fileFrag.allCbx.setImageResource(R.drawable.ready);
+					contentFrag.allCbx.setImageResource(R.drawable.ready);
 				} else {
 					cbx.setImageResource(R.drawable.dot);
-					fileFrag.allCbx.setImageResource(R.drawable.dot);
+					contentFrag.allCbx.setImageResource(R.drawable.dot);
 				}
 				cbx.setSelected(false);
 				cbx.setEnabled(true);
-				fileFrag.allCbx.setSelected(false);
+				contentFrag.allCbx.setSelected(false);
 
 			}
 		}
-		if (fileFrag.tempPreviewL2 != null && fileFrag.tempPreviewL2.equals(le)) {
+		if (contentFrag.tempPreviewL2 != null && contentFrag.tempPreviewL2.equals(le)) {
 			convertedView.setBackgroundColor(ExplorerActivity.LIGHT_GREY);
 		}
 
@@ -294,7 +294,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				size.setText(Util.nf.format(le.length) + " B");
 				lastModified.setText(Util.dtf.format(le.lastModified));
 			} else {
-				size.setText(Formatter.formatFileSize(fileFrag.activity, le.length));
+				size.setText(Formatter.formatFileSize(contentFrag.activity, le.length));
 				lastModified.setText(Util.df.format(le.lastModified));
 			}
 		} else {
@@ -318,7 +318,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				lastModified.setText(Util.df.format(le.lastModified));
 			}
 		}
-		fileFrag.imageLoader.displayImage(le.bf.f, fileFrag.getContext(), image, fileFrag.spanCount);
+		contentFrag.imageLoader.displayImage(le.bf.f, contentFrag.getContext(), image, contentFrag.spanCount);
 	}
 
 	private class OnClickListener implements View.OnClickListener {
@@ -328,15 +328,15 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		}
 		@Override
 		public void onClick(final View v) {
-			fileFrag.select(true);
+			contentFrag.select(true);
 			//final Integer pos = Integer.valueOf(v.getContentDescription().toString());
 			final LayoutElement rowItem = mDataset.get(pos);
 			if (v.getId() == R.id.more) {
 
-				final MenuBuilder menuBuilder = new MenuBuilder(fileFrag.activity);
-				final MenuInflater inflater = new MenuInflater(fileFrag.activity);
+				final MenuBuilder menuBuilder = new MenuBuilder(contentFrag.activity);
+				final MenuInflater inflater = new MenuInflater(contentFrag.activity);
 				inflater.inflate(R.menu.file_commands, menuBuilder);
-				final MenuPopupHelper optionsMenu = new MenuPopupHelper(fileFrag.activity , menuBuilder, fileFrag.searchButton);
+				final MenuPopupHelper optionsMenu = new MenuPopupHelper(contentFrag.activity , menuBuilder, contentFrag.searchButton);
 				optionsMenu.setForceShowIcon(true);
 
 				int num= menuBuilder.size();
@@ -347,21 +347,25 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 					}
 				}
 
-				final MenuItem findItem = menuBuilder.findItem(R.id.extract);
+				MenuItem findItem = menuBuilder.findItem(R.id.extract);
 				//Log.d(TAG, rowItem.name + ", " + findItem + ", " + FileUtil.extractiblePattern.matcher(rowItem.name).matches());
 				if (rowItem.isDirectory || !FileUtil.extractiblePattern.matcher(rowItem.name).matches()) {
-					findItem.setVisible(false);
-				} else {
-					findItem.setVisible(true);
+					findItem.setTitle("Compress");
+				}
+
+				findItem = menuBuilder.findItem(R.id.encrypt);
+				//Log.d(TAG, rowItem.name + ", " + findItem + ", " + FileUtil.extractiblePattern.matcher(rowItem.name).matches());
+				if (!rowItem.isDirectory && rowItem.name.toLowerCase().endsWith(CryptUtil.CRYPT_EXTENSION)) {
+					findItem.setTitle("Decrypt");
 				}
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
-							final ExplorerActivity activity = fileFrag.activity;
+							final ExplorerActivity activity = contentFrag.activity;
 							switch (item.getItemId()) {
 								case R.id.copy:
 									//copy(v);
-									fileFrag.activity.MOVE_PATH = null;
+									contentFrag.activity.MOVE_PATH = null;
 									ArrayList<BaseFile> copies = new ArrayList<>(1);
 									copies.add(rowItem.generateBaseFile());
 									activity.COPY_PATH = copies;
@@ -399,7 +403,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 									}
 									break;
 								case R.id.rename:
-									fileFrag.rename(rowItem.generateBaseFile());
+									contentFrag.rename(rowItem.generateBaseFile());
 									break;
 								case R.id.delete:
 									ArrayList<LayoutElement> ele = new ArrayList<LayoutElement>(1);
@@ -419,7 +423,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 										default:
 											ArrayList<File> arrayList = new ArrayList<>(1);
 											arrayList.add(new File(rowItem.path));
-											activity.getFutils().shareFiles(arrayList, activity, activity.getAppTheme(), fileFrag.accentColor);
+											activity.getFutils().shareFiles(arrayList, activity, activity.getAppTheme(), contentFrag.accentColor);
 											break;
 									}
 									break;
@@ -451,81 +455,87 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 									break;
 
 								case R.id.encrypt:
-									final Intent encryptIntent = new Intent(activity, EncryptService.class);
-									encryptIntent.putExtra(EncryptService.TAG_OPEN_MODE, rowItem.getMode().ordinal());
-									encryptIntent.putExtra(EncryptService.TAG_CRYPT_MODE,
-														   EncryptService.CryptEnum.ENCRYPT.ordinal());
-									encryptIntent.putExtra(EncryptService.TAG_SOURCE, rowItem.generateBaseFile());
+									if (!rowItem.isDirectory) {
+										if (!rowItem.name.toLowerCase().endsWith(CryptUtil.CRYPT_EXTENSION)) {
+											final Intent encryptIntent = new Intent(activity, EncryptService.class);
+											encryptIntent.putExtra(EncryptService.TAG_OPEN_MODE, rowItem.getMode().ordinal());
+											encryptIntent.putExtra(EncryptService.TAG_CRYPT_MODE,
+																   EncryptService.CryptEnum.ENCRYPT.ordinal());
+											encryptIntent.putExtra(EncryptService.TAG_SOURCE, rowItem.generateBaseFile());
 
-									final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+											final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
 
-									final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterfaceAuthenticate =
-										new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
-										@Override
-										public void onButtonPressed(Intent intent) {
-										}
+											final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterfaceAuthenticate =
+												new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
+												@Override
+												public void onButtonPressed(Intent intent) {
+												}
 
-										@Override
-										public void onButtonPressed(Intent intent, String password) throws Exception {
-											EncryptDecryptUtils.startEncryption(activity,
-																				rowItem.generateBaseFile().getPath(), password, intent);
-										}
-									};
+												@Override
+												public void onButtonPressed(Intent intent, String password) throws Exception {
+													EncryptDecryptUtils.startEncryption(activity,
+																						rowItem.generateBaseFile().getPath(), password, intent);
+												}
+											};
 
-									EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface =
-										new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
+											EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface =
+												new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
 
-										@Override
-										public void onButtonPressed(Intent intent) throws Exception {
-											// check if a master password or fingerprint is set
-											if (!preferences.getString(Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD,
-																	   Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD_DEFAULT).equals("")) {
+												@Override
+												public void onButtonPressed(Intent intent) throws Exception {
+													// check if a master password or fingerprint is set
+													if (!preferences.getString(Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD,
+																			   Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD_DEFAULT).equals("")) {
 
-												EncryptDecryptUtils.startEncryption(activity,
-																					rowItem.generateBaseFile().getPath(),
-																					Preffrag.ENCRYPT_PASSWORD_MASTER, encryptIntent);
-											} else if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_FINGERPRINT,
-																			  Preffrag.PREFERENCE_CRYPT_FINGERPRINT_DEFAULT)) {
+														EncryptDecryptUtils.startEncryption(activity,
+																							rowItem.generateBaseFile().getPath(),
+																							Preffrag.ENCRYPT_PASSWORD_MASTER, encryptIntent);
+													} else if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_FINGERPRINT,
+																					  Preffrag.PREFERENCE_CRYPT_FINGERPRINT_DEFAULT)) {
 
-												EncryptDecryptUtils.startEncryption(activity,
-																					rowItem.generateBaseFile().getPath(),
-																					Preffrag.ENCRYPT_PASSWORD_FINGERPRINT, encryptIntent);
+														EncryptDecryptUtils.startEncryption(activity,
+																							rowItem.generateBaseFile().getPath(),
+																							Preffrag.ENCRYPT_PASSWORD_FINGERPRINT, encryptIntent);
+													} else {
+														// let's ask a password from user
+														GeneralDialogCreation.showEncryptAuthenticateDialog(activity, encryptIntent,
+																											activity, activity.getAppTheme(),
+																											encryptButtonCallbackInterfaceAuthenticate);
+													}
+												}
+
+												@Override
+												public void onButtonPressed(Intent intent, String password) {
+												}
+											};
+
+											if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER,
+																	   Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER_DEFAULT)) {
+												// let's skip warning dialog call
+												try {
+													encryptButtonCallbackInterface.onButtonPressed(encryptIntent);
+												} catch (Exception e) {
+													e.printStackTrace();
+													Toast.makeText(activity,
+																   activity.getResources().getString(R.string.crypt_encryption_fail),
+																   Toast.LENGTH_LONG).show();
+												}
 											} else {
-												// let's ask a password from user
-												GeneralDialogCreation.showEncryptAuthenticateDialog(activity, encryptIntent,
-																									activity, activity.getAppTheme(),
-																									encryptButtonCallbackInterfaceAuthenticate);
+												GeneralDialogCreation.showEncryptWarningDialog(encryptIntent,
+																							   contentFrag, activity.getAppTheme(), encryptButtonCallbackInterface);
 											}
+											break;
+										} else {
+											//case R.id.decrypt:
+											EncryptDecryptUtils.decryptFile(activity, activity, contentFrag,
+																			contentFrag.openMode, rowItem.generateBaseFile(),
+																			rowItem.generateBaseFile().getParent(activity), activity, false);
+											break;
 										}
-
-										@Override
-										public void onButtonPressed(Intent intent, String password) {
-										}
-									};
-
-									if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER,
-															   Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER_DEFAULT)) {
-										// let's skip warning dialog call
-										try {
-											encryptButtonCallbackInterface.onButtonPressed(encryptIntent);
-										} catch (Exception e) {
-											e.printStackTrace();
-											Toast.makeText(activity,
-														   activity.getResources().getString(R.string.crypt_encryption_fail),
-														   Toast.LENGTH_LONG).show();
-										}
-									} else {
-										GeneralDialogCreation.showEncryptWarningDialog(encryptIntent,
-																					   fileFrag, activity.getAppTheme(), encryptButtonCallbackInterface);
 									}
 									break;
-								case R.id.decrypt:
-									EncryptDecryptUtils.decryptFile(activity, activity, fileFrag,
-																	fileFrag.openMode, rowItem.generateBaseFile(),
-																	rowItem.generateBaseFile().getParent(activity), activity, false);
-									break;
 								case R.id.hide:
-									fileFrag.dataUtils.addHiddenFile(rowItem.path);
+									contentFrag.dataUtils.addHiddenFile(rowItem.path);
 //									if (new File(rowItem.path).isDirectory()) {
 //										File f1 = new File(rowItem.path + "/" + ".nomedia");
 //										if (!f1.exists()) {
@@ -537,7 +547,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 //										}
 //										Futils.scanFile(rowItem.path, activity);
 //									}
-									fileFrag.updateList();
+									contentFrag.updateList();
 									//GeneralDialogCreation.showHiddenDialog(activity.dataUtils, activity.getFutils(), fileFrag, activity.getAppTheme());
 									break;
 								case R.id.book:
@@ -548,12 +558,16 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 									break;
 								case R.id.extract:
 									//activity.mainActivityHelper.extractFile(new File(rowItem.path));
-									activity.decompress(rowItem.path, fileFrag.currentPathTitle + "/" + rowItem.name.substring(0, rowItem.name.lastIndexOf(".")));
+									if (FileUtil.extractiblePattern.matcher(rowItem.name).matches()) {
+										activity.decompress(rowItem.path, contentFrag.currentPathTitle + "/" + rowItem.name.substring(0, rowItem.name.lastIndexOf(".")));
+									} else {
+										activity.compress(rowItem.path, contentFrag.currentPathTitle + "/" + (rowItem.name.lastIndexOf(".") > 0 ? rowItem.name.substring(0, rowItem.name.lastIndexOf(".")) : rowItem.name));
+									}
 									break;
 								case R.id.compress:
 									ArrayList<BaseFile> copies1 = new ArrayList<>();
 									copies1.add(rowItem.bf);
-									GeneralDialogCreation.showCompressDialog(activity, copies1, fileFrag.currentPathTitle);
+									GeneralDialogCreation.showCompressDialog(activity, copies1, contentFrag.currentPathTitle);
 									break;
 							}
 
@@ -583,164 +597,178 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			//Log.d(TAG, "f.exists() " + f.exists());
 			if (f.exists()) {
 				if (!f.canRead()) {
-					fileFrag.showToast(f + " cannot be read");
+					contentFrag.showToast(f + " cannot be read");
 				} else {
-					boolean inSelected = false;
-					if (fileFrag.dataSourceL2 != null)
-						for (LayoutElement st : fileFrag.dataSourceL2) {
-							if (f.equals(st) || fPath.startsWith(st.path + "/")) {
-								inSelected = true;
-								break;
+					final int id = v.getId();
+					if (contentFrag.multiFiles) {// || fileFrag.suffix != null && fileFrag.suffix.length() == 0
+						boolean inSelected = false;
+						if (contentFrag.dataSourceL2 != null)
+							for (LayoutElement st : contentFrag.dataSourceL2) {
+								if (f.equals(st) || fPath.startsWith(st.path + "/")) {
+									inSelected = true;
+									break;
+								}
 							}
-						}
-					if (!inSelected) {
-						if (fileFrag.multiFiles) {// || fileFrag.suffix != null && fileFrag.suffix.length() == 0
-							final int id = v.getId();
+						if (!inSelected) {
 							if (id == R.id.icon) {
-								fileFrag.tempPreviewL2 = rowItem;
+								contentFrag.tempPreviewL2 = rowItem;
+								notifyDataSetChanged();
 								if (f.isFile()) {
 									load(rowItem, f, fPath, pos);
-								} else if (fileFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//ContentFragment dir//fileFrag.type == -1
-									if (fileFrag.activity.slideFrag2 != null) {
-										Frag frag = fileFrag.activity.slideFrag2.getCurrentFragment();
+								} else if (contentFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//dir
+									if (contentFrag.activity.slideFrag2 != null) {
+										Frag frag = contentFrag.activity.slideFrag2.getCurrentFragment();
 										if (frag.type == Frag.TYPE.EXPLORER) {
 											((ContentFragment)frag).changeDir(path, true);
 										} else {
-											fileFrag.activity.slideFrag2.setCurrentItem(fileFrag.activity.slideFrag2.indexOfAdapter(fileFrag.activity.curExplorerFrag), true);
-											fileFrag.activity.curExplorerFrag.changeDir(path, true);
+											contentFrag.activity.slideFrag2.setCurrentItem(contentFrag.activity.slideFrag2.indexOfAdapter(contentFrag.activity.curExplorerFrag), true);
+											contentFrag.activity.curExplorerFrag.changeDir(path, true);
 										}
 									}
 								} else {//dir
-									Frag frag = fileFrag.activity.slideFrag.getCurrentFragment();
+									Frag frag = contentFrag.activity.slideFrag.getCurrentFragment();
 									if (frag.type == Frag.TYPE.EXPLORER) {
 										((ContentFragment)frag).changeDir(path, true);
 									} else {
-										fileFrag.activity.slideFrag.setCurrentItem(fileFrag.activity.slideFrag.indexOfAdapter(fileFrag.activity.curContentFrag), true);
-										fileFrag.activity.curContentFrag.changeDir(path, true);
-									}
-//									fileFrag.activity.curContentFrag.changeDir(fPath, true);
-								}
-								if (fileFrag.selectedInList1.size() > 0) {
-									if (fileFrag.selectedInList1.remove(rowItem)) {
-										if (fileFrag.selectedInList1.size() == 0 && fileFrag.activity.COPY_PATH == null && fileFrag.activity.MOVE_PATH == null && fileFrag.commands.getVisibility() == View.VISIBLE) {
-											fileFrag.horizontalDivider6.setVisibility(View.GONE);
-											fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.shrink_from_top));
-											fileFrag.commands.setVisibility(View.GONE);
-										}
-									} else {
-										fileFrag.selectedInList1.add(rowItem);
+										contentFrag.activity.slideFrag.setCurrentItem(contentFrag.activity.slideFrag.indexOfAdapter(contentFrag.activity.curContentFrag), true);
+										contentFrag.activity.curContentFrag.changeDir(path, true);
 									}
 								}
 							} else if (id == R.id.cbx) {//file and folder
-								if (fileFrag.selectedInList1.remove(rowItem)) {
-									if (fileFrag.selectedInList1.size() == 0 && fileFrag.activity.COPY_PATH == null && fileFrag.activity.MOVE_PATH == null && fileFrag.commands.getVisibility() == View.VISIBLE) {
-										fileFrag.horizontalDivider6.setVisibility(View.GONE);
-										fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.shrink_from_top));
-										fileFrag.commands.setVisibility(View.GONE);
+								if (contentFrag.selectedInList1.remove(rowItem)) {
+									if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+										contentFrag.horizontalDivider6.setVisibility(View.GONE);
+										contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+										contentFrag.commands.setVisibility(View.GONE);
 									}
 								} else {
-									fileFrag.selectedInList1.add(rowItem);
-									if (fileFrag.commands.getVisibility() == View.GONE) {
-										fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.grow_from_bottom));
-										fileFrag.commands.setVisibility(View.VISIBLE);
-										fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+									contentFrag.selectedInList1.add(rowItem);
+									if (contentFrag.commands.getVisibility() == View.GONE) {
+										contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+										contentFrag.commands.setVisibility(View.VISIBLE);
+										contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 									}
 								}
+								notifyDataSetChanged();
 							} else if (f.isDirectory()) { 
-								if (fileFrag.selectedInList1.size() == 0 && fileFrag.type != Frag.TYPE.SELECTION) { 
-									fileFrag.changeDir(path, true);
+								if (contentFrag.selectedInList1.size() == 0 && contentFrag.type == Frag.TYPE.EXPLORER) { 
+									contentFrag.changeDir(path, true);
 								} else {
-									if (fileFrag.selectedInList1.remove(rowItem)) {
-										if (fileFrag.selectedInList1.size() == 0 && fileFrag.activity.COPY_PATH == null && fileFrag.activity.MOVE_PATH == null && fileFrag.commands.getVisibility() == View.VISIBLE) {
-											fileFrag.horizontalDivider6.setVisibility(View.GONE);
-											fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.shrink_from_top));
-											fileFrag.commands.setVisibility(View.GONE);
+									if (contentFrag.selectedInList1.remove(rowItem)) {
+										if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+											contentFrag.horizontalDivider6.setVisibility(View.GONE);
+											contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+											contentFrag.commands.setVisibility(View.GONE);
 										} 
 									} else {
-										fileFrag.selectedInList1.add(rowItem);
-										if (fileFrag.commands.getVisibility() == View.GONE) {
-											fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.grow_from_bottom));
-											fileFrag.commands.setVisibility(View.VISIBLE);
-											fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+										contentFrag.selectedInList1.add(rowItem);
+										if (contentFrag.commands.getVisibility() == View.GONE) {
+											contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+											contentFrag.commands.setVisibility(View.VISIBLE);
+											contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 										}
 									}
+									notifyDataSetChanged();
 								}
 							} else if (f.isFile()) { 
-								if (fileFrag.selectedInList1.size() == 0) { 
-									openFile(f);
+								if (contentFrag.selectedInList1.size() == 0) { 
+									openFile(rowItem, f, fPath);
 								} else {
-									if (fileFrag.selectedInList1.remove(rowItem)) {
-										if (fileFrag.selectedInList1.size() == 0 && fileFrag.activity.COPY_PATH == null && fileFrag.activity.MOVE_PATH == null && fileFrag.commands.getVisibility() == View.VISIBLE) {
-											fileFrag.horizontalDivider6.setVisibility(View.GONE);
-											fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.shrink_from_top));
-											fileFrag.commands.setVisibility(View.GONE);
+									if (contentFrag.selectedInList1.remove(rowItem)) {
+										if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+											contentFrag.horizontalDivider6.setVisibility(View.GONE);
+											contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+											contentFrag.commands.setVisibility(View.GONE);
 										} 
 									} else {
-										fileFrag.selectedInList1.add(rowItem);
-										if (fileFrag.commands.getVisibility() == View.GONE) {
-											fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.grow_from_bottom));
-											fileFrag.commands.setVisibility(View.VISIBLE);
-											fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+										contentFrag.selectedInList1.add(rowItem);
+										if (contentFrag.commands.getVisibility() == View.GONE) {
+											contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+											contentFrag.commands.setVisibility(View.VISIBLE);
+											contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 										}
 									}
+									notifyDataSetChanged();
 								}
 							}
-							if ((fileFrag.currentPathTitle == null || fileFrag.currentPathTitle.length() > 0)) {
-								fileFrag.selectionStatus1.setText(fileFrag.selectedInList1.size() 
-																  + "/" + fileFrag.dataSourceL1.size());
+							if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0)) {
+								contentFrag.selectionStatus.setText(contentFrag.selectedInList1.size() 
+																  + "/" + contentFrag.dataSourceL1.size());
 							}
-						} else { //!multifile no preview
+						} else { // inselected
+							if (id == R.id.icon) { //dir
+								contentFrag.tempPreviewL2 = rowItem;
+								notifyDataSetChanged();
+								if (f.isFile()) {
+									load(rowItem, f, fPath, pos);
+								} else if (contentFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//ContentFragment dir//fileFrag.type == -1
+									if (contentFrag.activity.slideFrag2 != null) {
+										Frag frag = contentFrag.activity.slideFrag2.getCurrentFragment();
+										if (frag.type == Frag.TYPE.EXPLORER) {
+											((ContentFragment)frag).changeDir(path, true);
+										} else {
+											contentFrag.activity.slideFrag2.setCurrentItem(contentFrag.activity.slideFrag2.indexOfAdapter(contentFrag.activity.curExplorerFrag), true);
+											contentFrag.activity.curExplorerFrag.changeDir(path, true);
+										}
+									}
+								} else {//dir
+									//if (fileFrag.activity.slideFrag2 != null) {
+									Frag frag = contentFrag.activity.slideFrag.getCurrentFragment();
+									if (frag.type == Frag.TYPE.EXPLORER) {
+										((ContentFragment)frag).changeDir(path, true);
+									} else {
+										contentFrag.activity.slideFrag.setCurrentItem(contentFrag.activity.slideFrag.indexOfAdapter(contentFrag.activity.curContentFrag), true);
+										contentFrag.activity.curContentFrag.changeDir(path, true);
+									}
+								}
+							} else if (f.isFile()) {
+//								if (v.getId() == R.id.icon) {
+//									contentFrag.tempPreviewL2 = rowItem;
+//									load(rowItem, f, fPath, pos);
+//								} else {
+									openFile(rowItem, f, fPath);
+//								}
+							} 
+						}
+					} else { //!multifile no preview
+						if (id == R.id.cbx) {
+							// chọn mới đầu tiên
+							if (contentFrag.selectedInList1.size() == 0) {
+								contentFrag.selectedInList1.add(rowItem);
+								if (contentFrag.commands.getVisibility() == View.GONE) {
+									contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+									contentFrag.commands.setVisibility(View.VISIBLE);
+									contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+								}
+							} else {
+								if (contentFrag.selectedInList1.remove(rowItem)) { // đã chọn
+									if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+										contentFrag.horizontalDivider6.setVisibility(View.GONE);
+										contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+										contentFrag.commands.setVisibility(View.GONE);
+									}
+								} else { // chọn mới bỏ cũ
+									contentFrag.selectedInList1.clear();
+									contentFrag.selectedInList1.add(rowItem);
+								}
+							} 
+							notifyDataSetChanged();
+						} else {
 							if (f.isFile()) {
-								// chọn mới đầu tiên
-								if (v.getId() == R.id.cbx) {
-									if (fileFrag.selectedInList1.size() == 0) {
-										fileFrag.selectedInList1.add(rowItem);
-										if (fileFrag.commands.getVisibility() == View.GONE) {
-											fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.grow_from_bottom));
-											fileFrag.commands.setVisibility(View.VISIBLE);
-											fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-										}
-									} else if (fileFrag.selectedInList1.size() > 0) {
-										if (fileFrag.selectedInList1.remove(rowItem)) { // đã chọn
-											if (fileFrag.selectedInList1.size() == 0 && fileFrag.activity.COPY_PATH == null && fileFrag.activity.MOVE_PATH == null && fileFrag.commands.getVisibility() == View.VISIBLE) {
-												fileFrag.horizontalDivider6.setVisibility(View.GONE);
-												fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.shrink_from_top));
-												fileFrag.commands.setVisibility(View.GONE);
-											}
-										} else { // chọn mới bỏ cũ
-											fileFrag.selectedInList1.clear();
-											fileFrag.selectedInList1.add(rowItem);
-										}
-									}
-								} else {
-									openFile(f);
-								}
+								openFile(rowItem, f, fPath);
 							} else { //", "Directory
-								fileFrag.selectedInList1.clear();
-								if (fileFrag.currentPathTitle == null || fileFrag.currentPathTitle.length() > 0) {
-									fileFrag.changeDir(path, true);
+								//fileFrag.selectedInList1.clear();
+								if (contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0) {
+									contentFrag.changeDir(path, true);
 								}
 							}
 						}
-						notifyDataSetChanged();
-					} else { // inselected
-						if (f.isFile()) {
-							if (v.getId() == R.id.icon) {
-								load(rowItem, f, fPath, pos);
-							} else {
-								openFile(f);
-							}
-						} else if (v.getId() == R.id.icon) { //dir
-							fileFrag.tempPreviewL2 = rowItem;
-							fileFrag.activity.slideFrag2.setCurrentItem(Frag.TYPE.EXPLORER.ordinal(), true);
-							fileFrag.activity.curExplorerFrag.changeDir(fPath, true);
-						} 
 					}
 				}
 			} else {
-				fileFrag.changeDir(f.getParentFile().getAbsolutePath(), true);
+				contentFrag.changeDir(f.getParentFile().getAbsolutePath(), true);
 			}
-			fileFrag.updateDelPaste();
+			contentFrag.updateDelPaste();
 		}
 	}
 
@@ -765,50 +793,9 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 	}
 
 	private void load(final LayoutElement ele, final File f, final String fPath, final int pos) throws IllegalStateException {
-		if (fileFrag.activity.slideFrag2 == null) {
+		if (contentFrag.activity.slideFrag2 == null) {
 			Log.d(TAG, "Single panel only");
 			return;
-		}
-		// check if we're trying to click on encrypted file
-		if (!f.isDirectory() &&
-			fPath.endsWith(CryptUtil.CRYPT_EXTENSION)) {
-			// decrypt the file
-			fileFrag.isEncryptOpen = true;
-
-			fileFrag.encryptBaseFile = new BaseFile(fileFrag.activity.getExternalCacheDir().getPath()
-													+ "/"
-													+ new LayoutElement(f).generateBaseFile().getName().replace(CryptUtil.CRYPT_EXTENSION, ""));
-
-			EncryptDecryptUtils.decryptFile(fileFrag.activity, fileFrag.activity, fileFrag, fileFrag.openMode,
-											new LayoutElement(f).generateBaseFile(), fileFrag.activity.getExternalCacheDir().getPath(),
-											fileFrag.activity, true);
-			return;
-		} else {
-			switch (ele.getMode()) {
-				case SMB:
-					try {
-						SmbFile smbFile = new SmbFile(ele.path);
-						fileFrag.launchSMB(smbFile, f.length(), fileFrag.activity);
-					} catch (MalformedURLException ex) {
-						ex.printStackTrace();
-					}
-					break;
-				case OTG:
-					fileFrag.activity.getFutils().openFile(OTGUtil.getDocumentFile(ele.path, fileFrag.activity, false),
-														   fileFrag.activity);
-					break;
-				case DROPBOX:
-				case BOX:
-				case GDRIVE:
-				case ONEDRIVE:
-					Toast.makeText(fileFrag.activity, fileFrag.activity.getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
-					CloudUtil.launchCloud(ele.generateBaseFile(), fileFrag.openMode, fileFrag.activity);
-					break;
-				default:
-					fileFrag.activity.getFutils().openFile(f, fileFrag.activity);
-					break;
-			}
-			fileFrag.dataUtils.addHistoryFile(ele.path);
 		}
 		final String mime = MimeTypes.getMimeType(f);
 		Log.d(TAG, fPath + "=" + mime);
@@ -817,44 +804,44 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		int tabIndex2 = 0;
 		final SlidingTabsFragment.PagerAdapter pagerAdapter;
 		final SlidingTabsFragment slidingTabsFragment;
-		if (fileFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-			pagerAdapter = fileFrag.activity.slideFrag2.pagerAdapter;
-			slidingTabsFragment = fileFrag.activity.slideFrag2;
+		if (contentFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+			pagerAdapter = contentFrag.activity.slideFrag2.pagerAdapter;
+			slidingTabsFragment = contentFrag.activity.slideFrag2;
 		} else {
-			pagerAdapter = fileFrag.activity.slideFrag.pagerAdapter;
-			slidingTabsFragment = fileFrag.activity.slideFrag;
+			pagerAdapter = contentFrag.activity.slideFrag.pagerAdapter;
+			slidingTabsFragment = contentFrag.activity.slideFrag;
 		}
 		if (mime.startsWith("text/html") || mime.startsWith("text/xhtml")) {
-			tabIndex1 = getFragIndex(fileFrag, Frag.TYPE.TEXT);
-			tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.WEB);
+			tabIndex1 = getFragIndex(contentFrag, Frag.TYPE.TEXT);
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.WEB);
 			if (tabIndex1 >= 0) {
 				pagerAdapter.getItem(tabIndex1).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex1, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.TEXT, fPath);
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
 						}
-					}, 50);
+					}, 100);
 			}
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							slidingTabsFragment.addTab(Frag.TYPE.WEB, fPath);
-							fileFrag.listView.postDelayed(new Runnable() {
+							contentFrag.listView.postDelayed(new Runnable() {
 									@Override
 									public void run() {
 										pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
 									}
-								}, 50);
+								}, 100);
 						}
-					}, 100);
+					}, 200);
 			}
 			//pagerAdapter.getItem(i = Frag.TYPE.TEXT.ordinal()).load(fPath);
 			//pagerAdapter.getItem(i = Frag.TYPE.WEB.ordinal()).load(fPath);
@@ -862,7 +849,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			final StringBuilder sb = new StringBuilder(ExplorerActivity.DOCTYPE);
 			try {
 				ApkParser apkParser = new ApkParser(f);
-				sb.append(AndroidUtils.getSignature(fileFrag.activity, fPath));
+				sb.append(AndroidUtils.getSignature(contentFrag.activity, fPath));
 				sb.append("\nVerify apk " + apkParser.verifyApk());
 				sb.append("\nMeta data " + apkParser.getApkMeta());
 
@@ -878,73 +865,73 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				final String name = ExplorerApplication.PRIVATE_PATH + "/" + f.getName() + ".html";
 				FileUtil.writeFileAsCharset(new File(name), sb.toString(), "utf-8");
 				//pagerAdapter.getItem(i = Frag.TYPE.WEB.ordinal()).load(name);
-				tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.WEB);
+				tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.WEB);
 				if (tabIndex2 >= 0) {
 					pagerAdapter.getItem(tabIndex2).load(name);
 					slidingTabsFragment.setCurrentItem(tabIndex2, true);
 				} 
 				if (tabIndex2 < 0) {
 					slidingTabsFragment.addTab(Frag.TYPE.WEB, name);
-					fileFrag.listView.postDelayed(new Runnable() {
+					contentFrag.listView.postDelayed(new Runnable() {
 							@Override
 							public void run() {
 								pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(name);
 							}
-						}, 50);
+						}, 100);
 				}
 				byte[] bytes = FileUtil.readFileToMemory(f);
-				new FillClassesNamesThread(fileFrag, bytes, f, sb1, sb2, ExplorerActivity.END_PRE).start();
+				new FillClassesNamesThread(contentFrag, bytes, f, sb1, sb2, ExplorerActivity.END_PRE).start();
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		} else if (mime.startsWith("application/pdf")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.PDF.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.PDF);
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.PDF);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.PDF, fPath);
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
 						}
-					}, 50);
+					}, 100);
 			}
 		} else if (mime.startsWith("image/svg+xml")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.TEXT.ordinal()).load(fPath);
 			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).load(fPath);
-			tabIndex1 = getFragIndex(fileFrag, Frag.TYPE.TEXT);
-			tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.PHOTO);
+			tabIndex1 = getFragIndex(contentFrag, Frag.TYPE.TEXT);
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.PHOTO);
 			if (tabIndex1 >= 0) {
 				pagerAdapter.getItem(tabIndex1).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex1, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.TEXT, fPath);
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
 						}
-					}, 50);
+					}, 100);
 			}
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							slidingTabsFragment.addTab(Frag.TYPE.PHOTO, fPath);
-							fileFrag.listView.postDelayed(new Runnable() {
+							contentFrag.listView.postDelayed(new Runnable() {
 									@Override
 									public void run() {
 										pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
 									}
-								}, 50);
+								}, 100);
 						}
-					}, 100);
+					}, 200);
 			}
 
 //		} else if (mime.startsWith("application/epub+zip")
@@ -956,28 +943,28 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 //			pagerAdapter.getItem(i = Frag.TYPE.FBReader.ordinal()).load(fPath);
 		} else if (mime.startsWith("text")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.TEXT.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.TEXT);
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.TEXT);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.TEXT, fPath);
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
 						}
-					}, 50);
+					}, 100);
 			}
 		} else if (mime.startsWith("video")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.MEDIA.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.MEDIA);
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.MEDIA);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.MEDIA, fPath);
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
@@ -986,28 +973,28 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 		} else if (mime.startsWith("image")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).open(pos, mDataset);
-			tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.PHOTO);
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.PHOTO);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).open(pos, mDataset);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.PHOTO, fPath);
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							pagerAdapter.getItem(slidingTabsFragment.pageSelected).open(pos, mDataset);
 						}
-					}, 50);
+					}, 100);
 			}
 		} else if (mime.startsWith("audio")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.MEDIA.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(fileFrag, Frag.TYPE.MEDIA);
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.MEDIA);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.MEDIA, fPath);
-				fileFrag.listView.postDelayed(new Runnable() {
+				contentFrag.listView.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
@@ -1015,26 +1002,68 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 					}, 500);
 			}
 		} else {
-			fileFrag.tempPreviewL2 = null;
+			contentFrag.tempPreviewL2 = null;
 		}
 	}
 
-	private void openFile(final File f) {
-		try {
-			final Uri uri = Uri.fromFile(f);
-			final Intent i = new Intent(Intent.ACTION_VIEW); 
-			i.addCategory(Intent.CATEGORY_DEFAULT);
-			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+	private void openFile(LayoutElement ele, final File f, String fPath) {
+//		try {
+//			final Uri uri = Uri.fromFile(f);
+//			final Intent i = new Intent(Intent.ACTION_VIEW); 
+//			i.addCategory(Intent.CATEGORY_DEFAULT);
+//			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+//
+//			Log.d("i.setData(uri)", uri + "." + i);
+//			final String mimeType = MimeTypes.getMimeType(f);
+//			i.setDataAndType(uri, mimeType);//floor.getValue()
+//			Log.d(TAG, f + "=" + mimeType);
+//			final Intent createChooser = Intent.createChooser(i, "View");
+//			Log.i("createChooser.getExtras()", AndroidUtils.bundleToString(createChooser.getExtras()));
+//			fileFrag.startActivity(createChooser);
+//		} catch (Throwable e) {
+//			Toast.makeText(fileFrag.activity, "unable to view !\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+//		}
 
-			Log.d("i.setData(uri)", uri + "." + i);
-			final String mimeType = MimeTypes.getMimeType(f);
-			i.setDataAndType(uri, mimeType);//floor.getValue()
-			Log.d(TAG, f + "=" + mimeType);
-			final Intent createChooser = Intent.createChooser(i, "View");
-			Log.i("createChooser.getExtras()", AndroidUtils.bundleToString(createChooser.getExtras()));
-			fileFrag.startActivity(createChooser);
-		} catch (Throwable e) {
-			Toast.makeText(fileFrag.activity, "unable to view !\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+		// check if we're trying to click on encrypted file
+		if (!f.isDirectory() &&
+			fPath.endsWith(CryptUtil.CRYPT_EXTENSION)) {
+			// decrypt the file
+			contentFrag.isEncryptOpen = true;
+
+			contentFrag.encryptBaseFile = new BaseFile(contentFrag.activity.getExternalCacheDir().getPath()
+													+ "/"
+													+ new LayoutElement(f).generateBaseFile().getName().replace(CryptUtil.CRYPT_EXTENSION, ""));
+
+			EncryptDecryptUtils.decryptFile(contentFrag.activity, contentFrag.activity, contentFrag, contentFrag.openMode,
+											new LayoutElement(f).generateBaseFile(), contentFrag.activity.getExternalCacheDir().getPath(),
+											contentFrag.activity, true);
+			return;
+		} else {
+			switch (ele.getMode()) {
+				case SMB:
+					try {
+						SmbFile smbFile = new SmbFile(ele.path);
+						contentFrag.launchSMB(smbFile, f.length(), contentFrag.activity);
+					} catch (MalformedURLException ex) {
+						ex.printStackTrace();
+					}
+					break;
+				case OTG:
+					contentFrag.activity.getFutils().openFile(OTGUtil.getDocumentFile(ele.path, contentFrag.activity, false),
+														   contentFrag.activity);
+					break;
+				case DROPBOX:
+				case BOX:
+				case GDRIVE:
+				case ONEDRIVE:
+					Toast.makeText(contentFrag.activity, contentFrag.activity.getResources().getString(R.string.please_wait), Toast.LENGTH_LONG).show();
+					CloudUtil.launchCloud(ele.generateBaseFile(), contentFrag.openMode, contentFrag.activity);
+					break;
+				default:
+					contentFrag.activity.getFutils().openFile(f, contentFrag.activity);
+					break;
+			}
+			contentFrag.dataUtils.addHistoryFile(ele.path);
 		}
 	}
 
@@ -1045,7 +1074,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		}
 		@Override
 		public boolean onLongClick(final View v) {
-			fileFrag.select(true);
+			contentFrag.select(true);
 //			if (fileFrag.type == -1) {
 //				fileFrag.activity.slideFrag2.getCurrentFragment().select(false);
 //			} else {
@@ -1056,79 +1085,79 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			final String fPath = f.getAbsolutePath();//(String) v.getContentDescription();
 
 			if (!f.exists()) {
-				fileFrag.changeDir(fPath, true);
+				contentFrag.changeDir(fPath, true);
 				return true;
 			} else if (!f.canRead()) {
-				fileFrag.showToast(f + " cannot be read");
+				contentFrag.showToast(f + " cannot be read");
 				return true;
 			}
 			Log.d(TAG, "onLongClick, " + fPath);
-			Log.d(TAG, "currentSelectedList" + Util.collectionToString(fileFrag.selectedInList1, true, "\r\n"));
-			Log.d(TAG, "selectedInList.contains(f) " + fileFrag.selectedInList1.contains(f));
-			Log.d(TAG, "multiFiles " + fileFrag.multiFiles);
+			Log.d(TAG, "currentSelectedList" + Util.collectionToString(contentFrag.selectedInList1, true, "\r\n"));
+			Log.d(TAG, "selectedInList.contains(f) " + contentFrag.selectedInList1.contains(f));
+			Log.d(TAG, "multiFiles " + contentFrag.multiFiles);
 
 			boolean inSelectedFiles = false;
-			if (fileFrag.dataSourceL2 != null)
-				for (LayoutElement st : fileFrag.dataSourceL2) {
+			if (contentFrag.dataSourceL2 != null)
+				for (LayoutElement st : contentFrag.dataSourceL2) {
 					if (f.equals(st) || fPath.startsWith(st.path + "/")) {
 						inSelectedFiles = true;
 						break;
 					}
 				}
 			if (!inSelectedFiles) {
-				if (fileFrag.multiFiles || fileFrag.suffix.length() == 0) {
-					if (fileFrag.selectedInList1.remove(rowItem)) {
-						if (fileFrag.selectedInList1.size() == 0 && fileFrag.activity.COPY_PATH == null && fileFrag.activity.MOVE_PATH == null && fileFrag.commands.getVisibility() == View.VISIBLE) {
-							fileFrag.horizontalDivider6.setVisibility(View.GONE);
-							fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.shrink_from_top));
-							fileFrag.commands.setVisibility(View.GONE);
+				if (contentFrag.multiFiles || contentFrag.suffix.length() == 0) {
+					if (contentFrag.selectedInList1.remove(rowItem)) {
+						if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+							contentFrag.horizontalDivider6.setVisibility(View.GONE);
+							contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+							contentFrag.commands.setVisibility(View.GONE);
 						} 
 					} else {
-						fileFrag.selectedInList1.add(rowItem);
-						if (fileFrag.commands.getVisibility() == View.GONE) {
-							fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.grow_from_bottom));
-							fileFrag.commands.setVisibility(View.VISIBLE);
-							fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+						contentFrag.selectedInList1.add(rowItem);
+						if (contentFrag.commands.getVisibility() == View.GONE) {
+							contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+							contentFrag.commands.setVisibility(View.VISIBLE);
+							contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 						}
 					}
-					if ((fileFrag.currentPathTitle == null || fileFrag.currentPathTitle.length() > 0)) {
-						fileFrag.selectionStatus1.setText(fileFrag.selectedInList1.size() 
-														  + "/" + fileFrag.dataSourceL1.size());
+					if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0)) {
+						contentFrag.selectionStatus.setText(contentFrag.selectedInList1.size() 
+														  + "/" + contentFrag.dataSourceL1.size());
 					}
 				} else { // single file
 					if (f.isFile()) {
 						// chọn mới đầu tiên
-						if (fileFrag.selectedInList1.size() == 0) {
-							fileFrag.selectedInList1.add(rowItem);
-							if (fileFrag.commands.getVisibility() == View.GONE) {
-								fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.grow_from_bottom));
-								fileFrag.commands.setVisibility(View.VISIBLE);
-								fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+						if (contentFrag.selectedInList1.size() == 0) {
+							contentFrag.selectedInList1.add(rowItem);
+							if (contentFrag.commands.getVisibility() == View.GONE) {
+								contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+								contentFrag.commands.setVisibility(View.VISIBLE);
+								contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 							}
-						} else if (fileFrag.selectedInList1.size() > 0) {
-							if (fileFrag.selectedInList1.remove(rowItem)) {
+						} else {
+							if (contentFrag.selectedInList1.remove(rowItem)) {
 								// đã chọn
-								if (fileFrag.selectedInList1.size() == 0 && fileFrag.activity.COPY_PATH == null && fileFrag.activity.MOVE_PATH == null && fileFrag.commands.getVisibility() == View.VISIBLE) {
-									fileFrag.horizontalDivider6.setVisibility(View.GONE);
-									fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(fileFrag.activity, R.anim.shrink_from_top));
-									fileFrag.commands.setVisibility(View.GONE);
+								if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+									contentFrag.horizontalDivider6.setVisibility(View.GONE);
+									contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+									contentFrag.commands.setVisibility(View.GONE);
 								} 
 							} else {
 								// chọn mới bỏ cũ
-								fileFrag.selectedInList1.clear();
-								fileFrag.selectedInList1.add(rowItem);
+								contentFrag.selectedInList1.clear();
+								contentFrag.selectedInList1.add(rowItem);
 							}
 						}
 					} else { //", "Directory
-						fileFrag.selectedInList1.clear();
-						if (fileFrag.currentPathTitle == null || fileFrag.currentPathTitle.length() > 0) {
-							fileFrag.changeDir(fileFrag.dirTemp4Search, true);
+						contentFrag.selectedInList1.clear();
+						if (contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0) {
+							contentFrag.changeDir(contentFrag.dirTemp4Search, true);
 						}
 					}
 				}
 				notifyDataSetChanged();
 			} 
-			fileFrag.updateDelPaste();
+			contentFrag.updateDelPaste();
 			return true;
 		}
 	}

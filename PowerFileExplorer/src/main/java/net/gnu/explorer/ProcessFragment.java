@@ -102,20 +102,33 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		title = "Process";
 	}
 
-	void clone(final ProcessFragment frag) {
-		if (!fake) {
-			selectedInList1 = frag.selectedInList1;
-			lpinfo = frag.lpinfo;
-			prevInfo = frag.prevInfo;
-			searchMode = frag.searchMode;
-			searchVal = frag.searchVal;
-			adapter = frag.adapter;
-			if (listView != null && listView.getAdapter() != adapter) {
-				listView.setAdapter(adapter);
-			}
-			fake = true;
-		}
-	}
+//	@Override
+//	void clone(final ProcessFragment frag) {
+//		if (!fake) {
+//			selectedInList1 = frag.selectedInList1;
+//			lpinfo = frag.lpinfo;
+//			prevInfo = frag.prevInfo;
+//			searchMode = frag.searchMode;
+//			searchVal = frag.searchVal;
+//			adapter = frag.adapter;
+//			if (listView != null && listView.getAdapter() != adapter) {
+//				listView.setAdapter(adapter);
+//			}
+//			fake = true;
+//
+//			if (frag.selStatus != null) {
+//				final int visibility = frag.selStatus.getVisibility();
+//				if (selStatus.getVisibility() != visibility) {
+//					selStatus.setVisibility(visibility);
+//					horizontalDivider0.setVisibility(visibility);
+//					horizontalDivider12.setVisibility(visibility);
+//					status.setVisibility(visibility);
+//				}
+//				selectionStatus1.setText(frag.selectionStatus1.getText());
+//				diskStatus.setText(frag.diskStatus.getText());
+//			}
+//		}
+//	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,6 +152,12 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		processType.setOnItemSelectedListener(new ItemSelectedListener());
 		processType.setSelection(3);
 
+		v.findViewById(R.id.backup).setOnClickListener(this);
+		v.findViewById(R.id.unins).setOnClickListener(this);
+		v.findViewById(R.id.share).setOnClickListener(this);
+		v.findViewById(R.id.shortcuts).setOnClickListener(this);
+		v.findViewById(R.id.kill).setOnClickListener(this);
+		
 
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
@@ -257,8 +276,8 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		searchET.setTextColor(ExplorerActivity.TEXT_COLOR);
 		clearButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
 		searchButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		diskStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatus1.setTextColor(ExplorerActivity.TEXT_COLOR);
+		rightStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
+		selectionStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
 
 		if (ExplorerActivity.BASE_BACKGROUND < 0xff808080) {
 			processType.setPopupBackgroundResource(R.drawable.textfield_black);
@@ -691,77 +710,77 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		updateStatus();
 	}
 
-	public void fromActivity(final View v) {
-		//final Futils utils = utilsProvider.getFutils();
-        PopupMenu popup = new PopupMenu(v.getContext(), v);
-        popup.inflate(R.menu.process);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-				public boolean onMenuItemClick(MenuItem item) {
-					switch (item.getItemId()) {
-						case R.id.kill:
-							killList.clear();
-							for (String p : selectedInList1) {
-								try {
-									for (ProcessInfo pi : lpinfo) {
-										if (pi.packageName.equals(p)) {
-											AndroidUtils.killProcess(activity, pi.pid, p);
-											killList.add(p);
-										}
-									}
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-							loadlist(true);
-							Toast.makeText(activity, selectedInList1.size() + " processes were killed !", Toast.LENGTH_SHORT).show();
-							break;
-						case R.id.share:
-							ArrayList<File> arrayList2 = new ArrayList<File>();
-							ArrayList<String> apkPath = AndroidUtils.getApkPath(activity);
-							Collections.sort(apkPath);
-							for (String pi : selectedInList1) {
-								int binarySearch = Collections.binarySearch(apkPath, pi);
-								if (binarySearch >= 0) {
-									arrayList2.add(new File(apkPath.get(binarySearch)));
-								}
-							}
-//							int color1 = Color.parseColor(PreferenceUtils
-//														  .getAccentString(sharedPref));
-//							new Futils().shareFiles(arrayList2, activity, theme1,
-//													color1);
-							new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
-							break;
-						case R.id.backup:
-							Toast.makeText(
-								getContext(),
-								getResources().getString(R.string.copyingapk)
-								+ AppsFragment.BACKUP_PATH, Toast.LENGTH_LONG).show();
-							PackageManager pm = activity.getPackageManager();
-							for (String pi : selectedInList1) {
-								PackageInfo info = AndroidUtils.getPackageInfo(activity, pi);
-								if (info != null) {
-									ApplicationInfo applicationInfo = info.applicationInfo;
-									if (applicationInfo != null) {
-										AppsFragment.backup(applicationInfo.publicSourceDir, applicationInfo.loadLabel(pm) + "",
-															info.versionName, ProcessFragment.this);
-									} else {
-										Toast.makeText(activity, pi + " cannot be accessed", Toast.LENGTH_SHORT).show();
-									}
-								} else {
-									Toast.makeText(activity, pi + " cannot be accessed", Toast.LENGTH_SHORT).show();
-								}
-							}
-							break;
-						case R.id.unins:
-							for (String pi : selectedInList1) {
-								AndroidUtils.uninstall(activity, pi);
-							}
-					}
-					return true;
-				}
-			});
-		popup.show();
-	}
+//	public void fromActivity(final View v) {
+//		//final Futils utils = utilsProvider.getFutils();
+//        PopupMenu popup = new PopupMenu(v.getContext(), v);
+//        popup.inflate(R.menu.process);
+//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//				public boolean onMenuItemClick(MenuItem item) {
+//					switch (item.getItemId()) {
+//						case R.id.kill:
+//							killList.clear();
+//							for (String p : selectedInList1) {
+//								try {
+//									for (ProcessInfo pi : lpinfo) {
+//										if (pi.packageName.equals(p)) {
+//											AndroidUtils.killProcess(activity, pi.pid, p);
+//											killList.add(p);
+//										}
+//									}
+//								} catch (Exception e) {
+//									e.printStackTrace();
+//								}
+//							}
+//							loadlist(true);
+//							Toast.makeText(activity, selectedInList1.size() + " processes were killed !", Toast.LENGTH_SHORT).show();
+//							break;
+//						case R.id.share:
+//							ArrayList<File> arrayList2 = new ArrayList<File>();
+//							ArrayList<String> apkPath = AndroidUtils.getApkPath(activity);
+//							Collections.sort(apkPath);
+//							for (String pi : selectedInList1) {
+//								int binarySearch = Collections.binarySearch(apkPath, pi);
+//								if (binarySearch >= 0) {
+//									arrayList2.add(new File(apkPath.get(binarySearch)));
+//								}
+//							}
+////							int color1 = Color.parseColor(PreferenceUtils
+////														  .getAccentString(sharedPref));
+////							new Futils().shareFiles(arrayList2, activity, theme1,
+////													color1);
+//							new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
+//							break;
+//						case R.id.backup:
+//							Toast.makeText(
+//								getContext(),
+//								getResources().getString(R.string.copyingapk)
+//								+ AppsFragment.BACKUP_PATH, Toast.LENGTH_LONG).show();
+//							PackageManager pm = activity.getPackageManager();
+//							for (String pi : selectedInList1) {
+//								PackageInfo info = AndroidUtils.getPackageInfo(activity, pi);
+//								if (info != null) {
+//									ApplicationInfo applicationInfo = info.applicationInfo;
+//									if (applicationInfo != null) {
+//										AppsFragment.backup(applicationInfo.publicSourceDir, applicationInfo.loadLabel(pm) + "",
+//															info.versionName, ProcessFragment.this);
+//									} else {
+//										Toast.makeText(activity, pi + " cannot be accessed", Toast.LENGTH_SHORT).show();
+//									}
+//								} else {
+//									Toast.makeText(activity, pi + " cannot be accessed", Toast.LENGTH_SHORT).show();
+//								}
+//							}
+//							break;
+//						case R.id.unins:
+//							for (String pi : selectedInList1) {
+//								AndroidUtils.uninstall(activity, pi);
+//							}
+//					}
+//					return true;
+//				}
+//			});
+//		popup.show();
+//	}
 
 	@Override
 	public void onClick(View p1) {
@@ -832,6 +851,60 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			case R.id.clear:
 				searchET.setText("");
 				break;
+			case R.id.kill:
+				killList.clear();
+				for (String p : selectedInList1) {
+					try {
+						for (ProcessInfo pi : lpinfo) {
+							if (pi.packageName.equals(p)) {
+								AndroidUtils.killProcess(activity, pi.pid, p);
+								killList.add(p);
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				loadlist(true);
+				Toast.makeText(activity, selectedInList1.size() + " processes were killed !", Toast.LENGTH_SHORT).show();
+				break;
+			case R.id.share:
+				ArrayList<File> arrayList2 = new ArrayList<File>();
+				ArrayList<String> apkPath = AndroidUtils.getApkPath(activity);
+				Collections.sort(apkPath);
+				for (String pi : selectedInList1) {
+					int binarySearch = Collections.binarySearch(apkPath, pi);
+					if (binarySearch >= 0) {
+						arrayList2.add(new File(apkPath.get(binarySearch)));
+					}
+				}
+				new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
+				break;
+			case R.id.backup:
+				Toast.makeText(
+					getContext(),
+					getResources().getString(R.string.copyingapk)
+					+ AppsFragment.BACKUP_PATH, Toast.LENGTH_LONG).show();
+				PackageManager pm = activity.getPackageManager();
+				for (String pi : selectedInList1) {
+					PackageInfo info = AndroidUtils.getPackageInfo(activity, pi);
+					if (info != null) {
+						ApplicationInfo applicationInfo = info.applicationInfo;
+						if (applicationInfo != null) {
+							AppsFragment.backup(applicationInfo.publicSourceDir, applicationInfo.loadLabel(pm) + "",
+												info.versionName, ProcessFragment.this);
+						} else {
+							Toast.makeText(activity, pi + " cannot be accessed", Toast.LENGTH_SHORT).show();
+						}
+					} else {
+						Toast.makeText(activity, pi + " cannot be accessed", Toast.LENGTH_SHORT).show();
+					}
+				}
+				break;
+			case R.id.unins:
+				for (String pi : selectedInList1) {
+					AndroidUtils.uninstall(activity, pi);
+				}
 		}
 	}
 
@@ -914,31 +987,31 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		final MemoryInfo mem_info = new ActivityManager.MemoryInfo();
 		final ActivityManager systemService = (ActivityManager)activity.getSystemService(Context.ACTIVITY_SERVICE);
 		systemService.getMemoryInfo(mem_info);
-		diskStatus.setText(String.format("Available memory: %s B", Util.nf.format((mem_info.availMem)) + "/" + Util.nf.format(mem_info.totalMem)));
+		rightStatus.setText(String.format("Available memory: %s B", Util.nf.format((mem_info.availMem)) + "/" + Util.nf.format(mem_info.totalMem)));
 		//numProc_label.setText("Number of processes: " + display_process.size());
-		selectionStatus1.setText(selectedInList1.size() + "/" + lpinfo.size() + "/" + display_process.size());
+		selectionStatus.setText(selectedInList1.size() + "/" + lpinfo.size() + "/" + display_process.size());
 		adapter.notifyDataSetChanged();
 	}
 
 	private class ProcessAdapter extends RecyclerAdapter<ProcessInfo, ProcessAdapter.ViewHolder> implements OnClickListener, OnLongClickListener {
 
-		public ProcessAdapter(List<ProcessInfo> lpinfo) {
+		public ProcessAdapter(final List<ProcessInfo> lpinfo) {
 			//loadProcess();
 			super(lpinfo);//, R.layout.list_item_process, lpinfo);
 		}
 
 		class ViewHolder extends RecyclerView.ViewHolder {
-			View ll;
-			TextView name;
-			TextView items;
-			TextView attr;
-			//TextView lastModified;
-			TextView type;
-			ImageButton cbx;
-			ImageView image;
-			ImageButton more;
+			private final View ll;
+			private final TextView name;
+			private final TextView items;
+			private final TextView attr;
+			
+			private final TextView type;
+			private final ImageButton cbx;
+			private final ImageView image;
+			private final ImageButton more;
 
-			ViewHolder(View convertView) {
+			ViewHolder(final View convertView) {
 				super(convertView);
 				name = (TextView) convertView.findViewById(R.id.name);
 				items = (TextView) convertView.findViewById(R.id.items);
@@ -958,82 +1031,86 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				ll.setOnLongClickListener(ProcessAdapter.this);
 				more.setOnLongClickListener(ProcessAdapter.this);
 				cbx.setOnLongClickListener(ProcessAdapter.this);
+			
+				more.setColorFilter(ExplorerActivity.TEXT_COLOR);
+				name.setTextColor(ExplorerActivity.DIR_COLOR);
+				items.setTextColor(ExplorerActivity.TEXT_COLOR);
+				attr.setTextColor(ExplorerActivity.TEXT_COLOR);
+				//holder.lastModified.setTextColor(ExplorerActivity.TEXT_COLOR);
+				type.setTextColor(ExplorerActivity.TEXT_COLOR);
+
+			}
+
+			private void bind(final int position) {
+				final ProcessInfo pi = lpinfo.get(position);
+
+				cbx.setTag(pi);
+				more.setTag(pi);
+
+				name.setText(pi.label);
+				attr.setText(pi.packageName);
+				items.setText(Util.nf.format(pi.size) + " B");
+
+				int importance = pi.status;
+				if (importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+					type.setText("Foreground");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE) {
+					type.setText("Foreground Service");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
+					type.setText("Background");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_VISIBLE) {
+					type.setText("Visible");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE) {
+					type.setText("Perceptible");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_SERVICE) {
+					type.setText("Service");
+				} else if (importance == 150) {//}RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING) {
+					type.setText("Sleep");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_GONE) {
+					type.setText("Gone");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE) {
+					type.setText("Can't save state");
+				} else if (importance == RunningAppProcessInfo.IMPORTANCE_EMPTY) {
+					type.setText("Empty");
+				}
+
+				try {
+					image.setImageDrawable(pk.getApplicationIcon(pi.packageName));
+				} catch (NameNotFoundException e) {
+					image.setImageResource(R.drawable.ic_doc_apk);
+				}
+
+				final boolean checked = selectedInList1.contains(pi.packageName);
+				if (checked) {
+					ll.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+					cbx.setSelected(true);
+					cbx.setImageResource(R.drawable.ic_accept);
+				} else if (selectedInList1.size() > 0) {
+					ll.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+					cbx.setSelected(false);
+					cbx.setImageResource(R.drawable.ready);
+				} else {
+					ll.setBackgroundResource(R.drawable.ripple);
+					cbx.setSelected(false);
+					cbx.setImageResource(R.drawable.dot);
+				}
 			}
 		}
 
 		@Override
-		public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-			View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_process, parent, false);
+		public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+			final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_process, parent, false);
 			// set the view's size, margins, paddings and layout parameters
 			final ViewHolder vh = new ViewHolder(v);
 			return vh;
 		}
 
 		@Override
-		public void onBindViewHolder(ViewHolder holder, int position) {
-			final ProcessInfo pi = lpinfo.get(position);
-
-			holder.cbx.setTag(pi);
-			holder.more.setTag(pi);
-
-			holder.more.setColorFilter(ExplorerActivity.TEXT_COLOR);
-			holder.name.setTextColor(ExplorerActivity.DIR_COLOR);
-			holder.items.setTextColor(ExplorerActivity.TEXT_COLOR);
-			holder.attr.setTextColor(ExplorerActivity.TEXT_COLOR);
-			//holder.lastModified.setTextColor(ExplorerActivity.TEXT_COLOR);
-			holder.type.setTextColor(ExplorerActivity.TEXT_COLOR);
-
-			holder.name.setText(pi.label);
-			//holder.lastModified.setText(pi.pid + "");
-			holder.attr.setText(pi.packageName);
-			holder.items.setText(Util.nf.format(pi.size) + " B");
-
-			int importance = pi.status;
-			if (importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-				holder.type.setText("Foreground");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE) {
-				holder.type.setText("Foreground Service");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
-				holder.type.setText("Background");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_VISIBLE) {
-				holder.type.setText("Visible");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE) {
-				holder.type.setText("Perceptible");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_SERVICE) {
-				holder.type.setText("Service");
-			} else if (importance == 150) {//}RunningAppProcessInfo.IMPORTANCE_TOP_SLEEPING) {
-				holder.type.setText("Sleep");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_GONE) {
-				holder.type.setText("Gone");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_CANT_SAVE_STATE) {
-				holder.type.setText("Can't save state");
-			} else if (importance == RunningAppProcessInfo.IMPORTANCE_EMPTY) {
-				holder.type.setText("Empty");
-			}
-
-			try {
-				holder.image.setImageDrawable(pk.getApplicationIcon(pi.packageName));
-			} catch (NameNotFoundException e) {
-				holder.image.setImageResource(R.drawable.ic_doc_apk);
-			}
-
-			boolean checked = selectedInList1.contains(pi.packageName);
-			if (checked) {
-				holder.ll.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
-				holder.cbx.setSelected(true);
-				holder.cbx.setImageResource(R.drawable.ic_accept);
-			} else if (selectedInList1.size() > 0) {
-				holder.ll.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-				holder.cbx.setSelected(false);
-				holder.cbx.setImageResource(R.drawable.ready);
-			} else {
-				holder.ll.setBackgroundResource(R.drawable.ripple);
-				holder.cbx.setSelected(false);
-				holder.cbx.setImageResource(R.drawable.dot);
-			}
+		public void onBindViewHolder(final ViewHolder holder, final int position) {
+			holder.bind(position);
 		}
 
-		public void toggleChecked(boolean checked, ProcessInfo packageInfo) {
+		public void toggleChecked(final boolean checked, final ProcessInfo packageInfo) {
 			if (checked) {
 				selectedInList1.add(packageInfo.packageName);
 			} else {
@@ -1062,7 +1139,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			}
 		}
 
-		public void toggleChecked(boolean b) {
+		public void toggleChecked(final boolean b) {
 			if (b) {
 				selectedInList1.clear();
 				for (RunningAppProcessInfo r : display_process) {
@@ -1087,13 +1164,13 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		@Override
 		public boolean onLongClick(final View p1) {
 			final Object tag = p1.getTag();
+			final ProcessInfo tag2;
 			if (tag instanceof ProcessInfo) {
-				ProcessInfo tag2 = (ProcessInfo) tag;
-				toggleChecked(!selectedInList1.contains(tag2.packageName), tag2);
+				tag2 = (ProcessInfo) tag;
 			} else {
-				ProcessInfo tag2 = (ProcessInfo) ((ViewHolder) tag).cbx.getTag();
-				toggleChecked(!selectedInList1.contains(tag2.packageName), tag2);
+				tag2 = (ProcessInfo) ((ViewHolder) tag).cbx.getTag();
 			}
+			toggleChecked(!selectedInList1.contains(tag2.packageName), tag2);
 			return false;
 		}
 
@@ -1104,16 +1181,26 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				onLongClick(view);
 				return;
 			}
-			if (view.getId() == R.id.cbx) {
+			final int id = view.getId();
+			if (id == R.id.cbx) {
 				view.setSelected(!view.isSelected());
 				toggleChecked(view.isSelected(), (ProcessInfo) view.getTag());
-			} else if (view.getId() == R.id.more) {
+			} else if (id == R.id.more) {
 				final ProcessInfo pinfo = (ProcessInfo) view.getTag();
 				final MenuBuilder menuBuilder = new MenuBuilder(activity);
 				final MenuInflater inflater = new MenuInflater(activity);
 				inflater.inflate(R.menu.process, menuBuilder);
 				final MenuPopupHelper optionsMenu = new MenuPopupHelper(activity , menuBuilder, allSize);
 				optionsMenu.setForceShowIcon(true);
+				
+				Drawable icon = menuBuilder.findItem(R.id.shortcut).getIcon();
+				icon.setFilterBitmap(true);
+				icon.clearColorFilter();
+
+				icon = menuBuilder.findItem(R.id.properties).getIcon();
+				icon.setFilterBitmap(true);
+				icon.clearColorFilter();
+				
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
@@ -1193,6 +1280,9 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 									//new Futils().shareFiles(arrayList2, activity, theme1, color1);
 									new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 									break;
+								case R.id.shortcut:
+									//AndroidUtils.createShortCut(AppsFragment.this.getContext(), rowItem.packageName, rowItem.label, image.setImageDrawable(packageManager.getApplicationIcon(appInfo.packageName)));
+									return true;
 							}
 							return true;
 						}
@@ -1202,7 +1292,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				optionsMenu.show();
 			} else {
 				final int apiLevel = Build.VERSION.SDK_INT;
-				Intent intent = new Intent();
+				final Intent intent = new Intent();
 				final ProcessInfo pinfo = (ProcessInfo) ((ViewHolder) view.getTag()).cbx.getTag();
 				if (apiLevel >= 9) {
 					startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,

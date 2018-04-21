@@ -42,6 +42,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.androidutil.ForegroundService;
 import android.graphics.PorterDuff;
+import net.gnu.explorer.ExplorerApplication;
 
 public class DecompressFragment extends DialogFragment implements Serializable, OnItemSelectedListener, 
 OnCheckedChangeListener, OnClickListener {
@@ -327,7 +328,7 @@ OnCheckedChangeListener, OnClickListener {
 			command = extractWithFullPathsCB.isChecked() ? "x" : "e";
 			//password = passwordET.getText().toString();
 			try {
-				FileOutputStream fos = new FileOutputStream(Andro7za.DATA_DIR + DecompressFragment.class.getSimpleName() + ".ser");
+				FileOutputStream fos = new FileOutputStream(ExplorerApplication.DATA_DIR + DecompressFragment.class.getSimpleName() + ".ser");
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				ObjectOutputStream oos = new ObjectOutputStream(bos);
 				oos.writeObject(this);
@@ -340,7 +341,7 @@ OnCheckedChangeListener, OnClickListener {
 
 	public static DecompressFragment newInstance() {
 
-		File fi = new File(Andro7za.DATA_DIR + DecompressFragment.class.getSimpleName() + ".ser");
+		File fi = new File(ExplorerApplication.DATA_DIR + DecompressFragment.class.getSimpleName() + ".ser");
 		Log.d(TAG, fi.getAbsolutePath() + ", exist " + fi.exists() + ", length " + fi.length());
 		DecompressFragment decompressFrag = null;
 		if (fi.exists() && fi.length() > 0) {

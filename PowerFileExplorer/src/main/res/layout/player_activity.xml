@@ -82,7 +82,7 @@ limitations under the License.
 		android:visibility="gone" 
 		/>
 
-	<View
+	<!--<View
 		android:id="@+id/horizontalDivider6"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
@@ -338,5 +338,5 @@ limitations under the License.
 
 		</LinearLayout>
 
-	</HorizontalScrollView>
+	</HorizontalScrollView>-->
 </RelativeLayout>

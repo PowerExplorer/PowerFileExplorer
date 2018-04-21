@@ -61,14 +61,13 @@ public final class Andro7za {
 	public native void closeStreamJNI();
 
 	//public static final String PRIVATE_PATH = "/sdcard/.net.gnu.explorer";
-	private String mOutfile = ExplorerApplication.PRIVATE_PATH + "/7zaOut.txt";
-	private String mInfile = ExplorerApplication.PRIVATE_PATH + "/7zaIn.txt";
-	private String listFile = ExplorerApplication.PRIVATE_PATH + "/7zaFileList.txt";
+	private String mOutfile = ExplorerApplication.PRIVATE_PATH + "/7zOut.txt";
+	private String mInfile = ExplorerApplication.PRIVATE_PATH + "/7zIn.txt";
+	private String listFile = ExplorerApplication.PRIVATE_PATH + "/7zFileList.txt";
 
 	public Command command;
-	public static final String DATA_DIR = "/data/data/net.gnu.explorer/";
-	public static final String p7z_x86 = DATA_DIR + "commands/x86/7z";
-	public static final String p7z_arm = DATA_DIR + "commands/armeabi-v7a/7z";
+	
+	public static String p7z = ExplorerApplication.DATA_DIR + "commands/7z";
 
 	AsyncTask task;
 
@@ -76,40 +75,23 @@ public final class Andro7za {
 	}
 
 	public Andro7za(Context ctx) {
-
 		try {
 			//Log.d(TAG, "dir " + Util.collectionToString(Arrays.asList(ctx.getAssets().list(".")), true, "\n"));
-
 			Command command;
 
-			if (!new File(p7z_x86).exists()) {
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands");//"/android_asset/"
+			if (!new File(p7z).exists()) {
+				command = new Command("mkdir", ExplorerApplication.DATA_DIR + "commands");//"/android_asset/"
 				command.setCommandListener(new CommandListener(command));
 				command.run();
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands/x86");//"/android_asset/"
+				if (System.getProperty("os.arch").contains("x86")) {
+					FileUtil.is2File(ctx.getAssets().open("x86/7z"), p7z);///android_asset/
+				} else {
+					FileUtil.is2File(ctx.getAssets().open("armeabi-v7a/7z"), p7z);
+				}
+				command = new Command("chmod", "777", p7z);
 				command.setCommandListener(new CommandListener(command));
 				command.run();
-				FileUtil.is2File(ctx.getAssets().open("x86/7z"), p7z_x86);///android_asset/
-				command = new Command("chmod", "777", p7z_x86);
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				command = new Command(p7z_x86, "i");
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-			}
-
-			if (!new File(p7z_arm).exists()) {
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands");//"/android_asset/"
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands/armeabi-v7a");//"/android_asset/"
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				FileUtil.is2File(ctx.getAssets().open("armeabi-v7a/7z"), p7z_arm);///android_asset/
-				command = new Command("chmod", "777", Andro7za.DATA_DIR + "commands/armeabi-v7a/7z");
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				command = new Command(p7z_arm, "i");
+				command = new Command(p7z, "i");
 				command.setCommandListener(new CommandListener(command));
 				command.run();
 			}
@@ -117,10 +99,11 @@ public final class Andro7za {
 			t.printStackTrace();
 		}
 	}
+	
 	public Andro7za(String logPath) {
-		mOutfile = logPath + "/7zaOut.txt";
-		mInfile = logPath + "/7zaIn.txt";
-		listFile = logPath + "/7zaFileList.txt";
+		mOutfile = logPath + "/7zOut.txt";
+		mInfile = logPath + "/7zIn.txt";
+		listFile = logPath + "/7zFileList.txt";
 	}
 
 	public void initStream() throws IOException {
@@ -369,11 +352,8 @@ public final class Andro7za {
 		}
 		otherArgs.add(0, level);
 		otherArgs.add(0, "a");
-		if (true) {
-			otherArgs.add(0, p7z_arm);
-		} else {
-			otherArgs.add(0, p7z_x86);
-		}
+		otherArgs.add(0, p7z);
+		
 		otherArgs.add(archiveName);
 		otherArgs.add(fileListTmp2);
 		otherArgs.add(excludesTmp2);
@@ -560,11 +540,8 @@ public final class Andro7za {
 		otherArgs.add("-bb");
 		otherArgs.add(0, zArchive);
 		otherArgs.add(0, cmd);
-		if (true) {
-			otherArgs.add(0, p7z_arm);
-		} else {
-			otherArgs.add(0, p7z_x86);
-		}
+		otherArgs.add(0, p7z);
+		
 		command = new Command(otherArgs);//p7z + " " + cmd + " " + zArchive + " " + " -bb " + " " + password + " " + overwriteMode + " " +  pathToExtract + " " + otherArgs + includesTmp2 + excludesTmp2);
 		Log.d(TAG, "command: " + command);
 		CommandListener commandListener = new CommandListener(command, update);

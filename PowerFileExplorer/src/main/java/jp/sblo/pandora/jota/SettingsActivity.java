@@ -230,13 +230,13 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                     }
                 }
 
-                if ( JotaTextEditor.sFroyo  && !isJotaPlusInstalled(this) ){      // donate
-                    final Preference pr = new Preference(this);
-                    pr.setTitle(R.string.label_donate);
-                    pr.setSummary(R.string.summary_donate);
-                    pr.setOnPreferenceClickListener(mProcDonate);
-                    mPs.addPreference(pr);
-                }
+//                if ( JotaTextEditor.sFroyo  && !isJotaPlusInstalled(this) ){      // donate
+//                    final Preference pr = new Preference(this);
+//                    pr.setTitle(R.string.label_donate);
+//                    pr.setSummary(R.string.summary_donate);
+//                    pr.setOnPreferenceClickListener(mProcDonate);
+//                    mPs.addPreference(pr);
+//                }
                 {
                     final Preference pr = new Preference(this);
                     pr.setTitle(R.string.menu_pref_search);
@@ -863,10 +863,10 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                     category.addPreference(pr);
                 }
                 {      // change log
-                    final Preference pr = new Preference(this);
-                    pr.setTitle(R.string.label_changelog);
-                    pr.setOnPreferenceClickListener(mProcChangeLog);
-                    category.addPreference(pr);
+//                    final Preference pr = new Preference(this);
+//                    pr.setTitle(R.string.label_changelog);
+//                    pr.setOnPreferenceClickListener(mProcChangeLog);
+//                    category.addPreference(pr);
                 }
                 {
                     final Preference pr = new Preference(this);
@@ -1306,19 +1306,19 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
             return false;
         }
     };
-    private OnPreferenceClickListener mProcDonate = new OnPreferenceClickListener(){
-        public boolean onPreferenceClick(Preference preference) {
-            Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(URL_PLUS));
-            startActivity(intent);
-            return true;
-        }
-    };
-    private OnPreferenceClickListener mProcChangeLog = new OnPreferenceClickListener(){
-        public boolean onPreferenceClick(Preference preference) {
-            showChangeLog(SettingsActivity.this,true);
-            return true;
-        }
-    };
+//    private OnPreferenceClickListener mProcDonate = new OnPreferenceClickListener(){
+//        public boolean onPreferenceClick(Preference preference) {
+//            Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(URL_PLUS));
+//            startActivity(intent);
+//            return true;
+//        }
+//    };
+//    private OnPreferenceClickListener mProcChangeLog = new OnPreferenceClickListener(){
+//        public boolean onPreferenceClick(Preference preference) {
+//            showChangeLog(SettingsActivity.this,true);
+//            return true;
+//        }
+//    };
     private OnPreferenceClickListener mProcAbout = new OnPreferenceClickListener(){
         public boolean onPreferenceClick(Preference preference) {
             Intent intent = new Intent( SettingsActivity.this,AboutActivity.class);
@@ -1988,110 +1988,110 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 				editor.putInt(KEY_LASTVERSION, versioncode );
 
 				// set default
-//				if ( lastversion < 1 ){
-//				    editor.putBoolean(KEY_RE, false);
-//                    editor.putBoolean(KEY_IGNORE_CASE, true);
-//                    editor.putString(KEY_DIRECT_INTENT, "");
-//                    editor.putString(KEY_DIRECT_INTENT_INTENT, "");
-//				}
-//                if ( lastversion < 2 ){
-//                    editor.putString(KEY_FONT, "NORMAL");
-//                    editor.putString(KEY_FONT_SIZE, "18");
-//                    editor.putString(KEY_DEFAULT_FOLDER, Environment.getExternalStorageDirectory().getPath());
-//				}
-//                if ( lastversion < 3 ){
-//
-//                    editor.putBoolean(KEY_SHORTCUT_ALT_LEFT, false);
-//                    editor.putBoolean(KEY_SHORTCUT_ALT_RIGHT, false);
-//                    editor.putBoolean(KEY_SHORTCUT_CTRL, false);
-//                    editor.putBoolean(KEY_REMEMBER_LAST_FILE, false);
-//                    editor.putBoolean(KEY_WORD_WRAP, true);
-//                    editor.putString(KEY_THEME, THEME_DEFAULT);
-//                    editor.putInt(KEY_TEXT_COLOR, COLOR_DEFAULT);
-//                    editor.putInt(KEY_HIGHLIGHT_COLOR , getTextColorHighlight(ctx) );
-//                    editor.putInt( KEY_BACKGROUND , BACKGROUND_DEFAULT );
-//                    editor.putBoolean(KEY_UNDERLINE, true);
-//                    editor.putInt( KEY_UNDERLINE_COLOR, UNDERLINE_COLOR );
-//                }
-//                if ( lastversion < 5 ){
-//                    editor.putBoolean(KEY_CRETAE_BACKUP, true);
-//                }
-//                if ( lastversion < 6 ){
-//                    editor.putString(KEY_CHARSET_OPEN, "");
-//                    editor.putString(KEY_CHARSET_SAVE, "");
-//                    editor.putString(KEY_LINEBREAK_SAVE, "-1");
-//                    editor.putString(KEY_DIRECT_INTENT2, DI_INSERT);
-//                    editor.putString(KEY_DIRECT_INTENT_INTENT2, "");
-//                }
-//                if ( lastversion < 8 ){
-//                    editor.putBoolean(KEY_HIDETITLEBAR, false);
-//                    editor.putBoolean(KEY_HIDESOFTKEY_IS01, false);
-//                }
-//                if ( lastversion < 9 ){
-//                    editor.putBoolean(KEY_VIEWER_MODE, false);
-//                    editor.putBoolean(KEY_SHORTCUT_CTRL_LTN, false);
-//                }
-//                if ( lastversion < 10 ){
-//                    editor.putBoolean(KEY_USE_VOLUMEKEY, true);
-//                    editor.putInt(KEY_WRAPWIDTH_P, 0);
-//                    editor.putInt(KEY_WRAPWIDTH_L, 0);
-//                    editor.putInt(KEY_TAB_WIDTH, 4);
-//                    editor.putString(KEY_WRAPCHAR_P, DEFAULT_WRAP_WIDTH_CHAR);
-//                    editor.putString(KEY_WRAPCHAR_L, DEFAULT_WRAP_WIDTH_CHAR);
-//                    editor.putString(KEY_TAB_CHAR, DEFAULT_WRAP_WIDTH_CHAR);
-//                    editor.putString(KEY_TRACKBALL_BUTTON, TB_CENTERING);
-//                }
-//                if ( lastversion < 12 ){
-//                    editor.putBoolean(KEY_SHOW_LINENUMBERS, false );
-//                }
-//                if ( lastversion < 15 ){
-//                    editor.putBoolean(KEY_AUTO_INDENT, false );
-//                    editor.putBoolean(KEY_AUTO_SAVE, false );
-//                    editor.putInt(KEY_LINE_SPACE, 0 );
-//                }
-//                if ( lastversion < 17 ){
-//                    editor.putBoolean(KEY_SHOW_TAB, false );
-//                    editor.putString(KEY_ACTION_SHARE, AS_INSERT);
-//                }
-//                if ( lastversion < 29 ){
-//                    editor.putBoolean(KEY_SPECIAL_KEY_DESIREZ, false );
-//                }
-//                if ( lastversion < 31 ){
-//                    editor.putBoolean(KEY_BLINK_CURSOR, true );
-//                    editor.putString(KEY_ORIENTATION, ORI_AUTO );
-//                }
-//                if ( lastversion < 35 ){
-//                    if ( Build.MODEL.equals("Transformer TF101")){
-//                        editor.putString(KEY_TRACKBALL_BUTTON, TB_NOTHING);
-//                    }
-//                    if ( Build.MODEL.equals("LT-NA7")){
-//                        editor.putBoolean(KEY_SHORTCUT_CTRL_LTN, true);
-//                    }
-//                }
-//                if ( lastversion < 41 ){
-//                    editor.putString(KEY_WALLPAPER_TRANSPARENCY, "30");
-//                    editor.putBoolean(KEY_SHOW_TOOLBAR, true);
-//                }
-//                if ( lastversion < 42 ){
-//                    editor.putBoolean(KEY_FORCE_SCROLL, true);
-//                }
-//                if ( lastversion < 44 ){
-//                    editor.putBoolean(KEY_TOOLBAR_BIGBUTTON, false);
-//                    editor.putBoolean(KEY_TOOLBAR_HIDE_LANDSCAPE, false);
-//                }
-//                if ( lastversion < 60 ){
-//                    boolean rememberlastfile = sp.getBoolean( KEY_REMEMBER_LAST_FILE, false);
-//                    if ( rememberlastfile ){
-//                        editor.putString(KEY_STARTUP_ACTION, STARTUP_LASTFILE);
-//                    }else{
-//                        editor.putString(KEY_STARTUP_ACTION, STARTUP_NEW);
-//                    }
-//                }
-//                if ( lastversion < 63 ){
-//                    if ( JotaTextEditor.sHoneycomb ) {
-//                        editor.putBoolean(KEY_HIDETITLEBAR, false);
-//                    }
-//                }
+				if ( lastversion < 1 ){
+				    editor.putBoolean(KEY_RE, false);
+                    editor.putBoolean(KEY_IGNORE_CASE, true);
+                    editor.putString(KEY_DIRECT_INTENT, "");
+                    editor.putString(KEY_DIRECT_INTENT_INTENT, "");
+				}
+                if ( lastversion < 2 ){
+                    editor.putString(KEY_FONT, "NORMAL");
+                    editor.putString(KEY_FONT_SIZE, "18");
+                    editor.putString(KEY_DEFAULT_FOLDER, Environment.getExternalStorageDirectory().getPath());
+				}
+                if ( lastversion < 3 ){
+
+                    editor.putBoolean(KEY_SHORTCUT_ALT_LEFT, false);
+                    editor.putBoolean(KEY_SHORTCUT_ALT_RIGHT, false);
+                    editor.putBoolean(KEY_SHORTCUT_CTRL, false);
+                    editor.putBoolean(KEY_REMEMBER_LAST_FILE, false);
+                    editor.putBoolean(KEY_WORD_WRAP, true);
+                    editor.putString(KEY_THEME, THEME_DEFAULT);
+                    editor.putInt(KEY_TEXT_COLOR, COLOR_DEFAULT);
+                    editor.putInt(KEY_HIGHLIGHT_COLOR , getTextColorHighlight(ctx) );
+                    editor.putInt( KEY_BACKGROUND , BACKGROUND_DEFAULT );
+                    editor.putBoolean(KEY_UNDERLINE, true);
+                    editor.putInt( KEY_UNDERLINE_COLOR, UNDERLINE_COLOR );
+                }
+                if ( lastversion < 5 ){
+                    editor.putBoolean(KEY_CRETAE_BACKUP, true);
+                }
+                if ( lastversion < 6 ){
+                    editor.putString(KEY_CHARSET_OPEN, "");
+                    editor.putString(KEY_CHARSET_SAVE, "");
+                    editor.putString(KEY_LINEBREAK_SAVE, "-1");
+                    editor.putString(KEY_DIRECT_INTENT2, DI_INSERT);
+                    editor.putString(KEY_DIRECT_INTENT_INTENT2, "");
+                }
+                if ( lastversion < 8 ){
+                    editor.putBoolean(KEY_HIDETITLEBAR, false);
+                    editor.putBoolean(KEY_HIDESOFTKEY_IS01, false);
+                }
+                if ( lastversion < 9 ){
+                    editor.putBoolean(KEY_VIEWER_MODE, false);
+                    editor.putBoolean(KEY_SHORTCUT_CTRL_LTN, false);
+                }
+                if ( lastversion < 10 ){
+                    editor.putBoolean(KEY_USE_VOLUMEKEY, true);
+                    editor.putInt(KEY_WRAPWIDTH_P, 0);
+                    editor.putInt(KEY_WRAPWIDTH_L, 0);
+                    editor.putInt(KEY_TAB_WIDTH, 4);
+                    editor.putString(KEY_WRAPCHAR_P, DEFAULT_WRAP_WIDTH_CHAR);
+                    editor.putString(KEY_WRAPCHAR_L, DEFAULT_WRAP_WIDTH_CHAR);
+                    editor.putString(KEY_TAB_CHAR, DEFAULT_WRAP_WIDTH_CHAR);
+                    editor.putString(KEY_TRACKBALL_BUTTON, TB_CENTERING);
+                }
+                if ( lastversion < 12 ){
+                    editor.putBoolean(KEY_SHOW_LINENUMBERS, false );
+                }
+                if ( lastversion < 15 ){
+                    editor.putBoolean(KEY_AUTO_INDENT, false );
+                    editor.putBoolean(KEY_AUTO_SAVE, false );
+                    editor.putInt(KEY_LINE_SPACE, 0 );
+                }
+                if ( lastversion < 17 ){
+                    editor.putBoolean(KEY_SHOW_TAB, false );
+                    editor.putString(KEY_ACTION_SHARE, AS_INSERT);
+                }
+                if ( lastversion < 29 ){
+                    editor.putBoolean(KEY_SPECIAL_KEY_DESIREZ, false );
+                }
+                if ( lastversion < 31 ){
+                    editor.putBoolean(KEY_BLINK_CURSOR, true );
+                    editor.putString(KEY_ORIENTATION, ORI_AUTO );
+                }
+                if ( lastversion < 35 ){
+                    if ( Build.MODEL.equals("Transformer TF101")){
+                        editor.putString(KEY_TRACKBALL_BUTTON, TB_NOTHING);
+                    }
+                    if ( Build.MODEL.equals("LT-NA7")){
+                        editor.putBoolean(KEY_SHORTCUT_CTRL_LTN, true);
+                    }
+                }
+                if ( lastversion < 41 ){
+                    editor.putString(KEY_WALLPAPER_TRANSPARENCY, "30");
+                    editor.putBoolean(KEY_SHOW_TOOLBAR, true);
+                }
+                if ( lastversion < 42 ){
+                    editor.putBoolean(KEY_FORCE_SCROLL, true);
+                }
+                if ( lastversion < 44 ){
+                    editor.putBoolean(KEY_TOOLBAR_BIGBUTTON, false);
+                    editor.putBoolean(KEY_TOOLBAR_HIDE_LANDSCAPE, false);
+                }
+                if ( lastversion < 60 ){
+                    boolean rememberlastfile = sp.getBoolean( KEY_REMEMBER_LAST_FILE, false);
+                    if ( rememberlastfile ){
+                        editor.putString(KEY_STARTUP_ACTION, STARTUP_LASTFILE);
+                    }else{
+                        editor.putString(KEY_STARTUP_ACTION, STARTUP_NEW);
+                    }
+                }
+                if ( lastversion < 63 ){
+                    if ( JotaTextEditor.sHoneycomb ) {
+                        editor.putBoolean(KEY_HIDETITLEBAR, false);
+                    }
+                }
                 editor.commit();
                 SettingsShortcutActivity.writeDefaultShortcuts(ctx);
                 SettingsToolbarActivity.writeDefaultToolbarSettings(ctx);
@@ -2233,109 +2233,109 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
         mPs.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
-    public static void showChangeLog(final Activity context,boolean changelog)
-    {
-        int filename;
-        int title;
-        if ( changelog ){
-            filename = R.string.file_changelog;
-            title = R.string.label_changelog;
-        }else{
-            // welcome message
-            filename = R.string.file_welcome;
-            title = R.string.app_name;
-        }
-
-        boolean isJotaPlusInstalled = isJotaPlusInstalled(context);
-
-        String text="";
-        try{
-            boolean cuttop = changelog;
-            if ( cuttop ){
-                if ( JotaTextEditor.sFroyo  && !isJotaPlusInstalled ) {
-                    cuttop = false;
-                }
-            }
-            BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets().open(context.getString(filename))));
-            String line;
-            while( (line = br.readLine())!=null ){
-                if ( cuttop ){
-                    if ( line.startsWith("-----") ){
-                        cuttop = false;
-                    }
-                }else{
-                    text += line + '\n';
-                }
-            }
-            br.close();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-
-        View view = context.getLayoutInflater().inflate(R.layout.history_view, null);
-
-        TextView msgText = (TextView)view.findViewById(R.id.message);
-        msgText.setText( text );
-
-        Button banner = (Button)view.findViewById(R.id.banner);
-        if ( !JotaTextEditor.sFroyo || isJotaPlusInstalled ){
-            banner.setVisibility(View.GONE);
-        }
-        banner.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(URL_PLUS));
-//                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://sites.google.com/site/aquamarinepandora/jotaplus"));
-                try{
-                    context.startActivity(intent);
-                }
-                catch(Exception e){}
-            }
-        });
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-        .setView( view )
-        .setTitle( title )
-        .setPositiveButton(R.string.label_ok, null);
-
-        if ( JotaTextEditor.sFroyo  && !isJotaPlusInstalled(context) ){      // donate
-//        if ( changelog  /*&& (sSettings !=null && sSettings.donateCounter ==0)*/ ){
-            builder.setNegativeButton(R.string.label_donate, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(URL_PLUS));
-                    context.startActivity(intent);
-                }
-            });
-        }
-        builder.show();
-    }
+//    public static void showChangeLog(final Activity context,boolean changelog)
+//    {
+//        int filename;
+//        int title;
+//        if ( changelog ){
+//            filename = R.string.file_changelog;
+//            title = R.string.label_changelog;
+//        }else{
+//            // welcome message
+//            filename = R.string.file_welcome;
+//            title = R.string.app_name;
+//        }
+//
+//        boolean isJotaPlusInstalled = isJotaPlusInstalled(context);
+//
+//        String text="";
+//        try{
+//            boolean cuttop = changelog;
+//            if ( cuttop ){
+//                if ( JotaTextEditor.sFroyo  && !isJotaPlusInstalled ) {
+//                    cuttop = false;
+//                }
+//            }
+//            BufferedReader br = new BufferedReader(new InputStreamReader(context.getAssets().open(context.getString(filename))));
+//            String line;
+//            while( (line = br.readLine())!=null ){
+//                if ( cuttop ){
+//                    if ( line.startsWith("-----") ){
+//                        cuttop = false;
+//                    }
+//                }else{
+//                    text += line + '\n';
+//                }
+//            }
+//            br.close();
+//        }
+//        catch(Exception e){
+//            e.printStackTrace();
+//        }
+//
+//        View view = context.getLayoutInflater().inflate(R.layout.history_view, null);
+//
+//        TextView msgText = (TextView)view.findViewById(R.id.message);
+//        msgText.setText( text );
+//
+//        Button banner = (Button)view.findViewById(R.id.banner);
+//        if ( !JotaTextEditor.sFroyo || isJotaPlusInstalled ){
+//            banner.setVisibility(View.GONE);
+//        }
+//        banner.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(URL_PLUS));
+////                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://sites.google.com/site/aquamarinepandora/jotaplus"));
+//                try{
+//                    context.startActivity(intent);
+//                }
+//                catch(Exception e){}
+//            }
+//        });
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+//        .setView( view )
+//        .setTitle( title )
+//        .setPositiveButton(R.string.label_ok, null);
+//
+//        if ( JotaTextEditor.sFroyo  && !isJotaPlusInstalled(context) ){      // donate
+////        if ( changelog  /*&& (sSettings !=null && sSettings.donateCounter ==0)*/ ){
+//            builder.setNegativeButton(R.string.label_donate, new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int which) {
+//                    Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(URL_PLUS));
+//                    context.startActivity(intent);
+//                }
+//            });
+//        }
+//        builder.show();
+//    }
 
     public static void showWelcomeMessage(Activity context)
     {
-        if ( sLastVersion == -1 ){
-            // Do nothing
-        }else if (sLastVersion == 0 ){
-            // Welcome
-            showChangeLog(context,false);
-        }else{
-            // change log
-            showChangeLog(context,true);
-        }
+//        if ( sLastVersion == -1 ){
+//            // Do nothing
+//        }else if (sLastVersion == 0 ){
+//            // Welcome
+//            showChangeLog(context,false);
+//        }else{
+//            // change log
+//            showChangeLog(context,true);
+//        }
         sLastVersion = -1;
     }
 
-    public static boolean isJotaPlusInstalled(Context context)
-    {
-        PackageManager pm = context.getPackageManager();
-        try {
-            pm.getPackageInfo("jp.sblo.pandora.jota.plus", 0);
-            return true;
-        } catch (NameNotFoundException e) {
-        }
-        return false;
-    }
+//    public static boolean isJotaPlusInstalled(Context context)
+//    {
+//        PackageManager pm = context.getPackageManager();
+//        try {
+//            pm.getPackageInfo("jp.sblo.pandora.jota.plus", 0);
+//            return true;
+//        } catch (NameNotFoundException e) {
+//        }
+//        return false;
+//    }
 
 
 }

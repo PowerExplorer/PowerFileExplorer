@@ -774,7 +774,7 @@ PlaybackControlView.VisibilityListener {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if (Util.SDK_INT > 23) {
+		if (Util.SDK_INT > 23 || player == null) {
 			initializePlayer();
 			Log.d(TAG, "path " + currentPathTitle);
 			load(currentPathTitle);
@@ -785,7 +785,7 @@ PlaybackControlView.VisibilityListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if ((Util.SDK_INT <= 23 || player == null)) {
+		if (Util.SDK_INT <= 23 || player == null) {
 			initializePlayer();
 			Log.d(TAG, "path " + currentPathTitle);
 			load(currentPathTitle);

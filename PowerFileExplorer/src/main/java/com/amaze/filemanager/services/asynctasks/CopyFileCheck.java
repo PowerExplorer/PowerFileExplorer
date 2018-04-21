@@ -31,6 +31,8 @@ import java.util.LinkedList;
 import java.util.Set;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
+import net.gnu.explorer.ContentFragment;
+import net.gnu.explorer.FileFrag;
 
 /**
  * Created by arpitkh996 on 12-01-2016, modified by Emmanuel Messulam<emmanuelbendavid@gmail.com>
@@ -48,7 +50,7 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
         REPLACE
     }
 
-    private Frag mainFrag;
+    private FileFrag mainFrag;
     private String path;
     private Boolean move;
     private int counter = 0;
@@ -65,7 +67,7 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
     private final ArrayList<ArrayList<BaseFile>> filesToCopyPerFolder = new ArrayList<>();
     private ArrayList<BaseFile> filesToCopy;    // a copy of params sent to this
 
-    public CopyFileCheck(Frag ma, String path, Boolean move, ExplorerActivity con, boolean rootMode) {
+    public CopyFileCheck(FileFrag ma, String path, Boolean move, ExplorerActivity con, boolean rootMode) {
         mainFrag = ma;
         this.move = move;
         mainActivity = con;

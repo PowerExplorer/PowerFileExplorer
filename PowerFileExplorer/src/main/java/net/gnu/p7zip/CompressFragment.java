@@ -34,6 +34,7 @@ import net.gnu.androidutil.AndroidUtils;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.androidutil.ForegroundService;
 import android.graphics.PorterDuff;
+import net.gnu.explorer.ExplorerApplication;
 
 public class CompressFragment extends DialogFragment implements Serializable, OnItemSelectedListener, OnCheckedChangeListener, TextWatcher, OnClickListener, android.widget.RadioGroup.OnCheckedChangeListener {
 
@@ -550,7 +551,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 			otherParameters = otherParametersET.getText().toString();
 
 			try {
-				FileOutputStream fos = new FileOutputStream(Andro7za.DATA_DIR + CompressFragment.class.getSimpleName() + ".ser");
+				FileOutputStream fos = new FileOutputStream(ExplorerApplication.DATA_DIR + CompressFragment.class.getSimpleName() + ".ser");
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				ObjectOutputStream oos = new ObjectOutputStream(bos);
 				oos.writeObject(this);
@@ -563,7 +564,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 	public static CompressFragment newInstance() {
 		Log.d(TAG, "newInstance()");
-		File fi = new File(Andro7za.DATA_DIR + CompressFragment.class.getSimpleName() + ".ser");
+		File fi = new File(ExplorerApplication.DATA_DIR + CompressFragment.class.getSimpleName() + ".ser");
 		Log.d(TAG, fi.getAbsolutePath() + ", exist " + fi.exists() + ", length " + fi.length());
 		CompressFragment compressFrag = null;
 		if (fi.exists() && fi.length() > 0) {

@@ -170,6 +170,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 	protected void onCancelled(String result) {
 		Log.i(TAG, "onCancelled");
 		if (wl != null && wl.isHeld()) {
+			zpaq.command.stopAll();
 			andro7za.command.stopAll();
 			wl.release();
 			activity.stopService(new Intent(activity, ForegroundService.class));
@@ -182,10 +183,10 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		//Toast.makeText(activity, "Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds", Toast.LENGTH_LONG).show();
 		compressFrag.mBtnOK.setText("Compress");
 		if (result.length() > 0) {
-			compressFrag.statusTV.setText(compressFrag.statusTV.getText() + ". " + result + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
-			Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
+			compressFrag.statusTV.setText(compressFrag.statusTV.getText().toString().trim() + ". " + result + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
+			Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(activity, "Compression finished", Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, "Compression finished", Toast.LENGTH_SHORT).show();
 			//compressFrag.statusTV.setText(". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
 		}
 		if (wl != null && wl.isHeld()) {

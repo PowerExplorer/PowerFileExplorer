@@ -223,7 +223,7 @@
 			android:textAppearance="?android:textAppearanceSmall"/>
 
 		<TextView
-			android:id="@+id/diskStatus"
+			android:id="@+id/rightStatus"
 
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
@@ -678,7 +678,7 @@
 				
 				android:paddingBottom="0dp"
 				android:paddingTop="10dp"
-				android:drawablePadding="0dp"
+				android:drawablePadding="2dp"
 				android:layout_alignBaseline="@+id/compresss"
 			/>
 

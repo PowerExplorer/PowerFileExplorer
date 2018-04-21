@@ -182,7 +182,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 
 		pk = activity.getPackageManager();
 		apkDrawable = getResources().getDrawable(R.drawable.ic_doc_apk);
-		totalTransferTV = (TextView)v.findViewById(R.id.netStatus);
+		totalTransferTV = (TextView)v.findViewById(R.id.rightStatus);
 
 		allCbx = (ImageButton) v.findViewById(R.id.allCbx);
 		allName = (TextView) v.findViewById(R.id.allName);
@@ -512,7 +512,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		allDate.setTextColor(ExplorerActivity.TEXT_COLOR);
 		allSize.setTextColor(ExplorerActivity.TEXT_COLOR);
 		allType.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatus1.setTextColor(ExplorerActivity.TEXT_COLOR);
+		selectionStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
 		totalTransferTV.setTextColor(ExplorerActivity.TEXT_COLOR);
 		appStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
 		interval.setTextColor(ExplorerActivity.TEXT_COLOR);
@@ -566,7 +566,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 												  Formatter.formatFileSize(activity, totalRxSincePrev + totalTxSincePrev) + "@" + totalRate + unitTypeArr[unitType]
 												  ));
 		}
-		selectionStatus1.setText(myChecked.size() + "/" + appStatsList.size());
+		selectionStatus.setText(myChecked.size() + "/" + appStatsList.size());
 	}
 
 	private void updateAppList() {
@@ -1013,7 +1013,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 	}
 	
 	void updateStatus() {
-		selectionStatus1.setText(myChecked.size()  + "/" + appStatsList.size());
+		selectionStatus.setText(myChecked.size()  + "/" + appStatsList.size());
 	}
 
 	void rangeSelection() {

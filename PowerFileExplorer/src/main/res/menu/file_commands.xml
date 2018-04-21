@@ -38,10 +38,20 @@ limitations under the License.
 		android:showAsAction="always"
 		android:icon="@drawable/ic_delete_white_36dp"/>
 
+	<item android:id="@+id/open_with"
+		android:title="Open as..."
+		android:showAsAction="always"
+		android:icon="@drawable/ic_material_dialog_fs_unlocked"/>
+
 	<item android:id="@+id/extract"
 		android:title="Extract"
 		android:showAsAction="ifRoom"
 		android:icon="@drawable/ic_doc_compressed" />
+
+	<item android:id="@+id/share"
+		android:title="@string/share"
+		android:showAsAction="always"
+		android:icon="@drawable/ic_action_share_white"/>
 
 	<item android:id="@+id/addshortcut"
 		android:title="Create Shortcut"
@@ -52,11 +62,6 @@ limitations under the License.
 		android:title="Bookmark"
 		android:showAsAction="always"
 		android:icon="@drawable/add_to_favorites_48"/>
-
-	<item android:id="@+id/share"
-		android:title="@string/share"
-		android:showAsAction="always"
-		android:icon="@drawable/ic_action_share_white"/>
 
 	<item android:id="@+id/hide"
 		android:icon="@drawable/ic_visibility_off_black_48dp"
@@ -72,11 +77,6 @@ limitations under the License.
 		android:title="Encrypt"
 		android:showAsAction="always"
 		android:icon="@drawable/ic_material_dialog_fs_locked"/>
-	
-	<item android:id="@+id/decrypt"
-		android:title="Decrypt"
-		android:showAsAction="always"
-		android:icon="@drawable/ic_material_dialog_fs_unlocked"/>
 	
 	<item android:id="@+id/info"
 		android:title="Information"

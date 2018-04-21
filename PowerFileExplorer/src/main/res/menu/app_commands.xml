@@ -1,21 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/open"
-        android:title="@string/open" />
+	
+	
     <item
         android:id="@+id/backup"
+		android:icon="@drawable/backup"
         android:title="@string/backup" />
+	
     <item
         android:id="@+id/unins"
+		android:icon="@drawable/uninstall"
         android:title="@string/uninstall" />
+	
     <item
         android:id="@+id/properties"
+		android:icon="@drawable/operation_button_info"
         android:title="@string/properties" />
+	
     <item
         android:id="@+id/play"
+        android:icon="@drawable/ic_action_google_play"
         android:title="@string/play" />
+	
     <item
         android:id="@+id/share"
+		android:icon="@drawable/ic_action_share"
         android:title="@string/share" />
+
+    <item
+        android:id="@+id/shortcut"
+		android:icon="@drawable/ic_action_create_shortcut"
+        android:title="Create shortcut" />
 </menu>

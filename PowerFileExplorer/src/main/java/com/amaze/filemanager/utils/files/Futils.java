@@ -75,6 +75,7 @@ import java.util.Date;
 
 import jcifs.smb.SmbFile;
 import net.gnu.explorer.ExplorerActivity;
+import android.util.Log;
 
 /**
  * Functions that deal with files
@@ -86,6 +87,8 @@ public class Futils {
     public static final int EXECUTE = 1;
     private Toast studioCount;
     private DataUtils dataUtils = DataUtils.getInstance();
+
+	private static String TAG = "Futils";
 
     public Futils() {
     }
@@ -330,7 +333,7 @@ public class Futils {
     public static void openunknown(File f, Context c, boolean forcechooser) {
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
-
+		Log.d(TAG, "openunknown " + f + ", " + forcechooser);
         String type = MimeTypes.getMimeType(f);
         if(type!=null && type.trim().length()!=0 && !type.equals("*/*")) {
 

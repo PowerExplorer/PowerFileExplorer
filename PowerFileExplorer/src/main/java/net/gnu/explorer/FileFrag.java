@@ -111,7 +111,7 @@ import com.amaze.filemanager.utils.color.ColorPreference;
 import android.view.inputmethod.InputMethodManager;
 import android.support.v7.widget.PopupMenu;
 
-public abstract class FileFrag extends Frag {
+public abstract class FileFrag extends Frag implements View.OnClickListener {
 
 	private static final String TAG = "FileFrag";
 
@@ -121,8 +121,7 @@ public abstract class FileFrag extends Frag {
 	SHOW_HEADERS;
 
 	public SwipeRefreshLayout mSwipeRefreshLayout;
-    private DisplayMetrics displayMetrics;
-	
+
 	public BitmapDrawable folder, apk, DARK_IMAGE, DARK_VIDEO;
 	public boolean IS_LIST = true;
 
@@ -139,11 +138,12 @@ public abstract class FileFrag extends Frag {
 	TextView allSize;
 	TextView allType;
 	protected View selStatus;
-	TextView selectionStatus1;
+	TextView selectionStatus;
+	TextView rightStatus;
 	protected View horizontalDivider0;
 	protected View horizontalDivider12;
 	protected View horizontalDivider7;
-
+	
 	ImageButton searchButton;
 	ImageButton clearButton;
 	EditText searchET;
@@ -157,13 +157,14 @@ public abstract class FileFrag extends Frag {
 	TextView noFileText;
 
 	RecyclerView listView = null;
-	ArrAdapter srcAdapter;
 	ImageThreadLoader imageLoader;
-
-	GridLayoutManager gridLayoutManager;
-	TextView diskStatus;
-	GridDividerItemDecoration dividerItemDecoration;
+	ArrayList<LayoutElement> tempOriDataSourceL1 = new ArrayList<>();
+	ArrayList tempSelectedInList1 = new ArrayList();
+	public OpenMode openMode = OpenMode.FILE;
 	
+	GridLayoutManager gridLayoutManager;
+	GridDividerItemDecoration dividerItemDecoration;
+
 	long lastScroll = System.currentTimeMillis();
 	protected InputMethodManager imm;
 	Resources res;
@@ -214,12 +215,13 @@ public abstract class FileFrag extends Frag {
 		allDate = (TextView) v.findViewById(R.id.allDate);
 		allSize = (TextView) v.findViewById(R.id.allSize);
 		allType = (TextView) v.findViewById(R.id.allType);
-		selectionStatus1 = (TextView) v.findViewById(R.id.selectionStatus);
+		selectionStatus = (TextView) v.findViewById(R.id.selectionStatus);
 		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
 		horizontalDivider0 = v.findViewById(R.id.horizontalDivider0);
 		horizontalDivider12 = v.findViewById(R.id.horizontalDivider12);
+		
 		horizontalDivider7 = v.findViewById(R.id.horizontalDivider7);
-		diskStatus = (TextView) v.findViewById(R.id.diskStatus);
+		rightStatus = (TextView) v.findViewById(R.id.rightStatus);
 		selStatus = v.findViewById(R.id.selStatus);
 		listView = (RecyclerView) v.findViewById(R.id.listView1);
 		imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -241,7 +243,9 @@ public abstract class FileFrag extends Frag {
 			allType.setOnClickListener(this);
 		}
 
-
+		listView.setHasFixedSize(true);
+		listView.setItemViewCacheSize(20);
+		listView.setDrawingCacheEnabled(true);
 
 	}
 
@@ -258,6 +262,29 @@ public abstract class FileFrag extends Frag {
 		imageLoader = new ImageThreadLoader(activity);
 		super.onStart();
 	}
+
+//	public void clone(final Frag frag, final boolean fake) {
+//		super.clone(frag, fake);
+//
+//		final FileFrag fileFrag = (FileFrag)frag;
+//		if (fileFrag.gridLayoutManager != null) {
+//			final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
+//			final View vi = fileFrag.listView.getChildAt(0); 
+//			final int top = (vi == null) ? 0 : vi.getTop();
+//			//FileFrag fakeFrag = (FileFrag) this;//(FileFrag)pi.fakeFrag;
+//			gridLayoutManager.scrollToPositionWithOffset(index, top);
+//			status.setVisibility(fileFrag.status.getVisibility());
+//			commands.setVisibility(fileFrag.commands.getVisibility());
+//			selectedInList1 = fileFrag.selectedInList1;
+//			if (fileFrag.selStatus != null) {
+//				selStatus.setVisibility(fileFrag.selStatus.getVisibility());
+//				rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
+//				rightStatus.setText(fileFrag.rightStatus.getText());
+//			}
+//			selectionStatus.setVisibility(fileFrag.selectionStatus.getVisibility());
+//			selectionStatus.setText(fileFrag.selectionStatus.getText());
+//		}
+//	}
 
     public static void launchSMB(final SmbFile smbFile, final long si, final Activity activity) {
         final Streamer s = Streamer.getInstance();
@@ -309,24 +336,18 @@ public abstract class FileFrag extends Frag {
 		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
 	}
 
-	void notifyDataSetChanged() {
-		srcAdapter.notifyDataSetChanged();
-	}
-
 	void swap(View v) {
 		activity.swap = !activity.swap;
-
+		activity.leftSize = -activity.leftSize;
+		
 		AndroidUtils.setSharedPreference(activity, "swap", activity.swap);
 		final int leftVisible = activity.left.getVisibility();
 		final int rightVisible = activity.right.getVisibility();
 		final ViewGroup parent = (ViewGroup)activity.left.getParent();
 
-//		left.setAnimation(AnimationUtils.loadAnimation(this, R.anim.shrink_from_top));
-//		right.setAnimation(AnimationUtils.loadAnimation(this, R.anim.shrink_from_top));
 		parent.removeView(activity.left);
 		parent.removeView(activity.right);
-//		left.setAnimation(AnimationUtils.loadAnimation(this, R.anim.grow_from_top));
-//		right.setAnimation(AnimationUtils.loadAnimation(this, R.anim.grow_from_top));
+
 		if (activity.swap) {
 			parent.addView(activity.right, 0);
 			parent.addView(activity.left, 2);

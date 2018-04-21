@@ -920,7 +920,7 @@ public class AndroidUtils {
         shortcutIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		if (f.isDirectory()) {
 			shortcutIntent.putExtra(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-			shortcutIntent.putExtra(ExplorerActivity.EXTRA_FILTER_FILETYPE, ".*");
+			shortcutIntent.putExtra(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
 		}
         final Intent addIntent = new Intent();
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);

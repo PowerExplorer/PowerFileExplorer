@@ -175,7 +175,7 @@
 			android:textAppearance="?android:textAppearanceSmall"/>
 
 		<TextView
-			android:id="@+id/netStatus"
+			android:id="@+id/rightStatus"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:textSize="10sp"
@@ -388,33 +388,15 @@
 			android:orientation="horizontal">
 
 			<Button
-				android:id="@+id/moreLeft"
-				android:layout_width="32dp"
-				android:layout_height="56dp"
-				android:layout_gravity="center"
-				android:text="More"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_more_vert_black_48dp"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-
-				android:paddingBottom="0dp"
-				android:paddingTop="10dp"
-				android:drawablePadding="2dp"
-				android:layout_alignBaseline="@+id/compresss"
-			/>
-
-			<Button
-				android:id="@+id/copys"
+				android:id="@+id/backup"
 				android:layout_width="80dp"
 				android:layout_height="56dp"
+				android:layout_weight="1"
 				android:layout_gravity="center"
-				android:text="Copy"
+				android:text="Backup"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_content_copy_white_36dp"
+				android:drawableTop="@drawable/backup"
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
@@ -423,31 +405,13 @@
 				android:paddingTop="8dp"
 
 			/>
-
 			<Button
-				android:id="@+id/cuts"
+				android:id="@+id/unins"
 				android:layout_width="80dp"
 				android:layout_height="56dp"
+				android:layout_weight="1"
 				android:layout_gravity="center"
-				android:text="Cut"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_content_cut_white_36dp"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				android:textColor="#ffa0a0a0"
-				android:paddingBottom="0dp"
-				android:paddingTop="8dp"
-
-			/>
-
-			<Button
-				android:id="@+id/deletes_pastes"
-				android:layout_width="80dp"
-				android:layout_height="56dp"
-				android:layout_gravity="center"
-				android:text="Delete"
+				android:text="Uninstall"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
 				android:drawableTop="@drawable/ic_delete_white_36dp"
@@ -461,14 +425,15 @@
 			/>
 
 			<Button
-				android:id="@+id/renames"
+				android:id="@+id/share"
 				android:layout_width="80dp"
 				android:layout_height="56dp"
+				android:layout_weight="1"
 				android:layout_gravity="center"
-				android:text="Rename"
+				android:text="Share"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_action_rename_white"
+				android:drawableTop="@drawable/ic_action_share_white"
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
@@ -479,62 +444,12 @@
 			/>
 
 			<Button
-				android:id="@+id/compresss"
-				android:clickable="true"
-				android:layout_width="80dp"
-				android:layout_height="56dp"
-				android:text="Compress"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_zip_box_white_36dp"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				android:textColor="#ffa0a0a0"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-			/>
-
-			<Button
-				android:id="@+id/shares"
-				android:clickable="true"
-				android:layout_width="80dp"
-				android:layout_height="56dp"
-				android:text="Share"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_action_share_white"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				android:textColor="#ffa0a0a0"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-			/>
-
-			<Button
-				android:id="@+id/hides"
-				android:clickable="true"
-				android:layout_width="80dp"
-				android:layout_height="56dp"
-				android:text="Hide"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_visibility_off_black_48dp"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				android:textColor="#ffa0a0a0"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-			/>
-
-			<Button
 				android:id="@+id/shortcuts"
-				android:clickable="true"
 				android:layout_width="80dp"
 				android:layout_height="56dp"
-				android:text="Create Shortcut"
+				android:layout_weight="1"
+				android:layout_gravity="center"
+				android:text="Create shortcut"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
 				android:drawableTop="@drawable/ic_action_create_shortcut"
@@ -543,78 +458,11 @@
 				android:textStyle="normal"
 				android:textColor="#ffa0a0a0"
 				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
+				android:paddingTop="8dp"
+
 			/>
 
-			<Button
-				android:id="@+id/favourites"
-				android:clickable="true"
-				android:layout_width="80dp"
-				android:layout_height="56dp"
-				android:text="Favorite"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/add_to_favorites_48"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				android:textColor="#ffa0a0a0"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-			/>
 
-			<Button
-				android:id="@+id/encrypts"
-				android:clickable="true"
-				android:layout_width="80dp"
-				android:layout_height="56dp"
-				android:text="Encrypt"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_lock_lock"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				android:textColor="#ffa0a0a0"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-			/>
-
-			<Button
-				android:id="@+id/infos"
-				android:clickable="true"
-				android:layout_width="80dp"
-				android:layout_height="56dp"
-				android:text="Info"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_action_info"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				android:textColor="#ffa0a0a0"
-				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-			/>
-
-			<Button
-				android:id="@+id/moreRight"
-				android:layout_width="32dp"
-				android:layout_height="56dp"
-				android:layout_gravity="center"
-				android:text="More"
-				android:singleLine="true"
-				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_more_vert_black_48dp"
-				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-
-				android:paddingBottom="0dp"
-				android:paddingTop="10dp"
-				android:drawablePadding="0dp"
-				android:layout_alignBaseline="@+id/compresss"
-			/>
 
 		</LinearLayout>
 

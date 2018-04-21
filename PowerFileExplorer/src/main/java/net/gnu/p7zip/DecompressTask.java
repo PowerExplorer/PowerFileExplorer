@@ -139,7 +139,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 			wl.release();
 			activity.stopService(new Intent(activity, ForegroundService.class));
 		}
-		decompFrag.statusTV.setText(sb + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
+		decompFrag.statusTV.setText(sb.toString().trim() + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
 		Log.d(TAG, result);
 	}
 	private int rowNum = 0;

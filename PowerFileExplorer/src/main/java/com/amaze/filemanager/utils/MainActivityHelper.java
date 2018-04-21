@@ -46,6 +46,7 @@ import java.io.File;
 import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
+import net.gnu.explorer.ContentFragment;
 
 /**
  * Created by root on 11/22/15, modified by Emmanuel Messulam<emmanuelbendavid@gmail.com>
@@ -167,7 +168,7 @@ public class MainActivityHelper {
     }
 
     public void add(int pos) {
-        final Frag ma = mainActivity.slideFrag1Selected ? mainActivity.curContentFrag : mainActivity.curExplorerFrag;//(MainFragment) ((TabFragment) mainActivity.getSupportFragmentManager().findFragmentById(R.id.content_frame)).getCurrentTabFragment();
+        final ContentFragment ma = mainActivity.slideFrag1Selected ? mainActivity.curContentFrag : mainActivity.curExplorerFrag;//(MainFragment) ((TabFragment) mainActivity.getSupportFragmentManager().findFragmentById(R.id.content_frame)).getCurrentTabFragment();
         final String path = ma.currentPathTitle;
 
         switch (pos) {

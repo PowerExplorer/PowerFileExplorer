@@ -15,13 +15,17 @@ import net.gnu.explorer.ExplorerApplication;
 
 public class Zpaq
 {
-	private static String TAG = "Zpaq";
-	public static final String zpaqx86 = Andro7za.DATA_DIR + "commands/x86/zpaq";
-	public static final String zpaqarm = Andro7za.DATA_DIR + "commands/armeabi-v7a/zpaq";
+	private static String TAG = "ZPAQ";
+	
+	public static final String zpaq = ExplorerApplication.DATA_DIR + "commands/zpaq";
 	public Command command;
 	
 	AsyncTask task;
 	
+	private String mOutfile = ExplorerApplication.PRIVATE_PATH + "/zpaqOut.txt";
+	private String mInfile = ExplorerApplication.PRIVATE_PATH + "/zpaqIn.txt";
+	private String listFile = ExplorerApplication.PRIVATE_PATH + "/zpaqFileList.txt";
+
 	public native int runZpaq(String... args);
 	public native String stringFromJNI(String outfile, String infile);
 	public native void closeStreamJNI();
@@ -30,11 +34,6 @@ public class Zpaq
         //System.loadLibrary("zpaq");
     }
 	
-	//public static final String PRIVATE_PATH = "/sdcard/.net.gnu.explorer";
-	private String mOutfile = ExplorerApplication.PRIVATE_PATH + "/zpaqOut.txt";
-	private String mInfile = ExplorerApplication.PRIVATE_PATH + "/zpaqIn.txt";
-	private String listFile = ExplorerApplication.PRIVATE_PATH + "/zpaqFileList.txt";
-
 	public Zpaq() {
 	}
 
@@ -51,35 +50,21 @@ public class Zpaq
 
 			Command command;
 
-			if (!new File(zpaqx86).exists()) {
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands");//"/android_asset/"
+			if (!new File(zpaq).exists()) {
+				command = new Command("mkdir", ExplorerApplication.DATA_DIR + "commands");//"/android_asset/"
 				command.setCommandListener(new CommandListener(command));
 				command.run();
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands/x86");//"/android_asset/"
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				FileUtil.is2File(ctx.getAssets().open("x86/zpaq"), zpaqx86);///android_asset/
 				
-				command = new Command("chmod", "777", zpaqx86);
+				if (System.getProperty("os.arch").contains("x86")) {
+					FileUtil.is2File(ctx.getAssets().open("x86/zpaq"), zpaq);
+				} else {
+					FileUtil.is2File(ctx.getAssets().open("armeabi-v7a/zpaq"), zpaq);
+				}
+				
+				command = new Command("chmod", "777", zpaq);
 				command.setCommandListener(new CommandListener(command));
 				command.run();
-				command = new Command(zpaqx86);
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-			}
-
-			if (!new File(zpaqarm).exists()) {
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands");
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				command = new Command("mkdir", Andro7za.DATA_DIR + "commands/armeabi-v7a");
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				FileUtil.is2File(ctx.getAssets().open("armeabi-v7a/zpaq"), zpaqarm);
-				command = new Command("chmod", "777", zpaqarm);
-				command.setCommandListener(new CommandListener(command));
-				command.run();
-				command = new Command(zpaqarm);
+				command = new Command(zpaq);
 				command.setCommandListener(new CommandListener(command));
 				command.run();
 			}
@@ -169,11 +154,7 @@ public class Zpaq
 		otherArgs.addAll(0, Arrays.<String>asList(files.split("\\|+\\s*")));
 		otherArgs.add(0, archiveName);
 		otherArgs.add(0, "a");
-		if (true) {
-			otherArgs.add(0, zpaqarm);
-		} else {
-			otherArgs.add(0, zpaqx86);
-		}
+		otherArgs.add(0, zpaq);
 
 		//Log.d(TAG, Util.collectionToString(otherArgs, false, "\n"));
 		command = new Command(otherArgs);
@@ -224,11 +205,8 @@ public class Zpaq
 		otherArgs.add(0, mode);
 		otherArgs.add(0, archiveName);
 		otherArgs.add(0, "x");
-		if (true) {
-			otherArgs.add(0, zpaqarm);
-		} else {
-			otherArgs.add(0, zpaqx86);
-		}
+		otherArgs.add(0, zpaq);
+		
 		//Log.d(TAG, Util.collectionToString(otherArgs, false, "\n"));
 		command = new Command(otherArgs);
 		Log.d(TAG, "command: " + command);

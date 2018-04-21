@@ -89,7 +89,7 @@ public class CryptUtil {
     // TODO: Generate a random IV every time, and keep track of it (in database against encrypted files)
     private static final String IV = "LxbHiJhhUXcj";    // 12 byte long IV supported by android for GCM
 
-    public static final String CRYPT_EXTENSION = ".aze";
+    public static final String CRYPT_EXTENSION = ".enc";
 
     private ProgressHandler progressHandler;
     private ArrayList<HFile> failedOps;

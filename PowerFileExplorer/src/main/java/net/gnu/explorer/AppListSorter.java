@@ -89,15 +89,15 @@ class AppInfo implements Parcelable {
 		return packageName.equals(((AppInfo)o).packageName);
 	}
 
-//	@Override
-//	public String toString() {
-//		return label + "\n" + path;
-//	}
+	@Override
+	public String toString() {
+		return label + ": " + packageName;
+	}
 
-//	@Override
-//	public int hashCode() {
-//		return path.hashCode();
-//	}
+	@Override
+	public int hashCode() {
+		return packageName.hashCode();
+	}
 }
 
 

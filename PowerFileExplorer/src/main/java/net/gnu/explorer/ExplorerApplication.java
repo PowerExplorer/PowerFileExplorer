@@ -30,14 +30,9 @@ public class ExplorerApplication extends AppConfig {
 	public static String PRIVATE_PATH = "";
 	public static File PRIVATE_DIR = null;
 	public static final String ROOT_CACHE = "/.net.gnu.explorer";
+	public static String DATA_DIR = "/data/data/" + ExplorerApplication.class.getName().substring(0, ExplorerApplication.class.getName().lastIndexOf(".")) + "/"; //net.gnu.explorer/";
 	
-    private static void init() {
-		PRIVATE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + ROOT_CACHE;
-		PRIVATE_DIR = new File(PRIVATE_PATH);
-		PRIVATE_DIR.mkdirs();
-	}
-
-	static {
+    static {
 		String sdCardPath = System.getenv("SECONDARY_STORAGE");
 		Log.d(TAG, "SECONDARY_STORAGE " + sdCardPath);
 		File tmp = null;
@@ -102,7 +97,13 @@ public class ExplorerApplication extends AppConfig {
 		}
 	}
 	
-    @Override
+    private static void init() {
+		PRIVATE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + ROOT_CACHE;
+		PRIVATE_DIR = new File(PRIVATE_PATH);
+		PRIVATE_DIR.mkdirs();
+	}
+
+	@Override
     public void onCreate() {
         super.onCreate();
 		userAgent = Util.getUserAgent(this, "ExoPlayerDemo");

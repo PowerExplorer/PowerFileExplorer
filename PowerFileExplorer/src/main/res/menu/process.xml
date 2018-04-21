@@ -22,14 +22,19 @@
 		android:icon="@drawable/advancedsettings"/>
 	<item
         android:id="@+id/play"
+        android:icon="@drawable/ic_action_google_play"
         android:title="@string/play" 
 		/>
     <item
         android:id="@+id/share"
         android:title="@string/share" 
-		android:icon="@drawable/ic_action_share_white"/>
+		android:icon="@drawable/ic_action_share"/>
     <item
         android:id="@+id/kill"
         android:title="@string/kill" 
 		android:icon="@drawable/delete"/>
+    <item
+        android:id="@+id/shortcut"
+        android:title="Create shortcut" 
+		android:icon="@drawable/ic_action_create_shortcut"/>
 </menu>

@@ -232,7 +232,7 @@
 			android:textAppearance="?android:textAppearanceSmall"/>
 
 		<TextView
-			android:id="@+id/diskStatus"
+			android:id="@+id/rightStatus"
 
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
@@ -475,7 +475,7 @@
 				android:textColor="#ffa0a0a0"
 				android:paddingBottom="0dp"
 				android:paddingTop="10dp"
-				android:drawablePadding="0dp"
+				android:drawablePadding="2dp"
 			/>
 
 			<Button
@@ -691,7 +691,7 @@
 				android:textColor="#ffa0a0a0"
 				android:paddingBottom="0dp"
 				android:paddingTop="10dp"
-				android:drawablePadding="0dp"
+				android:drawablePadding="2dp"
 			/>
 
 		</LinearLayout>

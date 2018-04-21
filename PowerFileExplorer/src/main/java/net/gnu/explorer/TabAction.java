@@ -12,7 +12,7 @@ public interface TabAction {
 	public void closeOtherTabs();
 	public void addTab(final Frag.TYPE t, final String path);//String dir, String suffix, boolean multi, Bundle bundle
 	public void addTab(final Intent intent, final String title);
-	public int size();
+	public int realFragCount();
 	public int getFragIndex(final Frag.TYPE t);
 	public Frag getFragmentIndex(final int idx);
 	

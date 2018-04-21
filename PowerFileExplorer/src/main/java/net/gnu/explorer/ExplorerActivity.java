@@ -1,130 +1,122 @@
 package net.gnu.explorer;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
+import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.app.ActionBar;
+import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
-
-import com.amaze.filemanager.activities.BasicActivity;
-import net.gnu.androidutil.AndroidPathUtils;
+import com.amaze.filemanager.activities.ThemedActivity;
+import com.amaze.filemanager.adapters.DrawerAdapter;
+import com.amaze.filemanager.database.CloudContract;
+import com.amaze.filemanager.database.CloudHandler;
+import com.amaze.filemanager.database.CryptHandler;
+import com.amaze.filemanager.database.TabHandler;
+import com.amaze.filemanager.database.UtilsHandler;
+import com.amaze.filemanager.database.models.CloudEntry;
+import com.amaze.filemanager.exceptions.CloudPluginException;
+import com.amaze.filemanager.filesystem.BaseFile;
+import com.amaze.filemanager.filesystem.HFile;
+import com.amaze.filemanager.filesystem.RootHelper;
+import com.amaze.filemanager.fragments.CloudSheetFragment;
+import com.amaze.filemanager.fragments.CloudSheetFragment.CloudConnectionCallbacks;
+import com.amaze.filemanager.fragments.ProcessViewer;
+import com.amaze.filemanager.fragments.preference_fragments.QuickAccessPref;
+import com.amaze.filemanager.services.CopyService;
+import com.amaze.filemanager.services.DeleteTask;
+import com.amaze.filemanager.services.asynctasks.MoveFiles;
+import com.amaze.filemanager.ui.LayoutElement;
+import com.amaze.filemanager.ui.dialogs.RenameBookmark;
+import com.amaze.filemanager.ui.dialogs.RenameBookmark.BookmarkCallback;
+import com.amaze.filemanager.ui.dialogs.SmbConnectDialog;
+import com.amaze.filemanager.ui.dialogs.SmbConnectDialog.SmbConnectionListener;
+import com.amaze.filemanager.ui.drawer.EntryItem;
+import com.amaze.filemanager.ui.drawer.Item;
+import com.amaze.filemanager.ui.drawer.SectionItem;
+import com.amaze.filemanager.utils.AppConfig;
+import com.amaze.filemanager.utils.BookSorter;
+import com.amaze.filemanager.utils.DataUtils;
+import com.amaze.filemanager.utils.DataUtils.DataChangeListener;
+import com.amaze.filemanager.utils.MainActivityHelper;
+import com.amaze.filemanager.utils.OTGUtil;
+import com.amaze.filemanager.utils.OpenMode;
+import com.amaze.filemanager.utils.PreferenceUtils;
+import com.amaze.filemanager.utils.ServiceWatcherUtil;
+import com.amaze.filemanager.utils.TinyDB;
+import com.amaze.filemanager.utils.color.ColorUsage;
+import com.amaze.filemanager.utils.files.Futils;
+import com.bumptech.glide.Glide;
+import com.cloudrail.si.CloudRail;
+import com.cloudrail.si.exceptions.AuthenticationException;
+import com.cloudrail.si.exceptions.ParseException;
+import com.cloudrail.si.interfaces.CloudStorage;
+import com.cloudrail.si.services.Box;
+import com.cloudrail.si.services.Dropbox;
+import com.cloudrail.si.services.GoogleDrive;
+import com.cloudrail.si.services.OneDrive;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
+import eu.chainfire.libsuperuser.Shell;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
 import net.gnu.androidutil.AndroidUtils;
+import net.gnu.androidutil.ImageThreadLoader;
+import net.gnu.p7zip.CompressFragment;
+import net.gnu.p7zip.DecompressFragment;
 import net.gnu.util.FileUtil;
 import net.gnu.util.Util;
-import com.amaze.filemanager.services.asynctasks.*;
-import com.amaze.filemanager.utils.*;
-import com.amaze.filemanager.filesystem.*;
-import com.amaze.filemanager.services.*;
-import android.support.v7.widget.*;
 
-import android.widget.ImageButton;
-import java.util.*;
-import android.widget.Button;
-import com.bumptech.glide.*;
-import android.graphics.*;
-import android.content.res.*;
-import android.graphics.drawable.Drawable;
-import android.Manifest;
-import android.support.design.widget.Snackbar;
-import android.content.pm.*;
-import android.support.v4.app.ActivityCompat;
-import android.os.*;
-import eu.chainfire.libsuperuser.*;
-import com.amaze.filemanager.ui.dialogs.*;
-import com.amaze.filemanager.exceptions.*;
-import com.amaze.filemanager.database.*;
-import android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback;
-import com.amaze.filemanager.fragments.CloudSheetFragment.CloudConnectionCallbacks;
-import com.amaze.filemanager.utils.provider.*;
-import android.database.*;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.content.ContentUris;
-import android.support.v4.app.LoaderManager;
-import com.cloudrail.si.services.*;
-import com.cloudrail.si.exceptions.*;
-import com.cloudrail.si.interfaces.*;
-import com.cloudrail.si.*;
-import android.support.v4.content.*;
-import com.amaze.filemanager.fragments.*;
-import com.amaze.filemanager.ui.drawer.*;
 import static android.os.Build.VERSION.SDK_INT;
-import android.hardware.usb.*;
-import android.text.*;
-import android.graphics.drawable.ColorDrawable;
-import java.util.regex.Pattern;
-import com.amaze.filemanager.adapters.DrawerAdapter;
-import com.amaze.filemanager.ui.LayoutElement;
-import com.amaze.filemanager.activities.ThemedActivity;
-import com.amaze.filemanager.database.models.CloudEntry;
-
-import com.amaze.filemanager.utils.DataUtils.DataChangeListener;
-import com.amaze.filemanager.ui.dialogs.RenameBookmark.BookmarkCallback;
-import com.amaze.filemanager.ui.dialogs.SmbConnectDialog.SmbConnectionListener;
-import com.amaze.filemanager.utils.theme.AppTheme;
-import android.view.Window;
-import android.support.v7.app.ActionBar;
-import com.amaze.filemanager.utils.files.Futils;
-import android.content.BroadcastReceiver;
-import android.view.animation.DecelerateInterpolator;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
-import android.widget.FrameLayout;
-import android.view.WindowManager;
-import android.app.Activity;
-import com.amaze.filemanager.utils.color.ColorUsage;
-import com.amaze.filemanager.activities.PreferencesActivity;
-import android.content.Context;
-import android.content.IntentFilter;
-import android.content.ContentResolver;
-import com.amaze.filemanager.fragments.preference_fragments.QuickAccessPref;
 import static com.amaze.filemanager.fragments.preference_fragments.Preffrag.PREFERENCE_SHOW_SIDEBAR_FOLDERS;
 import static com.amaze.filemanager.fragments.preference_fragments.Preffrag.PREFERENCE_SHOW_SIDEBAR_QUICKACCESSES;
-import android.view.KeyEvent;
-import android.widget.AbsListView;
-import android.app.DialogFragment;
-import net.gnu.p7zip.CompressFragment;
-import android.widget.RadioButton;
-import net.gnu.p7zip.CompressTask;
-import net.gnu.p7zip.DecompressTask;
-import net.gnu.p7zip.DecompressFragment;
-import net.gnu.androidutil.ImageThreadLoader;
 
 
 public class ExplorerActivity extends ThemedActivity implements OnRequestPermissionsResultCallback,
@@ -252,11 +244,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public ContentFragment curContentFrag;
 	private int curContentFragIndex = 1;
 	ContentFragment curSelectionFrag;
-	private int curSelectionFragIndex = -1;
+	int curSelectionFragIndex = -1;
 	
 	SlidingTabsFragment slideFrag2 = null;
 	ContentFragment curSelectionFrag2;
-	private int curSelectionFrag2Index = 2;
+	int curSelectionFragIndex2 = 2;
 	public ContentFragment curExplorerFrag;
 	private int curExploreFragIndex = 1;
 	
@@ -528,10 +520,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 						bundle.putBoolean(EXTRA_DIRECTORIES_ONLY, intent.getBooleanExtra(EXTRA_DIRECTORIES_ONLY, false));
 						bundle.putStringArray(PREVIOUS_SELECTED_FILES, previousSelectedStr);
 
-						final ContentFragment fragment = new ContentFragment();
-						fragment.setArguments(bundle);
-						fragment.slidingTabsFragment = slideFrag;
-						slideFrag.addPagerItem(fragment);//path, suffix, multiFiles, null));
+						final ContentFragment contentFrag = new ContentFragment();
+						contentFrag.setArguments(bundle);
+						contentFrag.slidingTabsFragment = slideFrag;
+						slideFrag.addPagerItem(contentFrag);//path, suffix, multiFiles, null));
 						//slideFrag.addNewTab(path, suffix, multiFiles, false);
 					} else {
 						getFutils().openFile(file, this);
@@ -613,7 +605,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			} else {
 				slideFrag2 = (SlidingTabsFragment) supportFragmentManager.findFragmentByTag("slideFrag2");
 				curExploreFragIndex = savedInstanceState.getInt("curExploreFragIndex");
-				curSelectionFrag2Index = savedInstanceState.getInt("curSelectionFrag2Index");
+				curSelectionFragIndex2 = savedInstanceState.getInt("curSelectionFragIndex2");
 				//Log.d(TAG, "curExploreFragIndex " + curExploreFragIndex + ", curSelectionFrag2Index " + curSelectionFrag2Index);
 			}
 			transaction.replace(R.id.content_fragment2, slideFrag2, "slideFrag2");
@@ -998,11 +990,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		outState.putStringArray(PREVIOUS_SELECTED_FILES, previousSelectedStr);
 		
 		outState.putBoolean("slideFrag1Selected", slideFrag1Selected);
-		outState.putInt("curContentFragIndex", (curContentFragIndex=slideFrag.size() == 1 ? 0 : slideFrag.indexOfMTabs(curContentFrag)+1));
+		outState.putInt("curContentFragIndex", (curContentFragIndex=slideFrag.realFragCount() == 1 ? 0 : slideFrag.indexOfMTabs(curContentFrag)+1));
 		outState.putInt("curSelectionFragIndex", (curSelectionFragIndex=curSelectionFrag != null ? slideFrag.indexOfMTabs(curSelectionFrag) + 1: -1));
 		if (slideFrag2 != null) {
-			outState.putInt("curExploreFragIndex", (curExploreFragIndex=slideFrag2.size() == 1 ? 0 : slideFrag2.indexOfMTabs(curExplorerFrag)+1));
-			outState.putInt("curSelectionFrag2Index", (curSelectionFrag2Index = curSelectionFrag2 != null ? slideFrag2.indexOfMTabs(curSelectionFrag2) + 1: -1));
+			outState.putInt("curExploreFragIndex", (curExploreFragIndex=slideFrag2.realFragCount() == 1 ? 0 : slideFrag2.indexOfMTabs(curExplorerFrag)+1));
+			outState.putInt("curSelectionFragIndex2", (curSelectionFragIndex2 = curSelectionFrag2 != null ? slideFrag2.indexOfMTabs(curSelectionFrag2) + 1: -1));
 		}
 		//curSelectionFragIndex = curSelectionFrag != null ? slideFrag.indexOf(curSelectionFrag) + 1: -1;
 		//curSelectionFrag2Index = curSelectionFrag2 != null ? slideFrag2.indexOf(curSelectionFrag2) + 1: -1;
@@ -1050,11 +1042,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
         }
 	}
 
-	@Override
-	public void onStart() {
-		Log.d(TAG, "onStart");
-		super.onStart();
-	}
+//	@Override
+//	public void onStart() {
+//		Log.d(TAG, "onStart");
+//		super.onStart();
+//	}
 
     @Override
     public void onResume() {
@@ -1067,8 +1059,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		//Log.d(TAG, "onResume curContentFrag " + curContentFrag);
 		if (slideFrag2 != null) {
 			curExplorerFrag = (ContentFragment) slideFrag2.getFragmentIndex(curExploreFragIndex);
-			if (curSelectionFrag2Index >= 0) {
-				curSelectionFrag2 = (ContentFragment) slideFrag2.getFragmentIndex(curSelectionFrag2Index);
+			if (curSelectionFragIndex2 >= 0) {
+				curSelectionFrag2 = (ContentFragment) slideFrag2.getFragmentIndex(curSelectionFragIndex2);
 			}
 			//curContentFrag2.deletePastes = deletePastesBtn2;
 			Log.d(TAG, "onResume curContentFrag2 " + curSelectionFrag2);
@@ -1444,7 +1436,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 											 slideFrag1Selected ? curContentFrag : curExplorerFrag);
                     break;
                 case DataUtils.RENAME:
-                    Frag ma = slideFrag1Selected ? curContentFrag : curExplorerFrag;
+                    ContentFragment ma = slideFrag1Selected ? curContentFrag : curExplorerFrag;
                     mainActivityHelper.rename(ma.openMode, (oppathe),
 											  (oppathe1), this, ThemedActivity.rootMode);
                     ma.updateList();

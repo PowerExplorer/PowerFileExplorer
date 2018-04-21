@@ -23,14 +23,14 @@ public class TabClicks {
 		final PopupMenu popup = new PopupMenu(ctx, v);
 
 		popup.getMenuInflater().inflate(R.menu.tabs_popup, popup.getMenu());
-		final int count = tabAction.size();
+		final int count = tabAction.realFragCount();
 		final Menu menu = popup.getMenu();
 		if (count == 1) {
-			menu.getItem(1).setVisible(false);
-			menu.getItem(2).setVisible(false);
+			menu.findItem(R.id.close).setVisible(false);
+			menu.findItem(R.id.closeOthers).setVisible(false);
 		}
 		if (type != Frag.TYPE.EXPLORER) {
-			menu.getItem(0).setVisible(false);
+			menu.findItem(R.id.newTab).setVisible(false);
 		}
 		int ordinal = type.ordinal();
 		if (ordinal == Frag.TYPE.EXPLORER.ordinal()) {
@@ -38,6 +38,7 @@ public class TabClicks {
 		}
 		final int no = adapter.getCount() - 2;
 		Frag frag;
+		int explorerCount = 0;
 		if (no > 1) {
 			for (int i = 1; i <= no; i++) {
 				frag = adapter.getItem(i);
@@ -60,7 +61,12 @@ public class TabClicks {
 					menu.findItem(R.id.pdf).setVisible(false);
 				} else if (ordinal == Frag.TYPE.PHOTO.ordinal()) {
 					menu.findItem(R.id.photo).setVisible(false);
+				} else if (ordinal == Frag.TYPE.EXPLORER.ordinal()) {
+					explorerCount++;
 				} 
+			}
+			if (explorerCount == 1 && type == Frag.TYPE.EXPLORER) {
+				menu.findItem(R.id.close).setVisible(false);
 			}
 		}
 		

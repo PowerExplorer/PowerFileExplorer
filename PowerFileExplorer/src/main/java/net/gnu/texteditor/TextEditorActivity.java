@@ -35,7 +35,7 @@ public class TextEditorActivity extends SampleActivityBase {//
     private boolean mLogShown;
 	SlidingTabsFragment slideFrag;
 	private FragmentManager supportFragmentManager;
-	public Main main;
+	public TextFrag main;
 	
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class TextEditorActivity extends SampleActivityBase {//
 		Log.d(TAG, "onStart intent=" + getIntent() + ", main=" + main);
 		super.onStart();
 		if (main == null) {
-			main = (Main) slideFrag.getCurrentFragment();
+			main = (TextFrag) slideFrag.getCurrentFragment();
 		}
 	}
 	
@@ -77,7 +77,7 @@ public class TextEditorActivity extends SampleActivityBase {//
 		Log.d(TAG, "onResume main=" + main);
 		super.onResume();
 		if (main == null) {
-			main = (Main) slideFrag.getCurrentFragment();
+			main = (TextFrag) slideFrag.getCurrentFragment();
 		}
 		Log.d(TAG, "onResume main=" + main);
 	}
@@ -134,10 +134,10 @@ public class TextEditorActivity extends SampleActivityBase {//
 	
 	public void quit() {
 		Log.d(TAG, "quit " + main);
-		Main.saved = 0;
-		Main.count = slideFrag.pagerAdapter.getCount();
-		for (int i = Main.count == 1 ? 0 : Main.count - 2; Main.count == 1 ? i==0 : i > 0; i--) {
-			final Main item = (Main) slideFrag.pagerAdapter.getItem(slideFrag.pagerAdapter.getCount() == 1 ? 0 : i);
+		TextFrag.saved = 0;
+		TextFrag.count = slideFrag.pagerAdapter.getCount();
+		for (int i = TextFrag.count == 1 ? 0 : TextFrag.count - 2; TextFrag.count == 1 ? i==0 : i > 0; i--) {
+			final TextFrag item = (TextFrag) slideFrag.pagerAdapter.getItem(slideFrag.pagerAdapter.getCount() == 1 ? 0 : i);
 			item.confirmSave(item.mProcQuit);
 		}
 		//m.confirmSave(m.mProcQuit);

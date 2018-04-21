@@ -82,7 +82,7 @@ import net.gnu.explorer.*;
 import android.graphics.drawable.*;
 import android.content.res.*;
 
-public class Main extends Frag implements JotaDocumentWatcher, ShortcutListener,
+public class TextFrag extends Frag implements JotaDocumentWatcher, ShortcutListener,
 OnFileLoadListener {
     private static final String TAG = "Main";
     private static final int REQUESTCODE_OPEN = 0;
@@ -162,7 +162,7 @@ OnFileLoadListener {
 		
     };
 
-	public Main() {
+	public TextFrag() {
 		super();
 		type = Frag.TYPE.TEXT;
 		if (!(fragActivity instanceof TextEditorActivity)) {
@@ -170,13 +170,13 @@ OnFileLoadListener {
 		}
 	}
 	
-	public static Main newInstance(Intent intent, String title, String path) {
+	public static TextFrag newInstance(Intent intent, String title, String path) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("intent", intent);
         bundle.putString("title", title);
         bundle.putString("path", path);
         
-        Main fragment = new Main();
+        TextFrag fragment = new TextFrag();
         fragment.setArguments(bundle);
 
         return fragment;
@@ -1518,7 +1518,7 @@ OnFileLoadListener {
 				}
 				fragActivity.finish();
 			} else {
-				slidingTabsFragment.closeTab(Main.this);
+				slidingTabsFragment.closeTab(TextFrag.this);
 			}
         }
     };
@@ -1571,7 +1571,7 @@ OnFileLoadListener {
 
     private Runnable mProcReopen = new Runnable() {
         public void run() {
-            mTask = new TextLoadTask(activity, Main.this, mLine,mSettings.suppressMessage);
+            mTask = new TextLoadTask(activity, TextFrag.this, mLine,mSettings.suppressMessage);
             mTask.execute(mNewFilename, mSettings.CharsetOpen);
             mNewFilename = null;
         }
@@ -1621,7 +1621,7 @@ OnFileLoadListener {
 
         public void onClick(DialogInterface dialog, int which) {
             CharSequence path = fl[which].getPath();
-            mTask = new TextLoadTask(activity, Main.this, -1,mSettings.suppressMessage);
+            mTask = new TextLoadTask(activity, TextFrag.this, -1,mSettings.suppressMessage);
             mTask.execute(path.toString(), mSettings.CharsetOpen);
         }
 
@@ -2685,8 +2685,10 @@ OnFileLoadListener {
 		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 		mEditor.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 		mEditor.setTextColor(ExplorerActivity.TEXT_COLOR);
-		mToolbarBase.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		mToolbar.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		if (!(activity instanceof TextEditorActivity)) {
+			mToolbarBase.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			mToolbar.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		}
 	}
 
 	@Override
@@ -2858,8 +2860,16 @@ OnFileLoadListener {
 				//button.setTextColor(ExplorerActivity.TEXT_COLOR);
 				button.setText(getToolbarLabel(function));
 			}
-            if (button.getCompoundDrawables().length > 0) {
-				button.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+			if (!(activity instanceof TextEditorActivity)) {
+				button.setTextColor(ExplorerActivity.TEXT_COLOR);
+				if (button.getCompoundDrawables().length > 0) {
+					button.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				}
+			} else {
+				button.setTextColor(0xff404040);
+				if (button.getCompoundDrawables().length > 0) {
+					button.getCompoundDrawables()[1].setColorFilter(0xff404040, PorterDuff.Mode.SRC_IN);
+				}
 			}
             button.setTag(function);
             button.setOnClickListener(mOnClickToolbar);
