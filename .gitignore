@@ -14,6 +14,7 @@
 *.jar
 *.aar
 *.7z
+*.rartemp*
 
 # Generated files
 bin/
