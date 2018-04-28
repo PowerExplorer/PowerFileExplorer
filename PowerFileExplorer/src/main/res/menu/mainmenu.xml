@@ -5,6 +5,7 @@
 	<item android:title="@string/menu_file"
 		android:id="@+id/menu_file"
 		android:icon = "@drawable/ic_menu_archive"
+		android:showAsAction="ifRoom"
 		android:alphabeticShortcut = "F">
 		<menu>
 			<item android:id="@+id/menu_file_history" 	
@@ -58,7 +59,8 @@
 
 	<item android:title="@string/menu_edit" 
 		android:id="@+id/menu_edit"
-		android:icon = "@drawable/ic_menu_edit"
+		android:icon = "@drawable/ic_menu_edit_ab"
+		android:showAsAction="ifRoom"
 		android:alphabeticShortcut = "E">
 
 		<menu>
@@ -133,9 +135,6 @@
 
 	</item>
 
-	<item android:id="@+id/menu_toggle_log"
-
-		android:title="@string/sample_show_log" />
 	<!---
 	<item android:title="@string/menu_help" 
 	android:id="@+id/menu_help"

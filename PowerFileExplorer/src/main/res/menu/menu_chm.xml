@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_search"
+        android:title="@string/search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item android:id="@+id/menu_bookmark"
+        android:title="@string/bookmark"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/menu_home"
+        android:title="@string/home"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/menu_sitemap"
+        android:title="@string/site_map"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/menu_back_page"
+        android:title="@string/back_page"
+        android:icon="@android:drawable/ic_media_previous"
+        app:showAsAction="always">
+    </item>
+    <item android:id="@+id/menu_next_page"
+        android:title="@string/next_page"
+        android:icon="@android:drawable/ic_media_next"
+        app:showAsAction="always">
+    </item>
+    <item android:id="@+id/menu_zoom_in"
+        android:title="@string/zoom_in"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/menu_zoom_out"
+        android:title="@string/zoom_out"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/menu_search_all"
+        android:title="@string/search_all"
+        app:showAsAction="never">
+    </item>
+
+</menu>

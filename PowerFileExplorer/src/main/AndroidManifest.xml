@@ -1,35 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2013 The Android Open Source Project
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-android:largeHeap="true"
-android:windowSoftInputMode="stateVisible"
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-android:configChanges="orientation|keyboardHidden|screenSize"
-android:extractNativeLibs="false"
--->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gnu.explorer"
     android:versionCode="2"
-    android:versionName="1.0.1"
-	>
+    android:versionName="1.0.2"
+>
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle -->
 	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23"/>
-	
+
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-		
+
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 	<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -38,13 +19,13 @@ android:extractNativeLibs="false"
 	<uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
 	<!--<supports-screens 
-		android:smallScreens="true" 
-		android:normalScreens="true" 
-		android:largeScreens="true" 
-		android:xlargeScreens="true" 
-		android:anyDensity="true"/>-->
+	android:smallScreens="true" 
+	android:normalScreens="true" 
+	android:largeScreens="true" 
+	android:xlargeScreens="true" 
+	android:anyDensity="true"/>-->
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
-	
+
 	<!--uses-permission android:name="android.permission.BLUETOOTH"/>
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/-->
 
@@ -58,8 +39,7 @@ android:extractNativeLibs="false"
     <uses-permission android:name="android.permission.REORDER_TASKS"/>
 	<uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
 	<uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
-    
-		
+
 	<!--uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.MANAGE_ACCOUNTS" /-->
@@ -75,7 +55,9 @@ android:extractNativeLibs="false"
 	<uses-permission android:name="android.permission.ACCESS_MTP" />
 	<uses-permission android:name="android.permission.BATTERY_STATS" /-->
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-		
+	<uses-permission android:name="net.gnu.cloud.permission.ACCESS_PROVIDER" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
 	<!--uses-feature android:name="android.software.leanback" android:required="false"/>
 	<uses-feature android:name="android.hardware.touchscreen" android:required="false"/-->
 
@@ -102,7 +84,7 @@ android:extractNativeLibs="false"
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
-			
+
             <intent-filter>
                 <action android:name="android.intent.action.PICK"/>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -214,7 +196,7 @@ android:extractNativeLibs="false"
                 <action android:name="android.intent.action.SEARCH_LONG_PRESS"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-			
+
 			<intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 				<action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
@@ -305,28 +287,44 @@ android:extractNativeLibs="false"
 				<data android:mimeType="resource/folder" />
 				<data android:mimeType="inode/directory" />
             </intent-filter>
-			
+
         </activity>
 
 		<!--<receiver android:name="com.commonsware.android.sysevents.boot.OnBootReceiver">
-			<intent-filter>
-				<action android:name="android.intent.action.BOOT_COMPLETED"/>
-			</intent-filter>
+		<intent-filter>
+		<action android:name="android.intent.action.BOOT_COMPLETED"/>
+		</intent-filter>
 		</receiver>-->
-		
+
 		<!--<receiver android:name="com.commonsware.android.sysevents.pkg.OnPackageChangeReceiver">
-			<intent-filter>
-				<action android:name="android.intent.action.PACKAGE_INSTALL" />
-				<action android:name="android.intent.action.PACKAGE_ADDED" />
-				<action android:name="android.intent.action.PACKAGE_REPLACED" />
-				<action android:name="android.intent.action.PACKAGE_REMOVED" />
-				<action android:name="android.intent.action.PACKAGE_CHANGED" />
-				<action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
+		<intent-filter>
+		<action android:name="android.intent.action.PACKAGE_INSTALL" />
+		<action android:name="android.intent.action.PACKAGE_ADDED" />
+		<action android:name="android.intent.action.PACKAGE_REPLACED" />
+		<action android:name="android.intent.action.PACKAGE_REMOVED" />
+		<action android:name="android.intent.action.PACKAGE_CHANGED" />
+		<action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
 
-				<data android:scheme="package" />
-			</intent-filter>
+		<data android:scheme="package" />
+		</intent-filter>
 		</receiver>-->
-
+		<!--android:parentActivityName="chm.cblink.nb.chmreader.FileChooserActivity"
+		android:screenOrientation="portrait"
+		android:launchMode="singleTop"-->
+		<activity
+            android:name="chm.cblink.nb.chmreader.CHMActivity"
+			android:label="CHM Viewer">
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<data android:scheme="file" />
+                <data android:mimeType="application/x-chm"/>
+				<!--<data android:pathPattern=".*\.[cC][hH][mM]"/>-->
+            </intent-filter>
+        </activity>
 		<activity
             android:name="com.tekinarslan.sample.SampleActivity"
 			android:label="PDF Viewer"
@@ -337,6 +335,7 @@ android:extractNativeLibs="false"
                 <action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.OPENABLE"/>
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<data android:scheme="http"/>
 				<data android:scheme="file" />
@@ -410,7 +409,20 @@ android:extractNativeLibs="false"
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="text/*"/>
+				<data android:mimeType="application/x-iml"/>
+				<data android:mimeType="application/x-pro"/>
+				<data android:mimeType="application/x-gradle"/>
+				<data android:mimeType="application/x-cfg"/>
+				<data android:mimeType="application/x-gitignore"/>
+				<data android:mimeType="application/x-sh"/>
+				<data android:mimeType="application/x-properties"/>
+				<data android:mimeType="application/x-pod"/>
+				<data android:mimeType="application/x-classpath"/>
+				<data android:mimeType="application/x-mk"/>
 				<data android:mimeType="application/x-md"/>
+				<data android:mimeType="application/javascript" />
+                <data android:mimeType="application/json" />
+                <data android:mimeType="application/xml" />
             </intent-filter>
 
             <intent-filter>
@@ -427,32 +439,32 @@ android:extractNativeLibs="false"
 
         </activity>
 
-		<activity android:name="jp.sblo.pandora.jota.Main"
-			android:label="Jota Text Editor"
-			android:theme="@style/AppTheme"
+		<!--<activity android:name="jp.sblo.pandora.jota.Main"
+		android:label="Jota Text Editor"
+		android:theme="@style/AppTheme"
 		>
 
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="text/*"/>
-            </intent-filter>
+		<intent-filter>
+		<action android:name="android.intent.action.VIEW" />
+		<category android:name="android.intent.category.DEFAULT" />
+		<data android:scheme="file" />
+		<data android:scheme="content" />
+		<data android:mimeType="text/*"/>
+		</intent-filter>
 
-            <intent-filter>
-				<action android:name="android.intent.action.SEND" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="text/*" />
-            </intent-filter>
+		<intent-filter>
+		<action android:name="android.intent.action.SEND" />
+		<category android:name="android.intent.category.DEFAULT" />
+		<data android:mimeType="text/*" />
+		</intent-filter>
 
-			<!-- for SL4A -->
-			<intent-filter>
-				<action android:name="com.googlecode.android_scripting.action.EDIT_SCRIPT" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
+		<! for SL4A >
+		<intent-filter>
+		<action android:name="com.googlecode.android_scripting.action.EDIT_SCRIPT" />
+		<category android:name="android.intent.category.DEFAULT" />
+		</intent-filter>
 
-        </activity>
+        </activity>-->
 
         <activity android:name="jp.sblo.pandora.jota.MainForResult"
 			android:label="@string/app_name_debug"
@@ -497,16 +509,16 @@ android:extractNativeLibs="false"
 		/>
 
 		<!--activity 
-            android:name="com.ghostsq.commander.PictureViewer"
+		android:name="com.ghostsq.commander.PictureViewer"
 		android:icon="@drawable/ic_action_eye_open"
-			android:label="@string/pictvw_label"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
+		android:label="@string/pictvw_label"
+		android:configChanges="orientation|keyboardHidden|screenSize"
+		android:launchMode="singleTop">
+		<intent-filter>
+		<action android:name="android.intent.action.VIEW" />
+		<category android:name="android.intent.category.DEFAULT" />
+		<data android:mimeType="image/*" />
+		</intent-filter>
         </activity-->
 
 		<activity 
@@ -534,7 +546,7 @@ android:extractNativeLibs="false"
                 <data android:scheme="folder"/>
                 <data android:scheme="directory"/>
             </intent-filter>
-			
+
         </activity>
 
 		<!--activity android:name="com.jarvanmo.demo.VideoActivity"
@@ -553,19 +565,19 @@ android:extractNativeLibs="false"
         </activity-->
 
         <!--activity
-            android:name="com.afollestad.easyvideoplayersample.EasyMediaActivity"
-            android:label="Easy Player"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:configChanges="orientation|keyboardHidden|screenLayout|screenSize">
+		android:name="com.afollestad.easyvideoplayersample.EasyMediaActivity"
+		android:label="Easy Player"
+		android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+		android:configChanges="orientation|keyboardHidden|screenLayout|screenSize">
 
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="video/*"/>
-                <data android:mimeType="audio/*"/>
-            </intent-filter>
+		<intent-filter>
+		<action android:name="android.intent.action.VIEW" />
+		<category android:name="android.intent.category.DEFAULT" />
+		<data android:scheme="file" />
+		<data android:scheme="content" />
+		<data android:mimeType="video/*"/>
+		<data android:mimeType="audio/*"/>
+		</intent-filter>
         </activity-->
 
 		<!--activity android:name="com.google.android.exoplayer2.demo.SampleChooserActivity"
@@ -586,7 +598,7 @@ android:extractNativeLibs="false"
         <data android:pathPattern=".*\\.exolist\\.json"/>
 		</intent-filter>
 		</activity-->
-		
+
 		<activity android:name="net.gnu.explorer.MediaPlayerActivity"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
 			android:launchMode="singleTop"
@@ -613,22 +625,66 @@ android:extractNativeLibs="false"
 		</activity>
 
 
-		
+
 		<activity android:name=".ServiceActivity" >
         </activity>
-		
+
 		<service
             android:name="net.gnu.explorer.DataTrackerService"
-			android:label = "DataTrackerService"
+			android:label="DataTrackerService"
             android:exported="false"
 			android:process=":net"/>
-		
-		<service
-			android:name = "com.amaze.filemanager.services.CopyService"
-			android:label = "Copying"
-			android:process=":amaze"
-		>
-		</service>
+
+        <!--<service
+		android:name = "com.amaze.filemanager.services.ExtractService"
+		android:label = "Extracting"
+		/>-->
+        <service
+            android:name = "com.amaze.filemanager.services.ZipTask"
+            android:label = "Compressing"
+		/>
+        <service
+            android:name = "com.amaze.filemanager.services.CopyService"
+            android:label = "Copying"
+		/>
+
+        <service android:name="com.amaze.filemanager.services.EncryptService"
+            android:label="@string/crypt_encrypting"
+		/>
+
+        <service
+            android:name="com.amaze.filemanager.services.ftpservice.FTPService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER" />
+                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.amaze.filemanager.ui.notifications.FTPNotification"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.FTPSERVER_STARTED" />
+                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.FTPSERVER_STOPPED" />
+            </intent-filter>
+        </receiver>
+
+        <!--<provider
+		android:authorities="com.amaze.filemanager.FILE_PROVIDER"
+		android:name="com.amaze.filemanager.utils.GenericFileProvider"
+		android:exported="false"
+		android:grantUriPermissions="true">
+
+		<meta-data
+		android:name="android.support.FILE_PROVIDER_PATHS"
+		android:resource="@xml/provider_paths"/>
+        </provider>-->
 		<meta-data
 			android:name="com.sec.android.support.multiwindow"
 			android:value="true"

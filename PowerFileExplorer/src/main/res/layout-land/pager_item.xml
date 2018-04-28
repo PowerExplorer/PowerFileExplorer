@@ -573,7 +573,7 @@
 			/>
 
 			<Button
-				android:id="@+id/hides"
+				android:id="@+id/hiddenfiles"
 				android:clickable="true"
 				android:layout_width="64dp"
 				android:layout_height="56dp"
@@ -586,7 +586,7 @@
 				android:textStyle="normal"
 				android:visibility="gone"
 				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
+				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
 			/>
 
@@ -604,16 +604,16 @@
 				android:textStyle="normal"
 				android:visibility="gone"
 				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
+				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
 			/>
 
 			<Button
-				android:id="@+id/favourites"
+				android:id="@+id/book"
 				android:clickable="true"
 				android:layout_width="64dp"
 				android:layout_height="56dp"
-				android:text="Favorite"
+				android:text="Bookmark"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
 				android:drawableTop="@drawable/add_to_favorites_48"
@@ -622,11 +622,11 @@
 				android:textStyle="normal"
 				android:visibility="gone"
 				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
+				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
 			/>
 
-			<Button
+			<!--<Button
 				android:id="@+id/encrypts"
 				android:clickable="true"
 				android:layout_width="64dp"
@@ -640,9 +640,9 @@
 				android:textStyle="normal"
 				android:visibility="gone"
 				android:paddingBottom="0dp"
-				android:paddingTop="0dp"
-				android:drawablePadding="0dp"
-			/>
+			android:paddingTop="8dp"
+			android:drawablePadding="0dp"
+			/>-->
 
 			<Button
 				android:id="@+id/infos"

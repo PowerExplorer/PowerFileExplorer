@@ -143,7 +143,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 	protected View horizontalDivider0;
 	protected View horizontalDivider12;
 	protected View horizontalDivider7;
-	
+
 	ImageButton searchButton;
 	ImageButton clearButton;
 	EditText searchET;
@@ -158,10 +158,16 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 
 	RecyclerView listView = null;
 	ImageThreadLoader imageLoader;
+
+	ArrayList<LayoutElement> dataSourceL1 = new ArrayList<>();
+	ArrayList selectedInList1 = new ArrayList();
 	ArrayList<LayoutElement> tempOriDataSourceL1 = new ArrayList<>();
 	ArrayList tempSelectedInList1 = new ArrayList();
+	public ViewGroup commands;
+	public View horizontalDivider6;
+
 	public OpenMode openMode = OpenMode.FILE;
-	
+
 	GridLayoutManager gridLayoutManager;
 	GridDividerItemDecoration dividerItemDecoration;
 
@@ -219,12 +225,14 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
 		horizontalDivider0 = v.findViewById(R.id.horizontalDivider0);
 		horizontalDivider12 = v.findViewById(R.id.horizontalDivider12);
-		
+
 		horizontalDivider7 = v.findViewById(R.id.horizontalDivider7);
 		rightStatus = (TextView) v.findViewById(R.id.rightStatus);
 		selStatus = v.findViewById(R.id.selStatus);
 		listView = (RecyclerView) v.findViewById(R.id.listView1);
 		imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		horizontalDivider6 = v.findViewById(R.id.horizontalDivider6);
+		commands = (ViewGroup) v.findViewById(R.id.commands);
 
 		clearButton = (ImageButton) v.findViewById(R.id.clear);
 		searchButton = (ImageButton) v.findViewById(R.id.search);
@@ -247,6 +255,14 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		listView.setItemViewCacheSize(20);
 		listView.setDrawingCacheEnabled(true);
 
+		Button b;
+		final int no = commands.getChildCount();
+		for (int i = 0; i < no; i++) {
+			b = (Button) commands.getChildAt(i);
+			b.setTextColor(ExplorerActivity.TEXT_COLOR);
+			b.getCompoundDrawables()[1].setAlpha(0xff);
+			b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		}
 	}
 
 	@Override
@@ -338,8 +354,8 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 
 	void swap(View v) {
 		activity.swap = !activity.swap;
-		activity.leftSize = -activity.leftSize;
-		
+		activity.balance = -activity.balance;
+
 		AndroidUtils.setSharedPreference(activity, "swap", activity.swap);
 		final int leftVisible = activity.left.getVisibility();
 		final int rightVisible = activity.right.getVisibility();
@@ -368,31 +384,25 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 	void setRecyclerViewLayoutManager() {}
 
 	void hide() throws Resources.NotFoundException {
-		if (right.getVisibility() == View.VISIBLE && left.getVisibility() == View.VISIBLE) {
-//			if (spanCount == 4) {
-//				spanCount = 8;
-//				setRecyclerViewLayoutManager();
-//			}
-			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+			if (activity.right.getVisibility() == View.VISIBLE) {
 				activity.left.setVisibility(View.GONE);
 			} else {
-				activity.right.setVisibility(View.GONE);
+				activity.right.setVisibility(View.VISIBLE);
 			}
 		} else {
-//			if (spanCount == 8) {
-//				spanCount = 4;
-//				setRecyclerViewLayoutManager();
-//			}
-			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-				activity.right.setVisibility(View.VISIBLE);
+			if (activity.left.getVisibility() == View.VISIBLE) {
+				activity.right.setVisibility(View.GONE);
 			} else {
 				activity.left.setVisibility(View.VISIBLE);
 			}
 		}
+		activity.slideFrag.updateSpan();
+		activity.slideFrag2.updateSpan();
 	}
 
 	void biggerequalpanel() {
-		if (activity.leftSize <= 0) {
+		if (slidingTabsFragment.width <= 0) {
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
 				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
 				params.weight = 1.0f;
@@ -400,49 +410,44 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 				params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
 				params.weight = 2.0f;
 				activity.right.setLayoutParams(params);
-				activity.leftSize = 1;
-				if (left == activity.left) {
-					slidingTabsFragment.width = 1;
-					//activity.leftSize = width.width;
-					activity.slideFrag2.width = -slidingTabsFragment.width;
+				slidingTabsFragment.width = 1;
+				if (!activity.swap) {
+					activity.balance = 1;
+					activity.slideFrag2.width = -1;
 				} else {
-					slidingTabsFragment.width = -1;
-					//activity.leftSize = -width.width;
-					activity.slideFrag2.width = -slidingTabsFragment.width;
+					activity.balance = -1;
+					activity.slideFrag2.width = -1;
 				}
 			} else {
-				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
-				params.weight = 2.0f;
-				activity.left.setLayoutParams(params);
-				params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
+				LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
 				params.weight = 1.0f;
 				activity.right.setLayoutParams(params);
-				activity.leftSize = 1;
-				if (left == activity.left) {
-					slidingTabsFragment.width = -1;
-					//activity.leftSize = -width.width;
-					activity.slideFrag.width = -slidingTabsFragment.width;
+				params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
+				params.weight = 2.0f;
+				activity.left.setLayoutParams(params);
+				slidingTabsFragment.width = 1;
+				if (!activity.swap) {
+					activity.balance = -1;
+					activity.slideFrag.width = -1;
 				} else {
-					slidingTabsFragment.width = 1;
-					//activity.leftSize = width.width;
-					activity.slideFrag.width = -slidingTabsFragment.width;
+					activity.balance = 1;
+					activity.slideFrag.width = -1;
 				}
 			}
 		} else {
-			LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)left.getLayoutParams();
+			LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
 			params.weight = 1.0f;
-			left.setLayoutParams(params);
-			params = (LinearLayout.LayoutParams)right.getLayoutParams();
+			activity.left.setLayoutParams(params);
+			params = (LinearLayout.LayoutParams)activity.right.getLayoutParams();
 			params.weight = 1.0f;
-			right.setLayoutParams(params);
-			activity.leftSize = 0;
-			//width.width = 0;
+			activity.right.setLayoutParams(params);
+			activity.balance = 0;
 			activity.slideFrag.width = 0;
 			activity.slideFrag2.width = 0;
 		}
-		activity.curSelectionFrag2.setRecyclerViewLayoutManager();
-		activity.curExplorerFrag.setRecyclerViewLayoutManager();
-		AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.leftSize);
+		activity.slideFrag.updateSpan();
+		activity.slideFrag2.updateSpan();
+		AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.balance);
 	}
 
 	void moreInPanel(final View v) {

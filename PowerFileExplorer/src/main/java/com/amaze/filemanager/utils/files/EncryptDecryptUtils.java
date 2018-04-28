@@ -21,6 +21,7 @@ import com.amaze.filemanager.utils.ServiceWatcherUtil;
 import com.amaze.filemanager.utils.provider.UtilitiesProviderInterface;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
+import com.amaze.filemanager.ui.LayoutElement;
 
 /**
  * Provides useful interfaces and methods for encryption/decryption
@@ -43,13 +44,34 @@ public class EncryptDecryptUtils {
                                        Intent intent) throws Exception {
         CryptHandler cryptHandler = new CryptHandler(c);
         EncryptedEntry encryptedEntry = new EncryptedEntry(path.concat(CryptUtil.CRYPT_EXTENSION),
-                password);
+														   password);
         cryptHandler.addEntry(encryptedEntry);
 
         // start the encryption process
         ServiceWatcherUtil.runService(c, intent);
     }
 
+    public static void startEncryption(final Context c, final LayoutElement[] elements, final String password
+									   //, final Intent intent
+									   ) throws Exception {
+		final CryptHandler cryptHandler = new CryptHandler(c);
+		for (LayoutElement ele : elements) {
+			Log.d("EncryptDecryptUtils", "startEncryption " + ele);
+			final Intent encryptIntent = new Intent(c, EncryptService.class);
+			encryptIntent.putExtra(EncryptService.TAG_OPEN_MODE, ele.getMode().ordinal());
+			encryptIntent.putExtra(EncryptService.TAG_CRYPT_MODE,
+								   EncryptService.CryptEnum.ENCRYPT.ordinal());
+			final BaseFile generateBaseFile = ele.generateBaseFile();
+			encryptIntent.putExtra(EncryptService.TAG_SOURCE, generateBaseFile);
+			final EncryptedEntry encryptedEntry = new EncryptedEntry(generateBaseFile.getPath().concat(CryptUtil.CRYPT_EXTENSION),
+																	 password);
+			cryptHandler.addEntry(encryptedEntry);
+			// start the encryption process
+			ServiceWatcherUtil.runService(c, encryptIntent);
+			Thread.sleep(100);
+		}
+
+    }
 
     public static void decryptFile(Context c, final ExplorerActivity mainActivity, final Frag main, OpenMode openMode,
                                    BaseFile sourceFile, String decryptPath,
@@ -59,7 +81,7 @@ public class EncryptDecryptUtils {
         Intent decryptIntent = new Intent(main.getContext(), EncryptService.class);
         decryptIntent.putExtra(EncryptService.TAG_OPEN_MODE, openMode.ordinal());
         decryptIntent.putExtra(EncryptService.TAG_CRYPT_MODE,
-                EncryptService.CryptEnum.DECRYPT.ordinal());
+							   EncryptService.CryptEnum.DECRYPT.ordinal());
         decryptIntent.putExtra(EncryptService.TAG_SOURCE, sourceFile);
         decryptIntent.putExtra(EncryptService.TAG_DECRYPT_PATH, decryptPath);
         decryptIntent.putExtra(EncryptService.TAG_BROADCAST_RESULT, broadcastResult);
@@ -78,52 +100,52 @@ public class EncryptDecryptUtils {
         }
 
         DecryptButtonCallbackInterface decryptButtonCallbackInterface =
-                new DecryptButtonCallbackInterface() {
-                    @Override
-                    public void confirm(Intent intent) {
-                        ServiceWatcherUtil.runService(main.getContext(), intent);
-                    }
+			new DecryptButtonCallbackInterface() {
+			@Override
+			public void confirm(Intent intent) {
+				ServiceWatcherUtil.runService(main.getContext(), intent);
+			}
 
-                    @Override
-                    public void failed() {
-                        Toast.makeText(main.getContext(), main.getActivity().getResources().getString(R.string.crypt_decryption_fail_password), Toast.LENGTH_LONG).show();
-                    }
-                };
+			@Override
+			public void failed() {
+				Toast.makeText(main.getContext(), main.getActivity().getResources().getString(R.string.crypt_decryption_fail_password), Toast.LENGTH_LONG).show();
+			}
+		};
 
         switch (encryptedEntry.getPassword()) {
             case Preffrag.ENCRYPT_PASSWORD_FINGERPRINT:
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         GeneralDialogCreation.showDecryptFingerprintDialog(c,
-                                mainActivity, decryptIntent, utilsProvider.getAppTheme(), decryptButtonCallbackInterface);
+																		   mainActivity, decryptIntent, utilsProvider.getAppTheme(), decryptButtonCallbackInterface);
                     } else throw new CryptException();
                 } catch (CryptException e) {
                     e.printStackTrace();
 
                     Toast.makeText(main.getContext(),
-                            main.getResources().getString(R.string.crypt_decryption_fail),
-                            Toast.LENGTH_LONG).show();
+								   main.getResources().getString(R.string.crypt_decryption_fail),
+								   Toast.LENGTH_LONG).show();
                 }
                 break;
             case Preffrag.ENCRYPT_PASSWORD_MASTER:
                 try {
                     GeneralDialogCreation.showDecryptDialog(c,
-                            mainActivity, decryptIntent, utilsProvider.getAppTheme(),
-                            CryptUtil.decryptPassword(c, preferences1.getString(Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD,
-                                    Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD_DEFAULT)), decryptButtonCallbackInterface);
+															mainActivity, decryptIntent, utilsProvider.getAppTheme(),
+															CryptUtil.decryptPassword(c, preferences1.getString(Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD,
+																												Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD_DEFAULT)), decryptButtonCallbackInterface);
                 } catch (CryptException e) {
                     e.printStackTrace();
 
 
                     Toast.makeText(main.getContext(),
-                            main.getResources().getString(R.string.crypt_decryption_fail),
-                            Toast.LENGTH_LONG).show();
+								   main.getResources().getString(R.string.crypt_decryption_fail),
+								   Toast.LENGTH_LONG).show();
                 }
                 break;
             default:
                 GeneralDialogCreation.showDecryptDialog(c, mainActivity, decryptIntent,
-                        utilsProvider.getAppTheme(), encryptedEntry.getPassword(),
-                        decryptButtonCallbackInterface);
+														utilsProvider.getAppTheme(), encryptedEntry.getPassword(),
+														decryptButtonCallbackInterface);
                 break;
         }
     }

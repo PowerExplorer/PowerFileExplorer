@@ -18,7 +18,7 @@ limitations under the License.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/shortcut"
+    <item android:id="@+id/shortcuts"
 		android:title="Create shortcut"
 		android:showAsAction="always"
 		android:icon="@drawable/ic_action_create_shortcut"/>
@@ -28,10 +28,10 @@ limitations under the License.
 		android:showAsAction="always"
 		android:icon="@drawable/add_to_favorites_48"/>
 
-	<item android:id="@+id/encrypt"
+	<!--<item android:id="@+id/encrypts"
 		android:title="Encrypt" 
 		android:showAsAction="always"
-		android:icon="@drawable/ic_material_dialog_fs_locked"/>
+		android:icon="@drawable/ic_material_dialog_fs_locked"/>-->
 
 	<item android:id="@+id/hiddenfiles"
 		android:icon="@drawable/ic_visibility_off_black_48dp"

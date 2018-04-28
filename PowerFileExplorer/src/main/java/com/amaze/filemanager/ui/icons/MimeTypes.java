@@ -134,6 +134,7 @@ public final class MimeTypes {
         MIME_TYPES.put("flv", "video/x-flv");
         MIME_TYPES.put("mkv", "video/x-matroska");
 
+		MIME_TYPES.put("chm", "application/x-chm");
     }
 
 

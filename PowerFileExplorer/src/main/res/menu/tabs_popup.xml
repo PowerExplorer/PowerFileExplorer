@@ -31,6 +31,8 @@
 		android:title="Web" />
     <item android:id="@+id/pdf"
 		android:title="Pdf" />
+    <item android:id="@+id/chm"
+		android:title="Chm" />
     <item android:id="@+id/photo"
 		android:title="Photo" />
     <item android:id="@+id/media"

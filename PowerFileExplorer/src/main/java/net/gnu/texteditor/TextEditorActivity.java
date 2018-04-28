@@ -56,9 +56,9 @@ public class TextEditorActivity extends SampleActivityBase {//
 		Log.d(TAG, "onCreate intent " + intent + ", savedInstanceState=" + savedInstanceState);
 		if (savedInstanceState == null) {
 			if (intent != null && intent.getData() != null) {
-				slideFrag.addTab(intent, intent.getData().getLastPathSegment());//, "utf-8", false, '\n');
+				slideFrag.addTextTab(intent, intent.getData().getLastPathSegment());//, "utf-8", false, '\n');
 			} else {
-				slideFrag.addTab((Intent)null, (String)null);
+				slideFrag.addTextTab((Intent)null, (String)null);
 			}
 		}
     }
@@ -151,7 +151,7 @@ public class TextEditorActivity extends SampleActivityBase {//
 		//intent = getIntent();
 		//setIntent(null);
 		if (intent != null && !Intent.ACTION_MAIN.equals(intent.getAction())) {
-			slideFrag.addTab(intent, intent.getData().getLastPathSegment());//, "utf-8", false, '\n');
+			slideFrag.addTextTab(intent, intent.getData().getLastPathSegment());//, "utf-8", false, '\n');
 		}
 	}
 	

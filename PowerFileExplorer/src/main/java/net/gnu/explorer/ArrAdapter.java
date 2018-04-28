@@ -64,6 +64,7 @@ import com.amaze.filemanager.utils.cloud.CloudUtil;
 import jcifs.smb.SmbFile;
 import java.net.MalformedURLException;
 import com.amaze.filemanager.utils.OTGUtil;
+import android.content.res.Resources;
 
 public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHolder> {
 
@@ -137,10 +138,12 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 	public int getItemViewType(final int position) {
 		if (contentFrag.dataSourceL1.size() == 0) {
 			return 0;
-		} else if (contentFrag.spanCount == 1 
-				   || (contentFrag.spanCount == 2 && (contentFrag.activity.right.getVisibility() == View.GONE || contentFrag.activity.left.getVisibility() == View.GONE))) {
+		} else if (contentFrag.spanCount == 1 && contentFrag.slidingTabsFragment.width >= 0
+				   || (contentFrag.spanCount == 2 && (contentFrag.activity.right.getVisibility() == View.GONE || contentFrag.activity.left.getVisibility() == View.GONE))
+				   ) {
 			return 1;
-		} else if (contentFrag.spanCount == 2 && contentFrag.slidingTabsFragment.width >= 0) {
+		} else if (contentFrag.spanCount == 1 && contentFrag.slidingTabsFragment.width < 0
+				   || contentFrag.spanCount == 2 && contentFrag.slidingTabsFragment.width >= 0) {
 			return 2;
 		} else {
 			return 3;
@@ -288,15 +291,21 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				cbx.setEnabled(false);
 			}
 			attr.setText(st);
-			if (viewType <= 1) {
+			if (viewType == 1) {
 				final int lastIndexOf = fName.lastIndexOf(".");
 				type.setText(lastIndexOf >= 0 && lastIndexOf < fName.length() - 1 ? fName.substring(lastIndexOf + 1) : "");
-				size.setText(Util.nf.format(le.length) + " B");
 				lastModified.setText(Util.dtf.format(le.lastModified));
+			} else if (viewType == 2) {
+				if (contentFrag.slidingTabsFragment.width != 0) {
+					lastModified.setText(Util.dtf.format(le.lastModified));
+				} else {
+					lastModified.setText(Util.df.format(le.lastModified));
+				}
 			} else {
 				size.setText(Formatter.formatFileSize(contentFrag.activity, le.length));
 				lastModified.setText(Util.df.format(le.lastModified));
 			}
+			size.setText(Util.nf.format(le.length) + " B");
 		} else {
 			final String[] list = le.bf.f.list();
 			final int length = list == null ? 0 : list.length;
@@ -311,14 +320,103 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				cbx.setEnabled(false);
 			}
 			attr.setText(st);
-			if (viewType <= 1) {
+			if (viewType == 1) {
 				type.setText("Folder");
 				lastModified.setText(Util.dtf.format(le.lastModified));
+			} else if (viewType == 2) {
+				if (contentFrag.slidingTabsFragment.width != 0) {
+					lastModified.setText(Util.dtf.format(le.lastModified));
+				} else {
+					lastModified.setText(Util.df.format(le.lastModified));
+				}
 			} else {
 				lastModified.setText(Util.df.format(le.lastModified));
 			}
 		}
 		contentFrag.imageLoader.displayImage(le.bf.f, contentFrag.getContext(), image, contentFrag.spanCount);
+	}
+
+	static void encrypt(final ExplorerActivity activity, final ContentFragment contentFrag, final LayoutElement... rowItems) throws Resources.NotFoundException {
+		final Intent encryptIntent = new Intent(activity, EncryptService.class);
+		encryptIntent.putExtra(EncryptService.TAG_OPEN_MODE, rowItems[0].getMode().ordinal());
+		encryptIntent.putExtra(EncryptService.TAG_CRYPT_MODE,
+							   EncryptService.CryptEnum.ENCRYPT.ordinal());
+		//encryptIntent.putExtra(EncryptService.TAG_SOURCE, rowItem.generateBaseFile());
+		Log.d(TAG, "encrypt " + encryptIntent);
+
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+
+		final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterfaceAuthenticate =
+			new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
+			@Override
+			public void onButtonPressed(Intent intent) {
+			}
+
+			@Override
+			public void onButtonPressed(Intent intent, String password) throws Exception {
+				EncryptDecryptUtils.startEncryption(activity,
+													rowItems
+													//.generateBaseFile().getPath()
+													, password
+													//, intent
+													);
+			}
+		};
+
+		EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface =
+			new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
+
+			@Override
+			public void onButtonPressed(Intent intent) throws Exception {
+				// check if a master password or fingerprint is set
+				if (!preferences.getString(Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD,
+										   Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD_DEFAULT).equals("")) {
+
+					EncryptDecryptUtils.startEncryption(activity,
+														rowItems
+														//.generateBaseFile().getPath()
+														,
+														Preffrag.ENCRYPT_PASSWORD_MASTER
+														//, encryptIntent
+														);
+				} else if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_FINGERPRINT,
+												  Preffrag.PREFERENCE_CRYPT_FINGERPRINT_DEFAULT)) {
+
+					EncryptDecryptUtils.startEncryption(activity,
+														rowItems
+														//.generateBaseFile().getPath()
+														,
+														Preffrag.ENCRYPT_PASSWORD_FINGERPRINT
+														//, encryptIntent
+														);
+				} else {
+					// let's ask a password from user
+					GeneralDialogCreation.showEncryptAuthenticateDialog(activity, encryptIntent,
+																		activity, activity.getAppTheme(),
+																		encryptButtonCallbackInterfaceAuthenticate);
+				}
+			}
+
+			@Override
+			public void onButtonPressed(Intent intent, String password) {
+			}
+		};
+
+		if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER,
+								   Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER_DEFAULT)) {
+			// let's skip warning dialog call
+			try {
+				encryptButtonCallbackInterface.onButtonPressed(encryptIntent);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Toast.makeText(activity,
+							   activity.getResources().getString(R.string.crypt_encryption_fail),
+							   Toast.LENGTH_LONG).show();
+			}
+		} else {
+			GeneralDialogCreation.showEncryptWarningDialog(encryptIntent,
+														   contentFrag, activity.getAppTheme(), encryptButtonCallbackInterface);
+		}
 	}
 
 	private class OnClickListener implements View.OnClickListener {
@@ -373,14 +471,14 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 										activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 										activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
 										activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-										activity.curExplorerFrag.updateDelPaste();
 									}
+									activity.curExplorerFrag.updateDelPaste();
 									if (activity.curContentFrag.commands.getVisibility() == View.GONE) {
 										activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 										activity.curContentFrag.commands.setVisibility(View.VISIBLE);
 										activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-										activity.curContentFrag.updateDelPaste();
 									}
+									activity.curContentFrag.updateDelPaste();
 									break;
 								case R.id.cut:
 									//cut(v);
@@ -393,14 +491,14 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 										activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 										activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
 										activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-										activity.curExplorerFrag.updateDelPaste();
 									}
+									activity.curExplorerFrag.updateDelPaste();
 									if (activity.curContentFrag.commands.getVisibility() == View.GONE) {
 										activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 										activity.curContentFrag.commands.setVisibility(View.VISIBLE);
 										activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-										activity.curContentFrag.updateDelPaste();
 									}
+									activity.curContentFrag.updateDelPaste();
 									break;
 								case R.id.rename:
 									contentFrag.rename(rowItem.generateBaseFile());
@@ -457,73 +555,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 								case R.id.encrypt:
 									if (!rowItem.isDirectory) {
 										if (!rowItem.name.toLowerCase().endsWith(CryptUtil.CRYPT_EXTENSION)) {
-											final Intent encryptIntent = new Intent(activity, EncryptService.class);
-											encryptIntent.putExtra(EncryptService.TAG_OPEN_MODE, rowItem.getMode().ordinal());
-											encryptIntent.putExtra(EncryptService.TAG_CRYPT_MODE,
-																   EncryptService.CryptEnum.ENCRYPT.ordinal());
-											encryptIntent.putExtra(EncryptService.TAG_SOURCE, rowItem.generateBaseFile());
-
-											final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-
-											final EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterfaceAuthenticate =
-												new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
-												@Override
-												public void onButtonPressed(Intent intent) {
-												}
-
-												@Override
-												public void onButtonPressed(Intent intent, String password) throws Exception {
-													EncryptDecryptUtils.startEncryption(activity,
-																						rowItem.generateBaseFile().getPath(), password, intent);
-												}
-											};
-
-											EncryptDecryptUtils.EncryptButtonCallbackInterface encryptButtonCallbackInterface =
-												new EncryptDecryptUtils.EncryptButtonCallbackInterface() {
-
-												@Override
-												public void onButtonPressed(Intent intent) throws Exception {
-													// check if a master password or fingerprint is set
-													if (!preferences.getString(Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD,
-																			   Preffrag.PREFERENCE_CRYPT_MASTER_PASSWORD_DEFAULT).equals("")) {
-
-														EncryptDecryptUtils.startEncryption(activity,
-																							rowItem.generateBaseFile().getPath(),
-																							Preffrag.ENCRYPT_PASSWORD_MASTER, encryptIntent);
-													} else if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_FINGERPRINT,
-																					  Preffrag.PREFERENCE_CRYPT_FINGERPRINT_DEFAULT)) {
-
-														EncryptDecryptUtils.startEncryption(activity,
-																							rowItem.generateBaseFile().getPath(),
-																							Preffrag.ENCRYPT_PASSWORD_FINGERPRINT, encryptIntent);
-													} else {
-														// let's ask a password from user
-														GeneralDialogCreation.showEncryptAuthenticateDialog(activity, encryptIntent,
-																											activity, activity.getAppTheme(),
-																											encryptButtonCallbackInterfaceAuthenticate);
-													}
-												}
-
-												@Override
-												public void onButtonPressed(Intent intent, String password) {
-												}
-											};
-
-											if (preferences.getBoolean(Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER,
-																	   Preffrag.PREFERENCE_CRYPT_WARNING_REMEMBER_DEFAULT)) {
-												// let's skip warning dialog call
-												try {
-													encryptButtonCallbackInterface.onButtonPressed(encryptIntent);
-												} catch (Exception e) {
-													e.printStackTrace();
-													Toast.makeText(activity,
-																   activity.getResources().getString(R.string.crypt_encryption_fail),
-																   Toast.LENGTH_LONG).show();
-												}
-											} else {
-												GeneralDialogCreation.showEncryptWarningDialog(encryptIntent,
-																							   contentFrag, activity.getAppTheme(), encryptButtonCallbackInterface);
-											}
+											encrypt(activity, contentFrag, rowItem);
 											break;
 										} else {
 											//case R.id.decrypt:
@@ -558,7 +590,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 									break;
 								case R.id.extract:
 									//activity.mainActivityHelper.extractFile(new File(rowItem.path));
-									if (FileUtil.extractiblePattern.matcher(rowItem.name).matches()) {
+									if (!rowItem.isDirectory && FileUtil.extractiblePattern.matcher(rowItem.name).matches()) {
 										activity.decompress(rowItem.path, contentFrag.currentPathTitle + "/" + rowItem.name.substring(0, rowItem.name.lastIndexOf(".")));
 									} else {
 										activity.compress(rowItem.path, contentFrag.currentPathTitle + "/" + (rowItem.name.lastIndexOf(".") > 0 ? rowItem.name.substring(0, rowItem.name.lastIndexOf(".")) : rowItem.name));
@@ -693,7 +725,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 							}
 							if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0)) {
 								contentFrag.selectionStatus.setText(contentFrag.selectedInList1.size() 
-																  + "/" + contentFrag.dataSourceL1.size());
+																	+ "/" + contentFrag.dataSourceL1.size());
 							}
 						} else { // inselected
 							if (id == R.id.icon) { //dir
@@ -726,7 +758,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 //									contentFrag.tempPreviewL2 = rowItem;
 //									load(rowItem, f, fPath, pos);
 //								} else {
-									openFile(rowItem, f, fPath);
+								openFile(rowItem, f, fPath);
 //								}
 							} 
 						}
@@ -884,6 +916,21 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}
+		} else if (mime.startsWith("application/x-chm")) {
+			
+			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.CHM);
+			if (tabIndex2 >= 0) {
+				pagerAdapter.getItem(tabIndex2).load(fPath);
+				slidingTabsFragment.setCurrentItem(tabIndex2, true);
+			} else {
+				slidingTabsFragment.addTab(Frag.TYPE.CHM, fPath);
+				contentFrag.listView.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
+						}
+					}, 100);
+			}
 		} else if (mime.startsWith("application/pdf")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.PDF.ordinal()).load(fPath);
 			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.PDF);
@@ -1031,8 +1078,8 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			contentFrag.isEncryptOpen = true;
 
 			contentFrag.encryptBaseFile = new BaseFile(contentFrag.activity.getExternalCacheDir().getPath()
-													+ "/"
-													+ new LayoutElement(f).generateBaseFile().getName().replace(CryptUtil.CRYPT_EXTENSION, ""));
+													   + "/"
+													   + new LayoutElement(f).generateBaseFile().getName().replace(CryptUtil.CRYPT_EXTENSION, ""));
 
 			EncryptDecryptUtils.decryptFile(contentFrag.activity, contentFrag.activity, contentFrag, contentFrag.openMode,
 											new LayoutElement(f).generateBaseFile(), contentFrag.activity.getExternalCacheDir().getPath(),
@@ -1050,7 +1097,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 					break;
 				case OTG:
 					contentFrag.activity.getFutils().openFile(OTGUtil.getDocumentFile(ele.path, contentFrag.activity, false),
-														   contentFrag.activity);
+															  contentFrag.activity);
 					break;
 				case DROPBOX:
 				case BOX:
@@ -1122,7 +1169,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 					}
 					if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0)) {
 						contentFrag.selectionStatus.setText(contentFrag.selectedInList1.size() 
-														  + "/" + contentFrag.dataSourceL1.size());
+															+ "/" + contentFrag.dataSourceL1.size());
 					}
 				} else { // single file
 					if (f.isFile()) {

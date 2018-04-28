@@ -20,7 +20,7 @@ import com.amaze.filemanager.utils.AppConfig;
 import net.gnu.texteditor.TextEditorActivity;
 import com.tekinarslan.sample.SampleActivity;
 
-public class ExplorerApplication extends AppConfig {
+public class ExplorerApplication extends JotaTextEditor {
 	
 	private static final String TAG = "ExplorerApplication";
 	private static ExplorerApplication instance;

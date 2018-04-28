@@ -15,12 +15,12 @@
 		android:background="@drawable/ripple"
 		android:singleLine="true"
 		android:text=""
-		android:textSize="8sp"
-		android:textStyle="bold"
+		android:textSize="10sp"
+		android:ellipsize="middle"
 		android:paddingLeft="8dp"
-		android:paddingTop="2dp"
+		android:paddingTop="0dp"
 		android:paddingRight="8dp"
-		android:paddingBottom="2dp"
+		android:paddingBottom="0dp"
 		android:textAppearance="?android:textAppearanceSmall" />
 
 	<View

@@ -1970,20 +1970,20 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 	public static boolean isVersionUp(Context ctx)
 	{
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
-		boolean ret = false;
+		boolean hasNew = false;
 		int lastversion = sp.getInt(KEY_LASTVERSION, 0 );
 		sLastVersion = lastversion;
 		int versioncode;
 		try {
 		    String pkgname = ctx.getApplicationInfo().packageName;
 			versioncode = ctx.getPackageManager().getPackageInfo(pkgname, 0).versionCode;
-			ret = (lastversion != versioncode);
-			Log.d(TAG, "sLastVersion " + sLastVersion + ", lastversion " + lastversion + ", versioncode " + versioncode);
-			if ( !ret ){
+			hasNew = (lastversion != versioncode);
+			//Log.d(TAG, "sLastVersion " + sLastVersion + ", hasNew " + hasNew + ", versioncode " + versioncode);
+			if ( !hasNew ){
 			    sLastVersion = -1;
 			}
 			
-			if ( ret ){
+			if ( hasNew ){
 				Editor editor = sp.edit();
 				editor.putInt(KEY_LASTVERSION, versioncode );
 
@@ -2100,7 +2100,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
 		} catch (NameNotFoundException e) {
 		}
-		return ret;
+		return hasNew;
 	}
 
 	private static int getTextColorHighlight(Context ctx)

@@ -26,6 +26,7 @@ import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
 
 import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
+import android.util.Log;
 
 /**
  * Created by vishal on 8/4/17.
@@ -61,6 +62,8 @@ public class EncryptService extends Service {
     private ProgressListener progressListener;
     private boolean broadcastResult = false;
 
+	private String TAG = "EncryptService";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -71,7 +74,7 @@ public class EncryptService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+		Log.d(TAG, "onStartCommand " + intent);
         baseFile = intent.getParcelableExtra(TAG_SOURCE);
         cryptEnum = CryptEnum.values()[intent.getIntExtra(TAG_CRYPT_MODE, CryptEnum.ENCRYPT.ordinal())];
         broadcastResult = intent.getBooleanExtra(TAG_BROADCAST_RESULT, false);
@@ -110,7 +113,8 @@ public class EncryptService extends Service {
 
         @Override
         protected Void doInBackground(Void... params) {
-
+			Log.d(TAG, "onStartCommand " + params);
+			
             if (baseFile.isDirectory())  totalSize = baseFile.folderSize(context);
             else totalSize = baseFile.length(context);
 
@@ -168,7 +172,8 @@ public class EncryptService extends Service {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
+			Log.d(TAG, "onPostExecute");
+			
             serviceWatcherUtil.stopWatch();
             generateNotification(failedOps, cryptEnum==CryptEnum.ENCRYPT ? false : true);
 

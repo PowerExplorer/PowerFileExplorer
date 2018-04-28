@@ -199,56 +199,41 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					if (activ instanceof ExplorerActivity) {
 						final ExplorerActivity activity = (ExplorerActivity) activ;
 						if (createFragment.type == Frag.TYPE.EXPLORER) {
-							activity.dir = createFragment.currentPathTitle;
-						}
-						if (createFragment.type == Frag.TYPE.EXPLORER) {
+							activity.dir = ((ContentFragment) createFragment).dirTemp4Search;
 							if (side == Side.LEFT) {
 								activity.curContentFrag = (ContentFragment) createFragment;
 							} else {
 								activity.curExplorerFrag = (ContentFragment) createFragment;
 							}
 						} else if (createFragment.type == Frag.TYPE.SELECTION) {
-							activity.curSelectionFrag2 = (ContentFragment) createFragment;
+							if (side == Side.LEFT) {
+								activity.curSelectionFrag = (ContentFragment) createFragment;
+							} else {
+								activity.curSelectionFrag2 = (ContentFragment) createFragment;
+							}
 						}
 						createFragment.select(true);
 						if (side == Side.LEFT) {
-							//activity.slideFrag2.getCurrentFragment().select(false);
-							//createFragment.horizontalDivider6 = activity.slideFrag2.getCurrentFragment().horizontalDivider6;
-							//createFragment.rightCommands = activity.slideFrag2.getCurrentFragment().rightCommands;
-							//Log.d(TAG, "createFragment.leftCommands: " + createFragment.leftCommands);
-							//Log.d(TAG, "createFragment.rightCommands: " + createFragment.rightCommands);
-							//createFragment.commands = createFragment.leftCommands;
-							createFragment.right = activity.right;
-							createFragment.left = activity.left;
-							//createFragment.horizontalDivider6 = createFragment.horizontalDivider6;//createFragment.horizontalDivider11;
-							createFragment.slidingTabsFragment.width = activity.leftSize;
+							createFragment.slidingTabsFragment.width = activity.balance;
 						} else {
-							//createFragment.horizontalDivider11 = activity.slideFrag.getCurrentFragment().horizontalDivider11;
-							//createFragment.leftCommands = activity.slideFrag.getCurrentFragment().leftCommands;
-							//Log.d(TAG, "createFragment.leftCommands: " + createFragment.leftCommands);
-							//Log.d(TAG, "createFragment.rightCommands: " + createFragment.rightCommands);
-							//if (activity.slideFrag2.pagerAdapter != null && activity.slideFrag2.getContentFragment2(Frag.TYPE.EXPLORER) == createFragment) {
-							//createFragment.commands = createFragment.rightCommands;
-							createFragment.right = activity.left;
-							createFragment.left = activity.right;
-							//createFragment.horizontalDivider6 = createFragment.horizontalDivider6;
-							createFragment.slidingTabsFragment.width = -activity.leftSize;
+							createFragment.slidingTabsFragment.width = -activity.balance;
 						}
 
-						if (createFragment.commands != null) {
-							if (createFragment.selectedInList1.size() == 0 && 
-								(((createFragment instanceof ContentFragment) && activity.COPY_PATH == null && activity.MOVE_PATH == null) 
-								|| (!(createFragment instanceof ContentFragment)))) {
-								if (createFragment.commands.getVisibility() == View.VISIBLE) {
-									createFragment.horizontalDivider6.setVisibility(View.GONE);
-									createFragment.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-									createFragment.commands.setVisibility(View.GONE);
+						if (createFragment instanceof FileFrag) {
+							FileFrag fileFrag = ((FileFrag)createFragment);
+							if (fileFrag.selectedInList1.size() == 0 && 
+								(((fileFrag instanceof ContentFragment) && activity.COPY_PATH == null && activity.MOVE_PATH == null) 
+								|| (!(fileFrag instanceof ContentFragment)))) {
+								if (fileFrag.commands.getVisibility() == View.VISIBLE) {
+									fileFrag.horizontalDivider6.setVisibility(View.GONE);
+									fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
+									fileFrag.commands.setVisibility(View.GONE);
 								}
 							} else {
-								createFragment.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-								createFragment.commands.setVisibility(View.VISIBLE);
-								createFragment.horizontalDivider6.setVisibility(View.VISIBLE);
-								if (createFragment instanceof ContentFragment) {
+								fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+								fileFrag.commands.setVisibility(View.VISIBLE);
+								fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+								if (fileFrag instanceof ContentFragment) {
 									((ContentFragment)createFragment).updateDelPaste();
 								}
 							}
@@ -339,7 +324,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		return true;
 	}
 
-	public void addTab(final Intent intent, String title) {
+	public void addTextTab(final Intent intent, String title) {
 		if (title == null || title.length() == 0) {
 			title = "Untitled " + ++TextFrag.no + ".txt";
 		}
@@ -366,6 +351,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	}
 
 	public void addTab(final Frag.TYPE t, final String path) {
+		Log.d(TAG, "addTab TYPE " + t + ", path=" + path + ", mTabs=" + mTabs);
 		final PagerItem pagerItem;
 		Frag frag = null;
 		if (t == null) {
@@ -375,7 +361,10 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				main.slidingTabsFragment = this;
 				pagerItem = new PagerItem(main);
 			} else if (frag.type == Frag.TYPE.EXPLORER) {
-				pagerItem = new PagerItem(frag.clone(false));
+				final Frag clone = frag.clone(false);
+				//Log.e(TAG, "addTab frag " + frag);
+				//Log.e(TAG, "addTab clone " + clone);
+				pagerItem = new PagerItem(clone);
 			} else {
 				return;
 			}
@@ -546,7 +535,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 	public Frag getCurrentFragment() {
 		final int currentItem = mViewPager.getCurrentItem();
-		Log.d(TAG, "getCurrentFragment = " + currentItem + ", " + side + ", " + mTabs);
+		//Log.d(TAG, "getCurrentFragment = " + currentItem + ", " + side + ", " + mTabs);
 		return pagerAdapter.getItem(currentItem);
 	}
 
@@ -594,13 +583,33 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			return pagerAdapter.getItem(0).type == t ? 0 : -1;
 		}
 	}
+	
+	void updateSpan() {
+		Log.d(TAG, "updateSpan ");
+		for (PagerItem pi : mTabs) {
+			if (pi.frag != null) {
+				if (pi.frag instanceof ContentFragment) {
+					((FileFrag)pi.frag).refreshRecyclerViewLayoutManager();
+				}
+			}
+		}
+	}
 
 	void updateLayout(final boolean changeTime) {
 		Log.d(TAG, "updateLayout " + changeTime);
 		for (PagerItem pi : mTabs) {
 			if (pi.frag != null) {
 				if (pi.frag instanceof FileFrag) {
-					((FileFrag)pi.frag).refreshRecyclerViewLayoutManager();
+					final FileFrag frag = ((FileFrag)pi.frag);
+					frag.refreshRecyclerViewLayoutManager();
+					final int no = frag.commands.getChildCount();
+					Button b;
+					for (int i = 0; i < no; i++) {
+						b = (Button) frag.commands.getChildAt(i);
+						b.setTextColor(ExplorerActivity.TEXT_COLOR);
+						b.getCompoundDrawables()[1].setAlpha(0xff);
+						b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					}
 				}
 				if (changeTime && pi.frag.getContext() != null) {
 					pi.frag.updateColor(null);
@@ -608,15 +617,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						((ContentFragment)pi.frag).setDirectoryButtons();
 					}
 				}
-				final int no = pi.frag.commands.getChildCount();
-				Button b;
-				for (int i = 0; i < no; i++) {
-					b = (Button) pi.frag.commands.getChildAt(i);
-					b.setTextColor(ExplorerActivity.TEXT_COLOR);
-					b.getCompoundDrawables()[1].setAlpha(0xff);
-					b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-				}
-
 			}
 		}
 	}
@@ -777,7 +777,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		@Override
 		public Frag getItem(final int position) {
 			final int size = mTabs.size();
-			Log.d(TAG, "getItem " + position + "/" + size + ", " + side);
+			//Log.d(TAG, "getItem " + position + "/" + size + ", " + side);
 			if (size > 1) {
 				if (position == 0) {
 					return mTabs.get(size - 1).createFakeFragment();

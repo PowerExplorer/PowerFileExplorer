@@ -1,27 +1,15 @@
 package net.gnu.explorer;
 
-import android.app.Activity;
-import android.app.SearchManager;
-import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.widget.SearchView;
-
-import java.io.File;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import com.thefinestartist.finestwebview.WebFragment;
+import net.gnu.androidutil.AndroidUtils;
+import net.gnu.common.logger.Log;
 import net.gnu.explorer.R;
-import android.support.v4.app.*;
-import android.content.*;
-import net.gnu.common.logger.*;
-import net.gnu.androidutil.*;
-import java.util.*;
-import android.net.*;
-import java.net.*;
 
-/**
- * Created by selim_tekinarslan on 10.10.2014.
- */
 public class WebActivity extends FragmentActivity {
     
     private WebFragment fragment;
@@ -30,14 +18,11 @@ public class WebActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pdf_main);
-        openWebWithFragment();
+        onNewIntent(getIntent());
     }
 
-    
-
-    public void openWebWithFragment() {
-        Intent intent = getIntent();
-
+	@Override
+	protected void onNewIntent(Intent intent) {
 		Log.i("intent", intent + ".");
 		if (intent != null) {
 			Log.d("intent.getData()", intent.getData() + ".");
@@ -50,16 +35,19 @@ public class WebActivity extends FragmentActivity {
 			if (Intent.ACTION_SEND.equals(intent.getAction()) 
 				|| Intent.ACTION_VIEW.equals(intent.getAction())) {
 				Uri data = intent.getData();
-				String toString = data.toString();
-				fragment = new WebFragment();
-				Bundle args = new Bundle();
-				args.putString("url", toString);
-				fragment.setArguments(args);
+				String url = data.toString();
 				FragmentManager fragmentManager = getSupportFragmentManager();
-				fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+				if (fragment == null || fragmentManager.findFragmentByTag("web") == null) {
+					fragment = new WebFragment();
+					Bundle args = new Bundle();
+					args.putString("url", url);
+					fragment.setArguments(args);
+					fragmentManager.beginTransaction().replace(R.id.content_frame, fragment, "web").commit();
+				} else {
+					fragment.load(url);
+				}
 			}
 		}
-
-    }
+	}
 }
 

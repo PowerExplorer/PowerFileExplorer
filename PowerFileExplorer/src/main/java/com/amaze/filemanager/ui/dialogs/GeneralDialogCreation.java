@@ -169,8 +169,8 @@ public class GeneralDialogCreation {
         new AsyncTask<Void, Object, Void>() {
 
             long sizeTotal = 0;
-            StringBuilder files = new StringBuilder();
-            StringBuilder directories = new StringBuilder();
+            final StringBuilder files = new StringBuilder();
+            final StringBuilder directories = new StringBuilder();
             int counterDirectories = 0;
             int counterFiles = 0;
 
@@ -203,8 +203,8 @@ public class GeneralDialogCreation {
 							.append(". ")
 							.append(layoutElement.name)
 							.append(" (")
-							.append(Formatter.formatFileSize(c, sizeDirectory))
-							.append(")");
+							.append(net.gnu.util.Util.nf.format(sizeDirectory))
+							.append(" B)");
                         sizeTotal += sizeDirectory;
                         // Build list of files to delete.
                     } else {
@@ -217,8 +217,8 @@ public class GeneralDialogCreation {
 							.append(". ")
 							.append(layoutElement.name)
 							.append(" (")
-							.append(layoutElement.length)
-							.append(")");
+							.append(net.gnu.util.Util.nf.format(layoutElement.length))
+							.append(" B)");
                         sizeTotal += layoutElement.length;
                     }
 

@@ -1,0 +1,15 @@
+<resources>
+    
+    <string name="home">Home</string>
+    <string name="site_map">Site Map</string>
+    <string name="back_page">Back page</string>
+    <string name="next_page">Next page</string>
+    <string name="zoom_in">Zoom In</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="add">Add</string>
+    <string name="search">Search</string>
+    <string name="search_all">Search all</string>
+    <string name="text_search">Text search</string>
+    <string name="txt_search">Search</string>
+</resources>

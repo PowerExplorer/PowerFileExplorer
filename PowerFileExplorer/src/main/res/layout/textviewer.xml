@@ -47,7 +47,9 @@
 			    	android:orientation="horizontal"
 			    	android:layout_width="wrap_content"
 			    	android:layout_height="wrap_content"
-			    >
+					android:paddingTop="1dp"
+					android:paddingBottom="1dp"
+				>
 			    </LinearLayout>
 			</HorizontalScrollView>
 			<Button
@@ -64,6 +66,7 @@
 			android:id="@+id/horizontalDivider"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
+			android:visibility="gone"
 			android:background="?android:attr/dividerVertical" />
 		
 		<jp.sblo.pandora.jota.text.EditText

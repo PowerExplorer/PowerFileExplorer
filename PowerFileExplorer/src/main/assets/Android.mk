@@ -1,29 +1,82 @@
-# Copyright (C) 2009 The Android Open Source Project
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+LOCAL_CPP_EXTENSION := .cpp .cc
+LOCAL_MODULE    := zpaq
+LOCAL_SRC_FILES := libzpaq.cpp zpaq.cpp redirection-jni_zpaq.cpp runZpaq.cpp 
+
+LOCAL_CPPFLAGS += -Dunix -pthread \
+ -O3 -static \
+ -s \
+ -DANDROID_NDK -fexceptions \
+ -D_REENTRANT -DENV_UNIX \
+ -DUNICODE -D_UNICODE -DUNIX_USE_WIN_FILE \
+ -DBREAK_HANDLER -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE 
+
+LOCAL_CFLAGS += -fPIE
+#LOCAL_LDFLAGS += -fPIE -pie
+
+ifeq ($(TARGET_ARCH_ABI),x86)
+    LOCAL_CFLAGS += -ffast-math -mtune=atom -mssse3 -mfpmath=sse
+endif
+
+LOCAL_CPPFLAGS += $(LOCAL_CFLAGS)
+
+LOCAL_LDLIBS := -llog
+
+include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_EXECUTABLE)
+
+
+
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libavcodec
+TARGET_ARCH_ABI:=x86
+LOCAL_SRC_FILES := ffmpeg/android-libs/$(TARGET_ARCH_ABI)/$(LOCAL_MODULE).so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libavutil
+TARGET_ARCH_ABI:=x86
+LOCAL_SRC_FILES := ffmpeg/android-libs/$(TARGET_ARCH_ABI)/$(LOCAL_MODULE).so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := libavresample
+TARGET_ARCH_ABI:=x86
+LOCAL_SRC_FILES := ffmpeg/android-libs/$(TARGET_ARCH_ABI)/$(LOCAL_MODULE).so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := ffmpeg
+LOCAL_SRC_FILES := ffmpeg_jni.cc
+LOCAL_C_INCLUDES := ffmpeg
+LOCAL_SHARED_LIBRARIES := libavcodec libavresample libavutil
+TARGET_ARCH_ABI:=x86
+LOCAL_LDLIBS := -Lffmpeg/android-libs/$(TARGET_ARCH_ABI) -llog
+include $(BUILD_SHARED_LIBRARY)
+
+
+
+
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
 LOCAL_CPP_EXTENSION := .cpp .cc
 
-LOCAL_MODULE := 7za
+LOCAL_MODULE := 7z
 
 LOCAL_CFLAGS := -DANDROID_NDK  -fexceptions \
- -D_REENTRANT -DENV_UNIX \
- -DUNICODE -D_UNICODE -DUNIX_USE_WIN_FILE \
- -DBREAK_HANDLER -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
+ -D_REENTRANT \
+ -DENV_UNIX \
+ -DUNICODE -D_UNICODE \
+ -DUNIX_USE_WIN_FILE \
+ -DBREAK_HANDLER \
+ -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
  -DNDEBUG
 
 ifeq ($(TARGET_ARCH_ABI),x86)
@@ -39,9 +92,14 @@ LOCAL_CPPFLAGS := $(LOCAL_CFLAGS)
 LOCAL_LDLIBS := -llog
 #LOCAL_LDLIBS 	:= -L$(SYSROOT)/usr/lib -llog
 
-LOCAL_SRC_FILES := 7za/redirection-jni.cpp \
-    7za/7za.cpp \
-    CPP/7zip/Archive/7z/7zCompressionMode.cpp \
+#7z/redirection-jni.cpp \
+#7z/7za.cpp \
+
+
+LOCAL_SRC_FILES := \
+	7z/redirection-jni.cpp \
+	7z/net_gnu_p7zip_Andro7za.cpp \
+	CPP/7zip/Archive/7z/7zCompressionMode.cpp \
     CPP/7zip/Archive/7z/7zDecode.cpp \
     CPP/7zip/Archive/7z/7zEncode.cpp \
     CPP/7zip/Archive/7z/7zExtract.cpp \
@@ -345,3 +403,4 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(MY_CPP_DIR)/myWindows $(LOCAL_PATH)/$(MY_CPP
 
 include $(BUILD_SHARED_LIBRARY)
 #include $(BUILD_EXECUTABLE)
+

@@ -84,7 +84,7 @@ import android.content.res.*;
 
 public class TextFrag extends Frag implements JotaDocumentWatcher, ShortcutListener,
 OnFileLoadListener {
-    private static final String TAG = "Main";
+    private static final String TAG = "TextFrag";
     private static final int REQUESTCODE_OPEN = 0;
     private static final int REQUESTCODE_SAVEAS = 1;
     private static final int REQUESTCODE_MUSHROOM = 2;
@@ -137,7 +137,7 @@ OnFileLoadListener {
     private CharSequence mSl4aContents=null;
 	
 	private LinearLayout mContent;
-	private Activity activity;
+	//private Activity fragActivity;
 	private Intent intent;
 //	private String title;
 	public SlidingTabsFragment slidingTabsFragment;
@@ -186,7 +186,8 @@ OnFileLoadListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-        activity = this.getActivity();
+        super.onCreateView(inflater, container, savedInstanceState);
+		//fragActivity = this.getActivity();
 		setHasOptionsMenu(true);
 		return inflater.inflate(R.layout.textviewer, container, false);
     }
@@ -195,7 +196,7 @@ OnFileLoadListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 		Log.d(TAG, "onViewCreated savedInstanceState " + savedInstanceState);
-        activity = this.getActivity();
+        //fragActivity = this.getActivity();
 		Bundle args = getArguments();
 		Log.d(TAG, "onViewCreated args=" + args);
 		if (args != null) {
@@ -217,10 +218,10 @@ OnFileLoadListener {
 
         mWallpaper = (ImageView)view.findViewById(R.id.wallpaper);
 
-        PreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(fragActivity)
                 .registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
 
-        activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        fragActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 
         mEditor.setDocumentChangedListener(this);
@@ -245,9 +246,12 @@ OnFileLoadListener {
         mMenuButton = (Button)view.findViewById(R.id.menubutton);
         applySetting();
 		mContent = ((LinearLayout)view.findViewById(R.id.content));
-		if (activity instanceof TextEditorActivity) {
+		if (fragActivity instanceof TextEditorActivity) {
 			mContent.removeView(mToolbarBase);
-			activity.getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+			fragActivity.getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+			view.findViewById(R.id.horizontalDivider).setVisibility(View.GONE);
+		} else {
+			view.findViewById(R.id.horizontalDivider).setVisibility(View.VISIBLE);
 		}
 		
 		if ( savedInstanceState == null ){
@@ -258,7 +262,7 @@ OnFileLoadListener {
         if (mBootSettings.screenOrientation.equals(SettingsActivity.ORI_AUTO) || mRotationControl){
             // Do nothing
         } else if (mBootSettings.screenOrientation.equals(SettingsActivity.ORI_PORTRAIT)){
-            activity.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
+            fragActivity.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
             if ( getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT ){
                 if ( savedInstanceState == null ){
                     mRebootingForConfigChange = true;
@@ -266,7 +270,7 @@ OnFileLoadListener {
                 }
             }
         } else if (mBootSettings.screenOrientation.equals(SettingsActivity.ORI_LANDSCAPE)){
-            activity.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE );
+            fragActivity.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE );
             if ( getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE ){
                 if ( savedInstanceState == null ){
                     mRebootingForConfigChange = true;
@@ -413,7 +417,7 @@ OnFileLoadListener {
         mMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.openOptionsMenu();
+                fragActivity.openOptionsMenu();
             }
         });
 
@@ -444,7 +448,7 @@ OnFileLoadListener {
                             }
                         }
                     } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-					ContentResolver cr = activity.getContentResolver();
+					ContentResolver cr = fragActivity.getContentResolver();
                         Cursor cur = null;
                         try {
                             cur = cr.query(data, null, null, null, null);
@@ -478,7 +482,7 @@ OnFileLoadListener {
                     // mLine = extra.getInt("line");
                     // }
                     if (path != null) {
-					mTask = new TextLoadTask(activity, this, mLine,mSettings.suppressMessage);
+					mTask = new TextLoadTask(fragActivity, this, mLine,mSettings.suppressMessage);
                         mTask.execute(path, mSettings.CharsetOpen);
                     }
                 }
@@ -502,7 +506,7 @@ OnFileLoadListener {
 //                    mEditor.setText(contents);
                 } else {
                     if (path != null) {
-                        mTask = new TextLoadTask(activity, this, mLine,mSettings.suppressMessage);
+                        mTask = new TextLoadTask(fragActivity, this, mLine,mSettings.suppressMessage);
                         mTask.execute(path.toString(), mSettings.CharsetOpen);
                     }
                 }
@@ -511,7 +515,7 @@ OnFileLoadListener {
                 if ( SettingsActivity.STARTUP_LASTFILE.equals( mSettings.startupAction) ) {
                     File[] fl = getHistory();
                     if (fl != null) {
-                        mTask = new TextLoadTask(activity, this, -1,mSettings.suppressMessage);
+                        mTask = new TextLoadTask(fragActivity, this, -1,mSettings.suppressMessage);
                         mTask.execute(fl[0].getPath(), mSettings.CharsetOpen);
                     }
                 }else if ( SettingsActivity.STARTUP_HISTORY.equals( mSettings.startupAction) ){
@@ -539,7 +543,7 @@ OnFileLoadListener {
             mEditor.setChanged(mInstanceState.changed);
 			//Log.d(TAG, "onViewCreated isChanged " + mEditor.isChanged());
         }
-        SettingsActivity.showWelcomeMessage(activity);
+        SettingsActivity.showWelcomeMessage(fragActivity);
         if (savedInstanceState==null){
             mHandler.postDelayed(mShowImeProc, 1000);
         }
@@ -555,7 +559,7 @@ OnFileLoadListener {
 			File file = new File(fPathFromFrag);
 			if (file.exists() && file.isFile()) {
 				mProcNew.run();
-				mTask = new TextLoadTask(activity, this, mLine,mSettings.suppressMessage);
+				mTask = new TextLoadTask(fragActivity, this, mLine,mSettings.suppressMessage);
 				mTask.execute(currentPathTitle, mSettings.CharsetOpen);
 			}
 		}
@@ -573,21 +577,21 @@ OnFileLoadListener {
 //		}
 //	}
 	
-	public void onAttach(android.content.Context context) {
-		Log.d(TAG, "onAttach " + currentPathTitle + ", " + context);
-		super.onAttach(context);
-	}
+//	public void onAttach(android.content.Context context) {
+//		Log.d(TAG, "onAttach " + currentPathTitle + ", " + context);
+//		super.onAttach(context);
+//	}
 	
-	public void onAttachFragment(Fragment fragment) {
-		Log.d(TAG, "onAttachFragment " + currentPathTitle + ", " + fragment);
-		super.onAttachFragment(fragment);
-	}
+//	public void onAttachFragment(Fragment fragment) {
+//		Log.d(TAG, "onAttachFragment " + currentPathTitle + ", " + fragment);
+//		super.onAttachFragment(fragment);
+//	}
 	
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy " + toString());
         super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(fragActivity)
                 .unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
         if ( mWallpaperBmp!=null ){
             mWallpaperBmp.recycle();
@@ -598,7 +602,7 @@ OnFileLoadListener {
 	public void onStart() {
 		Log.d(TAG, "onStart " + toString());
         super.onStart();
-		activity = getActivity();
+		fragActivity = getActivity();
 	}
 	
 	@Override
@@ -632,7 +636,7 @@ OnFileLoadListener {
             mEditor.setText(ss);
             mEditor.setChanged(false);
 
-            SharedPreferences sp = activity.getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
+            SharedPreferences sp = fragActivity.getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
             String sel = sp.getString(filename, "-1,-1");
 
             if (offset != -1) {
@@ -678,7 +682,7 @@ OnFileLoadListener {
                 mEditor.showIme(false);
                 mHandler.removeCallbacks(mShowImeProc);
             }
-            KeywordHighlght.loadHighlight(activity,filename);
+            KeywordHighlght.loadHighlight(fragActivity,filename);
         	//onPrepareOptionsMenu(activity.menu);
 		}
     }
@@ -774,7 +778,7 @@ OnFileLoadListener {
                     }
                 }
             } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-                ContentResolver cr = activity.getContentResolver();
+                ContentResolver cr = fragActivity.getContentResolver();
                 Cursor cur = cr.query(data, null, null, null, null);
                 if (cur != null) {
                     cur.moveToFirst();
@@ -877,7 +881,7 @@ OnFileLoadListener {
             int selstart = mEditor.getSelectionStart();
             int selend = mEditor.getSelectionEnd();
 
-            SharedPreferences sp = activity.getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
+            SharedPreferences sp = fragActivity.getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
             Editor editor = sp.edit();
             editor.putString(mInstanceState.filename, String.format("%d,%d,%d", selstart, selend,
                     System.currentTimeMillis()));
@@ -941,8 +945,8 @@ OnFileLoadListener {
                 return true;
             }
 //            if (confirmSave(mProcQuit)) {
-			if (activity instanceof TextEditorActivity) {
-				((TextEditorActivity)activity).quit();
+			if (fragActivity instanceof TextEditorActivity) {
+				((TextEditorActivity)fragActivity).quit();
                 return true;
             }
         }
@@ -1039,7 +1043,7 @@ OnFileLoadListener {
                 lb = "\r\n";
             }
 
-            new TextSaveTask(activity, null, new Runnable() {
+            new TextSaveTask(fragActivity, null, new Runnable() {
                 public void run() {
                     saveHistory();
 					saved++;
@@ -1058,7 +1062,7 @@ OnFileLoadListener {
     }
 
     private void saveAs() {
-        Intent intent = new Intent(activity, FileSelectorActivity.class);
+        Intent intent = new Intent(fragActivity, FileSelectorActivity.class);
         intent.putExtra(FileSelectorActivity.INTENT_MODE, FileSelectorActivity.MODE_SAVE);
         String filename = mInstanceState.filename;
 
@@ -1114,7 +1118,7 @@ OnFileLoadListener {
                     Bundle extras = data.getExtras();
                     String path = extras.getString(FileSelectorActivity.INTENT_FILEPATH);
                     String charset = extras.getString(FileSelectorActivity.INTENT_CHARSET);
-						mTask = new TextLoadTask(activity, this, -1,mSettings.suppressMessage);
+						mTask = new TextLoadTask(fragActivity, this, -1,mSettings.suppressMessage);
                     mTask.execute(path, charset);
                 }
                     break;
@@ -1224,20 +1228,21 @@ OnFileLoadListener {
 //        menuitem = menu.findItem(R.id.menu_help_donate);
 //        menuitem.setVisible( mSettings.donateCounter == 0 );
 
-        if ( JotaTextEditor.sHoneycomb ){
-	        menuitem = menu.findItem(R.id.menu_edit);
-			new IcsWrapper().setShowAsActionIfRoomWithText(menuitem);
-	        menuitem.setIcon(R.drawable.ic_menu_edit_ab);
-        }
-		if (activity instanceof TextEditorActivity) {
+//        if ( JotaTextEditor.sHoneycomb ){
+//	        menuitem = menu.findItem(R.id.menu_edit);
+//			new IcsWrapper().setShowAsActionIfRoomWithText(menuitem);
+//	        menuitem.setIcon(R.drawable.ic_menu_edit_ab);
+//        }
+		if (fragActivity instanceof TextEditorActivity) {
 			if (!(mToolbarBase.getChildAt(0) instanceof ImageView)) {
-				ImageView iv = new ImageView(activity);
+				final ImageView iv = new ImageView(fragActivity);
 				iv.setImageResource(R.drawable.textpng);
 				iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
 				mToolbarBase.addView(iv, 0);
 			}
-			activity.getActionBar().setCustomView(mToolbarBase);
-			activity.getActionBar().setBackgroundDrawable(getResources().getDrawable((R.drawable.list_item_background_normal)));
+			final ActionBar actionBar = fragActivity.getActionBar();
+			actionBar.setCustomView(mToolbarBase);
+			actionBar.setBackgroundDrawable(getResources().getDrawable((R.drawable.list_item_background_normal)));
 		}
         super.onPrepareOptionsMenu(menu);//return 
     }
@@ -1256,7 +1261,7 @@ OnFileLoadListener {
             }
             return true;
             case R.id.menu_preferences: {
-					Intent intent = new Intent(activity,SettingsActivity.class);
+					Intent intent = new Intent(fragActivity,SettingsActivity.class);
                 intent.putExtra( SettingsActivity.EXTRA_CATEGORY, SettingsActivity.CAT_TOP);
                 startActivity(intent);
             }
@@ -1299,8 +1304,8 @@ OnFileLoadListener {
                 return true;
             case R.id.menu_file_quit: {
                 //confirmSave(mProcQuit);//
-				if (activity instanceof TextEditorActivity) {
-					((TextEditorActivity)activity).quit();
+				if (fragActivity instanceof TextEditorActivity) {
+					((TextEditorActivity)fragActivity).quit();
 				}
             }
                 return true;
@@ -1470,8 +1475,8 @@ OnFileLoadListener {
                 mProcInsert.run();
                 return true;
             case jp.sblo.pandora.jota.text.TextView.FUNCTION_QUIT:
-				if (activity instanceof TextEditorActivity) {
-					((TextEditorActivity)activity).quit();
+				if (fragActivity instanceof TextEditorActivity) {
+					((TextEditorActivity)fragActivity).quit();
 				}
                 //confirmSave(mProcQuit);//
                 return true;
@@ -1494,7 +1499,7 @@ OnFileLoadListener {
                 confirmSave(mProcSL4AByIntent);
                 return true;
             case jp.sblo.pandora.jota.text.TextView.FUNCTION_MENU:
-                activity.openOptionsMenu();
+                fragActivity.openOptionsMenu();
                 return true;
 
         }
@@ -1525,7 +1530,7 @@ OnFileLoadListener {
 
     private Runnable mProcOpen = new Runnable() {
         public void run() {
-            Intent intent = new Intent(activity, FileSelectorActivity.class);
+            Intent intent = new Intent(fragActivity, FileSelectorActivity.class);
             intent.putExtra(FileSelectorActivity.INTENT_MODE, FileSelectorActivity.MODE_OPEN);
             File[] fl = getHistory();
             if (fl != null) {
@@ -1571,7 +1576,7 @@ OnFileLoadListener {
 
     private Runnable mProcReopen = new Runnable() {
         public void run() {
-            mTask = new TextLoadTask(activity, TextFrag.this, mLine,mSettings.suppressMessage);
+            mTask = new TextLoadTask(fragActivity, TextFrag.this, mLine,mSettings.suppressMessage);
             mTask.execute(mNewFilename, mSettings.CharsetOpen);
             mNewFilename = null;
         }
@@ -1612,16 +1617,16 @@ OnFileLoadListener {
                     item.sub = fl[i].getPath();
                     items.add(item);
                 }
-                ListAdapter adapter = new DialogListAdapter(activity, R.layout.dialog_list_row,
+                ListAdapter adapter = new DialogListAdapter(fragActivity, R.layout.dialog_list_row,
                         R.id.txtMain, items);
-                new AlertDialog.Builder(activity).setTitle(R.string.history).setAdapter(adapter,
+                new AlertDialog.Builder(fragActivity).setTitle(R.string.history).setAdapter(adapter,
                         this).show();
             }
         }
 
         public void onClick(DialogInterface dialog, int which) {
             CharSequence path = fl[which].getPath();
-            mTask = new TextLoadTask(activity, TextFrag.this, -1,mSettings.suppressMessage);
+            mTask = new TextLoadTask(fragActivity, TextFrag.this, -1,mSettings.suppressMessage);
             mTask.execute(path.toString(), mSettings.CharsetOpen);
         }
 
@@ -1646,7 +1651,7 @@ OnFileLoadListener {
                     view = convertView;
                     holder = (ViewHolder)view.getTag();
                 } else {
-                    view = View.inflate(activity, R.layout.dialog_list_row, (ViewGroup)null);
+                    view = View.inflate(fragActivity, R.layout.dialog_list_row, (ViewGroup)null);
 
                     holder = new ViewHolder();
                     holder.main = (TextView)view.findViewById(R.id.txtMain);
@@ -1675,7 +1680,7 @@ OnFileLoadListener {
             long lastaccess;
         }
 
-        SharedPreferences sp = activity.getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
+        SharedPreferences sp = fragActivity.getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
         ArrayList<FileInfo> fl = new ArrayList<FileInfo>();
         fl.removeAll(fl);
         Map<String, ?> map = sp.getAll();
@@ -1747,7 +1752,7 @@ OnFileLoadListener {
                     }
                 }
             }
-            new AlertDialog.Builder(activity).setTitle(R.string.charset).setItems(items, this)
+            new AlertDialog.Builder(fragActivity).setTitle(R.string.charset).setItems(items, this)
                     .show();
         }
 
@@ -1765,7 +1770,7 @@ OnFileLoadListener {
             int lb = mInstanceState.linebreak;
             items[lb] = "*" + items[lb];
 
-            new AlertDialog.Builder(activity).setTitle(R.string.linebreak).setItems(items, this)
+            new AlertDialog.Builder(fragActivity).setTitle(R.string.linebreak).setItems(items, this)
                     .show();
         }
 
@@ -1780,7 +1785,7 @@ OnFileLoadListener {
         public void run() {
             items = getResources().getStringArray(R.array.CreateShortcut);
 
-            new AlertDialog.Builder(activity).setTitle(R.string.menu_file_shortcut).setItems(
+            new AlertDialog.Builder(fragActivity).setTitle(R.string.menu_file_shortcut).setItems(
                     items, this).show();
         }
 
@@ -1791,7 +1796,7 @@ OnFileLoadListener {
                     "text/plain");
 
             if (which == 1) {
-                shortcutIntent.setPackage(activity.getApplicationInfo().packageName);
+                shortcutIntent.setPackage(fragActivity.getApplicationInfo().packageName);
             }
 			if (mInstanceState.filename != null && mInstanceState.filename.startsWith("/")) {
 				String name = new File(mInstanceState.filename).getName();
@@ -1799,13 +1804,13 @@ OnFileLoadListener {
 				Intent intent = new Intent();
 				intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 				intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
-				Parcelable iconResource = Intent.ShortcutIconResource.fromContext(activity,
+				Parcelable iconResource = Intent.ShortcutIconResource.fromContext(fragActivity,
 																				  R.drawable.icon_note);
 				intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
 				intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-				activity.sendBroadcast(intent);
+				fragActivity.sendBroadcast(intent);
 			} else {
-				Toast.makeText(activity, "File is not existed", Toast.LENGTH_SHORT).show();//
+				Toast.makeText(fragActivity, "File is not existed", Toast.LENGTH_SHORT).show();//
 			}
         }
     };
@@ -1815,7 +1820,7 @@ OnFileLoadListener {
         public void run() {
             WordCounter.Result result = WordCounter.count(mEditor);
 
-            TextView tv = new TextView(activity);
+            TextView tv = new TextView(fragActivity);
 
             String filename = mInstanceState.filename;
             if ( filename == null ){
@@ -1830,7 +1835,7 @@ OnFileLoadListener {
 
             tv.setText(resstr);
 
-            new AlertDialog.Builder(activity).setMessage(R.string.menu_file_property).setView(tv)
+            new AlertDialog.Builder(fragActivity).setMessage(R.string.menu_file_property).setView(tv)
                     .setPositiveButton(R.string.label_ok, null).show();
         }
 
@@ -1855,7 +1860,7 @@ OnFileLoadListener {
                         endsel = temp;
                     }
                     if (endsel - startsel > jp.sblo.pandora.jota.text.TextView.MAX_PARCELABLE) {
-                        Toast.makeText(activity, R.string.toast_overflow_of_limit,
+                        Toast.makeText(fragActivity, R.string.toast_overflow_of_limit,
                                 Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -1864,7 +1869,7 @@ OnFileLoadListener {
                 intent.putExtra("replace_key", substr);
 
                 try {
-                    Intent pickIntent = new Intent(activity, ActivityPicker.class);
+                    Intent pickIntent = new Intent(fragActivity, ActivityPicker.class);
                     pickIntent.putExtra(Intent.EXTRA_INTENT, intent);
                     mReservedIntent = intent;
                     mReservedRequestCode = REQUESTCODE_MUSHROOM;
@@ -1895,7 +1900,7 @@ OnFileLoadListener {
                     endsel = temp;
                 }
                 if (endsel - startsel > jp.sblo.pandora.jota.text.TextView.MAX_PARCELABLE) {
-                    Toast.makeText(activity, R.string.toast_overflow_of_limit, Toast.LENGTH_LONG)
+                    Toast.makeText(fragActivity, R.string.toast_overflow_of_limit, Toast.LENGTH_LONG)
                             .show();
                     return;
                 }
@@ -1909,7 +1914,7 @@ OnFileLoadListener {
                     if (text.length() <= jp.sblo.pandora.jota.text.TextView.MAX_PARCELABLE) {
                         intent.putExtra(Intent.EXTRA_TEXT, text.toString());
                     } else {
-                        Toast.makeText(activity, R.string.toast_overflow_of_limit,
+                        Toast.makeText(fragActivity, R.string.toast_overflow_of_limit,
                                 Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -1949,9 +1954,9 @@ OnFileLoadListener {
 
         @Override
         public void run() {
-            mEditText = (EditText)activity.getLayoutInflater().inflate(R.layout.jump, null);
+            mEditText = (EditText)fragActivity.getLayoutInflater().inflate(R.layout.jump, null);
 
-            final AlertDialog dialog = new AlertDialog.Builder(activity).setTitle(
+            final AlertDialog dialog = new AlertDialog.Builder(fragActivity).setTitle(
                     R.string.menu_edit_jump).setMessage(R.string.message_edit_jump).setView(
                     mEditText).setPositiveButton(R.string.label_ok,
                     new DialogInterface.OnClickListener() {
@@ -2013,7 +2018,7 @@ OnFileLoadListener {
                     endsel = temp;
                 }
                 if (endsel - startsel > jp.sblo.pandora.jota.text.TextView.MAX_PARCELABLE) {
-                    Toast.makeText(activity, R.string.toast_overflow_of_limit, Toast.LENGTH_LONG)
+                    Toast.makeText(fragActivity, R.string.toast_overflow_of_limit, Toast.LENGTH_LONG)
                             .show();
                     return;
                 }
@@ -2021,10 +2026,10 @@ OnFileLoadListener {
                 searchWord(substr);
             } else {
                 final EditText mInput;
-                final View layout = View.inflate(activity, R.layout.input_search_word, null);
+                final View layout = View.inflate(fragActivity, R.layout.input_search_word, null);
                 mInput = (EditText)layout.findViewById(R.id.search_word);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(fragActivity);
                 builder.setTitle(getString(R.string.menu_search_byintent));
                 builder.setCancelable(true);
                 builder.setPositiveButton(getString(R.string.label_ok),
@@ -2060,7 +2065,7 @@ OnFileLoadListener {
             intent.putExtra(SearchManager.QUERY, substr);
 
             try {
-                Intent pickIntent = new Intent(activity, ActivityPicker.class);
+                Intent pickIntent = new Intent(fragActivity, ActivityPicker.class);
                 pickIntent.putExtra(Intent.EXTRA_INTENT, intent);
                 mReservedIntent = intent;
                 mReservedRequestCode = REQUESTCODE_SEARCHBYINTENT;
@@ -2183,7 +2188,7 @@ OnFileLoadListener {
                     endsel = temp;
                 }
                 if (endsel - startsel > jp.sblo.pandora.jota.text.TextView.MAX_PARCELABLE) {
-                    Toast.makeText(activity, R.string.toast_overflow_of_limit, Toast.LENGTH_LONG)
+                    Toast.makeText(fragActivity, R.string.toast_overflow_of_limit, Toast.LENGTH_LONG)
                             .show();
                     return;
                 }
@@ -2207,8 +2212,8 @@ OnFileLoadListener {
 
     private Runnable mProcShareScreenshot = new Runnable() {
         public void run() {
-            final View view = activity.getWindow().getDecorView();
-            InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            final View view = fragActivity.getWindow().getDecorView();
+            InputMethodManager imm = (InputMethodManager)fragActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(),0);
             mHandler.postDelayed( new Runnable() {
                 @Override
@@ -2217,7 +2222,7 @@ OnFileLoadListener {
                     Bitmap bitmap=view.getDrawingCache();
                     if (bitmap!=null){
                         try{
-                            ContentResolver cr = activity.getContentResolver();
+                            ContentResolver cr = fragActivity.getContentResolver();
                             String url = MediaStore.Images.Media.insertImage(cr, bitmap, "Jota screen shot", "Jota screen shot");
                             Uri U = Uri.parse(url);
 
@@ -2283,7 +2288,7 @@ OnFileLoadListener {
             mProcOnSearchResult.search();
             return;
         }
-        new Search(activity, searchword, mEditor.getText(), mSettings.re, mSettings.ignorecase,
+        new Search(fragActivity, searchword, mEditor.getText(), mSettings.re, mSettings.ignorecase,
                 mProcOnSearchResult);
     }
 
@@ -2292,7 +2297,7 @@ OnFileLoadListener {
             mProcReplace.run();
             return;
         }
-        new Search(activity, searchword, mEditor.getText(), mSettings.re, mSettings.ignorecase,
+        new Search(fragActivity, searchword, mEditor.getText(), mSettings.re, mSettings.ignorecase,
                 mProcOnSearchResult);
     }
 
@@ -2334,7 +2339,7 @@ OnFileLoadListener {
 
             } else { // not on the word
             }
-            activity.runOnUiThread(new Runnable() {
+            fragActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (mSearchForward) {
@@ -2348,7 +2353,7 @@ OnFileLoadListener {
     };
 
     private void doReplaceAll(String searchword) {
-        new Search(activity, searchword, mEditor.getText(), mSettings.re, mSettings.ignorecase,
+        new Search(fragActivity, searchword, mEditor.getText(), mSettings.re, mSettings.ignorecase,
                 mProcOnReplaceAllResult);
     }
 
@@ -2538,7 +2543,7 @@ OnFileLoadListener {
         mSharedPreferenceChanged=false;
         editor.setAutoCapitalize(mBootSettings.autoCapitalize);
 
-        mSettings = SettingsActivity.readSettings(activity);
+        mSettings = SettingsActivity.readSettings(fragActivity);
         editor.setNameDirectIntent(mSettings.intentname);
         editor.setTypeface(mSettings.fontface);
         editor.setTextSize(mSettings.fontsize);
@@ -2569,7 +2574,7 @@ OnFileLoadListener {
         }
 
         if ( TextUtils.isEmpty(wallpaper) ){
-			if (activity instanceof ExplorerActivity) {
+			if (fragActivity instanceof ExplorerActivity) {
 				editor.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 				editor.setTextColor(ExplorerActivity.TEXT_COLOR);
 			} else if (SettingsActivity.THEME_DEFAULT.equals(mSettings.theme)) {
@@ -2650,6 +2655,7 @@ OnFileLoadListener {
         mEdtReplaceWord.setDontUseSoftkeyWithHardkey( mSettings.specialkey_desirez );
         mEdtReplaceWord.enableBlinkCursor(mSettings.blinkCursor);
         boolean toolbarVisible = mSettings.showToolbar&&(!landscape || !mSettings.toolbarHideLandscape);
+		//Log.d(TAG, "mSettings.showToolbar " + mSettings.showToolbar + ", " + landscape + ", " + mSettings.toolbarHideLandscape);
         mToolbarBase.setVisibility(toolbarVisible?View.VISIBLE:View.GONE);
         editor.setForceScroll(mSettings.forceScroll);
         editor.setCtrlPreIme(mSettings.ctrlPreIme);
@@ -2665,13 +2671,13 @@ OnFileLoadListener {
     }
 
     void applyBootSetting() {
-        mBootSettings = SettingsActivity.readBootSettings(activity);
+        mBootSettings = SettingsActivity.readBootSettings(fragActivity);
 
         if ( mBootSettings.hideTitleBar) {
             if ( JotaTextEditor.sIceCreamSandwich ){
-                activity.setTheme(R.style.Theme_Holo_NoTitleBar);
+                fragActivity.setTheme(R.style.Theme_Holo_NoTitleBar);
             }else{
-                activity.setTheme(R.style.Theme_NoTitleBar);
+                fragActivity.setTheme(R.style.Theme_NoTitleBar);
             }
         }
 
@@ -2685,7 +2691,7 @@ OnFileLoadListener {
 		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 		mEditor.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 		mEditor.setTextColor(ExplorerActivity.TEXT_COLOR);
-		if (!(activity instanceof TextEditorActivity)) {
+		if (!(fragActivity instanceof TextEditorActivity)) {
 			mToolbarBase.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 			mToolbar.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 		}
@@ -2695,7 +2701,7 @@ OnFileLoadListener {
     public void onResume() {
         Log.d(TAG, "onResume " + toString());
         super.onResume();
-		activity =  this.getActivity();
+		fragActivity =  this.getActivity();
 		if (mSharedPreferenceChanged ){
             applySetting();
         }
@@ -2772,7 +2778,7 @@ OnFileLoadListener {
 //        String[] tblLabel = SettingsShortcutActivity.TBL_TOOLNAME;
         for (int i = 0; i < tblFunc.length; i++) {
             if (tblFunc[i] == f) {
-                return SettingsShortcutActivity.getToolbarLabel(activity, i);
+                return SettingsShortcutActivity.getToolbarLabel(fragActivity, i);
             }
         }
         return "";
@@ -2782,7 +2788,7 @@ OnFileLoadListener {
     private void initToolbar( ArrayList<Integer> toolbars , boolean bigButton)
     {
         mToolbar.removeAllViews();
-		if (!(activity instanceof TextEditorActivity)) {
+		if (!(fragActivity instanceof TextEditorActivity)) {
 			mToolbarBase.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 			mToolbar.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 			mMenuButton.setBackgroundResource(R.drawable.ripple);
@@ -2791,90 +2797,73 @@ OnFileLoadListener {
 		}
 		
 		Button button;
-		//int den;
+		ImageView iv = null;
 		final int density = (int)getResources().getDisplayMetrics().density;
-		final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 		for( Integer function : toolbars ){
             if ( bigButton ){
-                button = new Button(activity);//, null, com.android.internal.R.attr.buttonStyle);
+                button = new Button(fragActivity);//, null, com.android.internal.R.attr.buttonStyle);
                 button.setTextSize(20);
-                button.setBackgroundResource(R.drawable.ripple);//btn_default );
-				button.setPadding(0, 5 * density, 0, 0);
-				lp.width = 80 * density;
+                button.setBackgroundResource( R.drawable.btn_default );
+				//button.setPadding(0, 5 * density, 0, 0);
             }else{
-                button = new Button(activity);//, null, R.style.Widget_Button_Small);
+                button = new Button(fragActivity);//, null, R.style.Widget_Button_Small);
                 button.setTextSize(16);
-                button.setBackgroundResource(R.drawable.ripple);//btn_default_small);
-				button.setPadding(0, 5 * density, 0, 0);
-				lp.width = 80 * density;
+                button.setBackgroundResource(R.drawable.btn_default_small);
+				//button.setPadding(0, 5 * density, 0, 0);
             }
-			button.setGravity(Gravity.CENTER);
-			//den = 80 * density;
 			
-			lp.height = LayoutParams.WRAP_CONTENT;
-            lp.gravity = Gravity.CENTER;
-			final String toolname = SettingsShortcutActivity.TBL_TOOLNAME[function];
-			if ("Select All".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_select_all_36dp, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
-			} else if ("Undo".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_undo, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
-			} else if ("Copy".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_copy, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
-			} else if (" Cut ".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_cut, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
-			} else if ("Paste".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_paste, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
-			} else if ("Save".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_save, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
-			} else if ("Search".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_search, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
-			} else if ("Redo".equals(toolname)) {
-				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_action_redo, 0, 0);
-				button.setTextSize(1);
-				button.setText("");
-				
+			if (!(fragActivity instanceof TextEditorActivity)) {
+				final String toolname = SettingsShortcutActivity.TBL_TOOLNAME[function];
+				iv = new ImageView(fragActivity);
+				iv.setBackgroundResource(R.drawable.ripple);
+				iv.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				if ("Select All".equals(toolname)) {
+					lp.width = 60 * density;
+					iv.setImageResource(R.drawable.ic_select_all_36dp);
+					button = null;
+				} else if ("Undo".equals(toolname)) {
+					lp.width = 60 * density;
+					iv.setImageResource(R.drawable.ic_action_undo);
+					button = null;
+				} else if ("Copy".equals(toolname)) {
+					lp.width = 60 * density;;
+					iv.setImageResource(R.drawable.ic_action_copy);
+					button = null;
+				} else if (" Cut ".equals(toolname)) {
+					lp.width = 60 * density;
+					iv.setImageResource(R.drawable.ic_action_cut);
+					button = null;
+				} else if ("Paste".equals(toolname)) {
+					lp.width = 60 * density;
+					iv.setImageResource(R.drawable.ic_action_paste);
+					button = null;
+				} else if ("Save".equals(toolname)) {
+					lp.width = 60 * density;
+					iv.setImageResource(R.drawable.ic_action_save);
+					button = null;
+				} else if ("Search".equals(toolname)) {
+					lp.width = 60 * density;
+					iv.setImageResource(R.drawable.ic_action_search);
+					button = null;
+				} else if ("Redo".equals(toolname)) {
+					lp.width = 60 * density;
+					iv.setImageResource(R.drawable.ic_action_redo);
+					button = null;
+				} else {
+					button.setTextColor(ExplorerActivity.TEXT_COLOR);
+					button.setText(getToolbarLabel(function));
+					iv = null;
+				}
 			} else {
-				lp.width = 80 * density;
-				button.setPadding(0, 0, 0, 0);
-				//button.setTextColor(ExplorerActivity.TEXT_COLOR);
 				button.setText(getToolbarLabel(function));
-			}
-			if (!(activity instanceof TextEditorActivity)) {
-				button.setTextColor(ExplorerActivity.TEXT_COLOR);
-				if (button.getCompoundDrawables().length > 0) {
-					button.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-				}
-			} else {
 				button.setTextColor(0xff404040);
-				if (button.getCompoundDrawables().length > 0) {
-					button.getCompoundDrawables()[1].setColorFilter(0xff404040, PorterDuff.Mode.SRC_IN);
-				}
 			}
-            button.setTag(function);
-            button.setOnClickListener(mOnClickToolbar);
-            button.setFocusable(false);
-            mToolbar.addView(button, lp);
+			View v = button != null ? button : iv;
+            v.setTag(function);
+            v.setOnClickListener(mOnClickToolbar);
+            v.setFocusable(false);
+            mToolbar.addView(v, lp);
         }
 
     }

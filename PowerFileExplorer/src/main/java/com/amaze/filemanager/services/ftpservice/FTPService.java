@@ -162,7 +162,7 @@ public class FTPService extends Service implements Runnable {
             File file;
             try {
 
-                InputStream stream = getResources().openRawResource(R.raw.explorer);
+                InputStream stream = getResources().openRawResource(R.raw.key);
                 file = File.createTempFile("keystore.bks", "");
                 FileOutputStream outputStream = new FileOutputStream(file);
                 FileUtil.is2OS(stream, outputStream);

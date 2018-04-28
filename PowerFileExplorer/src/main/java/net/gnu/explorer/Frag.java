@@ -1,6 +1,5 @@
 package net.gnu.explorer;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -46,6 +45,7 @@ import java.util.List;
 import net.gnu.androidutil.AndroidUtils;
 import net.gnu.texteditor.TextFrag;
 import android.view.MotionEvent;
+import com.thefinestartist.finestwebview.WebFragment;
 //import org.geometerplus.android.fbreader.FBReader;
 
 public abstract class Frag extends Fragment implements View.OnTouchListener, Cloneable, Serializable {
@@ -61,16 +61,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	protected FragmentActivity fragActivity;
 	public SharedPreferences sharedPref;
 	
-	ArrayList<LayoutElement> dataSourceL1 = new ArrayList<>();
-	ArrayList selectedInList1 = new ArrayList();
-	
 	public int accentColor, primaryColor, primaryTwoColor;
-
-	ViewGroup left;
-	ViewGroup right;
-
-	public ViewGroup commands;
-	public View horizontalDivider6;
 
 	public SlidingTabsFragment slidingTabsFragment;
 	
@@ -78,7 +69,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	private Toast toast = null;
     
 	public static final enum TYPE {
-		EMPTY, EXPLORER, SELECTION, TEXT, WEB, PDF, PHOTO, MEDIA, APP, TRAFFIC_STATS, PROCESS//FBReader, 
+		EMPTY, EXPLORER, SELECTION, TEXT, WEB, PDF, CHM, PHOTO, MEDIA, APP, TRAFFIC_STATS, PROCESS//FBReader, 
 		};
 
 	public static Frag getFrag(final SlidingTabsFragment sliding, final TYPE t, final String path) {
@@ -103,11 +94,14 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		} else if (t == TYPE.PDF) {
 			frag = new PdfFragment();
 		} else if (t == TYPE.WEB) {
-			frag = WebFragment.newInstance(path);
+			frag = new WebFragment();//.newInstance(path);
+			frag.currentPathTitle = path;
 //		} else if (t == TYPE.FBReader) {
 //			return new FBReader();
 		} else if (t == TYPE.MEDIA) {
 			frag = new MediaPlayerFragment();
+		} else if (t == TYPE.CHM) {
+			frag = new CHMFrag();
 		} else if (t == TYPE.PHOTO) {
 			frag = new PhotoFragment();
 		} else if (t == TYPE.TRAFFIC_STATS) {
@@ -230,30 +224,12 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
 		}
         status = (ViewGroup)view.findViewById(R.id.status);
-		horizontalDivider6 = view.findViewById(R.id.horizontalDivider6);
-		commands = (ViewGroup) view.findViewById(R.id.commands);
-
-		if (type == Frag.TYPE.EXPLORER && slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-			right = activity.right;
-			left = activity.left;
-			slidingTabsFragment.width = activity.leftSize;
-
-		} else {
-			if (activity != null) {
-				right = activity.left;
-				left = activity.right;
-				slidingTabsFragment.width = -activity.leftSize;
-			}
-		}
 		
-		if (commands != null) {
-			Button b;
-			final int no = commands.getChildCount();
-			for (int i = 0; i < no; i++) {
-				b = (Button) commands.getChildAt(i);
-				b.setTextColor(ExplorerActivity.TEXT_COLOR);
-				b.getCompoundDrawables()[1].setAlpha(0xff);
-				b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		if (activity != null) {
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//type == Frag.TYPE.EXPLORER && 
+				slidingTabsFragment.width = activity.balance;
+			} else {
+				slidingTabsFragment.width = -activity.balance;
 			}
 		}
 	}
@@ -267,7 +243,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 
 	@Override
 	public void onStart() {
-		Log.d(TAG, "onStart");
+		//Log.d(TAG, "onStart");
 		if ((fragActivity = getActivity()) instanceof ExplorerActivity) {
 			activity = (ExplorerActivity)fragActivity;
 		}
@@ -300,218 +276,5 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
         // Showing toast finally
         this.toast.show();
     }
-
-//	public void onClick(final View v) {
-//		Log.d(TAG, "onClick v " + v + ", " + selectedInList1.size());
-//		switch (v.getId()) {
-////			case R.id.history:
-////                //if (ma != null)
-////                    GeneralDialogCreation.showHistoryDialog(dataUtils, activity.getFutils(), this, activity.getAppTheme());
-////                break;
-////            case R.id.sethome:
-////                if (openMode != OpenMode.FILE && openMode != OpenMode.ROOT) {
-////                    Toast.makeText(activity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
-////                    break;
-////                }
-////                final MaterialDialog dialog = GeneralDialogCreation.showBasicDialog(activity,
-////																					new String[]{getResources().getString(R.string.questionset),
-////																						getResources().getString(R.string.setashome), getResources().getString(R.string.yes), getResources().getString(R.string.no), null});
-////                dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-////						@Override
-////						public void onClick(View v) {
-////							home = main.getCurrentPath();
-////							updatePaths(main.no);
-////							dialog.dismiss();
-////						}
-////					});
-////                dialog.show();
-////                break;
-////            case R.id.hiddenitems:
-////                GeneralDialogCreation.showHiddenDialog(activity.dataUtils, activity.getFutils(), (ContentFragment)this, activity.getAppTheme());
-////                break;
-////            case R.id.search:
-////                getAppbar().getSearchView().revealSearchView();
-////                break;
-//			case R.id.copys:
-//				activity.MOVE_PATH = null;
-//				ArrayList<BaseFile> copies = new ArrayList<>();
-//				for (LayoutElement le : selectedInList1) {//int i2 = 0; i2 < plist.size(); i2++
-//					copies.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i2))
-//				}
-//				activity.COPY_PATH = copies;
-//
-//				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {//type == -1
-//					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-//					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
-//					activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-//					activity.curExplorerFrag.updateDelPaste();
-//				} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {//type != -1
-//					activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-//					activity.curContentFrag.commands.setVisibility(View.VISIBLE);
-//					activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-//					activity.curContentFrag.updateDelPaste();
-//				}
-//				break;
-//			case R.id.cuts:
-//				activity.COPY_PATH = null;
-//				ArrayList<BaseFile> copie = new ArrayList<>();
-//				for (LayoutElement le : selectedInList1) {//int i3 = 0; i3 < plist.size(); i3++
-//					copie.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i3))
-//				}
-//				activity.MOVE_PATH = copie;
-//
-//				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
-//					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-//					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
-//					activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-//					activity.curExplorerFrag.updateDelPaste();
-//				} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {
-//					activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-//					activity.curContentFrag.commands.setVisibility(View.VISIBLE);
-//					activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-//					activity.curContentFrag.updateDelPaste();
-//				}
-//				break;
-//			case R.id.deletes_pastes:
-//				Log.d(TAG, "deletesPastes selectedInList1.size() " + selectedInList1.size());
-//				if (selectedInList1.size() > 0) {
-//					GeneralDialogCreation.deleteFilesDialog(activity, //getLayoutElements(),
-//															activity, selectedInList1, activity.getAppTheme());
-//
-//				} else {
-//					String path = currentPathTitle;
-//					ArrayList<BaseFile> arrayList = activity.COPY_PATH != null ? activity.COPY_PATH: activity.MOVE_PATH;
-//					boolean move = activity.MOVE_PATH != null;
-//					new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode)
-//						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
-//					//COPY_PATH = null;
-//					activity.MOVE_PATH = null;
-//				}
-//				break;
-////			case R.id.extract:
-////                activity.mainActivityHelper.extractFile(selectedInList1);
-////                break;
-//            case R.id.renames:
-//				final BaseFile f = ((LayoutElement)selectedInList1.get(0)).generateBaseFile();
-//				rename(f);
-//				break;
-////			case R.id.ex:
-////				activity.mainActivityHelper.extractFile(new File(((LayoutElement)selectedInList1.get(0)).path));
-////				break;
-//			case R.id.compresss:
-////				ArrayList<BaseFile> copies1 = new ArrayList<>(selectedInList1.size());
-////				for (LayoutElement le : selectedInList1) {
-////					copies1.add(le.generateBaseFile());
-////				}
-////				GeneralDialogCreation.showCompressDialog(activity, copies1, currentPathTitle);
-//				StringBuilder sb = new StringBuilder();
-//				for (LayoutElement le : selectedInList1) {
-//					sb.append(le.path).append("| ");
-//				}
-//				activity.compress(sb.toString(), currentPathTitle);
-//				break;
-//			case R.id.shares:
-//				if (selectedInList1.size() > 0) {
-//
-//					if (selectedInList1.size() > 100)
-//						Toast.makeText(activity, getResources().getString(R.string.share_limit),
-//									   Toast.LENGTH_SHORT).show();
-//					else {
-//						ArrayList<File> arrayList = new ArrayList<>(selectedInList1.size());
-//						//ArrayList<Integer> plist = adapter.getCheckedItemPositions();
-//						for (LayoutElement i : selectedInList1) {//plist
-//							arrayList.add(new File(i.path));//dataSourceL1.get(
-//						}
-//
-//						switch (dataSourceL1.get(0).getMode()) {
-//							case DROPBOX:
-//							case BOX:
-//							case GDRIVE:
-//							case ONEDRIVE:
-//								activity.getFutils().shareCloudFile(((LayoutElement)selectedInList1.get(0)).path,
-//																	dataSourceL1.get(0).getMode(), getContext());
-//								break;
-//							default:
-//								activity.getFutils().shareFiles(arrayList, activity, activity.getAppTheme(), accentColor);
-//								break;
-//						}
-//					}
-//				}
-//				break;
-//			case R.id.moreLeft:
-//			case R.id.moreRight:
-//				final MenuBuilder menuBuilder = new MenuBuilder(fragActivity);
-//				final MenuInflater inflater = new MenuInflater(fragActivity);
-//				inflater.inflate(R.menu.more_commands, menuBuilder);
-//				final MenuPopupHelper optionsMenu = new MenuPopupHelper(fragActivity , menuBuilder, v);
-//				optionsMenu.setForceShowIcon(true);
-//
-//				final int num= menuBuilder.size();
-//				Drawable icon;
-//				for (int i = 0; i < num; i++) {
-//					icon = menuBuilder.getItem(i).getIcon();
-//					if (icon != null) {
-//						icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-//					}
-//				}
-//
-//				menuBuilder.setCallback(new MenuBuilder.Callback() {
-//
-//						@Override
-//						public void onMenuModeChange(MenuBuilder p1) {
-//						}
-//
-//						@Override
-//						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
-//							Log.d(TAG, item.getTitle() + ".");
-//							switch (item.getItemId()) {
-//								case (R.id.shortcut):
-//									for (LayoutElement le : selectedInList1) {
-//										AndroidUtils.addShortcut(activity, le.bf.f);
-//									}
-//									break;
-//								case R.id.book:
-//									DataUtils dataUtils = DataUtils.getInstance();
-//									for (LayoutElement le : selectedInList1) {
-//										dataUtils.addBook(new String[]{le.name, le.path}, true);
-//									}
-//									activity.refreshDrawer();
-//									Toast.makeText(activity, activity.getResources().getString(R.string.bookmarksadded), Toast.LENGTH_LONG).show();
-//									break;
-//								case R.id.encrypts:
-//									break;
-//								case (R.id.hiddenfiles):
-//									for (LayoutElement le : selectedInList1) {
-//										activity.dataUtils.addHiddenFile(le.path);
-//										if (new File(le.path).isDirectory()) {
-//											File f1 = new File(le.path + "/.nomedia");
-//											if (!f1.exists()) {
-//												try {
-//													com.amaze.filemanager.filesystem.FileUtil.mkfile(f1, activity);
-//													//activity.mainActivityHelper.mkFile(new HFile(OpenMode.FILE, le.path), Frag.this);
-//												} catch (Exception e) {
-//													e.printStackTrace();
-//												}
-//											}
-//											Futils.scanFile(le.path, getActivity());
-//										}
-//									}
-//									updateList();
-//									break;
-//							}
-//							return true;
-//						}
-//					});
-//				optionsMenu.show();
-//				break;
-//			case R.id.infos:
-//				LayoutElement le = (LayoutElement) selectedInList1.get(0);
-//				GeneralDialogCreation.showPropertiesDialogWithPermissions(le.generateBaseFile(),
-//																		  le.permissions, activity, ThemedActivity.rootMode,
-//																		  activity.getAppTheme());
-//				break;
-//
-//		}
-//	};
 
 }

@@ -234,12 +234,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	private ActionBarDrawerToggle mDrawerToggle;
 	public boolean isDrawerLocked = false;
 	
-	String[] mOperationsSystem = { 
-//	"Split & Merge", "Compress", "Decompress",
-//		"Text to Speech", "Replace All", "Generate Word List",
-//		"Generate Index Title", "Compare Document...",
-//		"Batch Delete & Rename", "ProxyFragment", "Pdf to Image",
-		};
 	SlidingTabsFragment slideFrag = null;
 	public ContentFragment curContentFrag;
 	private int curContentFragIndex = 1;
@@ -309,7 +303,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	
 	static int density;// = (int)(4 * getResources().getDisplayMetrics().density);
 	LinkedList<String> historyList = new LinkedList<>();
-	int leftSize = 0; //0 =; -1 <; 1 >
+	int balance = 0; //0 =; -1 <; 1 >
 	private Resources resources;
 	
 	public static Shell.Interactive shellInteractive;
@@ -562,16 +556,16 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			}
 		}
 		
-		leftSize = AndroidUtils.getSharedPreference(this, "biggerequalpanel", leftSize);
-		Log.d(TAG, "action " + intent.getAction() + ", suffix " + suffix + ", mime " + mimes + ", multiFiles " + multiFiles + ", leftSize=" + leftSize);
+		balance = AndroidUtils.getSharedPreference(this, "biggerequalpanel", balance);
+		Log.i(TAG, "intent " + action + ", suffix " + suffix + ", mime " + mimes + ", multiFiles " + multiFiles + ", balance=" + balance + ", dir " + dir + ", Category " + intent.getCategories() + ", DataString " + intent.getDataString() + ", Type " + intent.getType() + ", Package " + intent.getPackage() + ", Scheme " + intent.getScheme() + ", Extras " + intent.getExtras() + ", Component " + intent.getComponent() + ", Flags " + intent.getFlags());
 		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)left.getLayoutParams();
-		if (leftSize > 0) {
+		if (balance > 0) {
 			params.weight = 1.0f;
 			left.setLayoutParams(params);
 			params = (LinearLayout.LayoutParams)right.getLayoutParams();
 			params.weight = 2.0f;
 			right.setLayoutParams(params);
-		} else if (leftSize < 0) {
+		} else if (balance < 0) {
 			params.weight = 2.0f;
 			left.setLayoutParams(params);
 			params = (LinearLayout.LayoutParams)right.getLayoutParams();
@@ -2337,7 +2331,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
         this.intent = intent;
         final String path = intent.getStringExtra(EXTRA_ABSOLUTE_PATH);
         final String action = intent.getAction();
-		Log.i(TAG, "onNewIntent " + action + ", path " + path + ", Category " + Util.collectionToString(intent.getCategories(), false, "\n") + ", DataString " + intent.getDataString() + ", Type " + intent.getType() + ", Package " + intent.getPackage() + ", Scheme " + intent.getScheme() + ", Extras " + intent.getExtras() + ", Component " + intent.getComponent() + ", Flags " + intent.getFlags());
 		if (path != null) {
 			final File file = new File(path);
 			if (file.isDirectory()) {
@@ -2554,26 +2547,33 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			if (mBackPressed + TIME_INTERVAL >= System.currentTimeMillis()) {
 				super.onBackPressed();
 			} else {
-				boolean remain = false;
 				if (slideFrag1Selected) {
-					remain = curContentFrag.back();
-				} else if (slideFrag2.getCurrentFragment() == curExplorerFrag) {
-					remain = curExplorerFrag.back();
+					final Frag currentFragment = slideFrag.getCurrentFragment();
+					if (currentFragment == curContentFrag) {
+						if (curContentFrag.searchMode) {
+							curContentFrag.searchButton();
+						} else if (!curContentFrag.back()) {
+							Toast.makeText(getBaseContext(), "Press one more time to exit",
+										   Toast.LENGTH_SHORT).show(); 
+						}
+					} else if (currentFragment == curSelectionFrag && curSelectionFrag.searchMode) {
+						curSelectionFrag.searchButton();
+					}
+				} else if (slideFrag2 != null) {
+					final Frag currentFragment = slideFrag2.getCurrentFragment();
+					if (currentFragment == curExplorerFrag) {
+						if (curExplorerFrag.searchMode) {
+							curExplorerFrag.searchButton();
+						} else if (!curExplorerFrag.back()) {
+							Toast.makeText(getBaseContext(), "Press one more time to exit",
+										   Toast.LENGTH_SHORT).show(); 
+						}
+					} else if (currentFragment == curSelectionFrag2 && curSelectionFrag2.searchMode) {
+						curSelectionFrag2.searchButton();
+					}
 				}
-
-				if (!remain) {
-					mBackPressed = System.currentTimeMillis();
-					Toast.makeText(getBaseContext(), "Press one more time to exit",
-								   Toast.LENGTH_SHORT).show(); 
-				}
+				mBackPressed = System.currentTimeMillis();
 			}
-		}
-		if (curContentFrag != null && curContentFrag.searchMode && curContentFrag.searchET.isFocused()) {
-			curContentFrag.searchButton();
-		} else if (curExplorerFrag != null && curExplorerFrag.searchMode && curExplorerFrag.searchET.isFocused()) {
-			curExplorerFrag.searchButton();
-		} else if (curSelectionFrag2 != null && curSelectionFrag2.searchMode && curSelectionFrag2.searchET.isFocused()) {
-			curSelectionFrag2.searchButton();
 		}
 	}
 

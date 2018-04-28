@@ -11,6 +11,7 @@ import com.amaze.filemanager.filesystem.BaseFile;
 import com.amaze.filemanager.utils.files.Futils;
 import com.amaze.filemanager.utils.OnProgressUpdate;
 import net.gnu.util.FileUtil;
+import net.gnu.util.Util;
 
 /**
  * @author Emmanuel
@@ -53,7 +54,7 @@ public class CountItemsOrAndSize extends AsyncTask<Void, Pair<Integer, Long>, St
 
             items = getText(x, folderSize, false);
         } else {
-            items = Formatter.formatFileSize(context, fileLength) + (" (" + fileLength + " "
+            items = Formatter.formatFileSize(context, fileLength) + (" (" + net.gnu.util.Util.nf.format(fileLength) + " "
                     + context.getResources().getQuantityString(R.plurals.bytes, (int) fileLength) //truncation is insignificant
                     + ")");
         }
@@ -69,7 +70,7 @@ public class CountItemsOrAndSize extends AsyncTask<Void, Pair<Integer, Long>, St
     }
 
     private String getText(int filesInFolder, long length, boolean loading) {
-        String numOfItems = (filesInFolder != 0? filesInFolder + " ":"")
+        String numOfItems = (filesInFolder != 0? net.gnu.util.Util.nf.format(filesInFolder) + " " : "")
                 + context.getResources().getQuantityString(R.plurals.items, filesInFolder) ;
 
         return numOfItems + "; " + (loading? ">":"") + Formatter.formatFileSize(context, length);

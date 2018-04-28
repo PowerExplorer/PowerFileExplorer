@@ -35,6 +35,7 @@ import net.gnu.explorer.*;
 import android.widget.*;
 import android.view.*;
 import net.gnu.texteditor.*;
+import net.gnu.explorer.Frag.TYPE;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -57,7 +58,7 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
 	//private static final String TAG = "SlidingHorizontalScroll";
 
 	public SlidingTabsFragment fra;
-	
+
 	private static final int TITLE_OFFSET_DIPS = 2;
     private static final int TAB_VIEW_PADDING_DIPS = 6;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
@@ -200,7 +201,7 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
 			if (mTabViewLayoutId != 0) {
                 // If there is a custom tab view layout id set, try and inflate it
                 tabView = LayoutInflater.from(context).inflate(mTabViewLayoutId, mTabStripLinearLayout,
-																	false);
+															   false);
                 tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
             }
 
@@ -224,7 +225,7 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
             tabView.setOnClickListener(tabClickListener);
 
 			tabTitleView.setTextColor(ExplorerActivity.TEXT_COLOR);
-			
+
             mTabStripLinearLayout.addView(tabView);
         }
 		mTabStripLinearLayout.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
@@ -333,22 +334,19 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
 	private class TabClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-//            for (int i = 1; i < mTabStripLinearLayout.getChildCount()-1; i++) {
-//			//for (int i = 0; i < mTabStripLinearLayout.getChildCount(); i++) {
-//                if (v == mTabStripLinearLayout.getChildAt(i)) {
-//                    mViewPager.setCurrentItem(i, true);
-//                    return;
-//                }
-//            }
+
 			final int childCount = mTabStripLinearLayout.getChildCount();
 			final int currentItem = mViewPager.getCurrentItem();
 			for (int i = 0; i < childCount; i++) {
 				if (v == mTabStripLinearLayout.getChildAt(i)) {
 					if (currentItem != i) {
 						mViewPager.setCurrentItem(i, true);
-					} else if (fra.tabClicks != null) {
+					} else {
 						final SlidingTabsFragment.PagerAdapter adapter = (SlidingTabsFragment.PagerAdapter)mViewPager.getAdapter();
-						fra.tabClicks.click(getContext(), adapter, fra, v, adapter.getItem(currentItem).type);
+						final Frag.TYPE type = adapter.getItem(currentItem).type;
+						if (fra.tabClicks != null) {
+							fra.tabClicks.click(getContext(), adapter, fra, v, type);
+						}
 					}
 					return;
 				}
