@@ -337,8 +337,9 @@ public class Futils {
         String type = MimeTypes.getMimeType(f);
         if(type!=null && type.trim().length()!=0 && !type.equals("*/*")) {
 
-            Uri uri=fileToContentUri(c, f);
-            if(uri==null) uri=Uri.fromFile(f);
+            //Uri uri=fileToContentUri(c, f);
+            //if(uri==null) 
+			Uri uri=Uri.fromFile(f);
             intent.setDataAndType(uri, type);
 
             Intent startintent;
@@ -729,17 +730,17 @@ public class Futils {
         return b;
     }
 
-    public boolean deletedirectory(File f){
-        boolean b=true;
-        for(File file:f.listFiles()){
-            boolean c;
-            if(file.isDirectory()){c=deletedirectory(file);}
-            else {c=file.delete();}
-            if(!c)b=false;
-
-        }if(b)b=f.delete();
-        return b;
-    }
+//    public boolean deletedirectory(File f){
+//        boolean b=true;
+//        for(File file:f.listFiles()){
+//            boolean c;
+//            if(file.isDirectory()){c=deletedirectory(file);}
+//            else {c=file.delete();}
+//            if(!c)b=false;
+//
+//        }if(b)b=f.delete();
+//        return b;
+//    }
 
     public static boolean canListFiles(File f) {
         try {
@@ -813,9 +814,10 @@ public class Futils {
         intent.setDataAndType(Uri.fromFile(f), MimeTypes.getMimeType(f));
         String s="";
         ResolveInfo rii = c.getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        if (rii !=  null && rii.activityInfo != null) s = rii.activityInfo.packageName;
+        if (rii !=  null && rii.activityInfo != null) 
+			s = rii.activityInfo.packageName;
 
-        return s.equals("com.amaze.filemanager") || rii == null;
+        return s.equals("net.gnu.explorer") || rii == null;
     }
 
     /**

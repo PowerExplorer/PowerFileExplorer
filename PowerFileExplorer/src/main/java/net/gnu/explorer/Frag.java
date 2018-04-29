@@ -225,7 +225,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		}
         status = (ViewGroup)view.findViewById(R.id.status);
 		
-		if (activity != null) {
+		if (activity != null && slidingTabsFragment != null) {
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//type == Frag.TYPE.EXPLORER && 
 				slidingTabsFragment.width = activity.balance;
 			} else {

@@ -92,6 +92,7 @@ import android.os.Parcelable;
 import android.os.Parcel;
 import com.ToxicBakery.viewpager.transforms.DrawFromBackTransformer;
 import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
+import com.amaze.filemanager.utils.MainActivityHelper;
 
 public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListener, OnClickListener {//OnTouchListener, 
 
@@ -675,10 +676,10 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 				case R.id.removeButton:
 					ArrayList<LayoutElement> ele = new ArrayList<LayoutElement>();
 					ele.add(new LayoutElement(f));
-					if (mContext instanceof ExplorerActivity) {
+					//if (mContext instanceof ExplorerActivity) {
 						GeneralDialogCreation.deleteFilesDialog(mContext, //getLayoutElements(),
-																(ExplorerActivity)mContext, ele, ((ExplorerActivity)mContext).getAppTheme());
-					}
+															(ThemedActivity)mContext, ele, ((ThemedActivity)mContext).getAppTheme());
+					//}
 					//new Futils().deleteFiles(ele, (ExplorerActivity)mContext, /*positions, */((ThemedActivity)mContext).getAppTheme());
 					
 					break;
@@ -701,8 +702,8 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					break;
 				case R.id.renameButton:
 					MaterialDialog.Builder builder = new MaterialDialog.Builder(mContext);
-					String name = f.getName();
-					builder.input("", name, false, new MaterialDialog.InputCallback() {
+					final String nameOri = f.getName();
+					builder.input("", nameOri, false, new MaterialDialog.InputCallback() {
 							@Override
 							public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
 
@@ -719,10 +720,10 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 //									name = name + "/";
 
 								final String newName = f.getParent() + "/" + name;
-								((ExplorerActivity)mContext).mainActivityHelper.rename(OpenMode.FILE, mListOfMedia.get(pageSelected).getAbsolutePath(),
-																					   newName, (ExplorerActivity)mContext, ThemedActivity.rootMode);
-								mListOfMedia.remove(pageSelected);
-								mListOfMedia.add(pageSelected, new File(newName));
+								MainActivityHelper.rename(OpenMode.FILE, f.getAbsolutePath(),//mListOfMedia.get(pageSelected).getAbsolutePath(),
+														  newName, (ThemedActivity)mContext, ThemedActivity.rootMode);
+								mListOfMedia.remove(newpos);
+								mListOfMedia.add(newpos, new File(newName));
 								fileNameTV.setText(name);
 							}
 
@@ -843,7 +844,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					break;
 			}
 		} else {
-			Toast.makeText(mContext, mListOfMedia.get(pageSelected) + " is not existed", Toast.LENGTH_LONG).show();
+			Toast.makeText(mContext, f.getAbsolutePath() + " is not existed", Toast.LENGTH_LONG).show();
 		}
 
 	}
@@ -901,10 +902,6 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
                 imageViewPagerAdapter.fragMap.get(pageSelected).getImage().setVisibility(View.VISIBLE);
                 imageViewPagerAdapter.fragMap.get(pageSelected).getImage().setImageBitmap(bmp);
 
-//                if( name != null ) {
-//                    name_view.setTextColor( Color.WHITE );
-//                    name_view.setText( name );
-//                }
                 return;
             }
         } catch ( Throwable e ) {
@@ -925,7 +922,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
                 }
                 Bitmap new_bmp = Bitmap.createBitmap(old_bmp, 0, 0, old_w, old_h, m, false);
                 if (new_bmp != null) {
-                    old_bmp.recycle();
+                    //old_bmp.recycle();
                     return new_bmp;
                 }
             } catch ( OutOfMemoryError e ) {

@@ -80,8 +80,8 @@ public class MainActivityHelper {
         mat.positiveText(R.string.cancel);
         String content = contextc.getResources().getString(R.string.operation_fail_following);
         int k=1;
-        for(BaseFile s:failedOps){
-            content=content+ "\n" + (k) + ". " + s.getName();
+        for (BaseFile s:failedOps) {
+            content = content + "\n" + (k) + ". " + s.getName();
             k++;
         }
         mat.content(content);
@@ -118,13 +118,13 @@ public class MainActivityHelper {
      */
     void mkdir(final OpenMode openMode, final String path, final Frag ma) {
         mk(R.string.newfolder, new OnClickMaterialListener() {
-            @Override
-            public void onClick(MaterialDialog materialDialog) {
-                String a = materialDialog.getInputEditText().getText().toString();
-                mkDir(new HFile(openMode, path + "/" + a), ma);
-                materialDialog.dismiss();
-            }
-        });
+				@Override
+				public void onClick(MaterialDialog materialDialog) {
+					String a = materialDialog.getInputEditText().getText().toString();
+					mkDir(new HFile(openMode, path + "/" + a), ma);
+					materialDialog.dismiss();
+				}
+			});
     }
 
     /**
@@ -136,30 +136,30 @@ public class MainActivityHelper {
      */
     void mkfile(final OpenMode openMode, final String path, final Frag ma) {
         mk(R.string.newfile, new OnClickMaterialListener() {
-            @Override
-            public void onClick(MaterialDialog materialDialog) {
-                String a = materialDialog.getInputEditText().getText().toString();
-                mkFile(new HFile(openMode, path + "/" + a), ma);
-                materialDialog.dismiss();
-            }
-        });
+				@Override
+				public void onClick(MaterialDialog materialDialog) {
+					String a = materialDialog.getInputEditText().getText().toString();
+					mkFile(new HFile(openMode, path + "/" + a), ma);
+					materialDialog.dismiss();
+				}
+			});
     }
 
     private void mk(@StringRes int newText, final OnClickMaterialListener l) {
         final MaterialDialog materialDialog = GeneralDialogCreation.showNameDialog(mainActivity,
-                new String[]{mainActivity.getResources().getString(R.string.entername),
-                        "",
-                        mainActivity.getResources().getString(newText),
-                        mainActivity.getResources().getString(R.string.create),
-                        mainActivity.getResources().getString(R.string.cancel),
-                        null});
+																				   new String[]{mainActivity.getResources().getString(R.string.entername),
+																					   "",
+																					   mainActivity.getResources().getString(newText),
+																					   mainActivity.getResources().getString(R.string.create),
+																					   mainActivity.getResources().getString(R.string.cancel),
+																					   null});
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                l.onClick(materialDialog);
-            }
-        });
+				@Override
+				public void onClick(View v) {
+					l.onClick(materialDialog);
+				}
+			});
         materialDialog.show();
     }
 
@@ -181,7 +181,7 @@ public class MainActivityHelper {
             case NEW_CLOUD:
                 BottomSheetDialogFragment fragment = new CloudSheetFragment();
                 fragment.show(ma.getActivity().getSupportFragmentManager(),
-                        CloudSheetFragment.TAG_FRAGMENT);
+							  CloudSheetFragment.TAG_FRAGMENT);
                 break;
         }
     }
@@ -214,7 +214,7 @@ public class MainActivityHelper {
         return newPath;
     }
 
-    public void guideDialogForLEXA(String path) {
+    public static void guideDialogForLEXA(final ThemedActivity mainActivity, String path) {
         final MaterialDialog.Builder x = new MaterialDialog.Builder(mainActivity);
         x.theme(mainActivity.getAppTheme().getMaterialDialogTheme());
         x.title(R.string.needsaccess);
@@ -227,112 +227,113 @@ public class MainActivityHelper {
         ((ImageView) view.findViewById(R.id.icon)).setImageResource(R.drawable.sd_operate_step);
         x.positiveText(R.string.open);
         x.negativeText(R.string.cancel);
-        x.positiveColor(accentColor);
+        int accentColor = mainActivity.getColorPreference().getColor(ColorUsage.ACCENT);
+		x.positiveColor(accentColor);//accentColor);
         x.negativeColor(accentColor);
         x.callback(new MaterialDialog.ButtonCallback() {
-            @Override
-            public void onPositive(MaterialDialog materialDialog) {
-                triggerStorageAccessFramework();
-            }
+				@Override
+				public void onPositive(MaterialDialog materialDialog) {
+					triggerStorageAccessFramework(mainActivity);
+				}
 
-            @Override
-            public void onNegative(MaterialDialog materialDialog) {
-                Toast.makeText(mainActivity, R.string.error, Toast.LENGTH_SHORT).show();
-            }
-        });
+				@Override
+				public void onNegative(MaterialDialog materialDialog) {
+					Toast.makeText(mainActivity, R.string.error, Toast.LENGTH_SHORT).show();
+				}
+			});
         final MaterialDialog y = x.build();
         y.show();
     }
 
-    private void triggerStorageAccessFramework() {
+    private static void triggerStorageAccessFramework(final ThemedActivity mainActivity) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        mainActivity.startActivityForResult(intent, 3);
+        mainActivity.startActivityForResult(intent, ThemedActivity.FROM_PREVIOUS_IO_ACTION);
     }
 
-    public void rename(OpenMode mode, final String oldPath, final String newPath,
-                       final Activity context, boolean rootmode) {
-        final Toast toast=Toast.makeText(context, context.getString(R.string.renaming),
-                Toast.LENGTH_SHORT);
+    public static void rename(OpenMode mode, final String oldPath, final String newPath,
+							  final ThemedActivity themedActivity, boolean rootmode) {
+        final Toast toast=Toast.makeText(themedActivity, themedActivity.getString(R.string.renaming),
+										 Toast.LENGTH_SHORT);
         toast.show();
-        Operations.rename(new HFile(mode, oldPath), new HFile(mode, newPath), rootmode, context, new Operations.ErrorCallBack() {
-            @Override
-            public void exists(HFile file) {
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (toast != null) toast.cancel();
-                        Toast.makeText(mainActivity, context.getString(R.string.fileexist),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+        Operations.rename(new HFile(mode, oldPath), new HFile(mode, newPath), rootmode, themedActivity, new Operations.ErrorCallBack() {
+				@Override
+				public void exists(HFile file) {
+					themedActivity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (toast != null) toast.cancel();
+								Toast.makeText(themedActivity, themedActivity.getString(R.string.fileexist),
+											   Toast.LENGTH_SHORT).show();
+							}
+						});
+				}
 
-            @Override
-            public void launchSAF(HFile file) {
+				@Override
+				public void launchSAF(HFile file) {
 
-            }
+				}
 
-            @Override
-            public void launchSAF(final HFile file, final HFile file1) {
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (toast != null) toast.cancel();
-                        mainActivity.oppathe = file.getPath();
-                        mainActivity.oppathe1 = file1.getPath();
-                        mainActivity.operation = DataUtils.RENAME;
-                        guideDialogForLEXA(mainActivity.oppathe1);
-                    }
-                });
-            }
+				@Override
+				public void launchSAF(final HFile file, final HFile file1) {
+					themedActivity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (toast != null) toast.cancel();
+								themedActivity.oppathe = file.getPath();
+								themedActivity.oppathe1 = file1.getPath();
+								themedActivity.operation = DataUtils.RENAME;
+								guideDialogForLEXA(themedActivity, themedActivity.oppathe1);
+							}
+						});
+				}
 
-            @Override
-            public void done(HFile hFile, final boolean b) {
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (b) {
-                            Intent intent = new Intent("loadlist");
-                            mainActivity.sendBroadcast(intent);
+				@Override
+				public void done(HFile hFile, final boolean b) {
+					themedActivity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (b) {
+									Intent intent = new Intent("loadlist");
+									themedActivity.sendBroadcast(intent);
 
-                            // update the database entry to reflect rename for encrypted file
-                            if (oldPath.endsWith(CryptUtil.CRYPT_EXTENSION)) {
+									// update the database entry to reflect rename for encrypted file
+									if (oldPath.endsWith(CryptUtil.CRYPT_EXTENSION)) {
 
-                                try {
+										try {
 
-                                    CryptHandler cryptHandler = new CryptHandler(context);
-                                    EncryptedEntry oldEntry = cryptHandler.findEntry(oldPath);
-                                    EncryptedEntry newEntry = new EncryptedEntry();
-                                    newEntry.setId(oldEntry.getId());
-                                    newEntry.setPassword(oldEntry.getPassword());
-                                    newEntry.setPath(newPath);
-                                    cryptHandler.updateEntry(oldEntry, newEntry);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    // couldn't change the entry, leave it alone
-                                }
-                            }
-                        } else
-                            Toast.makeText(context, context.getString(R.string.operationunsuccesful),
-                                    Toast.LENGTH_SHORT).show();
+											CryptHandler cryptHandler = new CryptHandler(themedActivity);
+											EncryptedEntry oldEntry = cryptHandler.findEntry(oldPath);
+											EncryptedEntry newEntry = new EncryptedEntry();
+											newEntry.setId(oldEntry.getId());
+											newEntry.setPassword(oldEntry.getPassword());
+											newEntry.setPath(newPath);
+											cryptHandler.updateEntry(oldEntry, newEntry);
+										} catch (Exception e) {
+											e.printStackTrace();
+											// couldn't change the entry, leave it alone
+										}
+									}
+								} else
+									Toast.makeText(themedActivity, themedActivity.getString(R.string.operationunsuccesful),
+												   Toast.LENGTH_SHORT).show();
 
-                    }
-                });
-            }
+							}
+						});
+				}
 
-            @Override
-            public void invalidName(final HFile file) {
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+				@Override
+				public void invalidName(final HFile file) {
+					themedActivity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
 
-                        if (toast != null) toast.cancel();
-                        Toast.makeText(context, context.getString(R.string.invalid_name) + ": "
-                                + file.getName(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        });
+								if (toast != null) toast.cancel();
+								Toast.makeText(themedActivity, themedActivity.getString(R.string.invalid_name) + ": "
+											   + file.getName(), Toast.LENGTH_LONG).show();
+							}
+						});
+				}
+			});
     }
 
     public static final int DOESNT_EXIST = 0;
@@ -340,7 +341,7 @@ public class MainActivityHelper {
     //For Android 5
     public static final int CAN_CREATE_FILES = 2;
 
-    public int checkFolder(final File folder, Context context) {
+    public static int checkFolder(final File folder, ThemedActivity context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (FileUtil.isOnExtSdCard(folder, context)) {
                 if (!folder.exists() || !folder.isDirectory()) {
@@ -349,7 +350,7 @@ public class MainActivityHelper {
 
                 // On Android 5, trigger storage access framework.
                 if (!FileUtil.isWritableNormalOrSaf(folder, context)) {
-                    guideDialogForLEXA(folder.getPath());
+                    guideDialogForLEXA(context, folder.getPath());
                     return CAN_CREATE_FILES;
                 }
 
@@ -394,160 +395,161 @@ public class MainActivityHelper {
 
     public void mkFile(final HFile path, final Frag ma) {
         final Toast toast = Toast.makeText(ma.getActivity(), ma.getString(R.string.creatingfile),
-                Toast.LENGTH_SHORT);
+										   Toast.LENGTH_SHORT);
         toast.show();
         Operations.mkfile(path, ma.getActivity(), ThemedActivity.rootMode, new Operations.ErrorCallBack() {
-            @Override
-            public void exists(final HFile file) {
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (toast != null) toast.cancel();
-                        Toast.makeText(mainActivity, mainActivity.getString(R.string.fileexist),
-                                Toast.LENGTH_SHORT).show();
-                        if (ma != null && ma.getActivity() != null) {
-                            // retry with dialog prompted again
-                            mkfile(file.getMode(), file.getParent(), ma);
-                        }
+				@Override
+				public void exists(final HFile file) {
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (toast != null) toast.cancel();
+								Toast.makeText(mainActivity, mainActivity.getString(R.string.fileexist),
+											   Toast.LENGTH_SHORT).show();
+								if (ma != null && ma.getActivity() != null) {
+									// retry with dialog prompted again
+									mkfile(file.getMode(), file.getParent(), ma);
+								}
 
-                    }
-                });
-            }
+							}
+						});
+				}
 
-            @Override
-            public void launchSAF(HFile file) {
+				@Override
+				public void launchSAF(HFile file) {
 
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (toast != null) toast.cancel();
-                        mainActivity.oppathe = path.getPath();
-                        mainActivity.operation = DataUtils.NEW_FILE;
-                        guideDialogForLEXA(mainActivity.oppathe);
-                    }
-                });
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (toast != null) toast.cancel();
+								mainActivity.oppathe = path.getPath();
+								mainActivity.operation = DataUtils.NEW_FILE;
+								guideDialogForLEXA(mainActivity, mainActivity.oppathe);
+							}
+						});
 
-            }
+				}
 
-            @Override
-            public void launchSAF(HFile file, HFile file1) {
+				@Override
+				public void launchSAF(HFile file, HFile file1) {
 
-            }
+				}
 
-            @Override
-            public void done(HFile hFile, final boolean b) {
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+				@Override
+				public void done(HFile hFile, final boolean b) {
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
 
-                        if (b) {
-                            ma.updateList();
-                        } else
-                            Toast.makeText(ma.getActivity(), ma.getString(R.string.operationunsuccesful),
-                                    Toast.LENGTH_SHORT).show();
+								if (b) {
+									ma.updateList();
+								} else
+									Toast.makeText(ma.getActivity(), ma.getString(R.string.operationunsuccesful),
+												   Toast.LENGTH_SHORT).show();
 
-                    }
-                });
-            }
+							}
+						});
+				}
 
-            @Override
-            public void invalidName(final HFile file) {
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+				@Override
+				public void invalidName(final HFile file) {
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
 
-                        if (toast != null) toast.cancel();
-                        Toast.makeText(ma.getActivity(), ma.getString(R.string.invalid_name)
-                                + ": " + file.getName(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        });
+								if (toast != null) toast.cancel();
+								Toast.makeText(ma.getActivity(), ma.getString(R.string.invalid_name)
+											   + ": " + file.getName(), Toast.LENGTH_LONG).show();
+							}
+						});
+				}
+			});
     }
 
     public void mkDir(final HFile path, final Frag ma) {
         final Toast toast = Toast.makeText(ma.getActivity(), ma.getString(R.string.creatingfolder),
-                Toast.LENGTH_SHORT);
+										   Toast.LENGTH_SHORT);
         toast.show();
         Operations.mkdir(path, ma.getActivity(), ThemedActivity.rootMode, new Operations.ErrorCallBack() {
-            @Override
-            public void exists(final HFile file) {
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (toast != null) toast.cancel();
-                        Toast.makeText(mainActivity, mainActivity.getString(R.string.fileexist),
-                                Toast.LENGTH_SHORT).show();
-                        if (ma != null && ma.getActivity() != null) {
-                            // retry with dialog prompted again
-                            mkdir(file.getMode(), file.getParent(), ma);
-                        }
-                    }
-                });
-            }
+				@Override
+				public void exists(final HFile file) {
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (toast != null) toast.cancel();
+								Toast.makeText(mainActivity, mainActivity.getString(R.string.fileexist),
+											   Toast.LENGTH_SHORT).show();
+								if (ma != null && ma.getActivity() != null) {
+									// retry with dialog prompted again
+									mkdir(file.getMode(), file.getParent(), ma);
+								}
+							}
+						});
+				}
 
-            @Override
-            public void launchSAF(HFile file) {
-                if (toast != null) toast.cancel();
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mainActivity.oppathe = path.getPath();
-                        mainActivity.operation = DataUtils.NEW_FOLDER;
-                        guideDialogForLEXA(mainActivity.oppathe);
-                    }
-                });
+				@Override
+				public void launchSAF(HFile file) {
+					if (toast != null) toast.cancel();
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mainActivity.oppathe = path.getPath();
+								mainActivity.operation = DataUtils.NEW_FOLDER;
+								guideDialogForLEXA(mainActivity, mainActivity.oppathe);
+							}
+						});
 
-            }
+				}
 
-            @Override
-            public void launchSAF(HFile file, HFile file1) {
+				@Override
+				public void launchSAF(HFile file, HFile file1) {
 
-            }
+				}
 
-            @Override
-            public void done(HFile hFile, final boolean b) {
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+				@Override
+				public void done(HFile hFile, final boolean b) {
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
 
-                        if (b) {
-                            ma.updateList();
-                        } else
-                            Toast.makeText(ma.getActivity(), ma.getString(R.string.operationunsuccesful),
-                                    Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+								if (b) {
+									ma.updateList();
+								} else
+									Toast.makeText(ma.getActivity(), ma.getString(R.string.operationunsuccesful),
+												   Toast.LENGTH_SHORT).show();
+							}
+						});
+				}
 
-            @Override
-            public void invalidName(final HFile file) {
-                ma.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+				@Override
+				public void invalidName(final HFile file) {
+					ma.getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
 
-                        if (toast != null) toast.cancel();
-                        Toast.makeText(ma.getActivity(), ma.getString(R.string.invalid_name)
-                                + ": " + file.getName(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        });
+								if (toast != null) toast.cancel();
+								Toast.makeText(ma.getActivity(), ma.getString(R.string.invalid_name)
+											   + ": " + file.getName(), Toast.LENGTH_LONG).show();
+							}
+						});
+				}
+			});
     }
 
-    public void deleteFiles(ArrayList<BaseFile> files) {
-        if (files == null || files.size() == 0) return;
-        if (files.get(0).isSmb()) {
-            new DeleteTask(null, mainActivity).execute((files));
+    public void deleteFiles(ArrayList<BaseFile> itemsToDelete) {
+        if (itemsToDelete == null || itemsToDelete.size() == 0) return;
+        if (itemsToDelete.get(0).isSmb()) {
+            new DeleteTask(null, mainActivity).execute((itemsToDelete));
             return;
         }
-        int mode = checkFolder(new File(files.get(0).getPath()).getParentFile(), mainActivity);
+        int mode = checkFolder(new File(itemsToDelete.get(0).getPath()).getParentFile(), mainActivity);
         if (mode == 2) {
-            mainActivity.oparrayList = (files);
+            mainActivity.oparrayList = (itemsToDelete);
             mainActivity.operation = DataUtils.DELETE;
         } else if (mode == 1 || mode == 0)
-            new DeleteTask(null, mainActivity).execute((files));
-        else Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
+            new DeleteTask(null, mainActivity).execute((itemsToDelete));
+        else 
+			Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
     }
 
 //    public void extractFile(File file) {
@@ -585,7 +587,7 @@ public class MainActivityHelper {
                 if (path.contains(CloudHandler.CLOUD_PREFIX_DROPBOX)) return path;
                 else
                     return CloudHandler.CLOUD_PREFIX_DROPBOX
-                            + path.substring(path.indexOf(":") + 1, path.length());
+						+ path.substring(path.indexOf(":") + 1, path.length());
             case BOX:
                 if (path.contains(CloudHandler.CLOUD_PREFIX_BOX)) return path;
                 else return CloudHandler.CLOUD_PREFIX_BOX
@@ -598,7 +600,7 @@ public class MainActivityHelper {
                 if (path.contains(CloudHandler.CLOUD_PREFIX_ONE_DRIVE)) return path;
                 else
                     return CloudHandler.CLOUD_PREFIX_ONE_DRIVE + path.substring(path.indexOf(":") + 1,
-                            path.length());
+																				path.length());
             default:
                 return path;
         }
@@ -680,8 +682,8 @@ public class MainActivityHelper {
     public static boolean checkAccountsPermission(Context context) {
         // Verify that all required contact permissions have been granted.
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.GET_ACCOUNTS)
-                != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.INTERNET)
-                != PackageManager.PERMISSION_GRANTED) {
+			!= PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.INTERNET)
+			!= PackageManager.PERMISSION_GRANTED) {
             return false;
         }
         return true;
@@ -689,34 +691,34 @@ public class MainActivityHelper {
 
     public static void requestAccountsPermission(final BasicActivity activity) {
         final String[] PERMISSIONS = {Manifest.permission.GET_ACCOUNTS,
-                Manifest.permission.INTERNET};
+			Manifest.permission.INTERNET};
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                Manifest.permission.GET_ACCOUNTS) || ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                Manifest.permission.INTERNET)) {
+																Manifest.permission.GET_ACCOUNTS) || ActivityCompat.shouldShowRequestPermissionRationale(activity,
+																																						 Manifest.permission.INTERNET)) {
             // Provide an additional rationale to the user if the permission was not granted
             // and the user would benefit from additional context for the use of the permission.
             // For example, if the request has been denied previously.
 
             final MaterialDialog materialDialog = GeneralDialogCreation.showBasicDialog(activity,
-                    new String[] {
-                            activity.getResources().getString(R.string.grantgplus),
-                            activity.getResources().getString(R.string.grantper),
-                            activity.getResources().getString(R.string.grant),
-                            activity.getResources().getString(R.string.cancel), null
-                    });
+																						new String[] {
+																							activity.getResources().getString(R.string.grantgplus),
+																							activity.getResources().getString(R.string.grantper),
+																							activity.getResources().getString(R.string.grant),
+																							activity.getResources().getString(R.string.cancel), null
+																						});
             materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ActivityCompat.requestPermissions(activity,PERMISSIONS, 66);
-                    materialDialog.dismiss();
-                }
-            });
+					@Override
+					public void onClick(View v) {
+						ActivityCompat.requestPermissions(activity, PERMISSIONS, 66);
+						materialDialog.dismiss();
+					}
+				});
             materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    activity.finish();
-                }
-            });
+					@Override
+					public void onClick(View v) {
+						activity.finish();
+					}
+				});
             materialDialog.setCancelable(false);
             materialDialog.show();
 

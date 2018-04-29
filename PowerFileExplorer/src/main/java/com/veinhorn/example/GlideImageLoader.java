@@ -35,21 +35,7 @@ import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
 import net.gnu.androidutil.ImageThreadLoader;
 
 public class GlideImageLoader {
-	//private static final String TAG = "GlideImageLoader";
 
-	/**
-	 * Author: Alexey Nevinsky
-	 * Date: 06.12.15 1:38
-	 */
-	//private final File f;
-//	private Simple sThumb;
-//	private Simple sMain;
-	//private final String mime;
-
-//	public GlideImageLoader(File url) {//, String mime
-//		this.f = url;
-//		//this.mime = mime;
-//	}
 	public static final Pattern GIF_PATTERN = Pattern.compile("^[^/]*?\\.gif$", Pattern.CASE_INSENSITIVE);
 	public static final Pattern SVG_PATTERN = Pattern.compile("^[^/]*?\\.svg$", Pattern.CASE_INSENSITIVE);
 
@@ -62,6 +48,7 @@ public class GlideImageLoader {
 				Glide.with(context)
 					.load(f)
 					.asGif()
+					.skipMemoryCache(true)
 					.diskCacheStrategy(DiskCacheStrategy.NONE)
 					.signature(new StringSignature(f.lastModified() + " " + f.length()))//file.getAbsolute()
 					.placeholder(R.drawable.ic_doc_image_dark)
@@ -94,7 +81,7 @@ public class GlideImageLoader {
 					//.apply(RequestOptions.bitmapTransform(mBitmapTransformation))
 					//.bitmapTransform(new CenterCrop(context))
 					.asBitmap()
-					//.skipMemoryCache(true)
+					.skipMemoryCache(true)
 					.diskCacheStrategy(DiskCacheStrategy.NONE)
 					//.fitCenter()
 					//.crossFade()
@@ -141,7 +128,8 @@ public class GlideImageLoader {
 				Glide.with(context)
 					.load(f)
 					.asGif()
-					.diskCacheStrategy(DiskCacheStrategy.NONE)
+					.skipMemoryCache(true)
+					.diskCacheStrategy(DiskCacheStrategy.RESULT)
 					.signature(new StringSignature(f.lastModified() + " " + f.length()))//file.getAbsolute()
 					.placeholder(R.drawable.ic_doc_image_dark)
 					.into(thumbnailView);//(sMain = new Simple(imageView, callback)));
@@ -171,6 +159,8 @@ public class GlideImageLoader {
 				Glide.with(context)
 					.load(f)
 					.asBitmap()//android:adjustViewBounds="true"
+					.skipMemoryCache(true)
+					.diskCacheStrategy(DiskCacheStrategy.RESULT)
 					//.resize(100, 100)
 					.fitCenter()
 					//.crossFade()

@@ -13,8 +13,9 @@ import android.view.KeyEvent;
 import com.bumptech.glide.Glide;
 import android.annotation.TargetApi;
 import android.os.Build;
+import com.amaze.filemanager.activities.ThemedActivity;
 
-public class PhotoActivity extends FragmentActivity {
+public class PhotoActivity extends ThemedActivity {
 
 	private PhotoFragment photoFragment;
 	public static final String ACTION_VIEW_LIST = "net.gnu.explorer.photo.action.VIEW_LIST";
@@ -47,9 +48,10 @@ public class PhotoActivity extends FragmentActivity {
 		final String action = intent.getAction();
 		Log.d(TAG, "onNewIntent " + intent + ", action " + action + " , data " + intent.getData());
 		if (Intent.ACTION_SEND.equals(action) 
-			|| Intent.ACTION_VIEW.equals(action)) {
+			|| Intent.ACTION_VIEW.equals(action)
+			|| Intent.ACTION_MAIN.equals(action)) {
 			final Uri uri = intent.getData();
-			photoFragment.load(uri.getPath());
+			photoFragment.load(uri);//.getPath()
 		} else if (ACTION_VIEW_LIST.equals(action)) {
 			final String[] uriStrings = intent.getStringArrayExtra(URI_LIST_EXTRA);
 			photoFragment.open(0, uriStrings);

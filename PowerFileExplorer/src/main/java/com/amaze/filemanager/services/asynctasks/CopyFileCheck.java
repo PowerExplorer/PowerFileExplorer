@@ -33,6 +33,7 @@ import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
 import net.gnu.explorer.ContentFragment;
 import net.gnu.explorer.FileFrag;
+import com.amaze.filemanager.activities.ThemedActivity;
 
 /**
  * Created by arpitkh996 on 12-01-2016, modified by Emmanuel Messulam<emmanuelbendavid@gmail.com>
@@ -55,7 +56,7 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
     private Boolean move;
     private int counter = 0;
     private ExplorerActivity mainActivity;
-    private Context context;
+    private ThemedActivity context;
     private boolean rootMode = false;
     private OpenMode openMode = OpenMode.FILE;
     private DO_FOR_ALL_ELEMENTS dialogState = null;

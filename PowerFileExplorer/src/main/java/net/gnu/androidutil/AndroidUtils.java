@@ -87,6 +87,76 @@ public class AndroidUtils {
 		shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intent);
 		ctx.sendBroadcast(shortcutintent);
 	}
+
+	public static void addShortcut(final Context context, final File f) {
+        //Adding shortcut for MainActivity on Home screen
+		Log.d(TAG, "addShortcut " + f.getAbsolutePath());
+		final String absolutePath = f.getAbsolutePath();
+
+		final Intent addIntent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, f.getName());
+		addIntent.putExtra("duplicate", false);
+
+		final Intent shortcutIntent;
+		if (f.isFile()) {
+			if (MimeTypes.getMimeType(f).startsWith("image")) {
+				final int size = (int) context.getResources().getDimension(android.R.dimen.app_icon_size);
+				addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapUtil.scaleBmp(BitmapFactory.decodeFile(absolutePath), size));
+				shortcutIntent = new Intent(context.getApplicationContext(),
+											PhotoActivity.class);
+			} else {
+				addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+								   Intent.ShortcutIconResource.fromContext(context, ImageThreadLoader.getResId(f)));//R.mipmap.ic_launcher));
+				shortcutIntent = new Intent(context.getApplicationContext(),
+											context.getClass());
+			}
+		} else {
+			addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+							   Intent.ShortcutIconResource.fromContext(context, R.drawable.myfolder72));
+			shortcutIntent = new Intent(context.getApplicationContext(),
+										context.getClass());
+        }
+        
+        shortcutIntent.setData(Uri.fromFile(f));
+        shortcutIntent.putExtra(ExplorerActivity.EXTRA_ABSOLUTE_PATH, absolutePath);
+        shortcutIntent.setAction(Intent.ACTION_MAIN);
+        shortcutIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		if (f.isDirectory()) {
+			shortcutIntent.putExtra(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+			shortcutIntent.putExtra(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+		}
+
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        context.sendBroadcast(addIntent);
+    }
+
+	// Creates shortcut on Android widget screen
+//	public static void createShortcutIcon(Context ctx, Activity act, String shortcutName) {
+//		String PREFS_NAME = "PREFS_NAME";
+//		String PREF_KEY_SHORTCUT_ADDED = "PREF_KEY_SHORTCUT_ADDED";
+//		// Checking if ShortCut was already added
+//		final SharedPreferences sharedPreferences = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+//		final boolean shortCutWasAlreadyAdded = sharedPreferences.getBoolean(PREF_KEY_SHORTCUT_ADDED, false);
+//		if (shortCutWasAlreadyAdded) 
+//			return;
+//
+//		final Intent shortcutIntent = new Intent(ctx.getApplicationContext(), act.getClass());
+//		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//
+//		final Intent addIntent = new Intent();
+//		addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+//		addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutName);
+//		//addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(ctx.getApplicationContext(), R.drawable.ic_launcher));
+//		addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+//		ctx.getApplicationContext().sendBroadcast(addIntent);
+//
+//		// Remembering that ShortCut was already added
+//		final SharedPreferences.Editor editor = sharedPreferences.edit();
+//		editor.putBoolean(PREF_KEY_SHORTCUT_ADDED, true);
+//		editor.commit();
+//	}
+	
 	
 	public static void scanMedia(final Context ctx, final String root, final boolean includeSubFolder) {
 		if (Build.VERSION.SDK_INT >= 19) {
@@ -908,67 +978,6 @@ public class AndroidUtils {
 //		}
         return info.isConnected();
 	}
-
-	public static void addShortcut(final Context context, final File f) {
-        //Adding shortcut for MainActivity on Home screen
-		Log.d(TAG, "addShortcut " + f.getAbsolutePath());
-        final Intent shortcutIntent = new Intent(context.getApplicationContext(),
-										   context.getClass());
-        final String absolutePath = f.getAbsolutePath();
-		shortcutIntent.putExtra(ExplorerActivity.EXTRA_ABSOLUTE_PATH, absolutePath);
-        shortcutIntent.setAction(Intent.ACTION_MAIN);
-        shortcutIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		if (f.isDirectory()) {
-			shortcutIntent.putExtra(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-			shortcutIntent.putExtra(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-		}
-        final Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, f.getName());
-
-		if (f.isFile()) {
-			if (MimeTypes.getMimeType(f).startsWith("image")) {
-				final int size = (int) context.getResources().getDimension(android.R.dimen.app_icon_size);
-				addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapUtil.scaleBmp(BitmapFactory.decodeFile(absolutePath), size));
-			} else {
-				addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-								   Intent.ShortcutIconResource.fromContext(context, ImageThreadLoader.getResId(f)));//R.mipmap.ic_launcher));
-			}
-		} else {
-			addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-							   Intent.ShortcutIconResource.fromContext(context, R.drawable.myfolder72));
-		}
-        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        context.sendBroadcast(addIntent);
-    }
-
-	// Creates shortcut on Android widget screen
-//	public static void createShortcutIcon(Context ctx, Activity act, String shortcutName) {
-//		String PREFS_NAME = "PREFS_NAME";
-//		String PREF_KEY_SHORTCUT_ADDED = "PREF_KEY_SHORTCUT_ADDED";
-//		// Checking if ShortCut was already added
-//		final SharedPreferences sharedPreferences = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-//		final boolean shortCutWasAlreadyAdded = sharedPreferences.getBoolean(PREF_KEY_SHORTCUT_ADDED, false);
-//		if (shortCutWasAlreadyAdded) 
-//			return;
-//
-//		final Intent shortcutIntent = new Intent(ctx.getApplicationContext(), act.getClass());
-//		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//		final Intent addIntent = new Intent();
-//		addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-//		addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutName);
-//		//addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(ctx.getApplicationContext(), R.drawable.ic_launcher));
-//		addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-//		ctx.getApplicationContext().sendBroadcast(addIntent);
-//
-//		// Remembering that ShortCut was already added
-//		final SharedPreferences.Editor editor = sharedPreferences.edit();
-//		editor.putBoolean(PREF_KEY_SHORTCUT_ADDED, true);
-//		editor.commit();
-//	}
-
 	public static String getSharedPreference(final Context ctx, final String id) {
 		final SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 		return defaultSharedPreferences.getString(id, null);

@@ -636,7 +636,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 						boolean inSelected = false;
 						if (contentFrag.dataSourceL2 != null)
 							for (LayoutElement st : contentFrag.dataSourceL2) {
-								if (f.equals(st) || fPath.startsWith(st.path + "/")) {
+								if (rowItem.path.equals(st.path) || fPath.startsWith(st.path + "/")) {
 									inSelected = true;
 									break;
 								}

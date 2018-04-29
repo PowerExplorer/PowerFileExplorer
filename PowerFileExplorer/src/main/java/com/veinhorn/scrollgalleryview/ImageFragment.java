@@ -86,13 +86,17 @@ public class ImageFragment extends Fragment {
 	static int curTransform = 12;
 
 	private ViewPager viewPager;
-
+	private Context context;;
+	
 	private ScrollGalleryView scrollGalleryView;
 
 	@Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+		
         rootView = inflater.inflate(R.layout.image_fragment, container, false);
+		context = getContext();
+		
         image = (TouchImageView) rootView.findViewById(R.id.image);
         videoPlayImage = (ImageView) rootView.findViewById(R.id.videoPlayImage);
 		minZoom = TouchImageView.SUPER_MIN_MULTIPLIER * image.getMinZoom();
@@ -178,18 +182,18 @@ public class ImageFragment extends Fragment {
                     touchY = event.getY();
 					//Log.d(TAG, "ACTION_MOVE " + y_changed + ", mTouchAction " + mTouchAction + ", touchX " + touchX + ", measuredWidth " + measuredWidth);
 					if ((int) touchX > (4 * measuredWidth / 5)) {
-						doZoomTouch(y_changed);
-						if (zoomCallback != null) {
-							zoomCallback.run();
-						}
+						doDelayTouch(y_changed);
+//					} else if ((int) touchX > (3 * measuredWidth / 5)) {
+//						doZoomTouch(y_changed);
+//						if (zoomCallback != null) {
+//							zoomCallback.run();
+//						}
 					} else if ((int) touchX < (measuredWidth / 5)) {
 						doBrightnessTouch(y_changed);
-					} if ((int) touchX > (3 * measuredWidth / 5)) {
-						doDelayTouch(y_changed);
-					} else if ((int) touchX < (2 * measuredWidth / 5)) {//Transform
-						doTransformTouch(y_changed);
-					} else {
-						doPageTouch(y_changed);
+//					} if ((int) touchX < (2 * measuredWidth / 5)) {//Transform
+//						doTransformTouch(y_changed);
+//					} else {
+//						doPageTouch(y_changed);
 					}
 				}
                 break;
@@ -211,81 +215,81 @@ public class ImageFragment extends Fragment {
         centerInfo.setVisibility(View.GONE);
     }
 
-    private void doZoomTouch(final float y_changed) {
-        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_ZOOM) {
-            return;
-        }
-        final float oldZoom = curZoom;
-        mTouchAction = TOUCH_ZOOM;
-        final float delta = -((y_changed / mSurfaceYDisplayRange));
-        curZoom += delta;
-        curZoom = Math.min(Math.max(curZoom, minZoom), maxZoom);
-        if (delta != 0f) {
-            setZoom(curZoom, curZoom > oldZoom);
-        }
-    }
+//    private void doZoomTouch(final float y_changed) {
+//        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_ZOOM) {
+//            return;
+//        }
+//        final float oldZoom = curZoom;
+//        mTouchAction = TOUCH_ZOOM;
+//        final float delta = -((y_changed / mSurfaceYDisplayRange));
+//        curZoom += delta;
+//        curZoom = Math.min(Math.max(curZoom, minZoom), maxZoom);
+//        if (delta != 0f) {
+//            setZoom(curZoom, curZoom > oldZoom);
+//        }
+//    }
 
-	private void doPageTouch(final float y_changed) {
-        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_PAGE) {
-            return;
-        }
-        final int oldZoom = ScreenSlidePagerAdapter.numOfPages;
-        mTouchAction = TOUCH_PAGE;
-        final float delta = -y_changed;
-        //Log.d(TAG, "doPageTouch " + y_changed + ", delta " + delta + ", mTouchAction " + mTouchAction + ", ScreenSlidePagerAdapter.numOfPages " + ScreenSlidePagerAdapter.numOfPages);
-        if (delta != 0) {
-            ScreenSlidePagerAdapter.numOfPages += (delta > 0 ? 1 : -1);
-			ScreenSlidePagerAdapter.numOfPages = Math.min(Math.max(ScreenSlidePagerAdapter.numOfPages, 1), 2);
+//	private void doPageTouch(final float y_changed) {
+//        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_PAGE) {
+//            return;
+//        }
+//        final int oldZoom = ScreenSlidePagerAdapter.numOfPages;
+//        mTouchAction = TOUCH_PAGE;
+//        final float delta = -y_changed;
+//        //Log.d(TAG, "doPageTouch " + y_changed + ", delta " + delta + ", mTouchAction " + mTouchAction + ", ScreenSlidePagerAdapter.numOfPages " + ScreenSlidePagerAdapter.numOfPages);
+//        if (delta != 0) {
+//            ScreenSlidePagerAdapter.numOfPages += (delta > 0 ? 1 : -1);
+//			ScreenSlidePagerAdapter.numOfPages = Math.min(Math.max(ScreenSlidePagerAdapter.numOfPages, 1), 2);
+//
+//			final int drawableId;
+//			if (ScreenSlidePagerAdapter.numOfPages == oldZoom) {
+//				drawableId = R.drawable.ic_volume_mute_white_36dp;
+//			} else if (ScreenSlidePagerAdapter.numOfPages > oldZoom) {
+//				drawableId = R.drawable.ic_volume_up_white_36dp;
+//			} else {
+//				drawableId = R.drawable.ic_volume_down_white_36dp;
+//			}
+//			setInfo(ScreenSlidePagerAdapter.numOfPages + " pages", drawableId);
+//        }
+//    }
 
-			final int drawableId;
-			if (ScreenSlidePagerAdapter.numOfPages == oldZoom) {
-				drawableId = R.drawable.ic_volume_mute_white_36dp;
-			} else if (ScreenSlidePagerAdapter.numOfPages > oldZoom) {
-				drawableId = R.drawable.ic_volume_up_white_36dp;
-			} else {
-				drawableId = R.drawable.ic_volume_down_white_36dp;
-			}
-			setInfo(ScreenSlidePagerAdapter.numOfPages + " pages", drawableId);
-        }
-    }
-
-	private void doTransformTouch(final float y_changed) {
-        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_TRANSFORM) {
-            return;
-        }
-        final float oldTransform = curTransform;
-        mTouchAction = TOUCH_TRANSFORM;
-        final float delta = y_changed;
-        //Log.d(TAG, "doTransformTouch " + y_changed + ", delta " + delta + ", mTouchAction " + mTouchAction + ", curTransorm " + curTransorm);
-        if (delta != 0) {
-            curTransform += (delta > 0 ? 1 : -1);
-			curTransform = Math.min(Math.max(curTransform, 0), 13);
-
-			final int drawableId;
-			if (curTransform == oldTransform) {
-				drawableId = R.drawable.ic_volume_mute_white_36dp;
-			} else if (curTransform > oldTransform) {
-				drawableId = R.drawable.ic_volume_up_white_36dp;
-			} else {
-				drawableId = R.drawable.ic_volume_down_white_36dp;
-			}
-			viewPager.setPageTransformer(true, ScrollGalleryView.transforms[curTransform]);
-
-			final StringBuilder sb = new StringBuilder();
-			final int length = "Transformer".length();
-			final int length2 = ScrollGalleryView.transforms.length;
-			for (int i = 0; i < length2; i++) {
-				final String simpleName = ScrollGalleryView.transforms[i].getClass().getSimpleName();
-				Log.d(TAG, "getSimpleName " + simpleName);
-				if (i != curTransform) {
-					sb.append(simpleName.substring(0, simpleName.length() - length).replaceAll("([A-Z])", " $1")).append("\n");
-				} else {
-					sb.append("———").append(simpleName.substring(0, simpleName.length() - length).replaceAll("([A-Z])", " $1")).append(" ———\n");
-				}
-			}
-			setInfo(sb.toString().trim(), drawableId);
-        }
-    }
+//	private void doTransformTouch(final float y_changed) {
+//        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_TRANSFORM) {
+//            return;
+//        }
+//        final float oldTransform = curTransform;
+//        mTouchAction = TOUCH_TRANSFORM;
+//        final float delta = y_changed;
+//        //Log.d(TAG, "doTransformTouch " + y_changed + ", delta " + delta + ", mTouchAction " + mTouchAction + ", curTransorm " + curTransorm);
+//        if (delta != 0) {
+//            curTransform += (delta > 0 ? 1 : -1);
+//			curTransform = Math.min(Math.max(curTransform, 0), 13);
+//
+//			final int drawableId;
+//			if (curTransform == oldTransform) {
+//				drawableId = R.drawable.ic_volume_mute_white_36dp;
+//			} else if (curTransform > oldTransform) {
+//				drawableId = R.drawable.ic_volume_up_white_36dp;
+//			} else {
+//				drawableId = R.drawable.ic_volume_down_white_36dp;
+//			}
+//			viewPager.setPageTransformer(true, ScrollGalleryView.transforms[curTransform]);
+//
+//			final StringBuilder sb = new StringBuilder();
+//			final int length = "Transformer".length();
+//			final int length2 = ScrollGalleryView.transforms.length;
+//			for (int i = 0; i < length2; i++) {
+//				final String simpleName = ScrollGalleryView.transforms[i].getClass().getSimpleName();
+//				Log.d(TAG, "getSimpleName " + simpleName);
+//				if (i != curTransform) {
+//					sb.append(simpleName.substring(0, simpleName.length() - length).replaceAll("([A-Z])", " $1")).append("\n");
+//				} else {
+//					sb.append("———").append(simpleName.substring(0, simpleName.length() - length).replaceAll("([A-Z])", " $1")).append(" ———\n");
+//				}
+//			}
+//			setInfo(sb.toString().trim(), drawableId);
+//        }
+//    }
 
 	private void doDelayTouch(final float y_changed) {
 		//Log.d(TAG, "doDelayTouch " + y_changed + ", mTouchAction " + mTouchAction + ", curDelay " + curDelay);
@@ -316,18 +320,18 @@ public class ImageFragment extends Fragment {
         }
     }
 
-	private void setZoom(final float vol, final boolean up) {
-        int drawableId;
-        if (curZoom == 1) {
-            drawableId = R.drawable.ic_volume_mute_white_36dp;
-        } else if (up) {
-            drawableId = R.drawable.ic_volume_up_white_36dp;
-        } else {
-            drawableId = R.drawable.ic_volume_down_white_36dp;
-        }
-		image.setZoom(vol);
-        setInfo(getContext().getString(R.string.volume_changing, Math.round(vol * 100)), drawableId);
-    }
+//	private void setZoom(final float vol, final boolean up) {
+//        int drawableId;
+//        if (curZoom == 1) {
+//            drawableId = R.drawable.ic_volume_mute_white_36dp;
+//        } else if (up) {
+//            drawableId = R.drawable.ic_volume_up_white_36dp;
+//        } else {
+//            drawableId = R.drawable.ic_volume_down_white_36dp;
+//        }
+//		image.setZoom(vol);
+//        setInfo(getContext().getString(R.string.volume_changing, Math.round(vol * 100)), drawableId);
+//    }
 
 	private void doBrightnessTouch(float y_changed) {
         if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_BRIGHTNESS) {
@@ -431,7 +435,7 @@ public class ImageFragment extends Fragment {
 				videoPlayImage.setVisibility(View.GONE);
 			}
 			//showWait();
-            GlideImageLoader.loadMedia(mMediaInfo, getContext(), image);//, callback);//, mimenew MediaLoader.SuccessCallback() {
+            GlideImageLoader.loadMedia(mMediaInfo, context, image);//, callback);//, mimenew MediaLoader.SuccessCallback() {
 //                @Override
 //                public void onSuccess() {
 //                    //createViewAttacher(getArguments());

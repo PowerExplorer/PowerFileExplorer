@@ -220,7 +220,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
 	private String mimes = "";
 	String dir = "";
-
+	
+	
 	public final static int REQUEST_CODE_PREFERENCES = 1, REQUEST_CODE_SRV_FORM = 2, REQUEST_CODE_OPEN = 3;
     public final static int FIND_ACT = 1017, SMB_ACT = 2751, FTP_ACT = 4501, SFTP_ACT = 2450;
     public final static String PREF_RESTORE_ACTION = "com.ghostsq.commander.PREF_RESTORE";
@@ -246,15 +247,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public ContentFragment curExplorerFrag;
 	private int curExploreFragIndex = 1;
 	
-	public int operation = -1;
-    public ArrayList<BaseFile> oparrayList;
-    public ArrayList<ArrayList<BaseFile>> oparrayListList;
-	
-    // oppathe - the path at which certain operation needs to be performed
-    // oppathe1 - the new path which user wants to create/modify
-    // oppathList - the paths at which certain operation needs to be performed (pairs with oparrayList)
-    public String oppathe, oppathe1;
-	public ArrayList<String> oppatheList;
+//	public int operation = -1;
+//    public ArrayList<BaseFile> oparrayList;
+//    public ArrayList<ArrayList<BaseFile>> oparrayListList;
 	
     public static final int INTENT_WRITE_REQUEST_CODE = 1;
 
@@ -1310,6 +1305,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	@Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
 		Log.d(TAG, "onActivityResult: " + requestCode + ", " + intent);
+		
 		if (requestCode == FILES_REQUEST_CODE) {
 
 			if (responseCode == Activity.RESULT_OK) {
@@ -1369,7 +1365,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
                 sharedPref.edit().putString("drawer_header_path", intent.getData().toString()).commit();
                 //setDrawerHeaderBackground();
             }
-        } else if (requestCode == 3) {
+        } else if (requestCode == FROM_PREVIOUS_IO_ACTION) {
             Uri treeUri;
             if (responseCode == Activity.RESULT_OK) {
                 // Get Uri from Storage Access Framework.

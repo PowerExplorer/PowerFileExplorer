@@ -47,13 +47,13 @@ import java.util.ArrayList;
 public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> {
 
     private ArrayList<BaseFile> files;
-    private Context cd;
+    private Context ctx;
     private boolean rootMode;
     //private ZipViewer zipViewer;
     private DataUtils dataUtils = DataUtils.getInstance();
 
     public DeleteTask(ContentResolver c, Context cd) {
-        this.cd = cd;
+        this.ctx = cd;
         rootMode = PreferenceManager.getDefaultSharedPreferences(cd).getBoolean("rootmode", false);
     }
 
@@ -66,7 +66,7 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        Toast.makeText(cd, values[0], Toast.LENGTH_SHORT).show();
+        Toast.makeText(ctx, values[0], Toast.LENGTH_SHORT).show();
     }
 
     protected Boolean doInBackground(ArrayList<BaseFile>... p1) {
@@ -77,7 +77,7 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
         if (files.get(0).isOtgFile()) {
             for (BaseFile a : files) {
 
-                DocumentFile documentFile = OTGUtil.getDocumentFile(a.getPath(), cd, false);
+                DocumentFile documentFile = OTGUtil.getDocumentFile(a.getPath(), ctx, false);
                  b = documentFile.delete();
             }
         } else if (files.get(0).isDropBoxFile()) {
@@ -128,7 +128,7 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
 
             for(BaseFile a : files)
                 try {
-                    (a).delete(cd, rootMode);
+                    (a).delete(ctx, rootMode);
                 } catch (RootNotPermittedException e) {
                     e.printStackTrace();
                     b = false;
@@ -139,11 +139,11 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
         if(!files.get(0).isSmb()) {
             try {
                 for (BaseFile f : files) {
-                    delete(cd,f.getPath());
+                    delete(ctx,f.getPath());
                 }
             } catch (Exception e) {
                 for (BaseFile f : files) {
-                    Futils.scanFile(f.getPath(), cd);
+                    Futils.scanFile(f.getPath(), ctx);
                 }
             }
         }
@@ -151,7 +151,7 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
         // delete file entry from encrypted database
         for (BaseFile file : files) {
             if (file.getName().endsWith(CryptUtil.CRYPT_EXTENSION)) {
-                CryptHandler handler = new CryptHandler(cd);
+                CryptHandler handler = new CryptHandler(ctx);
                 handler.clear(file.getPath());
             }
         }
@@ -162,10 +162,10 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
     @Override
     public void onPostExecute(Boolean b) {
         Intent intent = new Intent("loadlist");
-        cd.sendBroadcast(intent);
+        ctx.sendBroadcast(intent);
 
         if (!b) {
-            Toast.makeText(cd, cd.getResources().getString(R.string.error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, ctx.getResources().getString(R.string.error), Toast.LENGTH_SHORT).show();
 //        } else if (zipViewer==null) {
 //            Toast.makeText(cd, cd.getResources().getString(R.string.done), Toast.LENGTH_SHORT).show();
         }

@@ -76,6 +76,8 @@ import static com.amaze.filemanager.utils.files.Futils.toHFileArray;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
 import net.gnu.explorer.ContentFragment;
+import com.amaze.filemanager.services.DeleteTask;
+import com.amaze.filemanager.utils.MainActivityHelper;
 
 /**
  * Here are a lot of function that create material dialogs
@@ -133,7 +135,7 @@ public class GeneralDialogCreation {
 
     @SuppressWarnings("ConstantConditions")
     public static void deleteFilesDialog(final Context c, //final ArrayList<LayoutElement> layoutElements,
-                                         final ExplorerActivity mainActivity, final List<LayoutElement> positions,
+                                         final ThemedActivity mainActivity, final List<LayoutElement> positions,
                                          AppTheme appTheme) {
 
         final ArrayList<BaseFile> itemsToDelete = new ArrayList<>();
@@ -152,7 +154,20 @@ public class GeneralDialogCreation {
 				@Override
 				public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 					Toast.makeText(c, c.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
-					mainActivity.mainActivityHelper.deleteFiles(itemsToDelete);
+					//mainActivity.mainActivityHelper.deleteFiles(itemsToDelete);
+					if (itemsToDelete == null || itemsToDelete.size() == 0) return;
+					if (itemsToDelete.get(0).isSmb()) {
+						new DeleteTask(null, mainActivity).execute((itemsToDelete));
+						return;
+					}
+					int mode = MainActivityHelper.checkFolder(new File(itemsToDelete.get(0).getPath()).getParentFile(), mainActivity);
+					if (mode == 2) {
+						mainActivity.oparrayList = (itemsToDelete);
+						mainActivity.operation = DataUtils.DELETE;
+					} else if (mode == 1 || mode == 0)
+						new DeleteTask(null, mainActivity).execute((itemsToDelete));
+					else 
+						Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
 				}
 			})
 			.build();

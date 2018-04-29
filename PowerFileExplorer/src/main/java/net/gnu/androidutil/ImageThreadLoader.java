@@ -289,6 +289,8 @@ public class ImageThreadLoader {
 							.with(ctx)
 							.load(file)
 							.asBitmap()//android:adjustViewBounds="true"
+							.skipMemoryCache(true)
+							.diskCacheStrategy(DiskCacheStrategy.RESULT)
 							.fitCenter()
 							.placeholder(imageIcon)
 							//.crossFade()
@@ -301,6 +303,8 @@ public class ImageThreadLoader {
 							.with(ctx)
 							.load(file)
 							.asBitmap()
+							.skipMemoryCache(true)
+							.diskCacheStrategy(DiskCacheStrategy.RESULT)
 							.fitCenter()
 							.placeholder(videos_new)
 							//.crossFade()

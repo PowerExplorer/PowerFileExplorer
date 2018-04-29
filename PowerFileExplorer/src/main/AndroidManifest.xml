@@ -313,7 +313,7 @@
 		android:launchMode="singleTop"-->
 		<activity
             android:name="chm.cblink.nb.chmreader.CHMActivity"
-			android:label="CHM Viewer">
+			android:label="CHM Reader">
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
             <intent-filter>

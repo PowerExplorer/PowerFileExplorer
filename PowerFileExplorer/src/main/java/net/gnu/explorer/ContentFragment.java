@@ -297,304 +297,307 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		Log.d(TAG, "onViewCreated " + toString() + ", savedInstanceState=" + savedInstanceState + ", args " + args);
 		super.onViewCreated(view, savedInstanceState);
 
-		final int fragIndex;
-		final String order;
-		if (type == Frag.TYPE.EXPLORER) {
-			fragIndex = slidingTabsFragment.indexOfMTabs(this);
-			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-				order = AndroidUtils.getSharedPreference(activity, "ContentFragSortType" + fragIndex, "Name ▲");
-				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag.SPAN_COUNT" + fragIndex, 1);
+		if (slidingTabsFragment != null) {
+			final int fragIndex;
+			final String order;
+
+			if (type == Frag.TYPE.EXPLORER) {
+				fragIndex = slidingTabsFragment.indexOfMTabs(this);
+				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+					order = AndroidUtils.getSharedPreference(activity, "ContentFragSortType" + fragIndex, "Name ▲");
+					spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag.SPAN_COUNT" + fragIndex, 1);
+				} else {
+					order = AndroidUtils.getSharedPreference(activity, "ExplorerFragSortType" + fragIndex, "Name ▲");
+					spanCount = AndroidUtils.getSharedPreference(activity, "ExplorerFrag.SPAN_COUNT" + fragIndex, 1);
+				} 
 			} else {
-				order = AndroidUtils.getSharedPreference(activity, "ExplorerFragSortType" + fragIndex, "Name ▲");
-				spanCount = AndroidUtils.getSharedPreference(activity, "ExplorerFrag.SPAN_COUNT" + fragIndex, 1);
-			} 
-		} else {
-			fragIndex = -1;
-			if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
-				order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeR", "Name ▲");
-				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTR", 1);
-			} else {
-				order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeL", "Name ▲");
-				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTL", 1);
+				fragIndex = -1;
+				if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+					order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeR", "Name ▲");
+					spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTR", 1);
+				} else {
+					order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeL", "Name ▲");
+					spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTL", 1);
+				}
 			}
-		}
-		Log.d(TAG, "onViewCreated index " + fragIndex + ", " + toString() + ", " + "args=" + args);
-		//Log.d(TAG, "sharedPreference " + fragIndex + ", " + order);
+			Log.d(TAG, "onViewCreated index " + fragIndex + ", " + toString() + ", " + "args=" + args);
+			//Log.d(TAG, "sharedPreference " + fragIndex + ", " + order);
 
-		SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
+			SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
 
-		scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
-		mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
-		dirMore = (ImageButton) view.findViewById(R.id.dirMore);
-		drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
-		drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
-		deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
-		
+			scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
+			mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
+			dirMore = (ImageButton) view.findViewById(R.id.dirMore);
+			drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
+			drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
+			deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
 
-		view.findViewById(R.id.copys).setOnClickListener(this);
-		view.findViewById(R.id.cuts).setOnClickListener(this);
-		deletePastesBtn.setOnClickListener(this);
-		view.findViewById(R.id.renames).setOnClickListener(this);
-		view.findViewById(R.id.shares).setOnClickListener(this);
-		final View moreLeft = view.findViewById(R.id.moreLeft);
-		moreLeft.setOnClickListener(this);
-		final View moreRight = view.findViewById(R.id.moreRight);
-		moreRight.setOnClickListener(this);
-		if (activity.balance != 0) {
-			moreLeft.setVisibility(View.GONE);
-			moreRight.setVisibility(View.GONE);
 
-			View findViewById = view.findViewById(R.id.book);
-			findViewById.setVisibility(View.VISIBLE);
-			
-			findViewById = view.findViewById(R.id.hiddenfiles);
-			findViewById.setVisibility(View.VISIBLE);
+			view.findViewById(R.id.copys).setOnClickListener(this);
+			view.findViewById(R.id.cuts).setOnClickListener(this);
+			deletePastesBtn.setOnClickListener(this);
+			view.findViewById(R.id.renames).setOnClickListener(this);
+			view.findViewById(R.id.shares).setOnClickListener(this);
+			final View moreLeft = view.findViewById(R.id.moreLeft);
+			moreLeft.setOnClickListener(this);
+			final View moreRight = view.findViewById(R.id.moreRight);
+			moreRight.setOnClickListener(this);
+			if (activity.balance != 0) {
+				moreLeft.setVisibility(View.GONE);
+				moreRight.setVisibility(View.GONE);
+
+				View findViewById = view.findViewById(R.id.book);
+				findViewById.setVisibility(View.VISIBLE);
+
+				findViewById = view.findViewById(R.id.hiddenfiles);
+				findViewById.setVisibility(View.VISIBLE);
 
 //			findViewById = view.findViewById(R.id.encrypts);
 //			findViewById.setVisibility(View.VISIBLE);
 
-			findViewById = view.findViewById(R.id.shortcuts);
-			findViewById.setVisibility(View.VISIBLE);
-		} else {
-			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-				moreLeft.setVisibility(View.GONE);
-			} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
-				moreRight.setVisibility(View.GONE);
-			}
-		}
-		view.findViewById(R.id.book).setOnClickListener(this);
-		view.findViewById(R.id.hiddenfiles).setOnClickListener(this);
-		//view.findViewById(R.id.encrypts).setOnClickListener(this);
-		view.findViewById(R.id.infos).setOnClickListener(this);
-		view.findViewById(R.id.shortcuts).setOnClickListener(this);
-		view.findViewById(R.id.compresss).setOnClickListener(this);
-		if (selectedInList1.size() == 0 && activity.COPY_PATH == null && activity.MOVE_PATH == null) {
-			if (commands.getVisibility() == View.VISIBLE) {
-				horizontalDivider6.setVisibility(View.GONE);
-				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-				commands.setVisibility(View.GONE);
-			}
-		} else if (commands.getVisibility() == View.GONE) {
-			commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-			commands.setVisibility(View.VISIBLE);
-			horizontalDivider6.setVisibility(View.VISIBLE);
-		}
-
-		if (type == Frag.TYPE.SELECTION) {
-			removeBtn = (ImageButton) view.findViewById(R.id.remove);
-			removeAllBtn = (ImageButton) view.findViewById(R.id.removeAll);
-			addBtn = (ImageButton) view.findViewById(R.id.add);
-			addAllBtn = (ImageButton) view.findViewById(R.id.addAll);
-			selectionCommands = (LinearLayout) view.findViewById(R.id.selectionCommands);
-			topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommands));
-			dirMore.setVisibility(View.GONE);
-			if (dataSourceL1.size() == 0) {
-				searchButton.setEnabled(false);
-				nofilelayout.setVisibility(View.VISIBLE);
-				mSwipeRefreshLayout.setVisibility(View.GONE);
+				findViewById = view.findViewById(R.id.shortcuts);
+				findViewById.setVisibility(View.VISIBLE);
 			} else {
-				searchButton.setEnabled(true);
-				nofilelayout.setVisibility(View.GONE);
-				mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-			}
-			removeBtn.setOnClickListener(this);
-			removeAllBtn.setOnClickListener(this);
-			addBtn.setOnClickListener(this);
-			addAllBtn.setOnClickListener(this);
-		} else {
-			dirMore.setOnClickListener(this);
-			topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
-		}
-
-
-		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-					//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
-					if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
-						if (dy > activity.density << 4 && selStatus.getVisibility() == View.VISIBLE) {
-							selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							selStatus.setVisibility(View.GONE);
-							horizontalDivider0.setVisibility(View.GONE);
-							horizontalDivider12.setVisibility(View.GONE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							status.setVisibility(View.GONE);
-						} else if (dy < -activity.density << 4 && selStatus.getVisibility() == View.GONE) {
-							selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							selStatus.setVisibility(View.VISIBLE);
-							horizontalDivider0.setVisibility(View.VISIBLE);
-							horizontalDivider12.setVisibility(View.VISIBLE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							status.setVisibility(View.VISIBLE);
-						}
-						lastScroll = System.currentTimeMillis();
-					}
+				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+					moreLeft.setVisibility(View.GONE);
+				} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+					moreRight.setVisibility(View.GONE);
 				}
-			});
-		
-		DefaultItemAnimator animator = new DefaultItemAnimator();
-		animator.setAddDuration(500);
-        listView.setItemAnimator(animator);
+			}
+			view.findViewById(R.id.book).setOnClickListener(this);
+			view.findViewById(R.id.hiddenfiles).setOnClickListener(this);
+			//view.findViewById(R.id.encrypts).setOnClickListener(this);
+			view.findViewById(R.id.infos).setOnClickListener(this);
+			view.findViewById(R.id.shortcuts).setOnClickListener(this);
+			view.findViewById(R.id.compresss).setOnClickListener(this);
+			if (selectedInList1.size() == 0 && activity.COPY_PATH == null && activity.MOVE_PATH == null) {
+				if (commands.getVisibility() == View.VISIBLE) {
+					horizontalDivider6.setVisibility(View.GONE);
+					commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
+					commands.setVisibility(View.GONE);
+				}
+			} else if (commands.getVisibility() == View.GONE) {
+				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+				commands.setVisibility(View.VISIBLE);
+				horizontalDivider6.setVisibility(View.VISIBLE);
+			}
 
-		clearButton.setOnClickListener(this);
-		searchButton.setOnClickListener(this);
+			if (type == Frag.TYPE.SELECTION) {
+				removeBtn = (ImageButton) view.findViewById(R.id.remove);
+				removeAllBtn = (ImageButton) view.findViewById(R.id.removeAll);
+				addBtn = (ImageButton) view.findViewById(R.id.add);
+				addAllBtn = (ImageButton) view.findViewById(R.id.addAll);
+				selectionCommands = (LinearLayout) view.findViewById(R.id.selectionCommands);
+				topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommands));
+				dirMore.setVisibility(View.GONE);
+				if (dataSourceL1.size() == 0) {
+					searchButton.setEnabled(false);
+					nofilelayout.setVisibility(View.VISIBLE);
+					mSwipeRefreshLayout.setVisibility(View.GONE);
+				} else {
+					searchButton.setEnabled(true);
+					nofilelayout.setVisibility(View.GONE);
+					mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+				}
+				removeBtn.setOnClickListener(this);
+				removeAllBtn.setOnClickListener(this);
+				addBtn.setOnClickListener(this);
+				addAllBtn.setOnClickListener(this);
+			} else {
+				dirMore.setOnClickListener(this);
+				topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
+			}
 
-		searchET.addTextChangedListener(textSearch);
-		mSwipeRefreshLayout.setOnRefreshListener(this);
-		mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-				@Override
-                public boolean onScale(ScaleGestureDetector detector) {
-                    Log.d(TAG, "onScale getCurrentSpan " + detector.getCurrentSpan() + ", getPreviousSpan " + detector.getPreviousSpan() + ", getTimeDelta " + detector.getTimeDelta());
-					//if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 50) {
-					//Log.d(TAG, "onScale " + (detector.getCurrentSpan() - detector.getPreviousSpan()) + ", getTimeDelta " + detector.getTimeDelta());
-					//mScaling = true;
-					mSwipeRefreshLayout.setEnabled(false);
-					if (detector.getCurrentSpan() - detector.getPreviousSpan() < -80 * activity.density) {
-						if (spanCount == 1) {
-							spanCount = 2;
-							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
-							return true;
-						} else if (spanCount == 2 && slidingTabsFragment.width >= 0) {
-							if (activity.right.getVisibility() == View.GONE || activity.left.getVisibility() == View.GONE) {
-								spanCount = 8;
-							} else {
-								spanCount = 4;
+			listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+					public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+						//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
+						if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
+							if (dy > activity.density << 4 && selStatus.getVisibility() == View.VISIBLE) {
+								selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+								selStatus.setVisibility(View.GONE);
+								horizontalDivider0.setVisibility(View.GONE);
+								horizontalDivider12.setVisibility(View.GONE);
+								status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+								status.setVisibility(View.GONE);
+							} else if (dy < -activity.density << 4 && selStatus.getVisibility() == View.GONE) {
+								selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+								selStatus.setVisibility(View.VISIBLE);
+								horizontalDivider0.setVisibility(View.VISIBLE);
+								horizontalDivider12.setVisibility(View.VISIBLE);
+								status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+								status.setVisibility(View.VISIBLE);
 							}
-							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
-							return true;
+							lastScroll = System.currentTimeMillis();
 						}
-					} else if (detector.getCurrentSpan() - detector.getPreviousSpan() > 80 * activity.density) {
-						if ((spanCount == 4 || spanCount == 8)) {
-							spanCount = 2;
-							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
-							return true;
-						} else if (spanCount == 2) {
-							spanCount = 1;
-							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
-							return true;
-						} 
 					}
-                    //}
-                    //mScaling = false;
-					mSwipeRefreshLayout.setEnabled(true);
-					return false;
-                }
-            });
+				});
 
-		listView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                   	//Log.d(TAG, "onTouch " + event);
-					select(true);
-					mScaleGestureDetector.onTouchEvent(event);
-                    return false;
-                }
-            });
+			DefaultItemAnimator animator = new DefaultItemAnimator();
+			animator.setAddDuration(500);
+			listView.setItemAnimator(animator);
 
-		if (args != null) {
-			if (currentPathTitle == null) {//"".equals(currentPathTitle) || 
-				currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH);
-			} else {
-				args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
-			}
-			//Log.d(TAG, "onViewCreated.dir " + dir);
-			suffix = args.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*").trim().toLowerCase();
-			String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
-			suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
-			suffixSpliter = ".*?(" + suffixSpliter + ")";
-			suffixPattern = Pattern.compile(suffixSpliter);
+			clearButton.setOnClickListener(this);
+			searchButton.setOnClickListener(this);
 
-			mimes = args.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
-			mimes = mimes == null ? "*/*" : mimes.toLowerCase();
-			//Log.d(TAG, "onViewCreated.suffix " + suffix);
-			multiFiles = args.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT);
-			//Log.d(TAG, "onViewCreated.multiFiles " + multiFiles);
-			if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
-				savedInstanceState = args;
-			}
+			searchET.addTextChangedListener(textSearch);
+			mSwipeRefreshLayout.setOnRefreshListener(this);
+			mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-			if (!multiFiles) {
-				allCbx.setVisibility(View.GONE);
-			}
-        }
+					@Override
+					public boolean onScale(ScaleGestureDetector detector) {
+						Log.d(TAG, "onScale getCurrentSpan " + detector.getCurrentSpan() + ", getPreviousSpan " + detector.getPreviousSpan() + ", getTimeDelta " + detector.getTimeDelta());
+						//if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 50) {
+						//Log.d(TAG, "onScale " + (detector.getCurrentSpan() - detector.getPreviousSpan()) + ", getTimeDelta " + detector.getTimeDelta());
+						//mScaling = true;
+						mSwipeRefreshLayout.setEnabled(false);
+						if (detector.getCurrentSpan() - detector.getPreviousSpan() < -80 * activity.density) {
+							if (spanCount == 1) {
+								spanCount = 2;
+								setRecyclerViewLayoutManager();
+								mSwipeRefreshLayout.setEnabled(true);
+								return true;
+							} else if (spanCount == 2 && slidingTabsFragment.width >= 0) {
+								if (activity.right.getVisibility() == View.GONE || activity.left.getVisibility() == View.GONE) {
+									spanCount = 8;
+								} else {
+									spanCount = 4;
+								}
+								setRecyclerViewLayoutManager();
+								mSwipeRefreshLayout.setEnabled(true);
+								return true;
+							}
+						} else if (detector.getCurrentSpan() - detector.getPreviousSpan() > 80 * activity.density) {
+							if ((spanCount == 4 || spanCount == 8)) {
+								spanCount = 2;
+								setRecyclerViewLayoutManager();
+								mSwipeRefreshLayout.setEnabled(true);
+								return true;
+							} else if (spanCount == 2) {
+								spanCount = 1;
+								setRecyclerViewLayoutManager();
+								mSwipeRefreshLayout.setEnabled(true);
+								return true;
+							} 
+						}
+						//}
+						//mScaling = false;
+						mSwipeRefreshLayout.setEnabled(true);
+						return false;
+					}
+				});
 
-		allName.setText("Name");
-		allSize.setText("Size");
-		allDate.setText("Date");
-		allType.setText("Type");
-		switch (order) {
-			case "Name ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.DESCENDING);
-				allName.setText("Name ▼");
-				break;
-			case "Date ▲":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.ASCENDING);
-				allDate.setText("Date ▲");
-				break;
-			case "Date ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.DESCENDING);
-				allDate.setText("Date ▼");
-				break;
-			case "Size ▲":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.ASCENDING);
-				allSize.setText("Size ▲");
-				break;
-			case "Size ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.DESCENDING);
-				allSize.setText("Size ▼");
-				break;
-			case "Type ▲":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.ASCENDING);
-				allType.setText("Type ▲");
-				break;
-			case "Type ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.DESCENDING);
-				allType.setText("Type ▼");
-				break;
-			default:
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.ASCENDING);
-				allName.setText("Name ▲");
-				break;
-		}
+			listView.setOnTouchListener(new View.OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						//Log.d(TAG, "onTouch " + event);
+						select(true);
+						mScaleGestureDetector.onTouchEvent(event);
+						return false;
+					}
+				});
 
-		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
-		if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
-			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-			suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-			mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
-			multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-			dirTemp4Search = (String) savedInstanceState.get("dirTemp4Search");
-			
-			allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
-			setRecyclerViewLayoutManager();
-			//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
-			if (type == Frag.TYPE.EXPLORER) {//} && !fake) {// && !activity.configurationChanged
-				//updateDir(currentPathTitle, ContentFragment.this);
-				setDirectoryButtons();
-			}
-			final int index  = savedInstanceState.getInt("index");
-			final int top  = savedInstanceState.getInt("top");
-			//Log.d(TAG, "index = " + index + ", " + top);
-			gridLayoutManager.scrollToPositionWithOffset(index, top);
-		} else {
-			//srcAdapter = new ArrAdapter(dataSourceL1);
-			//listView1.setAdapter(srcAdapter);
-			setRecyclerViewLayoutManager();
-			if (type == Frag.TYPE.EXPLORER && !fake) {
-				if (currentPathTitle != null) {
-					changeDir(currentPathTitle, false);
-				} else if (searchMode) {
-					searchMode = !searchMode;
-					manageSearchUI(searchMode);
-					changeDir(dirTemp4Search, false);
+			if (args != null) {
+				if (currentPathTitle == null) {//"".equals(currentPathTitle) || 
+					currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH);
+				} else {
+					args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+				}
+				//Log.d(TAG, "onViewCreated.dir " + dir);
+				suffix = args.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*").trim().toLowerCase();
+				String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
+				suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
+				suffixSpliter = ".*?(" + suffixSpliter + ")";
+				suffixPattern = Pattern.compile(suffixSpliter);
+
+				mimes = args.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
+				mimes = mimes == null ? "*/*" : mimes.toLowerCase();
+				//Log.d(TAG, "onViewCreated.suffix " + suffix);
+				multiFiles = args.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT);
+				//Log.d(TAG, "onViewCreated.multiFiles " + multiFiles);
+				if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
+					savedInstanceState = args;
+				}
+
+				if (!multiFiles) {
+					allCbx.setVisibility(View.GONE);
 				}
 			}
+
+			allName.setText("Name");
+			allSize.setText("Size");
+			allDate.setText("Date");
+			allType.setText("Type");
+			switch (order) {
+				case "Name ▼":
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.DESCENDING);
+					allName.setText("Name ▼");
+					break;
+				case "Date ▲":
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.ASCENDING);
+					allDate.setText("Date ▲");
+					break;
+				case "Date ▼":
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.DESCENDING);
+					allDate.setText("Date ▼");
+					break;
+				case "Size ▲":
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.ASCENDING);
+					allSize.setText("Size ▲");
+					break;
+				case "Size ▼":
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.DESCENDING);
+					allSize.setText("Size ▼");
+					break;
+				case "Type ▲":
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.ASCENDING);
+					allType.setText("Type ▲");
+					break;
+				case "Type ▼":
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.DESCENDING);
+					allType.setText("Type ▼");
+					break;
+				default:
+					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.ASCENDING);
+					allName.setText("Name ▲");
+					break;
+			}
+
+			//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
+			if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
+				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
+				multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+				dirTemp4Search = (String) savedInstanceState.get("dirTemp4Search");
+
+				allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
+				setRecyclerViewLayoutManager();
+				//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
+				if (type == Frag.TYPE.EXPLORER) {//} && !fake) {// && !activity.configurationChanged
+					//updateDir(currentPathTitle, ContentFragment.this);
+					setDirectoryButtons();
+				}
+				final int index  = savedInstanceState.getInt("index");
+				final int top  = savedInstanceState.getInt("top");
+				//Log.d(TAG, "index = " + index + ", " + top);
+				gridLayoutManager.scrollToPositionWithOffset(index, top);
+			} else {
+				//srcAdapter = new ArrAdapter(dataSourceL1);
+				//listView1.setAdapter(srcAdapter);
+				setRecyclerViewLayoutManager();
+				if (type == Frag.TYPE.EXPLORER && !fake) {
+					if (currentPathTitle != null) {
+						changeDir(currentPathTitle, false);
+					} else if (searchMode) {
+						searchMode = !searchMode;
+						manageSearchUI(searchMode);
+						changeDir(dirTemp4Search, false);
+					}
+				}
+			}
+			updateColor(view);
 		}
-		updateColor(view);
 	}
 
 	void notifyDataSetChanged() {
@@ -674,19 +677,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
         final int top = (vi == null) ? 0 : vi.getTop();
 		outState.putInt("index", index);
 		outState.putInt("top", top);
-		//Log.d(TAG, "onSaveInstanceState index = " + index + ", " + top);
+		
 		super.onSaveInstanceState(outState);
 	}
-
-//	@Override
-//	public void onViewStateRestored(Bundle savedInstanceState) {
-//		//Log.d(TAG, "onViewStateRestored " + savedInstanceState);
-//		if (imageLoader == null) {
-//			activity = (ExplorerActivity)getActivity();
-//			imageLoader = new ImageThreadLoader(activity);
-//		}
-//		super.onViewStateRestored(savedInstanceState);
-//	}
 
 	Map<String, Object> onSaveInstanceState() {
 		Map<String, Object> outState = new TreeMap<>();
@@ -695,8 +688,15 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		outState.put(ExplorerActivity.EXTRA_FILTER_FILETYPE, suffix);
 		outState.put(ExplorerActivity.EXTRA_FILTER_MIMETYPE, mimes);
 		outState.put(ExplorerActivity.EXTRA_MULTI_SELECT, multiFiles);
-		outState.put("selectedInList1", selectedInList1);
-		outState.put("dataSourceL1", dataSourceL1);
+		
+		final ArrayList<LayoutElement> dataSource = new ArrayList<>(dataSourceL1.size());
+		dataSource.addAll(dataSourceL1);
+		outState.put("dataSourceL1", dataSource);
+		
+		final ArrayList<LayoutElement> selectedInList = new ArrayList<>(selectedInList1.size());
+		selectedInList.addAll(selectedInList1);
+		outState.put("selectedInList1", selectedInList);
+		
 		outState.put("searchMode", searchMode);
 		outState.put("searchVal", searchET.getText().toString());
 		outState.put("dirTemp4Search", dirTemp4Search);
@@ -712,7 +712,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	}
 
 	void reload(Map<String, Object> savedInstanceState) {
-		Log.d(TAG, "reload " + savedInstanceState + currentPathTitle);
+		Log.d(TAG, "reload currentPathTitle " + currentPathTitle + ", "  + savedInstanceState);
 		currentPathTitle = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 		suffix = (String) savedInstanceState.get(ExplorerActivity.EXTRA_FILTER_FILETYPE);
 		mimes = (String) savedInstanceState.get(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
@@ -721,6 +721,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		selectedInList1.addAll((ArrayList<LayoutElement>) savedInstanceState.get("selectedInList1"));
 		dataSourceL1.clear();
 		dataSourceL1.addAll((ArrayList<LayoutElement>) savedInstanceState.get("dataSourceL1"));
+		
 		if (type == Frag.TYPE.SELECTION) {
 			tempOriDataSourceL1.clear();
 			tempOriDataSourceL1.addAll(dataSourceL1);
@@ -728,11 +729,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		searchMode = savedInstanceState.get("searchMode");
 		searchVal = (String) savedInstanceState.get("searchVal");
 		dirTemp4Search = (String) savedInstanceState.get("dirTemp4Search");
-		//listView1.setSelectionFromTop(savedInstanceState.getInt("index"),
-		//savedInstanceState.getInt("top"));
+		
 		allCbx.setEnabled(savedInstanceState.get("allCbx.isEnabled"));
 		srcAdapter.notifyDataSetChanged();
-
+		
 		setRecyclerViewLayoutManager();
 		gridLayoutManager.scrollToPositionWithOffset(savedInstanceState.get("index"), savedInstanceState.get("top"));
 
@@ -1032,9 +1032,16 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				+ " MiB. Used " + Util.nf.format((curDir.getTotalSpace() - curDir.getFreeSpace()) / (1 << 20))
 				+ " MiB. Total " + Util.nf.format(curDir.getTotalSpace() / (1 << 20)) + " MiB");
 		} else {
-			activity.curContentFrag.dataSourceL2 = dataSourceL1;
-			if (activity.curContentFrag.srcAdapter != null) {
-				activity.curContentFrag.srcAdapter.notifyDataSetChanged();
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+				activity.curContentFrag.dataSourceL2 = dataSourceL1;
+				if (activity.curContentFrag.srcAdapter != null) {
+					activity.curContentFrag.srcAdapter.notifyDataSetChanged();
+				}
+			} else if (activity.slideFrag2 != null) {
+				activity.curExplorerFrag.dataSourceL2 = dataSourceL1;
+				if (activity.curExplorerFrag.srcAdapter != null) {
+					activity.curExplorerFrag.srcAdapter.notifyDataSetChanged();
+				}
 			}
 			updateColor(null);
 		}
@@ -1993,14 +2000,16 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		public void afterTextChanged(final Editable text) {
-			final String filesearch = text.toString();
-			Log.d(TAG, "quicksearch " + filesearch);
-			if (filesearch.length() > 0) {
-				if (searchTask.getStatus() == AsyncTask.Status.RUNNING) {
-					searchTask.cancel(true);
+			if (searchMode) {
+				final String filesearch = text.toString();
+				Log.d(TAG, "quicksearch " + filesearch);
+				if (filesearch.length() > 0) {
+					if (searchTask.getStatus() == AsyncTask.Status.RUNNING) {
+						searchTask.cancel(true);
+					}
+					searchTask = new SearchFileNameTask();
+					searchTask.execute(filesearch);
 				}
-				searchTask = new SearchFileNameTask();
-				searchTask.execute(filesearch);
 			}
 		}
 
@@ -2064,9 +2073,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	boolean back() {
 		Map<String, Object> softBundle;
-		Log.d(TAG, "back " + backStack.size());
-		if (backStack.size() >= 1 && (softBundle = backStack.pop()) != null && softBundle.get("dataSourceL1") != null) {
-			Log.d(TAG, "back " + softBundle);
+		//Log.d(TAG, "back " + backStack.size());
+		if (backStack.size() > 1 && (softBundle = backStack.pop()) != null && softBundle.get("dataSourceL1") != null) {
+			//Log.d(TAG, "back " + softBundle);
 			reload(softBundle);
 			return true;
 		} else {

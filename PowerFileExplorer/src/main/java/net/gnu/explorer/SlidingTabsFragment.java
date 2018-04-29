@@ -59,7 +59,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		super.onViewCreated(view, savedInstanceState);
 		final Bundle args = getArguments();
 		Log.d(TAG, "onViewCreated args " + args + ", savedInstanceState " + savedInstanceState + ", " + side);
-
+		setRetainInstance(true);
 		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
 		if (childFragmentManager == null) {
 			childFragmentManager = getChildFragmentManager();
