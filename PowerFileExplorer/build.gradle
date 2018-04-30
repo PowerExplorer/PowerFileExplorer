@@ -24,6 +24,11 @@ repositories {
 		url 'https://dl.google.com/dl/android/maven2/'
 		
 		//url 'https://maven.google.com'
+		//https://dl-ssl.google.com/android/repository/repository-12.xml
+		//sources-25_r01.zip
+		//platform-25_r03.zip
+		//build-tools_r25.0.2-linux.zip
+		//build-tools_r25.0.2-windows.zip
 		//https://maven.google.com/com/android/support/support-annotations/27.1.1/support-annotations-27.1.1-sources.jar
 		//maven.google.com/ group_path / library / version / library - version . ext
 		//For example: maven.google.com/android/arch/lifecycle/compiler/1.0.0/compiler-1.0.0.pom .
@@ -119,7 +124,14 @@ dependencies{
 	
 	//compile 'com.github.javiersantos:MaterialStyledDialogs:+'//2.1'
 	//compile 'jp.wasabeef:glide-transformations:3.3.0'
-
+	//compile 'com.hierynomus:sshj:+'//0.25.0
+	//compile 'com.github.npgall:concurrent-trees:2.6.1'//Concurrent tries
+	//compile ("com.github.bumptech.glide:recyclerview-integration:4.7.1") {
+		// Excludes the support library because it's already included by Glide.
+		//transitive = false
+	//}
+	//compile 'com.github.bumptech.glide:glide:4.7.1'
+	//compile 'com.github.bumptech.glide:compiler:4.7.1'
 	
 	//compile 'com.thefinestartist:utils:0.9.0'
 	//compile "com.thefinestartist:finestwebview:1.2.7"

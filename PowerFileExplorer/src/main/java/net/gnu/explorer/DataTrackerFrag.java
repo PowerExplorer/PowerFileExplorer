@@ -302,7 +302,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 			});
 		unitSpinner.setSelection(4);
 
-		appStatAdapter = new AppsAdapter(new ArrayList<AppStats>());
+		appStatAdapter = new AppsAdapter(appStatsList);
 
 		listView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 		listView.setAdapter(appStatAdapter);
@@ -339,7 +339,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 					}
 				}});
 		final Bundle args = getArguments();
-		
+
 		if (args != null) {
 			title = args.getString("title");
 		}
@@ -394,7 +394,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 			handler.post(runnable);
 		}
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 
@@ -696,7 +696,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				cbx.setOnLongClickListener(AppsAdapter.this);
 			}
 		}
-		
+
 		public AppsAdapter(final ArrayList<AppStats> objects) {
 			super(objects);
 		}
@@ -916,12 +916,10 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				}
 			}
 		}
-		
+
 		@Override
-		public ViewHolder onCreateViewHolder(ViewGroup parent,
-														int viewType) {
-			View v;
-			v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_net, parent, false);
+		public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+			final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_net, parent, false);
 			// set the view's size, margins, paddings and layout parameters
 			final ViewHolder vh = new ViewHolder(v);
 			return vh;
@@ -1011,7 +1009,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 			}
 		}
 	}
-	
+
 	void updateStatus() {
 		selectionStatus.setText(myChecked.size()  + "/" + appStatsList.size());
 	}

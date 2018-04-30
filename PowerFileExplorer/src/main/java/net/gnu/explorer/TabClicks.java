@@ -15,13 +15,13 @@ public class TabClicks {
 		this.maxTabs = maxTabs;
 	}
 
-	public void click(final Context ctx, SlidingTabsFragment.PagerAdapter adapter, final TabAction tabAction, final View v, Frag.TYPE type) {
+	public void click(final Context ctx, final SlidingTabsFragment.PagerAdapter adapter, final TabAction tabAction, final View v, final Frag fra) {
 		Log.d(TAG, "click " + ctx + ", " + tabAction + ", " + v);
 		if (tabAction == null || ctx == null || v == null) {
 			return;
 		}
 		final PopupMenu popup = new PopupMenu(ctx, v);
-
+		final Frag.TYPE type = fra.type;
 		if (type == Frag.TYPE.TEXT) {
 			popup.getMenuInflater().inflate(R.menu.newtexttab, popup.getMenu());
 		} else {
@@ -51,6 +51,13 @@ public class TabClicks {
 								Toast.makeText(ctx, "Maximum " + count + " tabs only", Toast.LENGTH_SHORT).show();
 							}
 						} 
+						if (fra.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+							fra.activity.curContentFragIndex = fra.activity.slideFrag.realFragCount() == 1 ? 0 : fra.activity.slideFrag.indexOfMTabs(fra.activity.curContentFrag) + 1;
+							fra.activity.curSelectionFragIndex = SlidingTabsFragment.getFragTypeIndex(fra, Frag.TYPE.SELECTION);
+						} else {
+							fra.activity.curExplorerFragIndex = fra.activity.slideFrag2.realFragCount() == 1 ? 0 : fra.activity.slideFrag2.indexOfMTabs(fra.activity.curExplorerFrag) + 1;
+							fra.activity.curSelectionFragIndex2 = SlidingTabsFragment.getFragTypeIndex(fra, Frag.TYPE.SELECTION);
+						}
 						return true;
 					}
 				});
@@ -66,7 +73,7 @@ public class TabClicks {
 			if (no > 1) {
 				for (int i = 1; i <= no; i++) {
 					frag = adapter.getItem(i);
-					
+
 					if (frag.type == Frag.TYPE.SELECTION) {
 						menu.findItem(R.id.selection).setVisible(false);
 					} else if (frag.type == Frag.TYPE.APP) {
@@ -133,6 +140,13 @@ public class TabClicks {
 						} else if (R.id.process == itemId) {
 							tabAction.addTab(Frag.TYPE.PROCESS, null);
 						} 
+						if (fra.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+							fra.activity.curContentFragIndex = fra.activity.slideFrag.realFragCount() == 1 ? 0 : fra.activity.slideFrag.indexOfMTabs(fra.activity.curContentFrag) + 1;
+							fra.activity.curSelectionFragIndex = SlidingTabsFragment.getFragTypeIndex(fra, Frag.TYPE.SELECTION);
+						} else {
+							fra.activity.curExplorerFragIndex = fra.activity.slideFrag2.realFragCount() == 1 ? 0 : fra.activity.slideFrag2.indexOfMTabs(fra.activity.curExplorerFrag) + 1;
+							fra.activity.curSelectionFragIndex2 = SlidingTabsFragment.getFragTypeIndex(fra, Frag.TYPE.SELECTION);
+						}
 						return true;
 					}
 				});

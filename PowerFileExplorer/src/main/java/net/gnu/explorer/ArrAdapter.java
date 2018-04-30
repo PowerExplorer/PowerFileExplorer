@@ -804,26 +804,6 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		}
 	}
 
-	static int getFragIndex(final ContentFragment fileFrag, final Frag.TYPE t) {
-		final SlidingTabsFragment.PagerAdapter pagerAdapter;
-		if (fileFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-			pagerAdapter = fileFrag.activity.slideFrag2.pagerAdapter;
-		} else {
-			pagerAdapter = fileFrag.activity.slideFrag.pagerAdapter;
-		}
-		final int count = pagerAdapter.getCount();
-		if (count > 1) {
-			for (int i = 1; i < count - 1; i++) {
-				if (pagerAdapter.getItem(i).type == t) {
-					return i;
-				}
-			}
-			return -1;
-		} else {
-			return pagerAdapter.getItem(0).type == t ? 0 : -1;
-		}
-	}
-
 	private void load(final LayoutElement ele, final File f, final String fPath, final int pos) throws IllegalStateException {
 		if (contentFrag.activity.slideFrag2 == null) {
 			Log.d(TAG, "Single panel only");
@@ -844,8 +824,8 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			slidingTabsFragment = contentFrag.activity.slideFrag;
 		}
 		if (mime.startsWith("text/html") || mime.startsWith("text/xhtml")) {
-			tabIndex1 = getFragIndex(contentFrag, Frag.TYPE.TEXT);
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.WEB);
+			tabIndex1 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.TEXT);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.WEB);
 			if (tabIndex1 >= 0) {
 				pagerAdapter.getItem(tabIndex1).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex1, true);
@@ -897,7 +877,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				final String name = ExplorerApplication.PRIVATE_PATH + "/" + f.getName() + ".html";
 				FileUtil.writeFileAsCharset(new File(name), sb.toString(), "utf-8");
 				//pagerAdapter.getItem(i = Frag.TYPE.WEB.ordinal()).load(name);
-				tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.WEB);
+				tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.WEB);
 				if (tabIndex2 >= 0) {
 					pagerAdapter.getItem(tabIndex2).load(name);
 					slidingTabsFragment.setCurrentItem(tabIndex2, true);
@@ -918,7 +898,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 		} else if (mime.startsWith("application/x-chm")) {
 			
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.CHM);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.CHM);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
@@ -933,7 +913,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 		} else if (mime.startsWith("application/pdf")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.PDF.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.PDF);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.PDF);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
@@ -949,8 +929,8 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		} else if (mime.startsWith("image/svg+xml")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.TEXT.ordinal()).load(fPath);
 			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).load(fPath);
-			tabIndex1 = getFragIndex(contentFrag, Frag.TYPE.TEXT);
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.PHOTO);
+			tabIndex1 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.TEXT);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.PHOTO);
 			if (tabIndex1 >= 0) {
 				pagerAdapter.getItem(tabIndex1).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex1, true);
@@ -990,7 +970,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 //			pagerAdapter.getItem(i = Frag.TYPE.FBReader.ordinal()).load(fPath);
 		} else if (mime.startsWith("text")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.TEXT.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.TEXT);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.TEXT);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
@@ -1005,7 +985,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 		} else if (mime.startsWith("video")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.MEDIA.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.MEDIA);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.MEDIA);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
@@ -1020,7 +1000,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 		} else if (mime.startsWith("image")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).open(pos, mDataset);
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.PHOTO);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.PHOTO);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).open(pos, mDataset);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
@@ -1035,7 +1015,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 		} else if (mime.startsWith("audio")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.MEDIA.ordinal()).load(fPath);
-			tabIndex2 = getFragIndex(contentFrag, Frag.TYPE.MEDIA);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.MEDIA);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);

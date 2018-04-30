@@ -237,7 +237,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	
 	SlidingTabsFragment slideFrag = null;
 	public ContentFragment curContentFrag;
-	private int curContentFragIndex = 1;
+	int curContentFragIndex = 1;
 	ContentFragment curSelectionFrag;
 	int curSelectionFragIndex = -1;
 	
@@ -245,7 +245,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	ContentFragment curSelectionFrag2;
 	int curSelectionFragIndex2 = 2;
 	public ContentFragment curExplorerFrag;
-	private int curExplorerFragIndex = 1;
+	int curExplorerFragIndex = 1;
 	
 //	public int operation = -1;
 //    public ArrayList<BaseFile> oparrayList;
@@ -987,9 +987,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			AndroidUtils.setSharedPreference(this, "curExplorerFragPath", curExplorerFrag.dirTemp4Search);
 			outState.putInt("curSelectionFragIndex2", (curSelectionFragIndex2 = curSelectionFrag2 != null ? slideFrag2.indexOfMTabs(curSelectionFrag2) + 1: -1));
 		}
-		//curSelectionFragIndex = curSelectionFrag != null ? slideFrag.indexOf(curSelectionFrag) + 1: -1;
-		//curSelectionFrag2Index = curSelectionFrag2 != null ? slideFrag2.indexOf(curSelectionFrag2) + 1: -1;
-
+		
         if (selectedStorage != NO_VALUE)
             outState.putInt("selectitem", selectedStorage);
         if (COPY_PATH != null)
@@ -1093,7 +1091,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
             }
         }
     };
-
+	
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -2530,7 +2528,13 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	}
 	
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-		super.onBackPressed();
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			AndroidUtils.setSharedPreference(this, "curContentFragPath", curContentFrag.dirTemp4Search);
+			if (slideFrag2 != null) {
+				AndroidUtils.setSharedPreference(this, "curExplorerFragPath", curExplorerFrag.dirTemp4Search);
+			}
+			super.onBackPressed();
+		}
 		return true;
 	}
 
@@ -2542,6 +2546,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			mDrawerLayout.closeDrawer(mDrawerList);
 		} else {
 			if (mBackPressed + TIME_INTERVAL >= System.currentTimeMillis()) {
+				AndroidUtils.setSharedPreference(this, "curContentFragPath", curContentFrag.dirTemp4Search);
+				if (slideFrag2 != null) {
+					AndroidUtils.setSharedPreference(this, "curExplorerFragPath", curExplorerFrag.dirTemp4Search);
+				}
 				super.onBackPressed();
 			} else {
 				if (slideFrag1Selected) {

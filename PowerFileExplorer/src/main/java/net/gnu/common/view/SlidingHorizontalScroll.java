@@ -344,9 +344,9 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
 						mViewPager.setCurrentItem(i, true);
 					} else {
 						final SlidingTabsFragment.PagerAdapter adapter = (SlidingTabsFragment.PagerAdapter)mViewPager.getAdapter();
-						final Frag.TYPE type = adapter.getItem(currentItem).type;
+						final Frag frag = adapter.getItem(currentItem);
 						if (fra.tabClicks != null) {
-							fra.tabClicks.click(getContext(), adapter, fra, v, type);
+							fra.tabClicks.click(getContext(), adapter, fra, v, frag);
 						}
 					}
 					return;

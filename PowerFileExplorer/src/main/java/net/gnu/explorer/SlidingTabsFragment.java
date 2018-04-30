@@ -200,16 +200,21 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						final ExplorerActivity activity = (ExplorerActivity) activ;
 						if (createFragment.type == Frag.TYPE.EXPLORER) {
 							activity.dir = ((ContentFragment) createFragment).dirTemp4Search;
+
 							if (side == Side.LEFT) {
 								activity.curContentFrag = (ContentFragment) createFragment;
+								activity.curContentFragIndex = mTabs.size() == 1 ? 0 : indexOfMTabs(activity.curContentFrag) + 1;
 							} else {
 								activity.curExplorerFrag = (ContentFragment) createFragment;
+								activity.curExplorerFragIndex = mTabs.size() == 1 ? 0 : indexOfMTabs(activity.curExplorerFrag) + 1;
 							}
 						} else if (createFragment.type == Frag.TYPE.SELECTION) {
 							if (side == Side.LEFT) {
 								activity.curSelectionFrag = (ContentFragment) createFragment;
+								activity.curSelectionFragIndex = getFragIndex(Frag.TYPE.SELECTION);
 							} else {
 								activity.curSelectionFrag2 = (ContentFragment) createFragment;
+								activity.curSelectionFragIndex2 = getFragIndex(Frag.TYPE.SELECTION);
 							}
 						}
 						createFragment.select(true);
@@ -549,6 +554,26 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		final int currentItem = mViewPager.getCurrentItem();
 		//Log.d(TAG, "getCurrentFragment = " + currentItem + ", " + side + ", " + mTabs);
 		return pagerAdapter.getItem(currentItem);
+	}
+
+	static int getFragTypeIndex(final Frag fileFrag, final Frag.TYPE t) {
+		final SlidingTabsFragment.PagerAdapter pagerAdapter;
+		if (fileFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+			pagerAdapter = fileFrag.activity.slideFrag2.pagerAdapter;
+		} else {
+			pagerAdapter = fileFrag.activity.slideFrag.pagerAdapter;
+		}
+		final int count = pagerAdapter.getCount();
+		if (count > 1) {
+			for (int i = 1; i < count - 1; i++) {
+				if (pagerAdapter.getItem(i).type == t) {
+					return i;
+				}
+			}
+			return -1;
+		} else {
+			return pagerAdapter.getItem(0).type == t ? 0 : -1;
+		}
 	}
 
 	public Frag getFragmentIndex(final int idx) {

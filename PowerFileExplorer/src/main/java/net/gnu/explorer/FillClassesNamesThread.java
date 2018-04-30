@@ -49,7 +49,7 @@ public class FillClassesNamesThread extends Thread {
 						pagerAdapter = fileFrag.activity.slideFrag.pagerAdapter;
 						slidingTabsFragment = fileFrag.activity.slideFrag;
 					}
-					final int tabIndex2 = ArrAdapter.getFragIndex(fileFrag, Frag.TYPE.WEB);
+					final int tabIndex2 = SlidingTabsFragment.getFragTypeIndex(fileFrag, Frag.TYPE.WEB);
 					if (tabIndex2 >= 0) {
 						pagerAdapter.getItem(tabIndex2).load(fPath);
 						slidingTabsFragment.setCurrentItem(tabIndex2, true);
