@@ -93,6 +93,7 @@ import android.os.Parcel;
 import com.ToxicBakery.viewpager.transforms.DrawFromBackTransformer;
 import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
 import com.amaze.filemanager.utils.MainActivityHelper;
+import com.amaze.filemanager.utils.color.ColorUsage;
 
 public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListener, OnClickListener {//OnTouchListener, 
 
@@ -271,7 +272,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			setCurrentItem(pageSelected, false);
 		}
 	};
-	
+
 	private Runnable runUpdateInfo = new Runnable() {
 		@Override
 		public void run() {
@@ -281,7 +282,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			setupBar(newpos);
 		}
 	};
-	
+
 	private Runnable run = new Runnable() {
 		@Override
 		public void run() {
@@ -560,7 +561,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		thumbnailRecyclerAdapter = new ThumbnailAdapter(mContext, mListOfMedia, thumbnailOnClickListener, thumbnailSize);//mimes, parentPath, 
         thumbnailsRecyclerView.setAdapter(thumbnailRecyclerAdapter);
 		if (sizeMediaFiles == 1) {
-			thumbnailsRecyclerView.setPadding((getMeasuredWidth()-thumbnailSize)/2, 0, 0, 0);
+			thumbnailsRecyclerView.setPadding((getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
 		}
 	}
 
@@ -652,7 +653,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 //					default:
 					ArrayList<File> arrayList = new ArrayList<>();
 					arrayList.add(f);
-					new Futils().shareFiles(arrayList, (ExplorerActivity)mContext, ((ExplorerActivity)mContext).getAppTheme(), 0x80ffff00);
+					Futils.shareFiles(arrayList, (ExplorerActivity)mContext, ((ExplorerActivity)mContext).getAppTheme(), 0x80ffff00);
 					break;
 					//}
 				case R.id.clockwiseButton:
@@ -677,11 +678,11 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					ArrayList<LayoutElement> ele = new ArrayList<LayoutElement>();
 					ele.add(new LayoutElement(f));
 					//if (mContext instanceof ExplorerActivity) {
-						GeneralDialogCreation.deleteFilesDialog(mContext, //getLayoutElements(),
+					GeneralDialogCreation.deleteFilesDialog(mContext, //getLayoutElements(),
 															(ThemedActivity)mContext, ele, ((ThemedActivity)mContext).getAppTheme());
 					//}
 					//new Futils().deleteFiles(ele, (ExplorerActivity)mContext, /*positions, */((ThemedActivity)mContext).getAppTheme());
-					
+
 					break;
 				case R.id.slideshowButton:
 					if (sizeMediaFiles > 1) {
@@ -734,8 +735,10 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 						});
 					builder.positiveText(R.string.save);
 					builder.negativeText(R.string.cancel);
-					int color = 0x80ffff00;
-					builder.positiveColor(color).negativeColor(color).widgetColor(color);
+					final int accentColor = ((ThemedActivity)mContext).getColorPreference().getColor(ColorUsage.ACCENT);
+					builder.positiveColor(accentColor)
+						.negativeColor(accentColor)
+						.widgetColor(accentColor);
 					builder.build().show();
 					break;
 				case R.id.copyButton:

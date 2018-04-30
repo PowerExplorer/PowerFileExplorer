@@ -272,14 +272,26 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			});
 	}
 
-	void initLeftContentFragmentTabs() {
-		File storage = new File("/storage");
-		File[] fs = storage.listFiles();
+	void initLeftContentFragmentTabs(final String prevPath) {
+		final File storage = new File("/storage");
+		final File[] fs = storage.listFiles();
 
 		//String[] st = sdCardPath.split(":");
 		File f;
 		Bundle bundle;
-		ContentFragment fragment;
+		ContentFragment contentFrag;
+		
+		bundle = new Bundle();
+		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, prevPath);//EXTRA_DIR_PATH
+		bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+		bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+
+		contentFrag = new ContentFragment();
+		contentFrag.type = Frag.TYPE.EXPLORER;
+		contentFrag.setArguments(bundle);
+		contentFrag.slidingTabsFragment = this;
+		mTabs.add(new PagerItem(contentFrag));
+		
 		for (int i = fs.length - 1; i >= 0; i--) {
 			f = fs[i];
 			Log.d(TAG, f + ".");
@@ -289,11 +301,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
 				bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
 
-				fragment = new ContentFragment();
-				fragment.type = Frag.TYPE.EXPLORER;
-				fragment.setArguments(bundle);
-				fragment.slidingTabsFragment = this;
-				mTabs.add(new PagerItem(fragment));//f.getAbsolutePath(), ".*", true, null));
+				contentFrag = new ContentFragment();
+				contentFrag.type = Frag.TYPE.EXPLORER;
+				contentFrag.setArguments(bundle);
+				contentFrag.slidingTabsFragment = this;
+				mTabs.add(new PagerItem(contentFrag));//f.getAbsolutePath(), ".*", true, null));
 			}
 		}
 	}

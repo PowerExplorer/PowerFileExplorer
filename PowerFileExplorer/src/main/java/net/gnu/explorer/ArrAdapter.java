@@ -521,7 +521,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 										default:
 											ArrayList<File> arrayList = new ArrayList<>(1);
 											arrayList.add(new File(rowItem.path));
-											activity.getFutils().shareFiles(arrayList, activity, activity.getAppTheme(), contentFrag.accentColor);
+											Futils.shareFiles(arrayList, activity, activity.getAppTheme(), contentFrag.accentColor);
 											break;
 									}
 									break;

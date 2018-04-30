@@ -878,7 +878,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 						arrayList2.add(new File(apkPath.get(binarySearch)));
 					}
 				}
-				new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
+				Futils.shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 				break;
 			case R.id.backup:
 				Toast.makeText(
@@ -1278,7 +1278,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 									arrayList2.add(new File(pinfo.path));
 									//int color1 = Color.parseColor(PreferenceUtils.getAccentString(sharedPref));
 									//new Futils().shareFiles(arrayList2, activity, theme1, color1);
-									new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
+									Futils.shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 									break;
 								case R.id.shortcut:
 									//AndroidUtils.createShortCut(AppsFragment.this.getContext(), rowItem.packageName, rowItem.label, image.setImageDrawable(packageManager.getApplicationIcon(appInfo.packageName)));

@@ -89,10 +89,11 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
         // Make sure that the Tab Strips fills this View
         setFillViewport(true);
 
-        mTitleOffset = (int) (TITLE_OFFSET_DIPS * getResources().getDisplayMetrics().density);
+        float density = getResources().getDisplayMetrics().density;
+		mTitleOffset = (int) (TITLE_OFFSET_DIPS * density);
 
         mTabStripLinearLayout = new SlidingTabStripLinearLayout(context);
-		addView(mTabStripLinearLayout, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		addView(mTabStripLinearLayout, LayoutParams.MATCH_PARENT, (int)(20 * density));
     }
 
     /**

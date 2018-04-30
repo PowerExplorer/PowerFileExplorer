@@ -146,7 +146,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	
 	@Override
 	public String toString() {
-		return "type " + type + ", fake=" + fake + ", suffix=" + suffix + ", mimes=" + mimes + ", multi=" + multiFiles + ", currentPathTitle " + currentPathTitle + ", " + super.toString();
+		return "type " + type + ", " + slidingTabsFragment.side + ", fake=" + fake + ", suffix=" + suffix + ", mimes=" + mimes + ", multi=" + multiFiles + ", currentPathTitle " + currentPathTitle + ", " + super.toString();
 	}
 
 	public static ContentFragment newInstance(final SlidingTabsFragment sliding, final String dir, final String suffix, final String mimes, final boolean multiFiles, Bundle bundle) {//, int se) {//FragmentActivity ctx, 
@@ -833,8 +833,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
     }
 
 	public void updateList() {
-		Log.d(TAG, "updateList " + currentPathTitle + ", " + this);
-		if (type == Frag.TYPE.EXPLORER) {
+		Log.d(TAG, "updateList " + this);
+		if (type == Frag.TYPE.EXPLORER && !fake) {
 			if (currentPathTitle != null) {
 				changeDir(currentPathTitle, false);
 			} else {
@@ -988,7 +988,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
         return new FileObserver(path, FileObserver.CREATE | FileObserver.DELETE
 								| FileObserver.MOVED_FROM | FileObserver.MOVED_TO
 								| FileObserver.DELETE_SELF | FileObserver.MOVE_SELF
-								| FileObserver.CLOSE_WRITE) {
+								//| FileObserver.CLOSE_WRITE
+								) {
             @Override
             public void onEvent(final int event, final String path) {
                 if (path != null) {
@@ -1807,7 +1808,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 																	dataSourceL1.get(0).getMode(), getContext());
 								break;
 							default:
-								activity.getFutils().shareFiles(arrayList, activity, activity.getAppTheme(), accentColor);
+								Futils.shareFiles(arrayList, activity, activity.getAppTheme(), accentColor);
 								break;
 						}
 					}
@@ -1980,7 +1981,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
         builder.positiveColor(accentColor).negativeColor(accentColor).widgetColor(accentColor);
         final MaterialDialog materialDialog = builder.build();
         materialDialog.show();
-        Log.d(TAG, f.getNameString(getContext()));
+        Log.d(TAG, "rename " + name);//f.getNameString(getContext()));
 
         // place cursor at the starting of edit text by posting a runnable to edit text
         // this is done because in case android has not populated the edit text layouts yet, it'll
@@ -2085,7 +2086,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	public void changeDir(final String curDir, final boolean doScroll) {
 		Log.d(TAG, "changeDir " + curDir + ", doScroll " + doScroll + ", " + type + ", " + slidingTabsFragment.side);
-		
+		if (fake) {
+			return;
+		}
 		loadList.cancel(true);
 		searchTask.cancel(true);
 		loadList = new LoadFiles();

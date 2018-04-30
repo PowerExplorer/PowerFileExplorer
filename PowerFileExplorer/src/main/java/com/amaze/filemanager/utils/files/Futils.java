@@ -291,7 +291,7 @@ public class Futils {
         }.execute(path);
     }
 
-    public void shareFiles(ArrayList<File> a, Activity c,AppTheme appTheme,int fab_skin) {
+    public static void shareFiles(ArrayList<File> a, Activity c,AppTheme appTheme,int fab_skin) {
 
         ArrayList<Uri> uris = new ArrayList<>();
         boolean b = true;

@@ -891,7 +891,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 									//new Futils().shareFiles(arrayList2, activity, theme1, color1);
 									//ArrayList<File> arrayList = new ArrayList<>();
 									//arrayList.add(new File(rowItem.getPath()));
-									new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
+									Futils.shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 									break;
 							}
 							return true;

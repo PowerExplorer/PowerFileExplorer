@@ -634,7 +634,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				for (AppInfo pi : selectedInList1) {
 					arrayList2.add(new File(pi.path));
 				}
-				new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
+				Futils.shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 				break;
 			case R.id.unins:
 				for (AppInfo pi : selectedInList1) {
@@ -959,7 +959,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 							case R.id.share:
 								ArrayList<File> arrayList2 = new ArrayList<File>();
 								arrayList2.add(new File(rowItem.path));
-								new Futils().shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
+								Futils.shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 								return true;
 							case R.id.unins:
 								uninstall(rowItem);

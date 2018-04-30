@@ -245,7 +245,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	ContentFragment curSelectionFrag2;
 	int curSelectionFragIndex2 = 2;
 	public ContentFragment curExplorerFrag;
-	private int curExploreFragIndex = 1;
+	private int curExplorerFragIndex = 1;
 	
 //	public int operation = -1;
 //    public ArrayList<BaseFile> oparrayList;
@@ -494,7 +494,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				slideFrag.addTab(dir, suffix, mimes, multiFiles);
 			} else {
 				Log.d(TAG, "slideFrag.initContentFragmentTabs()");
-				slideFrag.initLeftContentFragmentTabs();
+				slideFrag.initLeftContentFragmentTabs(AndroidUtils.getSharedPreference(this, "curContentFragPath", "/storage"));
 			}
 			if (dir != null) {
 				final File file = new File(dir);
@@ -588,12 +588,12 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 					slideFrag2.addTab(previousSelectedStr);
 				} else {
 					Log.d(TAG, "slideFrag2.addTab(\"/storage\", suffix, mimes, multiFiles)");
-					slideFrag2.addTab("/storage", suffix, mimes, multiFiles);
+					slideFrag2.addTab(AndroidUtils.getSharedPreference(this, "curExplorerFragPath", "/storage"), suffix, mimes, multiFiles);
 					slideFrag2.addTab(null);
 				}
 			} else {
 				slideFrag2 = (SlidingTabsFragment) supportFragmentManager.findFragmentByTag("slideFrag2");
-				curExploreFragIndex = savedInstanceState.getInt("curExploreFragIndex");
+				curExplorerFragIndex = savedInstanceState.getInt("curExplorerFragIndex");
 				curSelectionFragIndex2 = savedInstanceState.getInt("curSelectionFragIndex2");
 				//Log.d(TAG, "curExploreFragIndex " + curExploreFragIndex + ", curSelectionFrag2Index " + curSelectionFrag2Index);
 			}
@@ -980,9 +980,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		
 		outState.putBoolean("slideFrag1Selected", slideFrag1Selected);
 		outState.putInt("curContentFragIndex", (curContentFragIndex=slideFrag.realFragCount() == 1 ? 0 : slideFrag.indexOfMTabs(curContentFrag)+1));
+		AndroidUtils.setSharedPreference(this, "curContentFragPath", curContentFrag.dirTemp4Search);
 		outState.putInt("curSelectionFragIndex", (curSelectionFragIndex=curSelectionFrag != null ? slideFrag.indexOfMTabs(curSelectionFrag) + 1: -1));
 		if (slideFrag2 != null) {
-			outState.putInt("curExploreFragIndex", (curExploreFragIndex=slideFrag2.realFragCount() == 1 ? 0 : slideFrag2.indexOfMTabs(curExplorerFrag)+1));
+			outState.putInt("curExplorerFragIndex", (curExplorerFragIndex=slideFrag2.realFragCount() == 1 ? 0 : slideFrag2.indexOfMTabs(curExplorerFrag)+1));
+			AndroidUtils.setSharedPreference(this, "curExplorerFragPath", curExplorerFrag.dirTemp4Search);
 			outState.putInt("curSelectionFragIndex2", (curSelectionFragIndex2 = curSelectionFrag2 != null ? slideFrag2.indexOfMTabs(curSelectionFrag2) + 1: -1));
 		}
 		//curSelectionFragIndex = curSelectionFrag != null ? slideFrag.indexOf(curSelectionFrag) + 1: -1;
@@ -1047,11 +1049,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		}
 		//Log.d(TAG, "onResume curContentFrag " + curContentFrag);
 		if (slideFrag2 != null) {
-			curExplorerFrag = (ContentFragment) slideFrag2.getFragmentIndex(curExploreFragIndex);
+			curExplorerFrag = (ContentFragment) slideFrag2.getFragmentIndex(curExplorerFragIndex);
 			if (curSelectionFragIndex2 >= 0) {
 				curSelectionFrag2 = (ContentFragment) slideFrag2.getFragmentIndex(curSelectionFragIndex2);
 			}
-			//curContentFrag2.deletePastes = deletePastesBtn2;
 			Log.d(TAG, "onResume curContentFrag2 " + curSelectionFrag2);
 		}
 
