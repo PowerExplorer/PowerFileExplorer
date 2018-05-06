@@ -351,7 +351,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				commands.setVisibility(View.VISIBLE);
 				horizontalDivider6.setVisibility(View.VISIBLE);
 			}
-
+			mSwipeRefreshLayout.setEnabled(false);
 			listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 					public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 						//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);

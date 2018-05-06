@@ -500,12 +500,12 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			
 			slideFrag = new SlidingTabsFragment();
 			slideFrag.side = SlidingTabsFragment.Side.LEFT;
-			Uri data = intent.getData();
+			final Uri data = intent.getData();
 			dir = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : intent.getStringExtra(EXTRA_ABSOLUTE_PATH) ;
 			if (dir != null ||
 				!"*".equals(suffix) || mimes.length() != 0 || previousSelectedStr != null) {
 				Log.d(TAG, "slideFrag.addTab(dir, suffix, mimes, multiFiles)");
-				if (FileUtil.extractiblePattern.matcher(dir).matches()) {
+				if (FileUtil.extractiblePattern.matcher(new File(dir).getName()).matches()) {
 					slideFrag.addTab(new File(dir).getParent(), suffix, mimes, multiFiles);
 					slideFrag.addZip(Frag.TYPE.ZIP, dir);
 				} else {
@@ -2371,7 +2371,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	@Override
     public void onNewIntent(final Intent intent) {
         this.intent = intent;
-        final String path = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? intent.getData().getPath() : intent.getStringExtra(EXTRA_ABSOLUTE_PATH);
+        final Uri data = intent.getData();
+		final String path = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : intent.getStringExtra(EXTRA_ABSOLUTE_PATH);
         final String action = intent.getAction();
 		Log.d(TAG, "onNewIntent " + path);
 		if (path != null) {
@@ -2392,24 +2393,24 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 //				slideFrag.addNewTab(path, i.getStringExtra(ExplorerActivity.EXTRA_SUFFIX), i.getBooleanExtra(ExplorerActivity.EXTRA_MULTI_SELECT, true), true);
 //				slideFrag.setCurrentItem(slideFrag.getCount() - 1);
             } else {
-				if (FileUtil.extractiblePattern.matcher(path).matches()) {
+				if (FileUtil.extractiblePattern.matcher(new File(path).getName()).matches()) {
 					final SlidingTabsFragment.PagerAdapter pagerAdapter = slideFrag.pagerAdapter;
-					final SlidingTabsFragment slidingTabsFragment = slideFrag;
 					final int tabIndex2 = SlidingTabsFragment.getFragTypeIndex(curContentFrag, Frag.TYPE.ZIP);
 						if (tabIndex2 >= 0) {
 							final ZipFragment zFrag = (ZipFragment) pagerAdapter.getItem(tabIndex2);
 							zFrag.load(path, null);
-							slidingTabsFragment.setCurrentItem(tabIndex2, true);
+							slideFrag.setCurrentItem(tabIndex2, true);
 						} else {
 							horizontalDivider5.postDelayed(new Runnable() {
 									@Override
 									public void run() {
-										slidingTabsFragment.addTab(Frag.TYPE.ZIP, path);
+										slideFrag.addTab(Frag.TYPE.ZIP, path);
 									}
 							}, 200);
 						}
+				} else {
+					getFutils().openFile(file, this);
 				}
-				//getFutils().openFile(file, this);
 			}
         } else if (intent.getStringArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS) != null) {
             ArrayList<BaseFile> failedOps = intent.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
