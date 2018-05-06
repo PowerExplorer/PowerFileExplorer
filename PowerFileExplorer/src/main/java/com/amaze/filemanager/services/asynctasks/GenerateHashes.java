@@ -34,8 +34,8 @@ public class GenerateHashes extends AsyncTask<Void, String, String[]> {
         this.context = c;
         this.file = f;
 
-        md5HashText = (TextView) view.findViewById(R.id.t9);
-        sha256Text = (TextView) view.findViewById(R.id.t10);
+        md5HashText = (TextView) view.findViewById(R.id.md5);
+        sha256Text = (TextView) view.findViewById(R.id.sha256);
 
         mMD5LinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_md5);
         mSHA256LinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_sha256);

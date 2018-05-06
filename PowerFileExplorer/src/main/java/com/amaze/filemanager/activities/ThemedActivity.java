@@ -29,6 +29,9 @@ import com.amaze.filemanager.services.asynctasks.MoveFiles;
 import android.app.Activity;
 import com.amaze.filemanager.utils.MainActivityHelper;
 import com.amaze.filemanager.utils.OpenMode;
+import net.gnu.p7zip.Zip;
+import java.util.List;
+import net.gnu.explorer.ZipEntry;
 
 /**
  * Created by arpitkh996 on 03-03-2016.
@@ -42,13 +45,15 @@ public class ThemedActivity extends BasicActivity {
     // oppathe - the path at which certain operation needs to be performed
     // oppathe1 - the new path which user wants to create/modify
     // oppathList - the paths at which certain operation needs to be performed (pairs with oparrayList)
-    public String oppathe, oppathe1;
-	public ArrayList<String> oppatheList;
+    public String originPath_oppathe, newPath_oppathe1;
+	public ArrayList<String> originPaths_oppatheList;
 	
     public int operation = -1;
-    public ArrayList<BaseFile> oparrayList;
+    public ArrayList<BaseFile> originPaths_oparrayList;
     public ArrayList<ArrayList<BaseFile>> oparrayListList;
 	public final static int FROM_PREVIOUS_IO_ACTION = 3;
+	public Zip zip;
+	public List<ZipEntry> filesInZip;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,11 +104,11 @@ public class ThemedActivity extends BasicActivity {
 			}
 			switch (operation) {
 				case DataUtils.DELETE://deletion
-					new DeleteTask(null, this).execute((oparrayList));
+					new DeleteTask(null, this).execute((originPaths_oparrayList));
 					break;
 				case DataUtils.RENAME:
-                    MainActivityHelper.rename(OpenMode.FILE, (oppathe),
-											  (oppathe1), this, ThemedActivity.rootMode);
+                    MainActivityHelper.rename(OpenMode.FILE, (originPath_oppathe),
+											  (newPath_oppathe1), this, ThemedActivity.rootMode);
                     break;
 			}
 			operation = -1;

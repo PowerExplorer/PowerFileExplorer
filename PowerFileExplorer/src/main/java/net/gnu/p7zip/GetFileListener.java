@@ -1,11 +1,11 @@
 package net.gnu.p7zip;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import net.gnu.explorer.ExplorerActivity;
+import android.support.v4.app.DialogFragment;
 
 public class GetFileListener implements OnClickListener {
 

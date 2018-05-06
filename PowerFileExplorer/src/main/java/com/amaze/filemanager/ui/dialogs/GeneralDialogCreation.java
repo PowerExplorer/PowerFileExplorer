@@ -78,6 +78,10 @@ import net.gnu.explorer.Frag;
 import net.gnu.explorer.ContentFragment;
 import com.amaze.filemanager.services.DeleteTask;
 import com.amaze.filemanager.utils.MainActivityHelper;
+import net.gnu.explorer.ZipEntry;
+import net.gnu.p7zip.Zip;
+import net.gnu.explorer.ExplorerApplication;
+import net.gnu.p7zip.DecompressTask;
 
 /**
  * Here are a lot of function that create material dialogs
@@ -162,7 +166,7 @@ public class GeneralDialogCreation {
 					}
 					int mode = MainActivityHelper.checkFolder(new File(itemsToDelete.get(0).getPath()).getParentFile(), mainActivity);
 					if (mode == 2) {
-						mainActivity.oparrayList = (itemsToDelete);
+						mainActivity.originPaths_oparrayList = (itemsToDelete);
 						mainActivity.operation = DataUtils.DELETE;
 					} else if (mode == 1 || mode == 0)
 						new DeleteTask(null, mainActivity).execute((itemsToDelete));
@@ -325,6 +329,212 @@ public class GeneralDialogCreation {
         dialog.show();
     }
 
+    @SuppressWarnings("ConstantConditions")
+    public static void deleteFilesDialog(final Context c, //final ArrayList<LayoutElement> layoutElements,
+                                         final ThemedActivity mainActivity, final Zip zip, final List<ZipEntry> itemsToDelete,
+                                         AppTheme appTheme) {
+
+        //final ArrayList<ZipEntry> itemsToDelete = new ArrayList<>();
+        int accentColor = mainActivity.getColorPreference().getColor(ColorUsage.ACCENT);
+
+        // Build dialog with custom view layout and accent color.
+        MaterialDialog dialog = new MaterialDialog.Builder(c)
+			.title(c.getString(R.string.dialog_delete_title))
+			.customView(R.layout.dialog_delete, true)
+			.theme(appTheme.getMaterialDialogTheme())
+			.negativeText(c.getString(R.string.cancel).toUpperCase())
+			.positiveText(c.getString(R.string.delete).toUpperCase())
+			.positiveColor(accentColor)
+			.negativeColor(accentColor)
+			.onPositive(new MaterialDialog.SingleButtonCallback() {
+				@Override
+				public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+					Toast.makeText(c, c.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
+					//mainActivity.mainActivityHelper.deleteFiles(itemsToDelete);
+					if (itemsToDelete == null || itemsToDelete.size() == 0) return;
+					int mode = MainActivityHelper.checkFolder(zip.file.getParentFile(), mainActivity);
+					if (mode == 2) {
+						mainActivity.filesInZip = (itemsToDelete);
+						mainActivity.operation = DataUtils.DELETE_IN_ZIP;
+						mainActivity.zip = zip;
+					} else if (mode == 1 || mode == 0) {
+						Runnable r = new Runnable() {
+							@Override
+							public void run() {
+								Toast.makeText(mainActivity, "Deletion finished", Toast.LENGTH_SHORT).show();
+							}
+						};
+						final StringBuilder sb = new StringBuilder();
+						for (ZipEntry ze : itemsToDelete) {
+							sb.append(ze.path).append("|");
+						}
+						new DecompressTask(mainActivity,
+										   zip.file.getAbsolutePath(),
+										   ExplorerApplication.PRIVATE_PATH,
+										   sb.toString(),
+										   "",
+										   "",
+										   "",
+										   0,
+										   "x",
+										   r).execute();
+					} else 
+						Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
+				}
+			})
+			.build();
+
+        // Get views from custom layout to set text values.
+        final TextView categoryDirectories = (TextView) dialog.getCustomView().findViewById(R.id.category_directories);
+        final TextView categoryFiles = (TextView) dialog.getCustomView().findViewById(R.id.category_files);
+        final TextView listDirectories = (TextView) dialog.getCustomView().findViewById(R.id.list_directories);
+        final TextView listFiles = (TextView) dialog.getCustomView().findViewById(R.id.list_files);
+        final TextView total = (TextView) dialog.getCustomView().findViewById(R.id.total);
+
+        // Parse items to delete.
+
+        new AsyncTask<Void, Object, Void>() {
+
+            long sizeTotal = 0;
+            final StringBuilder files = new StringBuilder();
+            final StringBuilder directories = new StringBuilder();
+            int counterDirectories = 0;
+            int counterFiles = 0;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                listFiles.setText(c.getString(R.string.loading));
+                listDirectories.setText(c.getString(R.string.loading));
+                total.setText(c.getString(R.string.loading));
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                for (ZipEntry layoutElement : itemsToDelete) {
+                    
+                    // Build list of directories to delete.
+                    if (layoutElement.isDirectory) {
+                        // Don't add newline between category and list.
+                        if (counterDirectories!=0) {
+                            directories.append("\n");
+                        }
+
+                        long sizeDirectory = zip.folderSize(layoutElement)[0];
+
+                        directories.append(++counterDirectories)
+							.append(". ")
+							.append(layoutElement.name)
+							.append(" (")
+							.append(net.gnu.util.Util.nf.format(sizeDirectory))
+							.append(" B)");
+                        sizeTotal += sizeDirectory;
+                        // Build list of files to delete.
+                    } else {
+                        // Don't add newline between category and list.
+                        if (counterFiles!=0) {
+                            files.append("\n");
+                        }
+
+                        files.append(++counterFiles)
+							.append(". ")
+							.append(layoutElement.name)
+							.append(" (")
+							.append(net.gnu.util.Util.nf.format(layoutElement.length))
+							.append(" B)");
+                        sizeTotal += layoutElement.length;
+                    }
+
+                    publishProgress(sizeTotal, counterFiles, counterDirectories, files, directories);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onProgressUpdate(Object... result) {
+                super.onProgressUpdate(result);
+
+                int tempCounterFiles = (int) result[1];
+                int tempCounterDirectories = (int) result[2];
+                long tempSizeTotal = (long) result[0];
+                StringBuilder tempFilesStringBuilder = (StringBuilder) result[3];
+                StringBuilder tempDirectoriesStringBuilder = (StringBuilder) result[4];
+
+                updateViews(tempSizeTotal, tempFilesStringBuilder, tempDirectoriesStringBuilder,
+							tempCounterFiles, tempCounterDirectories);
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                updateViews(sizeTotal, files, directories, counterFiles, counterDirectories);
+            }
+
+            private void updateViews(long tempSizeTotal, StringBuilder filesStringBuilder,
+                                     StringBuilder directoriesStringBuilder, int... values) {
+
+                int tempCounterFiles = values[0];
+                int tempCounterDirectories = values[1];
+
+                // Hide category and list for directories when zero.
+                if (tempCounterDirectories==0) {
+
+                    if (tempCounterDirectories==0) {
+
+                        categoryDirectories.setVisibility(View.GONE);
+                        listDirectories.setVisibility(View.GONE);
+                    }
+                    // Hide category and list for files when zero.
+                }
+
+                if (tempCounterFiles==0) {
+
+
+                    categoryFiles.setVisibility(View.GONE);
+                    listFiles.setVisibility(View.GONE);
+                }
+
+                if (tempCounterDirectories!=0||tempCounterFiles!=0) {
+                    listDirectories.setText(directoriesStringBuilder);
+                    if (listDirectories.getVisibility()!=View.VISIBLE&&tempCounterDirectories!=0)
+                        listDirectories.setVisibility(View.VISIBLE);
+                    listFiles.setText(filesStringBuilder);
+                    if (listFiles.getVisibility()!=View.VISIBLE&&tempCounterFiles!=0)
+                        listFiles.setVisibility(View.VISIBLE);
+
+                    if (categoryDirectories.getVisibility()!=View.VISIBLE&&tempCounterDirectories!=0)
+                        categoryDirectories.setVisibility(View.VISIBLE);
+                    if (categoryFiles.getVisibility()!=View.VISIBLE&&tempCounterFiles!=0)
+                        categoryFiles.setVisibility(View.VISIBLE);
+                }
+
+                // Show total size with at least one directory or file and size is not zero.
+                if (tempCounterFiles+tempCounterDirectories>1&&tempSizeTotal>0) {
+                    StringBuilder builderTotal = new StringBuilder()
+						.append(c.getString(R.string.total))
+						.append(" ")
+						.append(Formatter.formatFileSize(c, tempSizeTotal));
+                    total.setText(builderTotal);
+                    if (total.getVisibility()!=View.VISIBLE)
+                        total.setVisibility(View.VISIBLE);
+                } else {
+                    total.setVisibility(View.GONE);
+                }
+            }
+        }.execute();
+
+        // Set category text color for Jelly Bean (API 16) and later.
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN) {
+            categoryDirectories.setTextColor(accentColor);
+            categoryFiles.setTextColor(accentColor);
+        }
+
+        // Show dialog on screen.
+        dialog.show();
+    }
+
     public static void showPropertiesDialogWithPermissions(BaseFile baseFile, final String permissions,
                                                            ThemedActivity activity, boolean isRoot, AppTheme appTheme) {
         showPropertiesDialog(baseFile, permissions, activity, isRoot, appTheme, true, false);
@@ -354,7 +564,7 @@ public class GeneralDialogCreation {
         builder.theme(appTheme.getMaterialDialogTheme());
 
         View v = base.getLayoutInflater().inflate(R.layout.properties_dialog, null);
-        TextView itemsText = (TextView) v.findViewById(R.id.t7);
+        TextView itemsText = (TextView) v.findViewById(R.id.size);
 
         /*View setup*/ {
             TextView mNameTitle = (TextView) v.findViewById(R.id.title_name);
@@ -375,10 +585,10 @@ public class GeneralDialogCreation {
             TextView sha256Title = (TextView) v.findViewById(R.id.title_sha256);
             sha256Title.setTextColor(accentColor);
 
-            ((TextView) v.findViewById(R.id.t5)).setText(name);
-            ((TextView) v.findViewById(R.id.t6)).setText(parent);
+            ((TextView) v.findViewById(R.id.name)).setText(name);
+            ((TextView) v.findViewById(R.id.location)).setText(parent);
             itemsText.setText(items);
-            ((TextView) v.findViewById(R.id.t8)).setText(date);
+            ((TextView) v.findViewById(R.id.date)).setText(date);
 
             LinearLayout mNameLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_name);
             LinearLayout mLocationLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_location);
@@ -539,7 +749,88 @@ public class GeneralDialogCreation {
 		 */
     }
 
-    public static class SizeFormatter implements IValueFormatter {
+    public static void showPropertiesDialog(final ZipEntry zipEntry, ThemedActivity base, AppTheme appTheme,
+									 long totalZipLength, long totalUnzipLength) {
+        final Context c = base.getApplicationContext();
+        int accentColor = base.getColorPreference().getColor(ColorUsage.ACCENT);
+        final String date = Utils.getDate(zipEntry.lastModified);
+			
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(base);
+        builder.title(c.getString(R.string.properties));
+        builder.theme(appTheme.getMaterialDialogTheme());
+
+        View v = base.getLayoutInflater().inflate(R.layout.properties_dialog, null);
+        TextView itemsText = (TextView) v.findViewById(R.id.size);
+
+        /*View setup*/ {
+            TextView mNameTitle = (TextView) v.findViewById(R.id.title_name);
+            mNameTitle.setTextColor(accentColor);
+
+            TextView mDateTitle = (TextView) v.findViewById(R.id.title_date);
+            mDateTitle.setTextColor(accentColor);
+
+            TextView mSizeTitle = (TextView) v.findViewById(R.id.title_size);
+            mSizeTitle.setTextColor(accentColor);
+
+            TextView mLocationTitle = (TextView) v.findViewById(R.id.title_location);
+            mLocationTitle.setTextColor(accentColor);
+
+            TextView md5Title = (TextView) v.findViewById(R.id.title_md5);
+            md5Title.setTextColor(accentColor);
+
+            TextView sha256Title = (TextView) v.findViewById(R.id.title_sha256);
+            sha256Title.setTextColor(accentColor);
+
+            ((TextView) v.findViewById(R.id.name)).setText(zipEntry.name);
+            ((TextView) v.findViewById(R.id.location)).setText(zipEntry.parentPath);
+            ((TextView) v.findViewById(R.id.date)).setText(date);
+
+            LinearLayout mNameLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_name);
+            LinearLayout mLocationLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_location);
+            LinearLayout mSizeLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_size);
+            LinearLayout mDateLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_date);
+
+            // setting click listeners for long press
+            mNameLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						Futils.copyToClipboard(c, zipEntry.name);
+						Toast.makeText(c, c.getResources().getString(R.string.name)+" "+
+									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						return false;
+					}
+				});
+            mLocationLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						Futils.copyToClipboard(c, zipEntry.parentPath);
+						Toast.makeText(c, c.getResources().getString(R.string.location)+" "+
+									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						return false;
+					}
+				});
+            mSizeLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						Futils.copyToClipboard(c, "");//items
+						Toast.makeText(c, c.getResources().getString(R.string.size)+" "+
+									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						return false;
+					}
+				});
+            mDateLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						Futils.copyToClipboard(c, date);
+						Toast.makeText(c, c.getResources().getString(R.string.date)+" "+
+									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						return false;
+					}
+				});
+        }
+    }
+	
+	public static class SizeFormatter implements IValueFormatter {
 
         private Context context;
 

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -43,6 +42,7 @@ import net.gnu.explorer.ExplorerActivity;
 import net.gnu.androidutil.ForegroundService;
 import android.graphics.PorterDuff;
 import net.gnu.explorer.ExplorerApplication;
+import android.support.v4.app.DialogFragment;
 
 public class DecompressFragment extends DialogFragment implements Serializable, OnItemSelectedListener, 
 OnCheckedChangeListener, OnClickListener {
@@ -59,7 +59,7 @@ OnCheckedChangeListener, OnClickListener {
 
 	public String files = "";
 	public String saveTo = "";
-	String include = "";
+	public String include = "";
 	String exclude = "";
 	String otherArgs = "";
 	transient String password = "";
@@ -237,12 +237,12 @@ OnCheckedChangeListener, OnClickListener {
 				}
 				
 				int size = historyList.size();
-				historyList.add(0, fileET.getText().toString());
+				historyList.add(0, files);
 				if (size > 20) {
 					historyList.remove(size);
 				}
 				size = historySaveList.size();
-				historySaveList.add(0, saveToET.getText().toString());
+				historySaveList.add(0, saveTo);
 				if (historySaveList.size() > 20) {
 					historySaveList.remove(size);
 				}
@@ -326,7 +326,7 @@ OnCheckedChangeListener, OnClickListener {
 			otherArgs = otherArgsET.getText().toString();
 			overwriteMode = overwriteModeSpinner.getSelectedItemPosition();
 			command = extractWithFullPathsCB.isChecked() ? "x" : "e";
-			//password = passwordET.getText().toString();
+			password = passwordET.getText().toString();
 			try {
 				FileOutputStream fos = new FileOutputStream(ExplorerApplication.DATA_DIR + DecompressFragment.class.getSimpleName() + ".ser");
 				BufferedOutputStream bos = new BufferedOutputStream(fos);

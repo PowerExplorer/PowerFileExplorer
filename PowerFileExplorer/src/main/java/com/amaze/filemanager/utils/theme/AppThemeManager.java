@@ -11,7 +11,7 @@ public class AppThemeManager {
 
     public AppThemeManager(SharedPreferences preferences) {
         this.preferences = preferences;
-        appTheme = AppTheme.getTheme(preferences.getInt("theme", 2)).getSimpleTheme();
+        appTheme = AppTheme.getTheme(preferences.getInt("theme", AppTheme.TIME_INDEX)).getSimpleTheme();
     }
 
     /**

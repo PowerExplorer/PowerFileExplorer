@@ -30,7 +30,7 @@ public class ProgressHandler {
     int speedRaw = 0;
 
     // boolean manages the lifecycle of service and whether it should be canceled
-    private boolean isCancelled = false;
+    public boolean isCancelled = false;
 
     // callback interface to interact with process viewer fragment and notification
     ProgressListener progressListener;

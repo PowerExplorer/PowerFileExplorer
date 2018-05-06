@@ -3,7 +3,6 @@ package net.gnu.p7zip;
 import android.widget.*;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -35,6 +34,7 @@ import net.gnu.explorer.ExplorerActivity;
 import net.gnu.androidutil.ForegroundService;
 import android.graphics.PorterDuff;
 import net.gnu.explorer.ExplorerApplication;
+import android.support.v4.app.DialogFragment;
 
 public class CompressFragment extends DialogFragment implements Serializable, OnItemSelectedListener, OnCheckedChangeListener, TextWatcher, OnClickListener, android.widget.RadioGroup.OnCheckedChangeListener {
 
@@ -107,245 +107,6 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 	private transient Toast mToast;
 	private transient Activity activity;
-
-
-	@Override
-	public void onClick(final View p1) {
-		switch (p1.getId()) {
-			case R.id.mode: 
-				final View view = getView();
-				if (((ToggleButton)p1).isChecked()) {
-					view.findViewById(R.id.advancedLayout).setVisibility(View.VISIBLE);
-					view.findViewById(R.id.basicLayout).setVisibility(View.GONE);
-				} else {
-					view.findViewById(R.id.basicLayout).setVisibility(View.VISIBLE);
-					view.findViewById(R.id.advancedLayout).setVisibility(View.GONE);
-				}
-				break;
-			case R.id.cancelDir:
-				dismiss();
-				break;
-			case R.id.okDir:
-
-				Log.d("COMPRESS_REQUEST_CODE.selectedFiles", files + ", " + saveTo);// + fName);
-
-				save();
-
-				if (files.length() == 0) {
-					showToast("Invalid \"files\"");
-					return;
-				}
-				if (saveTo.length() == 0) {
-					showToast("Invalid file name");
-					return;
-				}
-
-				String fN;
-				if (saveTo.matches(FileUtil.compressibleExtension)) {
-					fN = saveTo;
-				} else {
-					fN = saveTo + "." + ((RadioButton)getView().findViewById(typeRadioGroup.getCheckedRadioButtonId() <= 0 ? R.id.sevenz: typeRadioGroup.getCheckedRadioButtonId())).getTag();// + "/" + fName
-				}
-				final File file = new File(fN);
-				Log.d(TAG, file.getAbsolutePath() + ", " + "file.isDirectory() = " + file.isDirectory() + ", file.exists() = " + file.exists());
-				if (file.isDirectory()) {
-					showToast("File name must be not a folder");
-					return;
-				} else {
-					File parentFile = file.getParentFile();
-					if (parentFile != null) {
-						if (!parentFile.exists() && !parentFile.mkdirs()) {
-							showToast(parentFile + " cannot be created");
-							return;
-						}
-						if (!parentFile.canWrite()) {
-							showToast("Folder " + parentFile + " cannot be written");
-							return;
-						}
-					} else {
-						showToast("Parent File is not existed");
-						return;
-					}
-				}
-
-				int size = historyList.size();
-				historyList.add(0, fileET.getText().toString());
-				if (size > 20) {
-					historyList.remove(size);
-				}
-				size = historySaveList.size();
-				historySaveList.add(0, saveToET.getText().toString());
-				if (historySaveList.size() > 20) {
-					historySaveList.remove(size);
-				}
-
-				if (compressTask == null || compressTask.isCancelled() || compressTask.getStatus() == AsyncTask.Status.FINISHED) {
-					if (file.exists()) {
-						AlertDialog.Builder alert = new AlertDialog.Builder(activity);
-						alert.setIconAttribute(android.R.attr.alertDialogIcon);
-						alert.setTitle("Overwrite?");
-						alert.setMessage("Do you really want to overwrite file \"" + file.getAbsolutePath() + "\"?");
-						alert.setCancelable(true);
-						alert.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(final DialogInterface dialog, final int which) {
-									if (file.delete()) {
-										showToast("Delete " + file + " successfully");
-									} else {
-										showToast("Delete " + file + " unsuccessfully");
-									}
-									compress();
-								}
-							});
-						alert.setPositiveButton("No", new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									compress();
-									dialog.cancel();
-								}
-							});
-						AlertDialog alertDialog = alert.create();
-						alertDialog.show();
-					} else {
-						compress();
-					}
-				} else {
-					compressTask.cancel(true);
-					mBtnOK.setText("Compress");
-				}
-				break;
-		}
-
-	}
-
-	private void compress() {
-		ForegroundService.ticker = "Compressing";
-		ForegroundService.title = "Touch to Open";
-		ForegroundService.text = "Compressing";
-		AndroidUtils.startService(activity, ForegroundService.class, ForegroundService.ACTION_FOREGROUND, TAG);
-		compressTask = new CompressTask(this);
-		compressTask.execute();
-		mBtnOK.setText("Cancel");
-
-	}
-
-
-	@Override
-	public void beforeTextChanged(CharSequence p1, int p2, int p3, int p4) {
-	}
-
-	@Override
-	public void onTextChanged(CharSequence p1, int p2, int p3, int p4) {
-		if (p1.length() > 0) {
-			if (typeRadioGroup.getCheckedRadioButtonId() == R.id.sevenz) {
-				encryptFileNamesCB.setEnabled(true);
-			}
-		} else {
-			encryptFileNamesCB.setChecked(false);
-			encryptFileNamesCB.setEnabled(false);
-			encryptFileNames = "";
-		}
-	}
-
-	@Override
-	public void afterTextChanged(Editable p1) {
-	}
-
-	@Override
-	public void onCheckedChanged(RadioGroup p1, int p2) {
-		if (p1.getCheckedRadioButtonId() == R.id.sevenz) {
-			solidArchiveCB.setEnabled(true);
-			getView().findViewById(R.id.solidArchiveParameterInfo).setEnabled(true);
-			if (passwordET.getText().length() > 0) {
-				encryptFileNamesCB.setEnabled(true);
-			}
-			if (otherParametersET.getText().length() == 0) {
-				otherParametersET.setText("-mqs=on -mt=on");
-			}
-		} else {
-			solidArchiveET.setText("-ms=off");
-			solidArchiveCB.setChecked(false);
-			solidArchiveCB.setEnabled(false);
-			getView().findViewById(R.id.solidArchiveParameterInfo).setEnabled(false);
-		}
-		if (p1.getCheckedRadioButtonId() != R.id.zpaq) {
-			deleteFilesAfterArchivingCB.setEnabled(true);
-		} else {
-			deleteFilesAfterArchivingCB.setChecked(false);
-			deleteFilesAfterArchivingCB.setEnabled(false);
-		}
-	}
-
-	@Override
-	public void onCheckedChanged(CompoundButton checkBox, boolean p2) {
-		switch (checkBox.getId()) {
-			case (R.id.deleteFilesAfterArchivingCB) : {
-					if (checkBox.isChecked()) {
-						deleteFilesAfterArchiving = "-sdel";
-					} else {
-						deleteFilesAfterArchiving = "";
-					}
-					break;
-				}
-			case (R.id.encryptFileNamesCB) : {
-					if (checkBox.isChecked()) {
-						encryptFileNames = "-mhe=on";
-					} else {
-						encryptFileNames = "";
-					}
-					break;
-				}
-			case (R.id.solidArchiveCB) : {
-					if (checkBox.isChecked()) {
-						solidArchiveET.setEnabled(true);
-						solidArchiveET.setText("-mse");
-					} else {
-						solidArchiveET.setText("-ms=off");
-						solidArchiveET.setEnabled(false);
-					}
-					break;
-				}
-//			case (R.id.testCB) : {
-////					if (checkBox.isChecked()) {
-////						otherArgsET.setEnabled(true);
-////					} else {
-////						otherArgsET.setText("");
-////						otherArgsET.setEnabled(false);
-////					}
-//					break;
-//				}
-//			case (R.id.createSeparateArchivesCB) : {
-////					if (checkBox.isChecked()) {
-////						otherArgsET.setEnabled(true);
-////					} else {
-////						otherArgsET.setText("");
-////						otherArgsET.setEnabled(false);
-////					}
-//					break;
-//				}
-			case (R.id.archiveNameMaskCB) : {
-					if (checkBox.isChecked()) {
-						archiveNameMaskET.setEnabled(true);
-						archiveNameMaskET.setText("YYYYMMDDhhmmss");
-					} else {
-						archiveNameMaskET.setText("");
-						archiveNameMaskET.setEnabled(false);
-					}
-					break;
-				}
-//			case (R.id.workingDirectoryCB) : {
-//					if (checkBox.isChecked()) {
-//						workingDirectoryET.setEnabled(true);
-//						workingDirectoryBtn.setEnabled(true);
-//					} else {
-//						workingDirectoryET.setText("");
-//						workingDirectoryET.setEnabled(false);
-//						workingDirectoryBtn.setEnabled(false);
-//					}
-//					break;
-//				}
-		}
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -521,6 +282,16 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		save();
 	}
 
+	private void compress() {
+		ForegroundService.ticker = "Compressing";
+		ForegroundService.title = "Touch to Open";
+		ForegroundService.text = "Compressing";
+		AndroidUtils.startService(activity, ForegroundService.class, ForegroundService.ACTION_FOREGROUND, TAG);
+		compressTask = new CompressTask(this);
+		compressTask.execute();
+		mBtnOK.setText("Cancel");
+	}
+	
 	public void onItemSelected(
 		AdapterView<?> parent, View view, int position, long id) {
 		//Log.d(TAG, view + ", " + parent);
@@ -533,6 +304,231 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 	public void onNothingSelected(AdapterView<?> parent) {
 	}
 
+	@Override
+	public void onClick(final View p1) {
+		switch (p1.getId()) {
+			case R.id.mode: 
+				final View view = getView();
+				if (((ToggleButton)p1).isChecked()) {
+					view.findViewById(R.id.advancedLayout).setVisibility(View.VISIBLE);
+					view.findViewById(R.id.basicLayout).setVisibility(View.GONE);
+				} else {
+					view.findViewById(R.id.basicLayout).setVisibility(View.VISIBLE);
+					view.findViewById(R.id.advancedLayout).setVisibility(View.GONE);
+				}
+				break;
+			case R.id.cancelDir:
+				dismiss();
+				break;
+			case R.id.okDir:
+
+				Log.d("COMPRESS_REQUEST_CODE.selectedFiles", files + ", " + saveTo);// + fName);
+
+				save();
+
+				if (files.length() == 0) {
+					showToast("Invalid \"files\"");
+					return;
+				}
+				if (saveTo.length() == 0) {
+					showToast("Invalid file name");
+					return;
+				}
+
+				String fN;
+				if (saveTo.matches(FileUtil.compressibleExtension)) {
+					fN = saveTo;
+				} else {
+					fN = saveTo + "." + ((RadioButton)getView().findViewById(typeRadioGroup.getCheckedRadioButtonId() <= 0 ? R.id.sevenz: typeRadioGroup.getCheckedRadioButtonId())).getTag();// + "/" + fName
+				}
+				final File file = new File(fN);
+				Log.d(TAG, file.getAbsolutePath() + ", " + "file.isDirectory() = " + file.isDirectory() + ", file.exists() = " + file.exists());
+				if (file.isDirectory()) {
+					showToast("File name must be not a folder");
+					return;
+				} else {
+					File parentFile = file.getParentFile();
+					if (parentFile != null) {
+						if (!parentFile.exists() && !parentFile.mkdirs()) {
+							showToast(parentFile + " cannot be created");
+							return;
+						}
+						if (!parentFile.canWrite()) {
+							showToast("Folder " + parentFile + " cannot be written");
+							return;
+						}
+					} else {
+						showToast("Parent File is not existed");
+						return;
+					}
+				}
+
+				int size = historyList.size();
+				historyList.add(0, fileET.getText().toString());
+				if (size > 20) {
+					historyList.remove(size);
+				}
+				size = historySaveList.size();
+				historySaveList.add(0, saveToET.getText().toString());
+				if (historySaveList.size() > 20) {
+					historySaveList.remove(size);
+				}
+
+				if (compressTask == null || compressTask.isCancelled() || compressTask.getStatus() == AsyncTask.Status.FINISHED) {
+					if (file.exists()) {
+						AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+						alert.setIconAttribute(android.R.attr.alertDialogIcon);
+						alert.setTitle("Overwrite?");
+						alert.setMessage("Do you really want to overwrite file \"" + file.getAbsolutePath() + "\"?");
+						alert.setCancelable(true);
+						alert.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(final DialogInterface dialog, final int which) {
+									if (file.delete()) {
+										showToast("Delete " + file + " successfully");
+									} else {
+										showToast("Delete " + file + " unsuccessfully");
+									}
+									compress();
+								}
+							});
+						alert.setPositiveButton("No", new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									compress();
+									dialog.cancel();
+								}
+							});
+						AlertDialog alertDialog = alert.create();
+						alertDialog.show();
+					} else {
+						compress();
+					}
+				} else {
+					compressTask.cancel(true);
+					mBtnOK.setText("Compress");
+				}
+				break;
+		}
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence p1, int p2, int p3, int p4) {
+	}
+
+	@Override
+	public void onTextChanged(CharSequence p1, int p2, int p3, int p4) {
+		if (p1.length() > 0) {
+			if (typeRadioGroup.getCheckedRadioButtonId() == R.id.sevenz) {
+				encryptFileNamesCB.setEnabled(true);
+			}
+		} else {
+			encryptFileNamesCB.setChecked(false);
+			encryptFileNamesCB.setEnabled(false);
+			encryptFileNames = "";
+		}
+	}
+
+	@Override
+	public void afterTextChanged(Editable p1) {
+	}
+
+	@Override
+	public void onCheckedChanged(RadioGroup p1, int p2) {
+		if (p1.getCheckedRadioButtonId() == R.id.sevenz) {
+			solidArchiveCB.setEnabled(true);
+			getView().findViewById(R.id.solidArchiveParameterInfo).setEnabled(true);
+			if (passwordET.getText().length() > 0) {
+				encryptFileNamesCB.setEnabled(true);
+			}
+			if (otherParametersET.getText().length() == 0) {
+				otherParametersET.setText("-mqs=on -mt=on");
+			}
+		} else {
+			solidArchiveET.setText("-ms=off");
+			solidArchiveCB.setChecked(false);
+			solidArchiveCB.setEnabled(false);
+			getView().findViewById(R.id.solidArchiveParameterInfo).setEnabled(false);
+		}
+		if (p1.getCheckedRadioButtonId() != R.id.zpaq) {
+			deleteFilesAfterArchivingCB.setEnabled(true);
+		} else {
+			deleteFilesAfterArchivingCB.setChecked(false);
+			deleteFilesAfterArchivingCB.setEnabled(false);
+		}
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton checkBox, boolean p2) {
+		switch (checkBox.getId()) {
+			case (R.id.deleteFilesAfterArchivingCB) : {
+					if (checkBox.isChecked()) {
+						deleteFilesAfterArchiving = "-sdel";
+					} else {
+						deleteFilesAfterArchiving = "";
+					}
+					break;
+				}
+			case (R.id.encryptFileNamesCB) : {
+					if (checkBox.isChecked()) {
+						encryptFileNames = "-mhe=on";
+					} else {
+						encryptFileNames = "";
+					}
+					break;
+				}
+			case (R.id.solidArchiveCB) : {
+					if (checkBox.isChecked()) {
+						solidArchiveET.setEnabled(true);
+						solidArchiveET.setText("-mse");
+					} else {
+						solidArchiveET.setText("-ms=off");
+						solidArchiveET.setEnabled(false);
+					}
+					break;
+				}
+//			case (R.id.testCB) : {
+////					if (checkBox.isChecked()) {
+////						otherArgsET.setEnabled(true);
+////					} else {
+////						otherArgsET.setText("");
+////						otherArgsET.setEnabled(false);
+////					}
+//					break;
+//				}
+//			case (R.id.createSeparateArchivesCB) : {
+////					if (checkBox.isChecked()) {
+////						otherArgsET.setEnabled(true);
+////					} else {
+////						otherArgsET.setText("");
+////						otherArgsET.setEnabled(false);
+////					}
+//					break;
+//				}
+			case (R.id.archiveNameMaskCB) : {
+					if (checkBox.isChecked()) {
+						archiveNameMaskET.setEnabled(true);
+						archiveNameMaskET.setText("YYYYMMDDhhmmss");
+					} else {
+						archiveNameMaskET.setText("");
+						archiveNameMaskET.setEnabled(false);
+					}
+					break;
+				}
+//			case (R.id.workingDirectoryCB) : {
+//					if (checkBox.isChecked()) {
+//						workingDirectoryET.setEnabled(true);
+//						workingDirectoryBtn.setEnabled(true);
+//					} else {
+//						workingDirectoryET.setText("");
+//						workingDirectoryET.setEnabled(false);
+//						workingDirectoryBtn.setEnabled(false);
+//					}
+//					break;
+//				}
+		}
+	}
+	
 	private void showToast(String message) {
         if (mToast != null) {
             mToast.cancel();

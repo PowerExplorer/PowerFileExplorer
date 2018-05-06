@@ -69,7 +69,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 	private Spinner processType;
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
 	private List<ProcessInfo> lpinfo = new LinkedList<>();
-	private List<ProcessInfo> prevInfo = new LinkedList<>();
+	//private List<ProcessInfo> tempOriDataSourceL1 = new LinkedList<>();
 	private LinkedList<String> killList = new LinkedList<>();
 	private LoadProcessTask proTask = new LoadProcessTask();//save, 0, 0
 
@@ -89,9 +89,6 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		"Gone",
 		"Empty"};
 	//private final ArrayList<ProcessInfo> tempSelectedInList1 = new ArrayList<>();
-
-	private int theme1;
-	private boolean fake = false;
 
 	private TextSearch textSearch = new TextSearch();
 	private ProcessSorter processSorter;
@@ -129,6 +126,17 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 //			}
 //		}
 //	}
+
+	@Override
+	public void clone(final Frag frag, final boolean fake) {
+		super.clone(frag, fake);
+		if (frag instanceof ProcessFragment && ((ProcessFragment)frag).gridLayoutManager != null) {
+			final ProcessFragment appsFragment = (ProcessFragment)frag;
+			lpinfo = appsFragment.lpinfo;
+			adapter = appsFragment.adapter;
+			//processSorter = appsFragment.processSorter;
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -182,20 +190,20 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 					//Log.d(TAG, "onScroll firstVisibleItem=" + firstVisibleItem + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
 					if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
-						if (dy > activity.density << 4 && selStatus.getVisibility() == View.VISIBLE) {
-							selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							selStatus.setVisibility(View.GONE);
+						if (dy > activity.density << 4 && selStatusLayout.getVisibility() == View.VISIBLE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							selStatusLayout.setVisibility(View.GONE);
 							horizontalDivider0.setVisibility(View.GONE);
 							horizontalDivider12.setVisibility(View.GONE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							status.setVisibility(View.GONE);
-						} else if (dy < -activity.density << 4 && selStatus.getVisibility() == View.GONE) {
-							selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							selStatus.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							sortBarLayout.setVisibility(View.GONE);
+						} else if (dy < -activity.density << 4 && selStatusLayout.getVisibility() == View.GONE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							selStatusLayout.setVisibility(View.VISIBLE);
 							horizontalDivider0.setVisibility(View.VISIBLE);
 							horizontalDivider12.setVisibility(View.VISIBLE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							status.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							sortBarLayout.setVisibility(View.VISIBLE);
 						}
 						lastScroll = System.currentTimeMillis();
 					}
@@ -277,7 +285,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		clearButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
 		searchButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
 		rightStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
+		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
 
 		if (ExplorerActivity.BASE_BACKGROUND < 0xff808080) {
 			processType.setPopupBackgroundResource(R.drawable.textfield_black);
@@ -345,9 +353,9 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			}
 			Collections.sort(tempInfo, processSorter);
 			lpinfo.clear();
-			lpinfo.addAll(prevInfo);
-			prevInfo.clear();
-			prevInfo.addAll(tempInfo);
+			lpinfo.addAll(tempOriDataSourceL1);
+			tempOriDataSourceL1.clear();
+			tempOriDataSourceL1.addAll(tempInfo);
 			updateStatus();
 			//listView.setSelectionFromTop(index, top);
 			for (String kSt : killList) {
@@ -459,7 +467,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				searchMode = true;
 				searchVal = searchET.getText().toString();
 				final String param = (String)params[0];
-				for (ProcessInfo pi : prevInfo) {
+				for (ProcessInfo pi : tempOriDataSourceL1) {
 					if (pi.label.contains(param) || pi.packageName.contains(param)) {
 						templpinfo.add(pi);
 					}
@@ -467,9 +475,9 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			} else {
 				int sel = params[0];
 				if (sel == 0) {
-					templpinfo.addAll(prevInfo);
+					templpinfo.addAll(tempOriDataSourceL1);
 				} else {
-					for (ProcessInfo pi : prevInfo) {
+					for (ProcessInfo pi : tempOriDataSourceL1) {
 						if (sel == 1 && pi.isSystemApp) {
 							templpinfo.add(pi);
 						} else if (sel == 2 && pi.isUpdatedSystemApp) {
@@ -989,7 +997,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		systemService.getMemoryInfo(mem_info);
 		rightStatus.setText(String.format("Available memory: %s B", Util.nf.format((mem_info.availMem)) + "/" + Util.nf.format(mem_info.totalMem)));
 		//numProc_label.setText("Number of processes: " + display_process.size());
-		selectionStatus.setText(selectedInList1.size() + "/" + lpinfo.size() + "/" + display_process.size());
+		selectionStatusTV.setText(selectedInList1.size() + "/" + lpinfo.size() + "/" + display_process.size());
 		adapter.notifyDataSetChanged();
 	}
 

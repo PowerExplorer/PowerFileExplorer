@@ -158,16 +158,16 @@ public class CopyService extends Service {
 
             watcherUtil = new ServiceWatcherUtil(progressHandler, totalSize);
 
-            DataPackage intent1 = new DataPackage();
-            intent1.setName(sourceFiles.get(0).getName());
-            intent1.setSourceFiles(sourceFiles.size());
-            intent1.setSourceProgress(0);
-            intent1.setTotal(totalSize);
-            intent1.setByteProgress(0);
-            intent1.setSpeedRaw(0);
-            intent1.setMove(move);
-            intent1.setCompleted(false);
-            putDataPackage(intent1);
+            DataPackage dataPackage = new DataPackage();
+            dataPackage.setName(sourceFiles.get(0).getName());
+            dataPackage.setSourceFiles(sourceFiles.size());
+            dataPackage.setSourceProgress(0);
+            dataPackage.setTotal(totalSize);
+            dataPackage.setByteProgress(0);
+            dataPackage.setSpeedRaw(0);
+            dataPackage.setMove(move);
+            dataPackage.setCompleted(false);
+            putDataPackage(dataPackage);
 
             targetPath = p1[0].getString(TAG_COPY_TARGET);
             move = p1[0].getBoolean(TAG_COPY_MOVE);
@@ -176,7 +176,6 @@ public class CopyService extends Service {
             copy.execute(sourceFiles, targetPath, move, openMode);
 
             if (copy.failedFOps.size() == 0) {
-
                 // adding/updating new encrypted db entry if any encrypted file was copied/moved
                 for (BaseFile sourceFile : sourceFiles) {
                     findAndReplaceEncryptedEntry(sourceFile);
@@ -398,7 +397,7 @@ public class CopyService extends Service {
                     GenericCopyUtil copyUtil = new GenericCopyUtil(c);
 
                     progressHandler.setFileName(sourceFile.getName());
-                    copyUtil.copy(sourceFile, targetFile);
+                    copyUtil.copy(sourceFile, targetFile, progressHandler);
                 }
             }
         }
@@ -563,6 +562,7 @@ public class CopyService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+			Log.d("CopyService", "Cancel copy");
             //cancel operation
             progressHandler.setCancelled(true);
         }

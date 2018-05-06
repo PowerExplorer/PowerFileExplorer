@@ -37,7 +37,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 	PowerManager.WakeLock wl;
 	private Andro7za andro7za;
 	private Zpaq zpaq;
-	
+	Runnable run;
 	private static final String TAG = "DecompressTask";
 
 	public DecompressTask(DecompressFragment decompFrag) {
@@ -45,26 +45,52 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		this.activity = decompFrag.getActivity();
 		andro7za = new Andro7za(activity);
 		zpaq = new Zpaq(activity);
-		this.fList = decompFrag.fileET.getText().toString();
-		this.saveTo = decompFrag.saveToET.getText().toString();
-		this.include = decompFrag.includeET.getText().toString();
-		this.exclude = decompFrag.excludeET.getText().toString();
-		this.password = decompFrag.passwordET.getText().toString();
-		String[] otherArg = decompFrag.otherArgsET.getText().toString().split("\\s+");
-		otherArgs = new ArrayList<String>(Arrays.asList(otherArg));
+		this.fList = decompFrag.files;//.getText().toString();
+		this.saveTo = decompFrag.saveTo;//.getText().toString();
+		this.include = decompFrag.include;//.getText().toString();
+		this.exclude = decompFrag.exclude;//.getText().toString();
+		this.password = decompFrag.password;//.getText().toString();
+		String[] otherArg = decompFrag.otherArgs.split("\\s+");//.getText().toString().split("\\s+");
+		this.otherArgs = new ArrayList<String>(Arrays.asList(otherArg));
 		szmode = modes[decompFrag.overwriteModeSpinner.getSelectedItemPosition()];
 		zpaqmode = zpaqmodes[decompFrag.overwriteModeSpinner.getSelectedItemPosition()];
-		command = decompFrag.extractWithFullPathsCB.isChecked() ? "x" : "e";
+		command = decompFrag.command;//extractWithFullPathsCB.isChecked() ? "x" : "e";
+	}
+
+	public DecompressTask(Activity activity, 
+						  String files, 
+						  String saveTo, 
+						  String include, 
+						  String exclude, 
+						  String password, 
+						  String otherArgs, 
+						  int overwriteModeSpinner, 
+						  String command, 
+						  Runnable run) {
+		this.activity = activity;
+		andro7za = new Andro7za(activity);
+		zpaq = new Zpaq(activity);
+		this.fList = files;
+		this.saveTo = saveTo;
+		this.include = include;
+		this.exclude = exclude;
+		this.password = password;
+		String[] otherArg = otherArgs.split("\\s+");
+		this.otherArgs = new ArrayList<String>(Arrays.asList(otherArg));
+		szmode = modes[overwriteModeSpinner];
+		zpaqmode = zpaqmodes[overwriteModeSpinner];
+		this.command = command;
+		this.run = run;
 	}
 
 	protected String doInBackground(String... urls) {
 		start = System.currentTimeMillis();
-		PowerManager pm = (PowerManager)activity.getSystemService(
-			Context.POWER_SERVICE);
+		PowerManager pm = (PowerManager)activity.getSystemService(Context.POWER_SERVICE);
 		wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		try {
 			wl.acquire();
 			List<String> fiList = Arrays.asList(fList.split("\\|+\\s*"));
+			Log.d(TAG, "doInBackground fiList " + fiList);
 			File f = new File(saveTo);
 			if (!f.exists()) {
 				f.mkdirs();
@@ -133,19 +159,25 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 	protected void onPostExecute(String result) {
 		Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
 		//Toast.makeText(activity, "Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds", Toast.LENGTH_LONG).show();
-		decompFrag.mBtnOK.setText("Decompress");
 		sb.append(result);
 		if (wl != null && wl.isHeld()) {
 			wl.release();
 			activity.stopService(new Intent(activity, ForegroundService.class));
 		}
-		decompFrag.statusTV.setText(sb.toString().trim() + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
+		if (decompFrag != null) {
+			decompFrag.mBtnOK.setText("Decompress");
+			decompFrag.statusTV.setText(sb.toString().trim() + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
+		}
 		Log.d(TAG, result);
+		if (run != null) {
+			run.run();
+		}
 	}
+
 	private int rowNum = 0;
 	private StringBuilder sb = new StringBuilder();
 	protected void onProgressUpdate(String... progress) {
-		if (progress != null && progress.length > 0 && progress[0] != null && progress[0].trim().length() > 0) {
+		if (decompFrag != null && progress != null && progress.length > 0 && progress[0] != null && progress[0].trim().length() > 0) {
 
 //			if (progress[0].indexOf("\n") >= 0) {
 //				++rowNum;

@@ -51,7 +51,7 @@
 				<!-- Buttons added here dynamically -->
 			</HorizontalScrollView>
 			<LinearLayout
-				android:id="@+id/selectionCommands"
+				android:id="@+id/selectionCommandsLayout"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
@@ -198,7 +198,7 @@
 		android:background="?android:attr/dividerVertical" />
 
 	<LinearLayout
-		android:id="@+id/selStatus"
+		android:id="@+id/selStatusLayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -208,7 +208,7 @@
 	>
 
 		<TextView
-			android:id="@+id/selectionStatus"
+			android:id="@+id/selectionStatusTV"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
@@ -243,11 +243,11 @@
 		android:id="@+id/horizontalDivider12"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
-		android:layout_below="@+id/selStatus"
+		android:layout_below="@+id/selStatusLayout"
 		android:background="?android:attr/dividerVertical" />
 
 	<LinearLayout
-		android:id="@+id/status"
+		android:id="@+id/sortBarLayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -354,7 +354,7 @@
 		android:id="@+id/horizontalDivider7"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
-		android:layout_below="@+id/status"
+		android:layout_below="@+id/sortBarLayout"
 		android:background="?android:attr/dividerVertical" />
 
 	<!--android.support.v7.widget.RecyclerView

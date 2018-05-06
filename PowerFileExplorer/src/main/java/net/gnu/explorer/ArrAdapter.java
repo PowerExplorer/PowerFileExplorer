@@ -65,6 +65,7 @@ import jcifs.smb.SmbFile;
 import java.net.MalformedURLException;
 import com.amaze.filemanager.utils.OTGUtil;
 import android.content.res.Resources;
+import java.util.List;
 
 public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHolder> {
 
@@ -124,7 +125,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		}
 	}
 
-	public ArrAdapter(final ContentFragment fileFrag, final ArrayList<LayoutElement> objects) {
+	public ArrAdapter(final ContentFragment fileFrag, final List<LayoutElement> objects) {
 		super(objects);
 		this.contentFrag = fileFrag;
 
@@ -591,7 +592,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 								case R.id.extract:
 									//activity.mainActivityHelper.extractFile(new File(rowItem.path));
 									if (!rowItem.isDirectory && FileUtil.extractiblePattern.matcher(rowItem.name).matches()) {
-										activity.decompress(rowItem.path, contentFrag.currentPathTitle + "/" + rowItem.name.substring(0, rowItem.name.lastIndexOf(".")));
+										activity.decompress(rowItem.path, contentFrag.currentPathTitle + "/" + rowItem.name.substring(0, rowItem.name.lastIndexOf(".")), "", true);
 									} else {
 										activity.compress(rowItem.path, contentFrag.currentPathTitle + "/" + (rowItem.name.lastIndexOf(".") > 0 ? rowItem.name.substring(0, rowItem.name.lastIndexOf(".")) : rowItem.name));
 									}
@@ -724,7 +725,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 								}
 							}
 							if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0)) {
-								contentFrag.selectionStatus.setText(contentFrag.selectedInList1.size() 
+								contentFrag.selectionStatusTV.setText(contentFrag.selectedInList1.size() 
 																	+ "/" + contentFrag.dataSourceL1.size());
 							}
 						} else { // inselected
@@ -998,6 +999,15 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 						}
 					}, 500);
 			}
+		} else if (FileUtil.extractiblePattern.matcher(ele.name).matches()) {
+			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).open(pos, mDataset);
+			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.ZIP);
+			if (tabIndex2 >= 0) {
+				pagerAdapter.getItem(tabIndex2).load(fPath);
+				slidingTabsFragment.setCurrentItem(tabIndex2, true);
+			} else {
+				slidingTabsFragment.addTab(Frag.TYPE.ZIP, fPath);
+			}
 		} else if (mime.startsWith("image")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).open(pos, mDataset);
 			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.PHOTO);
@@ -1148,7 +1158,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 						}
 					}
 					if ((contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0)) {
-						contentFrag.selectionStatus.setText(contentFrag.selectedInList1.size() 
+						contentFrag.selectionStatusTV.setText(contentFrag.selectedInList1.size() 
 															+ "/" + contentFrag.dataSourceL1.size());
 					}
 				} else { // single file

@@ -236,8 +236,9 @@
                 <data android:pathPattern=".*\.bz2"/>
                 <data android:pathPattern=".*\.tar.bz2"/>
 				<data android:pathPattern=".*\.html"/>
+				<data android:pathPattern=".*\.aze"/>
+					
 				<data android:mimeType="application/pdf"/>
-
                 <data android:mimeType="application/vnd.ms-excel"/>
 				<data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
 				<data android:mimeType="text/rtf"/>

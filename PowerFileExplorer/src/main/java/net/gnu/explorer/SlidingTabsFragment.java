@@ -165,30 +165,30 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 							Log.d(TAG, "onPageSelected: " + position + ", side " + side + ", pi.frag " + pi.frag + ", pi.fakeFrag " + pi.fakeFrag);
 							if (pi.fakeFrag != null) {
 								pi.fakeFrag.clone(pi.frag, true);
-								if (pi.fakeFrag.status != null) {
-									pi.fakeFrag.status.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
-								}
-								if (pi.frag instanceof FileFrag && ((FileFrag)pi.frag).gridLayoutManager != null) {
-									final FileFrag fileFrag = (FileFrag)pi.frag;
-									FileFrag fakeFrag = (FileFrag)pi.fakeFrag;
-									fakeFrag.selectedInList1 = fileFrag.selectedInList1;
-									fakeFrag.tempOriDataSourceL1 = fileFrag.tempOriDataSourceL1;
-									fakeFrag.tempSelectedInList1 = fileFrag.tempSelectedInList1;
-									fakeFrag.status.setVisibility(fileFrag.status.getVisibility());
-									fakeFrag.commands.setVisibility(fileFrag.commands.getVisibility());
-									if (fileFrag.selStatus != null) {
-										fakeFrag.selStatus.setVisibility(fileFrag.selStatus.getVisibility());
-										fakeFrag.rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
-										fakeFrag.rightStatus.setText(fileFrag.rightStatus.getText());
-									}
-									fakeFrag.selectionStatus.setVisibility(fileFrag.selectionStatus.getVisibility());
-									fakeFrag.selectionStatus.setText(fileFrag.selectionStatus.getText());
-									
-									final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
-									final View vi = fileFrag.listView.getChildAt(0); 
-									final int top = (vi == null) ? 0 : vi.getTop();
-									fakeFrag.gridLayoutManager.scrollToPositionWithOffset(index, top);
-								}
+//								if (pi.fakeFrag.status != null) {
+//									pi.fakeFrag.status.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+//								}
+//								if (pi.frag instanceof FileFrag && ((FileFrag)pi.frag).gridLayoutManager != null) {
+//									final FileFrag fileFrag = (FileFrag)pi.frag;
+//									FileFrag fakeFrag = (FileFrag)pi.fakeFrag;
+//									fakeFrag.selectedInList1 = fileFrag.selectedInList1;
+//									fakeFrag.tempOriDataSourceL1 = fileFrag.tempOriDataSourceL1;
+//									fakeFrag.tempSelectedInList1 = fileFrag.tempSelectedInList1;
+//									fakeFrag.status.setVisibility(fileFrag.status.getVisibility());
+//									fakeFrag.commands.setVisibility(fileFrag.commands.getVisibility());
+//									if (fileFrag.selStatus != null) {
+//										fakeFrag.selStatus.setVisibility(fileFrag.selStatus.getVisibility());
+//										fakeFrag.rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
+//										fakeFrag.rightStatus.setText(fileFrag.rightStatus.getText());
+//									}
+//									fakeFrag.selectionStatus.setVisibility(fileFrag.selectionStatus.getVisibility());
+//									fakeFrag.selectionStatus.setText(fileFrag.selectionStatus.getText());
+//									
+//									final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
+//									final View vi = fileFrag.listView.getChildAt(0); 
+//									final int top = (vi == null) ? 0 : vi.getTop();
+//									fakeFrag.gridLayoutManager.scrollToPositionWithOffset(index, top);
+//								}
 							} else {
 								pi.createFakeFragment();
 							}

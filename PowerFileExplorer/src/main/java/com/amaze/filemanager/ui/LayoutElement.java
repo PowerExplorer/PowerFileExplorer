@@ -19,20 +19,11 @@
 
 package com.amaze.filemanager.ui;
 
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.amaze.filemanager.filesystem.BaseFile;
-import com.amaze.filemanager.utils.files.Futils;
 import com.amaze.filemanager.utils.OpenMode;
-
-import java.util.Calendar;
-import android.graphics.Bitmap;
 import java.io.File;
-import jcifs.smb.SmbException;
-import android.util.Log;
 
 public class LayoutElement implements Parcelable {
 

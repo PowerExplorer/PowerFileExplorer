@@ -279,10 +279,10 @@ public class MainActivityHelper {
 							@Override
 							public void run() {
 								if (toast != null) toast.cancel();
-								themedActivity.oppathe = file.getPath();
-								themedActivity.oppathe1 = file1.getPath();
+								themedActivity.originPath_oppathe = file.getPath();
+								themedActivity.newPath_oppathe1 = file1.getPath();
 								themedActivity.operation = DataUtils.RENAME;
-								guideDialogForLEXA(themedActivity, themedActivity.oppathe1);
+								guideDialogForLEXA(themedActivity, themedActivity.newPath_oppathe1);
 							}
 						});
 				}
@@ -381,9 +381,9 @@ public class MainActivityHelper {
     public void compressFiles(File file, ArrayList<BaseFile> baseFiles) {
         int mode = checkFolder(file.getParentFile(), mainActivity);
         if (mode == 2) {
-            mainActivity.oppathe = (file.getPath());
+            mainActivity.originPath_oppathe = (file.getPath());
             mainActivity.operation = DataUtils.COMPRESS;
-            mainActivity.oparrayList = baseFiles;
+            mainActivity.originPaths_oparrayList = baseFiles;
         } else if (mode == 1) {
             Intent intent2 = new Intent(mainActivity, ZipTask.class);
             intent2.putExtra(ZipTask.KEY_COMPRESS_PATH, file.getPath());
@@ -422,9 +422,9 @@ public class MainActivityHelper {
 							@Override
 							public void run() {
 								if (toast != null) toast.cancel();
-								mainActivity.oppathe = path.getPath();
+								mainActivity.originPath_oppathe = path.getPath();
 								mainActivity.operation = DataUtils.NEW_FILE;
-								guideDialogForLEXA(mainActivity, mainActivity.oppathe);
+								guideDialogForLEXA(mainActivity, mainActivity.originPath_oppathe);
 							}
 						});
 
@@ -493,9 +493,9 @@ public class MainActivityHelper {
 					ma.getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								mainActivity.oppathe = path.getPath();
+								mainActivity.originPath_oppathe = path.getPath();
 								mainActivity.operation = DataUtils.NEW_FOLDER;
-								guideDialogForLEXA(mainActivity, mainActivity.oppathe);
+								guideDialogForLEXA(mainActivity, mainActivity.originPath_oppathe);
 							}
 						});
 
@@ -544,7 +544,7 @@ public class MainActivityHelper {
         }
         int mode = checkFolder(new File(itemsToDelete.get(0).getPath()).getParentFile(), mainActivity);
         if (mode == 2) {
-            mainActivity.oparrayList = (itemsToDelete);
+            mainActivity.originPaths_oparrayList = (itemsToDelete);
             mainActivity.operation = DataUtils.DELETE;
         } else if (mode == 1 || mode == 0)
             new DeleteTask(null, mainActivity).execute((itemsToDelete));

@@ -56,7 +56,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	public String currentPathTitle;
 	protected String title;
 
-	protected ViewGroup status;
+	protected ViewGroup sortBarLayout;
 	public ExplorerActivity activity;
 	protected FragmentActivity fragActivity;
 	public SharedPreferences sharedPref;
@@ -69,7 +69,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	private Toast toast = null;
     
 	public static final enum TYPE {
-		EMPTY, EXPLORER, SELECTION, TEXT, WEB, PDF, CHM, PHOTO, MEDIA, APP, TRAFFIC_STATS, PROCESS//FBReader, 
+		EMPTY, EXPLORER, ZIP, SELECTION, TEXT, WEB, PDF, CHM, PHOTO, MEDIA, APP, TRAFFIC_STATS, PROCESS//FBReader, 
 		};
 
 	public static Frag getFrag(final SlidingTabsFragment sliding, final TYPE t, final String path) {
@@ -100,6 +100,9 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 //			return new FBReader();
 		} else if (t == TYPE.MEDIA) {
 			frag = new MediaPlayerFragment();
+		} else if (t == TYPE.ZIP) {
+			frag = new ZipFragment();
+			frag.type = TYPE.ZIP;
 		} else if (t == TYPE.CHM) {
 			frag = new CHMFrag();
 		} else if (t == TYPE.PHOTO) {
@@ -118,6 +121,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 
 	public void updateList() {} //TODO
 	public void load(String path) {}
+	public void load(String path, Runnable run) {}
 	public void open(final int curPos, final List<LayoutElement> path) {}
 	public void updateColor(View rootView) {}
 
@@ -160,34 +164,34 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	}
 
 	public boolean select(boolean sel) {
-		ViewGroup statusOther;
+		ViewGroup sortBarLayoutOther;
 		if (sel) {
-			if (status != null) {
-				status.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+			if (sortBarLayout != null) {
+				sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
 			}
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-				if (activity.slideFrag2 != null && (statusOther = activity.slideFrag2.getCurrentFragment().status) != null) {
-					statusOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+				if (activity.slideFrag2 != null && (sortBarLayoutOther = activity.slideFrag2.getCurrentFragment().sortBarLayout) != null) {
+					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 				}
 				activity.slideFrag1Selected = sel;
 			} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
-				if ((statusOther = activity.slideFrag.getCurrentFragment().status) != null) {
-					statusOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+				if ((sortBarLayoutOther = activity.slideFrag.getCurrentFragment().sortBarLayout) != null) {
+					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 				}
 				activity.slideFrag1Selected = !sel;
 			}
 		} else {
-			if (status != null) {
-				status.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			if (sortBarLayout != null) {
+				sortBarLayout.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 			}
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-				if ((statusOther = activity.slideFrag2.getCurrentFragment().status) != null) {
-					statusOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+				if ((sortBarLayoutOther = activity.slideFrag2.getCurrentFragment().sortBarLayout) != null) {
+					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
 				}
 				activity.slideFrag1Selected = sel;
 			} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
-				if ((statusOther = activity.slideFrag.getCurrentFragment().status) != null) {
-					statusOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+				if ((sortBarLayoutOther = activity.slideFrag.getCurrentFragment().sortBarLayout) != null) {
+					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
 				}
 				activity.slideFrag1Selected = !sel;
 			}
@@ -223,7 +227,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 			title = savedInstanceState.getString("title");
 			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
 		}
-        status = (ViewGroup)view.findViewById(R.id.status);
+        sortBarLayout = (ViewGroup)view.findViewById(R.id.sortBarLayout);
 		
 		if (activity != null && slidingTabsFragment != null) {
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//type == Frag.TYPE.EXPLORER && 

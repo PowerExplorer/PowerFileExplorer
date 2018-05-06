@@ -76,7 +76,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 	private Spinner appType;
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
-	private transient List<AppInfo> prevInfo = new LinkedList<>();;
+	//private transient List<AppInfo> tempOriDataSourceL1 = new LinkedList<>();;
 	//HashSet<AppInfo> selectedInList1 = new HashSet<AppInfo>();
 	//private final ArrayList<AppInfo> tempSelectedInList1 = new ArrayList<>();
 	private final String[] appTypeArr = new String[] {
@@ -99,6 +99,17 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		final File backupPath = new File(BACKUP_PATH);
 		if (!backupPath.exists())
 			backupPath.mkdirs();
+	}
+	
+	@Override
+	public void clone(final Frag frag, final boolean fake) {
+		super.clone(frag, fake);
+		if (frag instanceof AppsFragment && ((AppsFragment)frag).gridLayoutManager != null) {
+			final AppsFragment appsFragment = (AppsFragment)frag;
+			appList = appsFragment.appList;
+			appAdapter = appsFragment.appAdapter;
+			//appListSorter = appsFragment.appListSorter;
+		}
 	}
 
 	@Override
@@ -127,7 +138,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		if (savedInstanceState == null) {
 			appType.setSelection(3);
 		}
-		
+
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
 		searchET.addTextChangedListener(textSearch);
@@ -139,20 +150,20 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 					//Log.d(TAG, "onScroll firstVisibleItem=" + firstVisibleItem + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
 					if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
-						if (dy > activity.density << 4 && selectionStatus.getVisibility() == View.VISIBLE) {
-							selectionStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							selectionStatus.setVisibility(View.GONE);
+						if (dy > activity.density << 4 && selectionStatusTV.getVisibility() == View.VISIBLE) {
+							selectionStatusTV.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							selectionStatusTV.setVisibility(View.GONE);
 							horizontalDivider0.setVisibility(View.GONE);
 							horizontalDivider12.setVisibility(View.GONE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							status.setVisibility(View.GONE);
-						} else if (dy < -activity.density << 4 && selectionStatus.getVisibility() == View.GONE) {
-							selectionStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							selectionStatus.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							sortBarLayout.setVisibility(View.GONE);
+						} else if (dy < -activity.density << 4 && selectionStatusTV.getVisibility() == View.GONE) {
+							selectionStatusTV.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							selectionStatusTV.setVisibility(View.VISIBLE);
 							horizontalDivider0.setVisibility(View.VISIBLE);
 							horizontalDivider12.setVisibility(View.VISIBLE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							status.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							sortBarLayout.setVisibility(View.VISIBLE);
 						}
 						lastScroll = System.currentTimeMillis();
 					}
@@ -345,7 +356,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		searchET.setTextColor(ExplorerActivity.TEXT_COLOR);
 		clearButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
 		searchButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		selectionStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
+		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
 
 		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
 		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
@@ -413,7 +424,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			if (params[0] instanceof String) {
 				searchMode = true;
 				searchVal = searchET.getText().toString();
-				for (AppInfo pi : prevInfo) {
+				for (AppInfo pi : tempOriDataSourceL1) {
 					if (pi.label.contains((String)params[0]) || pi.packageName.contains((String)params[0])) {
 						tempAppList.add(pi);
 					}
@@ -421,9 +432,9 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			} else {
 				int sel = params[0];
 				if (sel == 0) {
-					tempAppList.addAll(prevInfo);
+					tempAppList.addAll(tempOriDataSourceL1);
 				} else {
-					for (AppInfo pi : prevInfo) {
+					for (AppInfo pi : tempOriDataSourceL1) {
 						if (sel == 1 && pi.isSystemApp) {
 							tempAppList.add(pi);
 						} else if (sel == 2 && pi.isUpdatedSystemApp) {
@@ -451,7 +462,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			appList.addAll(tempAppList);
 			selectedInList1.clear();
 			appAdapter.notifyDataSetChanged();
-			selectionStatus.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
+			selectionStatusTV.setText(selectedInList1.size() + "/" + appList.size() + "/" + tempOriDataSourceL1.size());
 			mSwipeRefreshLayout.setRefreshing(false);
 		}
 	}
@@ -481,7 +492,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 	void updateStatus() {
 		appAdapter.notifyDataSetChanged();
-		selectionStatus.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
+		selectionStatusTV.setText(selectedInList1.size() + "/" + appList.size() + "/" + tempOriDataSourceL1.size());
 	}
 
 	void rangeSelection() {
@@ -542,7 +553,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 					allCbx.setImageResource(R.drawable.dot);
 				}
 				appAdapter.toggleChecked(all);
-				selectionStatus.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
+				selectionStatusTV.setText(selectedInList1.size() + "/" + appList.size() + "/" + tempOriDataSourceL1.size());
 				break;
 			case R.id.allName:
 				if (allName.getText().toString().equals("Name ▲")) {
@@ -713,13 +724,13 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			try {
 				Collections.sort(tempAppList, appListSorter);
 				appList.clear();
-				prevInfo.clear();
+				tempOriDataSourceL1.clear();
 				selectedInList1.clear();
 				appList.addAll(tempAppList);
-				prevInfo.addAll(tempAppList);
+				tempOriDataSourceL1.addAll(tempAppList);
 				appAdapter.notifyDataSetChanged();
 
-				selectionStatus.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
+				selectionStatusTV.setText(selectedInList1.size() + "/" + appList.size() + "/" + tempOriDataSourceL1.size());
 				if (save) {
 					gridLayoutManager.scrollToPositionWithOffset(index, top);
 				}
@@ -751,7 +762,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				selectedInList1.remove(packageInfo);
 			}
 			notifyDataSetChanged();
-			selectionStatus.setText(selectedInList1.size() + "/" + appList.size() + "/" + prevInfo.size());
+			selectionStatusTV.setText(selectedInList1.size() + "/" + appList.size() + "/" + tempOriDataSourceL1.size());
 			boolean all = selectedInList1.size() == appList.size();
 			allCbx.setSelected(all);
 			if (all) {
@@ -1001,7 +1012,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			final BaseFile f1 = new BaseFile(item.path);
 			f1.setMode(OpenMode.ROOT);
 			ApplicationInfo info1 = AndroidUtils.getAppInfo(AppsFragment.this.getContext(), item.packageName);
-			
+
 			if (info1 != null && (info1.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
 				// system package
 				if (AppsFragment.this.sharedPref.getBoolean("rootmode", false)) {

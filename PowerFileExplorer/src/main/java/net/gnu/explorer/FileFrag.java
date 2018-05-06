@@ -137,8 +137,8 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 	TextView allDate;
 	TextView allSize;
 	TextView allType;
-	protected View selStatus;
-	TextView selectionStatus;
+	protected View selStatusLayout;
+	TextView selectionStatusTV;
 	TextView rightStatus;
 	protected View horizontalDivider0;
 	protected View horizontalDivider12;
@@ -159,10 +159,9 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 	RecyclerView listView = null;
 	ImageThreadLoader imageLoader;
 
-	ArrayList<LayoutElement> dataSourceL1 = new ArrayList<>();
-	ArrayList selectedInList1 = new ArrayList();
-	ArrayList<LayoutElement> tempOriDataSourceL1 = new ArrayList<>();
-	ArrayList tempSelectedInList1 = new ArrayList();
+	List tempOriDataSourceL1 = new LinkedList();
+	List selectedInList1 = new LinkedList();
+	List tempSelectedInList1 = new LinkedList();
 	public ViewGroup commands;
 	public View horizontalDivider6;
 
@@ -221,14 +220,14 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		allDate = (TextView) v.findViewById(R.id.allDate);
 		allSize = (TextView) v.findViewById(R.id.allSize);
 		allType = (TextView) v.findViewById(R.id.allType);
-		selectionStatus = (TextView) v.findViewById(R.id.selectionStatus);
+		selectionStatusTV = (TextView) v.findViewById(R.id.selectionStatusTV);
 		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
 		horizontalDivider0 = v.findViewById(R.id.horizontalDivider0);
 		horizontalDivider12 = v.findViewById(R.id.horizontalDivider12);
 
 		horizontalDivider7 = v.findViewById(R.id.horizontalDivider7);
 		rightStatus = (TextView) v.findViewById(R.id.rightStatus);
-		selStatus = v.findViewById(R.id.selStatus);
+		selStatusLayout = v.findViewById(R.id.selStatusLayout);
 		listView = (RecyclerView) v.findViewById(R.id.listView1);
 		imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		horizontalDivider6 = v.findViewById(R.id.horizontalDivider6);
@@ -279,28 +278,32 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		super.onStart();
 	}
 
-//	public void clone(final Frag frag, final boolean fake) {
-//		super.clone(frag, fake);
-//
-//		final FileFrag fileFrag = (FileFrag)frag;
-//		if (fileFrag.gridLayoutManager != null) {
-//			final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
-//			final View vi = fileFrag.listView.getChildAt(0); 
-//			final int top = (vi == null) ? 0 : vi.getTop();
-//			//FileFrag fakeFrag = (FileFrag) this;//(FileFrag)pi.fakeFrag;
-//			gridLayoutManager.scrollToPositionWithOffset(index, top);
-//			status.setVisibility(fileFrag.status.getVisibility());
-//			commands.setVisibility(fileFrag.commands.getVisibility());
-//			selectedInList1 = fileFrag.selectedInList1;
-//			if (fileFrag.selStatus != null) {
-//				selStatus.setVisibility(fileFrag.selStatus.getVisibility());
-//				rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
-//				rightStatus.setText(fileFrag.rightStatus.getText());
-//			}
-//			selectionStatus.setVisibility(fileFrag.selectionStatus.getVisibility());
-//			selectionStatus.setText(fileFrag.selectionStatus.getText());
-//		}
-//	}
+	public void clone(final Frag frag, final boolean fake) {
+		super.clone(frag, fake);
+
+		if (frag instanceof FileFrag && ((FileFrag)frag).gridLayoutManager != null) {
+			final FileFrag fileFrag = (FileFrag)frag;
+			
+			selectedInList1 = fileFrag.selectedInList1;
+			tempOriDataSourceL1 = fileFrag.tempOriDataSourceL1;
+			tempSelectedInList1 = fileFrag.tempSelectedInList1;
+			sortBarLayout.setVisibility(fileFrag.sortBarLayout.getVisibility());
+			commands.setVisibility(fileFrag.commands.getVisibility());
+			if (fileFrag.selStatusLayout != null) {
+				selStatusLayout.setVisibility(fileFrag.selStatusLayout.getVisibility());
+				rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
+				rightStatus.setText(fileFrag.rightStatus.getText());
+			}
+			selectionStatusTV.setVisibility(fileFrag.selectionStatusTV.getVisibility());
+			selectionStatusTV.setText(fileFrag.selectionStatusTV.getText());
+			sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+			
+			final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
+			final View vi = fileFrag.listView.getChildAt(0); 
+			final int top = (vi == null) ? 0 : vi.getTop();
+			gridLayoutManager.scrollToPositionWithOffset(index, top);
+		}
+	}
 
     public static void launchSMB(final SmbFile smbFile, final long si, final Activity activity) {
         final Streamer s = Streamer.getInstance();

@@ -1,47 +1,39 @@
 package net.gnu.androidutil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
-import android.widget.ImageView;
-import java.io.*;
-import java.util.*;
-import net.gnu.util.*;
-import net.gnu.androidutil.*;
-import android.util.*;
-import android.os.*;
-import net.gnu.explorer.*;
-import android.content.res.*;
-import android.webkit.*;
-import com.bumptech.glide.*;
-import com.caverock.androidsvg.*;
-import android.graphics.drawable.*;
-import com.bumptech.glide.samples.svg.*;
-import com.bumptech.glide.load.model.*;
-import com.bumptech.glide.load.resource.file.*;
-import com.bumptech.glide.load.engine.*;
-import com.amaze.filemanager.ui.icons.*;
-import com.bumptech.glide.signature.*;
-import android.widget.ImageView.*;
-import android.support.v7.widget.*;
-import com.amaze.filemanager.utils.files.CryptUtil;
-import java.util.regex.Pattern;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.ImageView;
+import com.amaze.filemanager.ui.icons.MimeTypes;
+import com.amaze.filemanager.utils.files.CryptUtil;
+import com.bumptech.glide.GenericRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.StreamEncoder;
+import com.bumptech.glide.load.resource.file.FileToStreamDecoder;
+import com.bumptech.glide.samples.svg.SvgDecoder;
+import com.bumptech.glide.samples.svg.SvgDrawableTranscoder;
+import com.bumptech.glide.samples.svg.SvgSoftwareLayerSetter;
+import com.bumptech.glide.signature.StringSignature;
+import com.caverock.androidsvg.SVG;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.LinkedList;
+import net.gnu.explorer.ExplorerActivity;
+import net.gnu.explorer.ExplorerApplication;
+import net.gnu.explorer.R;
+import net.gnu.explorer.ZipEntry;
+import net.gnu.util.FileUtil;
 //import com.bumptech.glide.*;
 
 public class ImageThreadLoader {
@@ -68,11 +60,11 @@ public class ImageThreadLoader {
 	public static Drawable apkIcon;
 	public static Drawable imageIcon;
 	public static Drawable compressIcon;
-	
+
 	private static Bitmap apkIconBitmap;
 	private static Drawable fileLockDrawable;
 	private static Drawable folderLockDrawable;
-	
+
 	private static final String PREF_CACHE= "cachefiles";
     private static boolean cachefiles;
 	private final LoaderThread loaderThread=new LoaderThread();
@@ -118,7 +110,7 @@ public class ImageThreadLoader {
 			fileLockDrawable = res.getDrawable(R.drawable.ic_file_lock_white_36dp);
 			compressIcon = res.getDrawable(R.drawable.ic_doc_compressed);
 			compressIcon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-			
+
 			//Find the dir to save cached images
 			final File cacheDir2 = new File(cachePath);
 			if (!cacheDir2.exists())
@@ -173,7 +165,7 @@ public class ImageThreadLoader {
 				   || ext.equals("xlsx")) {
 			return R.drawable.spreadsheet64;
 		} else if (ext.equals(CryptUtil.CRYPT_EXTENSION)) {
-			  return R.drawable.ic_file_lock_white_36dp;
+			return R.drawable.ic_file_lock_white_36dp;
 		} else if (mimeType.startsWith("image")) {
 			return R.drawable.ic_launcher_image;
 		} else if (FileUtil.extractibleExtensionPattern.matcher(ext).matches()) {
@@ -183,9 +175,19 @@ public class ImageThreadLoader {
 		}
 	}
 
+	public Drawable getFileIcon(final String f) {
+		final String mimeType = MimeTypes.getMimeType(f);
+		final String ext = FileUtil.getExtension(new File(f).getName());
+		return getFileIcon(mimeType, ext);
+	}
+
 	public Drawable getFileIcon(final File f) {
 		final String mimeType = MimeTypes.getMimeType(f);
 		final String ext = FileUtil.getExtension(f.getName());
+		return getFileIcon(mimeType, ext);
+	}
+
+	public Drawable getFileIcon(final String mimeType, final String ext) {
 		if (ext.equals("zip")) {
 			return myzip;
 		} else if (ext.equals("rar")) {
@@ -213,12 +215,29 @@ public class ImageThreadLoader {
 			return spreadsheet64;
 		} else if (ext.equals(CryptUtil.CRYPT_EXTENSION)) {
 			return fileLockDrawable;
+		} else if (mimeType.startsWith("video")) {
+			return videos_new;
+		} else if (mimeType.startsWith("audio")) {
+			return audio;
 		} else if (mimeType.startsWith("image")) {
 			return imageIcon;
 		} else if (FileUtil.extractibleExtensionPattern.matcher(ext).matches()) {
 			return compressIcon;
 		} else {
 			return miscellaneous;
+		}
+	}
+
+	public void displayImage(final ZipEntry ze, final Context ctx, final ImageView imageView, int cols) {
+		if (cols <= 2) {
+			imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		} else {
+			imageView.setScaleType(ImageView.ScaleType.CENTER);
+		}
+		if (ze.isDirectory) {
+			imageView.setImageDrawable(myfolder72);
+		} else {
+			imageView.setImageDrawable(getFileIcon(ze.path));
 		}
 	}
 

@@ -70,10 +70,10 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 
 	private static final String TAG = "DataTrackerFrag";
 
-	private final ArrayList<AppStats> appStatsList = new ArrayList<>();
+	private ArrayList<AppStats> appStatsList = new ArrayList<>();
 	private AppsAdapter appStatAdapter;
 
-	private final ArrayList<AppStats> prevAppStatsList = new ArrayList<>();
+	//private final ArrayList<AppStats> tempOriDataSourceL1 = new ArrayList<>();
 	private final HashSet<AppStats> myChecked = new HashSet<>();
 //	private ListView listView;
 
@@ -168,6 +168,17 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		super();
 		type = Frag.TYPE.TRAFFIC_STATS;
 		title = "Traffic";
+	}
+
+	@Override
+	public void clone(final Frag frag, final boolean fake) {
+		super.clone(frag, fake);
+		if (frag instanceof DataTrackerFrag && ((DataTrackerFrag)frag).gridLayoutManager != null) {
+			final DataTrackerFrag dataTrackerFrag = (DataTrackerFrag)frag;
+			appStatAdapter = dataTrackerFrag.appStatAdapter;
+			appStatsList = dataTrackerFrag.appStatsList;
+			//appStatsComparator = dataTrackerFrag.appStatsComparator;
+		}
 	}
 
     @Override
@@ -320,20 +331,20 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 					//Log.d(TAG, "onScroll firstVisibleItem=" + firstVisibleItem + ", visibleItemCount=" + visibleItemCount + ", totalItemCount=" + totalItemCount);
 					if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
-						if (dy > activity.density << 4 && selStatus.getVisibility() == View.VISIBLE) {
-							selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							selStatus.setVisibility(View.GONE);
+						if (dy > activity.density << 4 && selStatusLayout.getVisibility() == View.VISIBLE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							selStatusLayout.setVisibility(View.GONE);
 							horizontalDivider0.setVisibility(View.GONE);
 							horizontalDivider12.setVisibility(View.GONE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-							status.setVisibility(View.GONE);
-						} else if (dy < -activity.density << 4 && selStatus.getVisibility() == View.GONE) {
-							selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							selStatus.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							sortBarLayout.setVisibility(View.GONE);
+						} else if (dy < -activity.density << 4 && selStatusLayout.getVisibility() == View.GONE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							selStatusLayout.setVisibility(View.VISIBLE);
 							horizontalDivider0.setVisibility(View.VISIBLE);
 							horizontalDivider12.setVisibility(View.VISIBLE);
-							status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-							status.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							sortBarLayout.setVisibility(View.VISIBLE);
 						}
 						lastScroll = System.currentTimeMillis();
 					}
@@ -512,7 +523,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		allDate.setTextColor(ExplorerActivity.TEXT_COLOR);
 		allSize.setTextColor(ExplorerActivity.TEXT_COLOR);
 		allType.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
+		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
 		totalTransferTV.setTextColor(ExplorerActivity.TEXT_COLOR);
 		appStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
 		interval.setTextColor(ExplorerActivity.TEXT_COLOR);
@@ -566,7 +577,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 												  Formatter.formatFileSize(activity, totalRxSincePrev + totalTxSincePrev) + "@" + totalRate + unitTypeArr[unitType]
 												  ));
 		}
-		selectionStatus.setText(myChecked.size() + "/" + appStatsList.size());
+		selectionStatusTV.setText(myChecked.size() + "/" + appStatsList.size());
 	}
 
 	private void updateAppList() {
@@ -601,8 +612,8 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos();
 				//}
 				//Log.d(TAG, SystemClock.elapsedRealtimeNanos() + ", " + rx + ", " + tx);
-				if ((i = prevAppStatsList.indexOf(appStats)) >= 0) {
-					appStats = prevAppStatsList.get(i);
+				if ((i = tempOriDataSourceL1.indexOf(appStats)) >= 0) {
+					appStats = (AppStats) tempOriDataSourceL1.get(i);
 
 					appStats.elapsedTimeSincePrev = elapsedRealtimeNanos - appStats.elapsedTimeSinceStart;
 					appStats.elapsedTimeSinceStart = elapsedRealtimeNanos;
@@ -641,7 +652,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 							tempAppStatsList.add(appStats);
 						}
 					} 
-					prevAppStatsList.add(appStats);
+					tempOriDataSourceL1.add(appStats);
 
 					appStats.elapsedTimeSincePrev = elapsedRealtimeNanos;
 					appStats.elapsedTimeSinceStart = elapsedRealtimeNanos;
@@ -1011,7 +1022,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 	}
 
 	void updateStatus() {
-		selectionStatus.setText(myChecked.size()  + "/" + appStatsList.size());
+		selectionStatusTV.setText(myChecked.size()  + "/" + appStatsList.size());
 	}
 
 	void rangeSelection() {

@@ -152,7 +152,7 @@
 		android:background="?android:attr/dividerVertical" />
 
 	<LinearLayout
-		android:id="@+id/selStatus"
+		android:id="@+id/selStatusLayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -161,7 +161,7 @@
 		android:padding="0dp"
 	>
 		<TextView
-			android:id="@+id/selectionStatus"
+			android:id="@+id/selectionStatusTV"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="10sp"
@@ -195,11 +195,11 @@
 		android:id="@+id/horizontalDivider12"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
-		android:layout_below="@+id/selStatus"
+		android:layout_below="@+id/selStatusLayout"
 		android:background="?android:attr/dividerVertical" />
 
 	<LinearLayout
-		android:id="@+id/status"
+		android:id="@+id/sortBarLayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -300,7 +300,7 @@
 		android:id="@+id/horizontalDivider7"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
-		android:layout_below="@+id/status"
+		android:layout_below="@+id/sortBarLayout"
 		android:background="?android:attr/dividerVertical" />
 
 	<FrameLayout

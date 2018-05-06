@@ -30,6 +30,9 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import com.amaze.filemanager.utils.ProgressHandler;
+import com.amaze.filemanager.services.DeleteTask;
+import java.util.ArrayList;
 
 /**
  * Created by vishal on 26/10/16.
@@ -38,15 +41,16 @@ import java.nio.channels.ReadableByteChannel;
  */
 
 public class GenericCopyUtil {
-
+	private ProgressHandler progressHandler;
     private BaseFile mSourceFile;
     private HFile mTargetFile;
     private Context mContext;   // context needed to find the DocumentFile in otg/sd card
     private DataUtils dataUtils = DataUtils.getInstance();
     public static final String PATH_FILE_DESCRIPTOR = "/proc/self/fd/";
 
-    public static final int DEFAULT_BUFFER_SIZE =  8192;
-
+    public static final int DEFAULT_BUFFER_SIZE =  262144;
+	public static final String TAG = "GenericCopyUtil";
+	
     public GenericCopyUtil(Context context) {
         this.mContext = context;
     }
@@ -70,82 +74,76 @@ public class GenericCopyUtil {
         BufferedOutputStream bufferedOutputStream = null;
 
         try {
-
             // initializing the input channels based on file types
             if (mSourceFile.isOtgFile()) {
                 // source is in otg
                 ContentResolver contentResolver = mContext.getContentResolver();
                 DocumentFile documentSourceFile = OTGUtil.getDocumentFile(mSourceFile.getPath(),
-                        mContext, false);
+																		  mContext, false);
 
                 bufferedInputStream = new BufferedInputStream(contentResolver
-                        .openInputStream(documentSourceFile.getUri()), DEFAULT_BUFFER_SIZE);
+															  .openInputStream(documentSourceFile.getUri()), DEFAULT_BUFFER_SIZE);
             } else if (mSourceFile.isSmb()) {
-
                 // source is in smb
                 bufferedInputStream = new BufferedInputStream(mSourceFile.getInputStream(mContext), DEFAULT_BUFFER_SIZE);
             } else if (mSourceFile.isDropBoxFile()) {
-
                 CloudStorage cloudStorageDropbox = dataUtils.getAccount(OpenMode.DROPBOX);
                 bufferedInputStream = new BufferedInputStream(cloudStorageDropbox
-                        .download(CloudUtil.stripPath(OpenMode.DROPBOX,
-                                mSourceFile.getPath())));
+															  .download(CloudUtil.stripPath(OpenMode.DROPBOX,
+																							mSourceFile.getPath())));
             } else if (mSourceFile.isBoxFile()) {
-
                 CloudStorage cloudStorageBox = dataUtils.getAccount(OpenMode.BOX);
                 bufferedInputStream = new BufferedInputStream(cloudStorageBox
-                        .download(CloudUtil.stripPath(OpenMode.BOX,
-                                mSourceFile.getPath())));
+															  .download(CloudUtil.stripPath(OpenMode.BOX,
+																							mSourceFile.getPath())));
             } else if (mSourceFile.isGoogleDriveFile()) {
-
                 CloudStorage cloudStorageGdrive = dataUtils.getAccount(OpenMode.GDRIVE);
                 bufferedInputStream = new BufferedInputStream(cloudStorageGdrive
-                        .download(CloudUtil.stripPath(OpenMode.GDRIVE,
-                                mSourceFile.getPath())));
+															  .download(CloudUtil.stripPath(OpenMode.GDRIVE,
+																							mSourceFile.getPath())));
             } else if (mSourceFile.isOneDriveFile()) {
-
                 CloudStorage cloudStorageOnedrive = dataUtils.getAccount(OpenMode.ONEDRIVE);
                 bufferedInputStream = new BufferedInputStream(cloudStorageOnedrive
-                        .download(CloudUtil.stripPath(OpenMode.ONEDRIVE,
-                                mSourceFile.getPath())));
+															  .download(CloudUtil.stripPath(OpenMode.ONEDRIVE,
+																							mSourceFile.getPath())));
             } else {
-
                 // source file is neither smb nor otg; getting a channel from direct file instead of stream
                 File file = new File(mSourceFile.getPath());
                 if (FileUtil.isReadable(file)) {
 
                     if (mTargetFile.isOneDriveFile()
-                            || mTargetFile.isDropBoxFile()
-                            || mTargetFile.isGoogleDriveFile()
-                            || mTargetFile.isBoxFile()
-                            || lowOnMemory) {
+						|| mTargetFile.isDropBoxFile()
+						|| mTargetFile.isGoogleDriveFile()
+						|| mTargetFile.isBoxFile()
+						|| lowOnMemory) {
                         // our target is cloud, we need a stream not channel
                         bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
                     } else {
-
                         inChannel = new RandomAccessFile(file, "r").getChannel();
                     }
                 } else {
                     ContentResolver contentResolver = mContext.getContentResolver();
                     DocumentFile documentSourceFile = FileUtil.getDocumentFile(file,
-                            mSourceFile.isDirectory(), mContext);
+																			   mSourceFile.isDirectory(), mContext);
 
                     bufferedInputStream = new BufferedInputStream(contentResolver
-                            .openInputStream(documentSourceFile.getUri()), DEFAULT_BUFFER_SIZE);
+																  .openInputStream(documentSourceFile.getUri()), DEFAULT_BUFFER_SIZE);
                 }
             }
 
+			File targetFile = null;
+			DocumentFile documentTargetFile = null;
             // initializing the output channels based on file types
             if (mTargetFile.isOtgFile()) {
 
                 // target in OTG, obtain streams from DocumentFile Uri's
 
                 ContentResolver contentResolver = mContext.getContentResolver();
-                DocumentFile documentTargetFile = OTGUtil.getDocumentFile(mTargetFile.getPath(),
-                        mContext, true);
+                documentTargetFile = OTGUtil.getDocumentFile(mTargetFile.getPath(),
+															 mContext, true);
 
                 bufferedOutputStream = new BufferedOutputStream(contentResolver
-                        .openOutputStream(documentTargetFile.getUri()), DEFAULT_BUFFER_SIZE);
+																.openOutputStream(documentTargetFile.getUri()), DEFAULT_BUFFER_SIZE);
             } else if (mTargetFile.isSmb()) {
 
                 bufferedOutputStream = new BufferedOutputStream(mTargetFile.getOutputStream(mContext), DEFAULT_BUFFER_SIZE);
@@ -156,11 +154,11 @@ public class GenericCopyUtil {
                 if (mSourceFile.isDropBoxFile()) {
                     // we're in the same provider, use api method
                     cloudStorageDropbox.copy(CloudUtil.stripPath(OpenMode.DROPBOX, mSourceFile.getPath()),
-                            CloudUtil.stripPath(OpenMode.DROPBOX, mTargetFile.getPath()));
+											 CloudUtil.stripPath(OpenMode.DROPBOX, mTargetFile.getPath()));
                     return;
                 } else {
                     cloudStorageDropbox.upload(CloudUtil.stripPath(OpenMode.DROPBOX, mTargetFile.getPath()),
-                            bufferedInputStream, mSourceFile.getSize(), true);
+											   bufferedInputStream, mSourceFile.getSize(), true);
                     return;
                 }
             } else if (mTargetFile.isBoxFile()) {
@@ -170,11 +168,11 @@ public class GenericCopyUtil {
                 if (mSourceFile.isBoxFile()) {
                     // we're in the same provider, use api method
                     cloudStorageBox.copy(CloudUtil.stripPath(OpenMode.BOX, mSourceFile.getPath()),
-                            CloudUtil.stripPath(OpenMode.BOX, mTargetFile.getPath()));
+										 CloudUtil.stripPath(OpenMode.BOX, mTargetFile.getPath()));
                     return;
                 } else {
                     cloudStorageBox.upload(CloudUtil.stripPath(OpenMode.BOX, mTargetFile.getPath()),
-                            bufferedInputStream, mSourceFile.getSize(), true);
+										   bufferedInputStream, mSourceFile.getSize(), true);
                     bufferedInputStream.close();
                     return;
                 }
@@ -186,11 +184,11 @@ public class GenericCopyUtil {
                 if (mSourceFile.isGoogleDriveFile()) {
                     // we're in the same provider, use api method
                     cloudStorageGdrive.copy(CloudUtil.stripPath(OpenMode.GDRIVE, mSourceFile.getPath()),
-                            CloudUtil.stripPath(OpenMode.GDRIVE, mTargetFile.getPath()));
+											CloudUtil.stripPath(OpenMode.GDRIVE, mTargetFile.getPath()));
                     return;
                 } else {
                     cloudStorageGdrive.upload(CloudUtil.stripPath(OpenMode.GDRIVE, mTargetFile.getPath()),
-                            bufferedInputStream, mSourceFile.getSize(), true);
+											  bufferedInputStream, mSourceFile.getSize(), true);
                     bufferedInputStream.close();
                     return;
                 }
@@ -201,69 +199,75 @@ public class GenericCopyUtil {
                 if (mSourceFile.isOneDriveFile()) {
                     // we're in the same provider, use api method
                     cloudStorageOnedrive.copy(CloudUtil.stripPath(OpenMode.ONEDRIVE, mSourceFile.getPath()),
-                            CloudUtil.stripPath(OpenMode.ONEDRIVE, mTargetFile.getPath()));
+											  CloudUtil.stripPath(OpenMode.ONEDRIVE, mTargetFile.getPath()));
                     return;
                 } else {
                     cloudStorageOnedrive.upload(CloudUtil.stripPath(OpenMode.ONEDRIVE, mTargetFile.getPath()),
-                            bufferedInputStream, mSourceFile.getSize(), true);
+												bufferedInputStream, mSourceFile.getSize(), true);
                     bufferedInputStream.close();
                     return;
                 }
             } else {
                 // copying normal file, target not in OTG
-                File file = new File(mTargetFile.getPath());
-                if (FileUtil.isWritable(file)) {
+                targetFile = new File(mTargetFile.getPath());
+                if (FileUtil.isWritable(targetFile)) {
 
                     if (lowOnMemory) {
-                        bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
+                        bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
                     } else {
-
-                        outChannel = new RandomAccessFile(file, "rw").getChannel();
+                        outChannel = new RandomAccessFile(targetFile, "rw").getChannel();
                     }
                 } else {
                     ContentResolver contentResolver = mContext.getContentResolver();
-                    DocumentFile documentTargetFile = FileUtil.getDocumentFile(file,
-                            mTargetFile.isDirectory(), mContext);
+                    documentTargetFile = FileUtil.getDocumentFile(targetFile,
+																  mTargetFile.isDirectory(), mContext);
 
                     bufferedOutputStream = new BufferedOutputStream(contentResolver
-                            .openOutputStream(documentTargetFile.getUri()), DEFAULT_BUFFER_SIZE);
+																	.openOutputStream(documentTargetFile.getUri()), DEFAULT_BUFFER_SIZE);
                 }
             }
 
-            if (bufferedInputStream!=null) {
-                if (bufferedOutputStream!=null) copyFile(bufferedInputStream, bufferedOutputStream);
-                else if (outChannel!=null) {
-                    copyFile(bufferedInputStream, outChannel);
+			boolean success = true;
+            if (bufferedInputStream != null) {
+                if (bufferedOutputStream != null) 
+					success = copyFile(bufferedInputStream, bufferedOutputStream);
+                else if (outChannel != null) {
+                    success = copyFile(bufferedInputStream, outChannel);
                 }
-            } else if (inChannel!=null) {
-                if (bufferedOutputStream!=null) copyFile(inChannel, bufferedOutputStream);
-                else if (outChannel!=null)  copyFile(inChannel, outChannel);
+            } else if (inChannel != null) {
+                if (bufferedOutputStream != null) 
+					success = copyFile(inChannel, bufferedOutputStream);
+                else if (outChannel != null)  
+					success = copyFile(inChannel, outChannel);
             }
-
+			if (!success) {
+				if (documentTargetFile != null) {
+					documentTargetFile.delete();
+				} else if (targetFile != null) {
+					targetFile.delete();
+				}
+			}
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(getClass().getSimpleName(), "I/O Error!");
-            throw new IOException();
+            Log.e(TAG, e.getMessage());
+            throw e;
         } catch (OutOfMemoryError e) {
-            e.printStackTrace();
-
+            Log.e(TAG, e.getMessage());
             // we ran out of memory to map the whole channel, let's switch to streams
-            AppConfig.toast(mContext, mContext.getResources().getString(R.string.copy_low_memory));
-
+            //AppConfig.toast(mContext, mContext.getResources().getString(R.string.copy_low_memory));
             startCopy(true);
         } finally {
-
-            try {
-                if (inChannel!=null) inChannel.close();
-                if (outChannel!=null) outChannel.close();
-                if (inputStream!=null) inputStream.close();
-                if (outputStream!=null) outputStream.close();
-                if (bufferedInputStream!=null) bufferedInputStream.close();
-                if (bufferedOutputStream!=null) bufferedOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                // failure in closing stream
-            }
+            //try {
+				net.gnu.util.FileUtil.close(inChannel, outChannel, inputStream, outputStream, bufferedInputStream, bufferedOutputStream);
+//                if (inChannel != null) inChannel.close();
+//                if (outChannel != null) outChannel.close();
+//                if (inputStream != null) inputStream.close();
+//                if (outputStream != null) outputStream.close();
+//                if (bufferedInputStream != null) bufferedInputStream.close();
+//                if (bufferedOutputStream != null) bufferedOutputStream.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                // failure in closing stream
+//            }
         }
     }
 
@@ -272,66 +276,75 @@ public class GenericCopyUtil {
      * @param sourceFile the source file, which is to be copied
      * @param targetFile the target file
      */
-    public void copy(BaseFile sourceFile, HFile targetFile) throws IOException {
+    public void copy(BaseFile sourceFile, HFile targetFile, ProgressHandler progressHandler) throws IOException {
 
         this.mSourceFile = sourceFile;
         this.mTargetFile = targetFile;
-
+		this.progressHandler = progressHandler;
         startCopy(false);
     }
 
-    private void copyFile(BufferedInputStream bufferedInputStream, FileChannel outChannel)
-            throws IOException {
+    private boolean copyFile(BufferedInputStream bufferedInputStream, FileChannel outChannel)
+	throws IOException {
 
         MappedByteBuffer byteBuffer = outChannel.map(FileChannel.MapMode.READ_WRITE, 0,
-                mSourceFile.getSize());
+													 mSourceFile.getSize());
         int count = 0;
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-        while (count != -1) {
-
-            count = bufferedInputStream.read(buffer);
-            if (count!=-1) {
-
-                byteBuffer.put(buffer, 0, count);
-                ServiceWatcherUtil.POSITION+=count;
-            }
+		while ((count = bufferedInputStream.read(buffer)) != -1) {
+			if (progressHandler.isCancelled) {
+				outChannel.close();
+				return false;
+			}
+//            count = bufferedInputStream.read(buffer);
+//            if (count != -1) {
+			byteBuffer.put(buffer, 0, count);
+			ServiceWatcherUtil.POSITION += count;
+//            }
         }
+		return true;
     }
 
-    private void copyFile(FileChannel inChannel, FileChannel outChannel) throws IOException {
+    private boolean copyFile(FileChannel inChannel, FileChannel outChannel) throws IOException {
 
         //MappedByteBuffer inByteBuffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, inChannel.size());
         //MappedByteBuffer outByteBuffer = outChannel.map(FileChannel.MapMode.READ_WRITE, 0, inChannel.size());
 
         ReadableByteChannel inByteChannel = new CustomReadableByteChannel(inChannel);
         outChannel.transferFrom(inByteChannel, 0, mSourceFile.getSize());
+		return true;
     }
 
-    private void copyFile(BufferedInputStream bufferedInputStream, BufferedOutputStream bufferedOutputStream)
-            throws IOException {
+    private boolean copyFile(BufferedInputStream bufferedInputStream, BufferedOutputStream bufferedOutputStream)
+	throws IOException {
         int count = 0;
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-
-        while (count != -1) {
-
-            count = bufferedInputStream.read(buffer);
-            if (count!=-1) {
-
-                bufferedOutputStream.write(buffer, 0 , count);
-                ServiceWatcherUtil.POSITION+=count;
-            }
+		while ((count = bufferedInputStream.read(buffer)) != -1) {
+			if (progressHandler.isCancelled) {
+				bufferedOutputStream.close();
+				return false;
+			}
+//          count = bufferedInputStream.read(buffer);
+//          if (count != -1) {
+			bufferedOutputStream.write(buffer, 0 , count);
+			ServiceWatcherUtil.POSITION += count;
+//          }
         }
         bufferedOutputStream.flush();
+		return true;
     }
 
-    private void copyFile(FileChannel inChannel, BufferedOutputStream bufferedOutputStream)
-            throws IOException {
+    private boolean copyFile(FileChannel inChannel, BufferedOutputStream bufferedOutputStream)
+	throws IOException {
         MappedByteBuffer inBuffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, mSourceFile.getSize());
 
         int count = -1;
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         while (inBuffer.hasRemaining() && count != 0) {
-
+			if (progressHandler.isCancelled) {
+				bufferedOutputStream.close();
+				return false;
+			}
             int tempPosition = inBuffer.position();
 
             try {
@@ -347,20 +360,20 @@ public class GenericCopyUtil {
 
                 // reset the counter bytes
                 count = 0;
-                for (int i=0; i<buffer.length && inBuffer.hasRemaining(); i++) {
+                for (int i=0; i < buffer.length && inBuffer.hasRemaining(); i++) {
                     buffer[i] = inBuffer.get();
                     count++;
                 }
             }
 
             if (count != -1) {
-
                 bufferedOutputStream.write(buffer, 0, count);
                 ServiceWatcherUtil.POSITION = inBuffer.position();
             }
 
         }
         bufferedOutputStream.flush();
+		return true;
     }
 
     /**
@@ -378,7 +391,7 @@ public class GenericCopyUtil {
         @Override
         public int read(ByteBuffer dst) throws IOException {
             int bytes;
-            if (((bytes = byteChannel.read(dst))>0)) {
+            if (((bytes = byteChannel.read(dst)) > 0)) {
 
                 ServiceWatcherUtil.POSITION += bytes;
                 return bytes;

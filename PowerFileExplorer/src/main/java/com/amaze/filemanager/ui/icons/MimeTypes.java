@@ -137,7 +137,22 @@ public final class MimeTypes {
 		MIME_TYPES.put("chm", "application/x-chm");
     }
 
+	public static String getMimeType(String path) {
+        String type = ALL_MIME_TYPES;
+        final String extension = getExtension(path);
 
+        // mapping extension to system mime types
+        if (extension != null && !extension.isEmpty()) {
+            final String extensionLowerCase = extension.toLowerCase();
+            final MimeTypeMap mime = MimeTypeMap.getSingleton();
+            type = mime.getMimeTypeFromExtension(extensionLowerCase);
+            if (type == null) {
+                type = MIME_TYPES.get(extensionLowerCase);
+            }
+        }
+        if (type == null) type = ALL_MIME_TYPES;
+        return type;
+    }
     /**
      * Get Mime Type of a file
      * @param file the file of which mime type to get
@@ -160,7 +175,7 @@ public final class MimeTypes {
                 type = MIME_TYPES.get(extensionLowerCase);
             }
         }
-        if(type == null) type = ALL_MIME_TYPES;
+        if (type == null) type = ALL_MIME_TYPES;
         return type;
     }
 
@@ -176,8 +191,8 @@ public final class MimeTypes {
      * @return extension extracted from name
      */
     public static String getExtension(String a) {
-        if(a.contains("."))
-        return a.substring(a.lastIndexOf(".") + 1).toLowerCase();
+        if (a.contains("."))
+			return a.substring(a.lastIndexOf(".") + 1).toLowerCase();
         else return "";
     }
 

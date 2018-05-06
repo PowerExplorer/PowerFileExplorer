@@ -105,7 +105,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
 	private TextSearch textSearch = new TextSearch();
-	ArrayList<LayoutElement> dataSourceL2;
+	List<LayoutElement> dataSourceL1 = new LinkedList<>();
+	List<LayoutElement> dataSourceL2;
 	LayoutElement tempPreviewL2 = null;
 	Button deletePastesBtn;
 	ArrAdapter srcAdapter;
@@ -116,7 +117,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	private ImageButton removeAllBtn;
 	private ImageButton addBtn;
 	private ImageButton addAllBtn;
-	private LinearLayout selectionCommands;
+	private LinearLayout selectionCommandsLayout;
 	private LoadFiles loadList = new LoadFiles();
 	private int file_count, folder_count, columns;
 	private int sortby, dsort, asc;
@@ -269,15 +270,15 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			final View vi = contentFrag.listView.getChildAt(0); 
 			final int top = (vi == null) ? 0 : vi.getTop();
 			gridLayoutManager.scrollToPositionWithOffset(index, top);
-			if (contentFrag.selStatus != null) {
-				final int visibility = contentFrag.selStatus.getVisibility();
-				if (selStatus.getVisibility() != visibility) {
-					selStatus.setVisibility(visibility);
+			if (contentFrag.selStatusLayout != null) {
+				final int visibility = contentFrag.selStatusLayout.getVisibility();
+				if (selStatusLayout.getVisibility() != visibility) {
+					selStatusLayout.setVisibility(visibility);
 					horizontalDivider0.setVisibility(visibility);
 					horizontalDivider12.setVisibility(visibility);
-					status.setVisibility(visibility);
+					sortBarLayout.setVisibility(visibility);
 				}
-				selectionStatus.setText(contentFrag.selectionStatus.getText());
+				selectionStatusTV.setText(contentFrag.selectionStatusTV.getText());
 				rightStatus.setText(contentFrag.rightStatus.getText());
 			}
 		}
@@ -387,8 +388,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				removeAllBtn = (ImageButton) view.findViewById(R.id.removeAll);
 				addBtn = (ImageButton) view.findViewById(R.id.add);
 				addAllBtn = (ImageButton) view.findViewById(R.id.addAll);
-				selectionCommands = (LinearLayout) view.findViewById(R.id.selectionCommands);
-				topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommands));
+				selectionCommandsLayout = (LinearLayout) view.findViewById(R.id.selectionCommandsLayout);
+				topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommandsLayout));
 				dirMore.setVisibility(View.GONE);
 				if (dataSourceL1.size() == 0) {
 					searchButton.setEnabled(false);
@@ -413,20 +414,20 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 						//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
 						if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
-							if (dy > activity.density << 4 && selStatus.getVisibility() == View.VISIBLE) {
-								selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-								selStatus.setVisibility(View.GONE);
+							if (dy > activity.density << 4 && selStatusLayout.getVisibility() == View.VISIBLE) {
+								selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+								selStatusLayout.setVisibility(View.GONE);
 								horizontalDivider0.setVisibility(View.GONE);
 								horizontalDivider12.setVisibility(View.GONE);
-								status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-								status.setVisibility(View.GONE);
-							} else if (dy < -activity.density << 4 && selStatus.getVisibility() == View.GONE) {
-								selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-								selStatus.setVisibility(View.VISIBLE);
+								sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+								sortBarLayout.setVisibility(View.GONE);
+							} else if (dy < -activity.density << 4 && selStatusLayout.getVisibility() == View.GONE) {
+								selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+								selStatusLayout.setVisibility(View.VISIBLE);
 								horizontalDivider0.setVisibility(View.VISIBLE);
 								horizontalDivider12.setVisibility(View.VISIBLE);
-								status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-								status.setVisibility(View.VISIBLE);
+								sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+								sortBarLayout.setVisibility(View.VISIBLE);
 							}
 							lastScroll = System.currentTimeMillis();
 						}
@@ -736,7 +737,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		setRecyclerViewLayoutManager();
 		gridLayoutManager.scrollToPositionWithOffset(savedInstanceState.get("index"), savedInstanceState.get("top"));
 
-		updateDir(dirTemp4Search, ContentFragment.this);
+		updateDir(dirTemp4Search);
 	}
 
 	boolean isEncryptOpen = false;       // do we have to open a file when service is begin destroyed
@@ -838,7 +839,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			if (currentPathTitle != null) {
 				changeDir(currentPathTitle, false);
 			} else {
-				updateDir(dirTemp4Search, this);
+				updateDir(dirTemp4Search);
 			}
 		}
     }
@@ -964,19 +965,15 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 	}
 
-	public void updateDir(String d, FileFrag cf) {//ExploreFragment
-		Log.d(TAG, "updateDir " + d + ", " + cf);
+	public void updateDir(String d) {
+		Log.d(TAG, "updateDir " + d);
 		if (openMode != OpenMode.CUSTOM) {
 			setDirectoryButtons();
 			activity.dir = d;
 		}
-		
-		if (cf == activity.slideFrag.getCurrentFragment()) {
-			activity.curContentFrag = (ContentFragment) cf;
+		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//}cf == activity.slideFrag.getCurrentFragment()) {
 			activity.slideFrag.notifyTitleChange();
-		} else if (activity.slideFrag2 != null && cf == activity.slideFrag2.getCurrentFragment()) {
-			//title = new File(d).getName();
-			activity.curExplorerFrag = (ContentFragment) cf;
+		} else if (activity.slideFrag2 != null) {//} && cf == activity.slideFrag2.getCurrentFragment()) {
 			activity.slideFrag2.notifyTitleChange();
 		}
 	}
@@ -1024,7 +1021,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			
 			activity = (ExplorerActivity)getActivity();
 
-			selectionStatus.setText(selectedInList1.size() 
+			selectionStatusTV.setText(selectedInList1.size() 
 									 + "/" + dataSourceL1.size());
 
 			final File curDir = new File(dirTemp4Search);//currentPathTitle == null ? dirTemp4Search : currentPathTitle);
@@ -1055,7 +1052,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		allDate.setTextColor(ExplorerActivity.TEXT_COLOR);
 		allSize.setTextColor(ExplorerActivity.TEXT_COLOR);
 		allType.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
+		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
 		rightStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
 		searchET.setTextColor(ExplorerActivity.TEXT_COLOR);
 		clearButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
@@ -1322,10 +1319,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 			curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
 			curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
-			curContentFrag.selectionStatus
+			curContentFrag.selectionStatusTV
 				.setText(curContentFrag.selectedInList1.size() + "/"
 						 + curContentFrag.dataSourceL1.size());
-			curSelectionFrag2.selectionStatus
+			curSelectionFrag2.selectionStatusTV
 				.setText(curSelectionFrag2.selectedInList1.size() + "/"
 						 + curSelectionFrag2.dataSourceL1.size());
 		}
@@ -1387,10 +1384,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				curSelectionFrag2.mSwipeRefreshLayout.setVisibility(View.VISIBLE);
 			}
 			curSelectionFrag2.allCbx.setEnabled(true);
-			curContentFrag.selectionStatus
+			curContentFrag.selectionStatusTV
 				.setText(curContentFrag.dataSourceL1.size() + "/"
 						 + curContentFrag.dataSourceL1.size());
-			curSelectionFrag2.selectionStatus
+			curSelectionFrag2.selectionStatusTV
 				.setText(curSelectionFrag2.selectedInList1.size() + "/"
 						 + curSelectionFrag2.dataSourceL1.size());
 		} else {
@@ -1427,10 +1424,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		curSelectionFrag2.listView.invalidateItemDecorations();
 		curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
 		curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
-		curContentFrag.selectionStatus
+		curContentFrag.selectionStatusTV
 			.setText(curContentFrag.selectedInList1.size() + "/"
 					 + curContentFrag.dataSourceL1.size());
-		curSelectionFrag2.selectionStatus
+		curSelectionFrag2.selectionStatusTV
 			.setText(curSelectionFrag2.selectedInList1.size() + "/"
 					 + curSelectionFrag2.dataSourceL1.size());
 	}
@@ -1457,28 +1454,28 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			} 
 			curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
 			curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
-			curContentFrag.selectionStatus
+			curContentFrag.selectionStatusTV
 				.setText(curContentFrag.selectedInList1.size() + "/"
 						 + curContentFrag.dataSourceL1.size());
-			curSelectionFrag2.selectionStatus
+			curSelectionFrag2.selectionStatusTV
 				.setText(curSelectionFrag2.selectedInList1.size() + "/"
 						 + curSelectionFrag2.dataSourceL1.size());
 		}
 	}
 
 	private void showStatus() {
-		if (status.getVisibility() == View.GONE) {
-			if (selStatus != null) {
-				selStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-				selStatus.setVisibility(View.VISIBLE);
+		if (sortBarLayout.getVisibility() == View.GONE) {
+			if (selStatusLayout != null) {
+				selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+				selStatusLayout.setVisibility(View.VISIBLE);
 			} else {
-				selectionStatus.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-				selectionStatus.setVisibility(View.VISIBLE);
+				selectionStatusTV.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+				selectionStatusTV.setVisibility(View.VISIBLE);
 			}
 			horizontalDivider0.setVisibility(View.VISIBLE);
 			horizontalDivider12.setVisibility(View.VISIBLE);
-			status.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-			status.setVisibility(View.VISIBLE);
+			sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+			sortBarLayout.setVisibility(View.VISIBLE);
 		}
 	}
 	
@@ -1576,7 +1573,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							commands.setVisibility(View.GONE);
 						}
 					}
-					selectionStatus.setText(selectedInList1.size() 
+					selectionStatusTV.setText(selectedInList1.size() 
 											 + "/" + dataSourceL1.size());
 					srcAdapter.notifyDataSetChanged();
 					updateDelPaste();
@@ -1760,7 +1757,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					boolean move = activity.MOVE_PATH != null;
 					new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode)
 						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
-					//COPY_PATH = null;
 					activity.MOVE_PATH = null;
 				}
 				break;
@@ -1771,15 +1767,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				final BaseFile f = ((LayoutElement)selectedInList1.get(0)).generateBaseFile();
 				rename(f);
 				break;
-//			case R.id.ex:
-//				activity.mainActivityHelper.extractFile(new File(((LayoutElement)selectedInList1.get(0)).path));
-//				break;
 			case R.id.compresss:
-//				ArrayList<BaseFile> copies1 = new ArrayList<>(selectedInList1.size());
-//				for (LayoutElement le : selectedInList1) {
-//					copies1.add(le.generateBaseFile());
-//				}
-//				GeneralDialogCreation.showCompressDialog(activity, copies1, currentPathTitle);
 				StringBuilder sb = new StringBuilder();
 				for (LayoutElement le : selectedInList1) {
 					sb.append(le.path).append("| ");
@@ -1788,17 +1776,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				break;
 			case R.id.shares:
 				if (selectedInList1.size() > 0) {
-
 					if (selectedInList1.size() > 100)
 						Toast.makeText(activity, getResources().getString(R.string.share_limit),
 									   Toast.LENGTH_SHORT).show();
 					else {
-						ArrayList<File> arrayList = new ArrayList<>(selectedInList1.size());
-						//ArrayList<Integer> plist = adapter.getCheckedItemPositions();
-						for (LayoutElement i : selectedInList1) {//plist
-							arrayList.add(new File(i.path));//dataSourceL1.get(
-						}
-
 						switch (dataSourceL1.get(0).getMode()) {
 							case DROPBOX:
 							case BOX:
@@ -1808,6 +1789,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 																	dataSourceL1.get(0).getMode(), getContext());
 								break;
 							default:
+								ArrayList<File> arrayList = new ArrayList<>(selectedInList1.size());
+								for (LayoutElement i : selectedInList1) {
+									arrayList.add(new File(i.path));
+								}
 								Futils.shareFiles(arrayList, activity, activity.getAppTheme(), accentColor);
 								break;
 						}
@@ -2115,7 +2100,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			searchET.setText("");
 			searchButton.setImageResource(R.drawable.ic_action_search);
 			if (type == Frag.TYPE.SELECTION) {
-				topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommands));
+				topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommandsLayout));
 				dataSourceL1.clear();
 				dataSourceL1.addAll(tempOriDataSourceL1);
 			} else {
@@ -2504,15 +2489,15 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 
 			if (allCbx.isSelected()) {//}.isChecked()) {
-				selectionStatus.setText(dataSourceL1.size() 
+				selectionStatusTV.setText(dataSourceL1.size() 
 										 + "/" + dataSourceL1.size());
 			} else {
-				selectionStatus.setText(selectedInList1.size() 
+				selectionStatusTV.setText(selectedInList1.size() 
 										 + "/" + dataSourceL1.size());
 			}
 			Log.d(TAG, "LoadFiles.onPostExecute " + currentPathTitle);
 
-			updateDir(currentPathTitle, ContentFragment.this);
+			updateDir(currentPathTitle);
 			mSwipeRefreshLayout.setRefreshing(false);
 			
 			if (dataSourceL1.size() == 0) {
@@ -2789,7 +2774,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			dataSourceL1.addAll(result);
 			selectedInList1.clear();
 			srcAdapter.notifyDataSetChanged();
-			selectionStatus.setText(selectedInList1.size() 
+			selectionStatusTV.setText(selectedInList1.size() 
 									 + "/" + dataSourceL1.size());
 			File file = new File(dirTemp4Search);
 			rightStatus.setText(
@@ -2904,7 +2889,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	}
 
 	void updateStatus() {
-		selectionStatus.setText(selectedInList1.size()  + "/" + dataSourceL1.size());
+		selectionStatusTV.setText(selectedInList1.size()  + "/" + dataSourceL1.size());
 	}
 
 	void rangeSelection() {

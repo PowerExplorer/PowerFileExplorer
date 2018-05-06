@@ -62,11 +62,13 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import net.gnu.explorer.ExplorerActivity;
 import android.support.v7.widget.CardView;
+import android.support.v4.app.DialogFragment;
+import com.amaze.filemanager.utils.color.ColorPreference;
 
-public class ProcessViewer extends Fragment {
+public class ProcessViewer extends DialogFragment {
 
     boolean isInitialized = false;
-    SharedPreferences sharedPrefs;
+    //SharedPreferences sharedPrefs;
     ExplorerActivity mainActivity;
     int accentColor, primaryColor;
     ImageButton mCancelButton;
@@ -80,23 +82,26 @@ public class ProcessViewer extends Fragment {
     private TextView mProgressTypeText, mProgressFileNameText,
             mProgressBytesText, mProgressFileText,  mProgressSpeedText, mProgressTimer;
 
+	boolean copyCancelled = false;
+	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.processparent, container, false);
         setRetainInstance(false);
-
+		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
         mainActivity = (ExplorerActivity) getActivity();
 
-        accentColor = mainActivity.getColorPreference().getColor(ColorUsage.ACCENT);
-        primaryColor = mainActivity.getColorPreference().getColor(ColorUsage.PRIMARY);
+        ColorPreference colorPreference = mainActivity.getColorPreference();
+		accentColor = colorPreference.getColor(ColorUsage.ACCENT);
+        primaryColor = colorPreference.getColor(ColorUsage.PRIMARY);
         if (mainActivity.getAppTheme().equals(AppTheme.DARK))
             rootView.setBackgroundResource((R.color.cardView_background));
         //mainActivity.updateViews(new ColorDrawable(primaryColor));
         //mainActivity.getAppbar().setTitle(getResources().getString(R.string.process_viewer));
         //mainActivity.floatingActionButton.hideMenuButton(true);
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mainActivity.supportInvalidateOptionsMenu();
+        //sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
+        //mainActivity.supportInvalidateOptionsMenu();
 
         mCardView = (CardView) rootView.findViewById(R.id.card_view);
 
@@ -109,9 +114,11 @@ public class ProcessViewer extends Fragment {
         mProgressFileText = (TextView) rootView.findViewById(R.id.text_view_progress_file);
         mProgressSpeedText = (TextView) rootView.findViewById(R.id.text_view_progress_speed);
         mProgressTimer = (TextView) rootView.findViewById(R.id.text_view_progress_timer);
-
-        if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
-
+		mProgressTypeText.setTextColor(accentColor);
+        if (!copyCancelled) {
+			mCancelButton.setEnabled(true);
+		}
+		if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
             mCancelButton.setImageResource(R.drawable.ic_action_cancel);
             mCardView.setCardBackgroundColor(Utils.getColor(getContext(), R.color.cardView_foreground));
             mCardView.setCardElevation(0f);
@@ -120,18 +127,17 @@ public class ProcessViewer extends Fragment {
         return rootView;
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private ServiceConnection mCopyConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
+										   
+            copyCancelled = false;
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-
             CopyService.LocalBinder localBinder = (CopyService.LocalBinder) service;
             CopyService copyService = localBinder.getService();
-
-            for (int i=0; i<copyService.getDataPackageSize(); i++) {
-
+			for (int i=0; i<copyService.getDataPackageSize(); i++) {
                 processResults(copyService.getDataPackage(i), ServiceType.COPY);
             }
 
@@ -149,7 +155,6 @@ public class ProcessViewer extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
                             processResults(dataPackage, ServiceType.COPY);
                         }
                     });
@@ -164,6 +169,7 @@ public class ProcessViewer extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+			mCancelButton.setEnabled(false);
         }
     };
 
@@ -305,7 +311,7 @@ public class ProcessViewer extends Fragment {
         super.onResume();
 
         Intent intent = new Intent(getActivity(), CopyService.class);
-        getActivity().bindService(intent, mConnection, 0);
+        getActivity().bindService(intent, mCopyConnection, 0);
 
 //        Intent intent1 = new Intent(getActivity(), ExtractService.class);
 //        getActivity().bindService(intent1, mExtractConnection, 0);
@@ -320,7 +326,7 @@ public class ProcessViewer extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unbindService(mConnection);
+        getActivity().unbindService(mCopyConnection);
         //getActivity().unbindService(mExtractConnection);
         getActivity().unbindService(mCompressConnection);
         getActivity().unbindService(mCryptConnection);
@@ -336,7 +342,6 @@ public class ProcessViewer extends Fragment {
      * to process
      */
     enum ServiceType {
-
         COPY, EXTRACT, COMPRESS, ENCRYPT, DECRYPT
     }
 
@@ -408,7 +413,6 @@ public class ProcessViewer extends Fragment {
         switch (serviceType) {
             case COPY:
                 if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
-
                     mProgressImage.setImageDrawable(getResources()
                             .getDrawable(R.drawable.ic_content_copy_white_36dp));
                 } else {
@@ -483,12 +487,12 @@ public class ProcessViewer extends Fragment {
                         getResources().getString(R.string.stopping), Toast.LENGTH_LONG).show();
                 getActivity().sendBroadcast(intent);
                 mProgressTypeText.setText(getResources().getString(R.string.cancelled));
-                mProgressSpeedText.setText("");
-                mProgressFileText.setText("");
-                mProgressBytesText.setText("");
-                mProgressFileNameText.setText("");
-
-                mProgressTypeText.setTextColor(Utils.getColor(getContext(), android.R.color.holo_red_light));
+//                mProgressSpeedText.setText("");
+//                mProgressFileText.setText("");
+//                mProgressBytesText.setText("");
+//                mProgressFileNameText.setText("");
+				mCancelButton.setEnabled(false);
+				copyCancelled = true;
             }
         });
     }

@@ -10,18 +10,24 @@ import net.gnu.util.FileUtil;
 import java.util.Arrays;
 import net.gnu.p7zip.UpdateProgress;
 import java.util.List;
-import net.gnu.p7zip.Andro7za;
 import net.gnu.explorer.ExplorerApplication;
+import net.gnu.p7zip.Zip;
+import java.util.ArrayList;
+import net.gnu.explorer.ZipEntry;
+import java.util.regex.Pattern;
+import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.Collection;
+import java.util.LinkedList;
 
-public class Zpaq
-{
+public class Zpaq {
 	private static String TAG = "ZPAQ";
-	
+
 	public static final String zpaq = ExplorerApplication.DATA_DIR + "commands/zpaq";
 	public Command command;
-	
+
 	AsyncTask task;
-	
+
 	private String mOutfile = ExplorerApplication.PRIVATE_PATH + "/zpaqOut.txt";
 	private String mInfile = ExplorerApplication.PRIVATE_PATH + "/zpaqIn.txt";
 	private String listFile = ExplorerApplication.PRIVATE_PATH + "/zpaqFileList.txt";
@@ -29,11 +35,11 @@ public class Zpaq
 	public native int runZpaq(String... args);
 	public native String stringFromJNI(String outfile, String infile);
 	public native void closeStreamJNI();
-	
+
 	static {
         //System.loadLibrary("zpaq");
     }
-	
+
 	public Zpaq() {
 	}
 
@@ -54,13 +60,13 @@ public class Zpaq
 				command = new Command("mkdir", ExplorerApplication.DATA_DIR + "commands");//"/android_asset/"
 				command.setCommandListener(new CommandListener(command));
 				command.run();
-				
+
 				if (System.getProperty("os.arch").contains("x86")) {
 					FileUtil.is2File(ctx.getAssets().open("x86/zpaq"), zpaq);
 				} else {
 					FileUtil.is2File(ctx.getAssets().open("armeabi-v7a/zpaq"), zpaq);
 				}
-				
+
 				command = new Command("chmod", "777", zpaq);
 				command.setCommandListener(new CommandListener(command));
 				command.run();
@@ -72,7 +78,7 @@ public class Zpaq
 			t.printStackTrace();
 		}
 	}
-	
+
 	public void initStream() throws IOException {
 		resetFile(mOutfile);
 		resetFile(mInfile);
@@ -90,7 +96,7 @@ public class Zpaq
 		}
 		file.createNewFile();
 	}
-	
+
 	public Object[] runZpaq(boolean showDebug, String... args) throws IOException {
 		try {
 			initStream();
@@ -98,9 +104,9 @@ public class Zpaq
 			if (args == null && args.length == 0) {
 				return new Object[] {2, new StringBuilder()};
 			}
-			
+
 			Log.d(TAG, "Call runZpaq(): " + args);
-			
+
 			int ret = runZpaq(args);
 			Log.d(TAG, "runZpaq() ret " + ret);
 			FileReader fileReader = new FileReader(mOutfile);
@@ -122,6 +128,106 @@ public class Zpaq
 		} finally {
 			closeStreamJNI();
 		}
+	}
+
+	private final Pattern patLn = Pattern.compile("[^\n]+");
+	//- 2018-05-04 11:31:57           32  0660 /sdcard/.net.gnu.explorer/.m
+	private final Pattern zipEntryInfoPattern = Pattern.compile("([^\\s]+)\\s+(\\d{4}[-/]\\d{2}[-/]\\d{2}) (\\d{2}:\\d{2}:\\d{2})\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\n]+)", Pattern.UNICODE_CASE);
+
+	public Zip listing(String archiveName, String password) {
+		List<String> otherArgs = new ArrayList<>();
+		final StringBuilder sb = new StringBuilder(16);
+		Zip zip = new Zip(new File(archiveName));
+		ZipEntry ze = null;
+
+		final UpdateProgress update = new UpdateProgress() {
+			@Override
+			public void updateProgress(String[] args) {
+				//Log.d(TAG, args[0]);
+				sb.append(args[0]).append("\n");
+			}
+		};
+		Log.i(TAG, archiveName + "," +
+			  password + ", " + 
+			  otherArgs
+			  );
+
+		if (password != null && password.length() > 0) {
+			otherArgs.add(0, password);
+			otherArgs.add(0, "-key");
+		}
+
+		otherArgs.add(0, archiveName);
+		otherArgs.add(0, "l");
+		otherArgs.add(0, zpaq);
+
+		//Log.d(TAG, Util.collectionToString(otherArgs, false, "\n"));
+		command = new Command(otherArgs);
+		Log.d(TAG, "command: " + command);
+		CommandListener commandListener = new CommandListener(command, update);
+		command.setCommandListener(commandListener);
+		command.run();
+		int ret = commandListener.ret;
+		Log.d(TAG, "ret " + ret);
+		String line ="";
+		final Matcher m = patLn.matcher(sb.toString());
+		final Calendar cal = Calendar.getInstance();
+		String[] date;
+		String[] time;
+		String path;
+		while (m.find()) {
+			line = m.group();
+			Log.d(TAG, line);
+			final Matcher matcher = zipEntryInfoPattern.matcher(line);
+			if (matcher.matches()) {
+				final String group2 = matcher.group(2).trim();
+				if (group2.length() > 0) {
+					date = group2.split("[-/]");
+					time = matcher.group(3).split(":");
+					cal.set(Integer.valueOf(date[0]).intValue(), Integer.valueOf(date[1]).intValue() - 1, Integer.valueOf(date[2]).intValue(), 
+							Integer.valueOf(time[0]).intValue(), Integer.valueOf(time[1]).intValue(), Integer.valueOf(time[2]).intValue());
+				}
+
+				path = matcher.group(6);
+				final String length = matcher.group(4).trim();
+				final long intValue = Long.valueOf(length.length() == 0 ? "0" : length).longValue();
+				zip.unZipSize += intValue;
+				if (path.endsWith("/")) {
+					ze = new ZipEntry(null, 
+									  path.substring(0, path.length() - 1),
+									  true,
+									  intValue,
+									  -1,
+									  cal.getTimeInMillis());
+				} else {
+					ze = new ZipEntry(null, 
+									  path,
+									  false,
+									  intValue,
+									  -1,
+									  cal.getTimeInMillis());
+				}
+				//Log.d(TAG, "ze.getParentPath() " + ze.getParentPath());
+				zip.entries.put(path, ze);
+			}
+		}
+		Collection<ZipEntry> values = new LinkedList<ZipEntry>(zip.entries.values());
+		Collection<ZipEntry> valuesNew;
+		while (values.size() > 0) {
+			valuesNew = new LinkedList<ZipEntry>();
+			for (ZipEntry ze1 : values) {
+				//Log.d(TAG, zip.entries.get(ze.parentPath) + ".");
+				if (!"/".equals(ze1.parentPath) && zip.entries.get(ze1.parentPath) == null) {
+					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, 0, 0, 0);
+					valuesNew.add(zipEntry);
+					zip.entries.put(ze1.parentPath, zipEntry);
+				}
+			}
+			values = valuesNew;
+		}
+		
+		Log.d(TAG, zip.toString());
+		return zip;
 	}
 
 	public int compress(
@@ -168,7 +274,7 @@ public class Zpaq
 
 		return ret;
 	}
-	
+
 	public int decompress(
 		String archiveName, 
 		String password, 
@@ -189,24 +295,24 @@ public class Zpaq
 			otherArgs.add(0, password);
 			otherArgs.add(0, "-key");
 		}
-		
+
 		if (include != null && include.trim().length() > 0) {
 			otherArgs.add("-only");
 			otherArgs.addAll(Arrays.asList(include.split("\\|+\\s+")));
 		}
-		
+
 		if (excludes != null && excludes.trim().length() > 0) {
 			otherArgs.add("-not");
 			otherArgs.addAll(Arrays.asList(excludes.split("\\|+\\s+")));
 		}
-		
+
 		otherArgs.add(0, saveTo);
 		otherArgs.add(0, "-to");
 		otherArgs.add(0, mode);
 		otherArgs.add(0, archiveName);
 		otherArgs.add(0, "x");
 		otherArgs.add(0, zpaq);
-		
+
 		//Log.d(TAG, Util.collectionToString(otherArgs, false, "\n"));
 		command = new Command(otherArgs);
 		Log.d(TAG, "command: " + command);

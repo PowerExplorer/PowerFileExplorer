@@ -1,16 +1,23 @@
 package net.gnu.p7zip;
 
-import java.io.File;
-
-import android.util.Log;
 import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-import net.gnu.util.*;
+
 import android.content.Context;
-import org.magiclen.magiccommand.Command;
 import android.os.AsyncTask;
+import android.util.Log;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.gnu.explorer.ExplorerApplication;
+import net.gnu.explorer.ZipEntry;
+import net.gnu.util.FileUtil;
+import net.gnu.util.Util;
+import org.magiclen.magiccommand.Command;
+import java.util.LinkedList;
 
 /**
  * <code>Andro7za</code> provided the 7za JNI interface.
@@ -66,7 +73,7 @@ public final class Andro7za {
 	private String listFile = ExplorerApplication.PRIVATE_PATH + "/7zFileList.txt";
 
 	public Command command;
-	
+
 	public static String p7z = ExplorerApplication.DATA_DIR + "commands/7z";
 
 	AsyncTask task;
@@ -99,12 +106,6 @@ public final class Andro7za {
 			t.printStackTrace();
 		}
 	}
-	
-	public Andro7za(String logPath) {
-		mOutfile = logPath + "/7zOut.txt";
-		mInfile = logPath + "/7zIn.txt";
-		listFile = logPath + "/7zFileList.txt";
-	}
 
 	public void initStream() throws IOException {
 		resetFile(mOutfile);
@@ -122,6 +123,46 @@ public final class Andro7za {
 			file.delete();
 		}
 		file.createNewFile();
+	}
+
+	final private StringBuilder sb = new StringBuilder();
+	public String read() throws IOException {
+		synchronized (sb) {
+			sb.setLength(0);
+			BufferedReader in = null;
+			try {
+				//initStream(); // not check
+				in = new BufferedReader(new FileReader(mOutfile));
+				while (in.ready()) {
+					String readLine = in.readLine();
+					if (readLine == null || "".equals(readLine)) {
+						in.close();
+						closeStreamJNI();
+						break;
+					} else {
+						sb.append(readLine);
+					}
+				}
+				return sb.toString();
+			} finally {
+				FileUtil.close(in);
+			}
+		}
+	}
+
+	public void write(String content) {
+		BufferedWriter out = null;
+		try {
+			//initStream(); // not check
+			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mInfile)));
+			out.write(content.toCharArray(), 0, content.toCharArray().length);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			FileUtil.flushClose(out);
+		}
 	}
 
 	public Object[] run7za(boolean showDebug, String... args) throws IOException {
@@ -187,46 +228,6 @@ public final class Andro7za {
 		return new Object[] {run7za[0], nameList};
 	}
 
-	final private static StringBuilder sb = new StringBuilder();
-	public String read() throws IOException {
-		synchronized (sb) {
-			sb.setLength(0);
-			BufferedReader in = null;
-			try {
-				//initStream(); // not check
-				in = new BufferedReader(new FileReader(mOutfile));
-				while (in.ready()) {
-					String readLine = in.readLine();
-					if (readLine == null || "".equals(readLine)) {
-						in.close();
-						closeStreamJNI();
-						break;
-					} else {
-						sb.append(readLine);
-					}
-				}
-				return sb.toString();
-			} finally {
-				FileUtil.close(in);
-			}
-		}
-	}
-
-	public void write(String content) {
-		BufferedWriter out = null;
-		try {
-			//initStream(); // not check
-			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mInfile)));
-			out.write(content.toCharArray(), 0, content.toCharArray().length);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			FileUtil.flushClose(out);
-		}
-	}
-
 	public int compress(String pathArchive7z, String type, String password, String compressLevel, String pathToCompress) {
 		if (type == null || type.trim().length() == 0) {
 			type = "";
@@ -268,17 +269,23 @@ public final class Andro7za {
 		if (compressLevel == null) {
 			compressLevel = "";
 		}
-		if (fileList.size() > 0) {
-			String outputList = Util.collectionToString(fileList, false, "\n");
-			FileUtil.stringToFile(listFile, outputList);
+		try {
+			if (fileList.size() > 0) {
+				String outputList = Util.collectionToString(fileList, false, "\n");
+				FileUtil.stringToFile(listFile, outputList);
 
-			Log.d(TAG, "Call a7zaCommand(), compress: \"" + fileList + " to " + pathArchive7z + "\" level " + compressLevel);
-			int ret = a7zaCommandAll("a", type, password, compressLevel, pathArchive7z, "@" + listFile, "");
-			Log.d(TAG, "a7zaCommand() compress ret " + ret + ", file: " + pathArchive7z);
-			new File(listFile).delete();
-			return ret;
-		} else {
-			return -1;
+				Log.d(TAG, "Call a7zaCommand(), compress: \"" + fileList + " to " + pathArchive7z + "\" level " + compressLevel);
+				int ret = a7zaCommandAll("a", type, password, compressLevel, pathArchive7z, "@" + listFile, "");
+				Log.d(TAG, "a7zaCommand() compress ret " + ret + ", file: " + pathArchive7z);
+				new File(listFile).delete();
+				return ret;
+			} else {
+				return -1;
+			}
+		} catch (IOException e) {
+			return 2;
+		} finally {
+			closeStreamJNI();
 		}
 	}
 
@@ -301,7 +308,7 @@ public final class Andro7za {
 			  otherArgs
 			  );
 
-		String fileListTmp = archiveName + ".tmp";
+		String fileListTmp = ExplorerApplication.PRIVATE_PATH + archiveName.substring(archiveName.lastIndexOf("/")) + ".tmp";
 		String fileListTmp2 = "";
 		String excludesTmp = "";
 		String excludesTmp2 = "";
@@ -319,7 +326,7 @@ public final class Andro7za {
 			fileListTmp2 = "@" + fileListTmp;
 
 			if (excludes != null && excludes.trim().length() > 0) {
-				excludesTmp = archiveName + ".exc." + System.currentTimeMillis();
+				excludesTmp = ExplorerApplication.PRIVATE_PATH + archiveName.substring(archiveName.lastIndexOf("/")) + ".exc." + System.currentTimeMillis();
 				bw = new BufferedWriter(new FileWriter(excludesTmp));
 				try {
 					List<String> l = Util.stringToList(excludes, "[\r\n]+");
@@ -353,7 +360,7 @@ public final class Andro7za {
 		otherArgs.add(0, level);
 		otherArgs.add(0, "a");
 		otherArgs.add(0, p7z);
-		
+
 		otherArgs.add(archiveName);
 		otherArgs.add(fileListTmp2);
 		otherArgs.add(excludesTmp2);
@@ -491,6 +498,9 @@ public final class Andro7za {
 		}
 		otherArgs.add(0, overwriteMode);
 
+		if (pathToExtract == null) {
+			pathToExtract = ExplorerApplication.PRIVATE_PATH;
+		}
 		File f = new File(pathToExtract);
 		if (!f.exists()) {
 			if (!f.mkdirs()) {
@@ -502,7 +512,7 @@ public final class Andro7za {
 
 		String includesTmp = "";
 		if (includes != null && includes.trim().length() > 0) {
-			includesTmp = zArchive + ".inc." + System.currentTimeMillis();
+			includesTmp = ExplorerApplication.PRIVATE_PATH + zArchive.substring(zArchive.lastIndexOf("/")) + ".inc." + System.currentTimeMillis();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(includesTmp));
 			try {
 				List<String> l = Util.stringToList(includes, "[\r\n]+");
@@ -520,7 +530,7 @@ public final class Andro7za {
 
 		String excludesTmp = "";
 		if (excludes != null && excludes.trim().length() > 0) {
-			excludesTmp = zArchive + ".exc." + System.currentTimeMillis();BufferedWriter bw = new BufferedWriter(new FileWriter(excludesTmp));
+			excludesTmp = ExplorerApplication.PRIVATE_PATH + zArchive.substring(zArchive.lastIndexOf("/")) + ".exc." + System.currentTimeMillis();BufferedWriter bw = new BufferedWriter(new FileWriter(excludesTmp));
 			try {
 				List<String> l = Util.stringToList(excludes, "[\r\n]+");
 				for (String st : l) {
@@ -536,12 +546,12 @@ public final class Andro7za {
 		otherArgs.add(excludesTmp2);
 
 		int ret = 0;
-		Log.d(TAG, "overwrite mode" + overwriteMode);
+		
 		otherArgs.add("-bb");
 		otherArgs.add(0, zArchive);
 		otherArgs.add(0, cmd);
 		otherArgs.add(0, p7z);
-		
+
 		command = new Command(otherArgs);//p7z + " " + cmd + " " + zArchive + " " + " -bb " + " " + password + " " + overwriteMode + " " +  pathToExtract + " " + otherArgs + includesTmp2 + excludesTmp2);
 		Log.d(TAG, "command: " + command);
 		CommandListener commandListener = new CommandListener(command, update);
@@ -556,22 +566,149 @@ public final class Andro7za {
 		new File(excludesTmp).delete();
 		return ret;
 	}
+	
+	private final Pattern patLn = Pattern.compile("[^\n]+");
+	private final Pattern zipEntryInfoPattern = Pattern.compile("([ \\d]{4}[-/ ][ \\d]{2}[- /][ \\d]{2}) ([ \\d]{2}[ :][ \\d]{2}[ :][ \\d]{2}) ([D\\.]).{4} ([ \\d]{12}) ([ \\d]{12})  ([^\r\n]+)", Pattern.UNICODE_CASE);
+	private final Pattern patEnd = Pattern.compile("([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)");
+	
+	public Zip listCmd(final String pathArchive7z, String password) {
+		List<String> otherArgs = new ArrayList<>();
+		final StringBuilder sb = new StringBuilder(16);
+		Zip zip = new Zip(new File(pathArchive7z));
+		ZipEntry ze = null;
 
-	// ------------------- ----- ------------ ------------  ------------------------
-	// 2016-03-13 22:49:48 ....A         4212               jni/CPP/myWindows/makefile.depend
-	// 2016-03-13 23:44:49 D....            0            0  gen/com/hostzi
-	// 2015-08-02 17:49:11 .R..A         9405               CPP/Windows/Window.h
-	//                     .....                            p7zip_15.14_src_all.tar
-	private final static Pattern ENTRY_PATTERN = Pattern.compile("[ \\d]{4}[-/ ][ \\d]{2}[- /][ \\d]{2} [ \\d]{2}[ :][ \\d]{2}[ :][ \\d]{2} ([D\\.]).{3}[A\\.] [ \\d]{12}[ \\d]{15}([^\r\n]+)", Pattern.UNICODE_CASE);
+		final UpdateProgress update = new UpdateProgress() {
+			@Override
+			public void updateProgress(String[] args) {
+				//Log.d(TAG, args[0]);
+				sb.append(args[0]).append("\n");
+			}
+		};
+		if (password == null || password.length() == 0) {
+			password = "";
+		} else {
+			password = "-p" + password;
+			otherArgs.add(0, password);
+		}
+		otherArgs.add(0, pathArchive7z);
+		otherArgs.add(0, "l");
+		otherArgs.add(0, p7z);
 
-	public Collection<String> listing(File archive7z, String password) throws IOException {
-		return listing(archive7z.getAbsolutePath(), password);
+		command = new Command(otherArgs);
+		Log.d(TAG, "command: " + command);
+
+		CommandListener commandListener = new CommandListener(command, update);
+		command.setCommandListener(commandListener);
+		command.run();
+		final int ret = commandListener.ret;
+		Log.d(TAG, "ret " + ret + ", command: " + command);
+		
+		String line ="";
+		final Matcher m = patLn.matcher(sb.toString());
+		int count = 0;
+		final Calendar cal = Calendar.getInstance();
+		String[] date;
+		String[] time;
+		String path;
+		while (m.find() && count < 3) {
+			line = m.group();
+			//Log.d(TAG, line);
+			if ("------------------- ----- ------------ ------------  ------------------------".equals(line)) {
+				count++;
+				Log.d(TAG, "count " + count);
+			} else if (count == 1) {
+				final Matcher matcher = zipEntryInfoPattern.matcher(line);
+				Log.d(TAG, "count " + count + ", " + line);
+				if (matcher.matches()) {
+					final String group1 = matcher.group(1).trim();
+					if (group1.length() > 0) {
+						date = group1.split("[-/]");
+						time = matcher.group(2).split(":");
+						cal.set(Integer.valueOf(date[0]).intValue(), Integer.valueOf(date[1]).intValue() - 1, Integer.valueOf(date[2]).intValue(), 
+								Integer.valueOf(time[0]).intValue(), Integer.valueOf(time[1]).intValue(), Integer.valueOf(time[2]).intValue());
+					}
+					
+					path = matcher.group(6);
+					final String length = matcher.group(4).trim();
+					final String zipLength = matcher.group(5).trim();
+					if ("D".equals(matcher.group(3))) {
+						ze = new ZipEntry(null, 
+										  path,
+										  true,
+										  Integer.valueOf(length.length() == 0 ? "0" : length).intValue(),
+										  Integer.valueOf(zipLength.length() == 0 ? "0" : zipLength).intValue(),
+										  cal.getTimeInMillis());
+					} else {
+						ze = new ZipEntry(null, 
+										  path,
+										  false,
+										  Integer.valueOf(length.length() == 0 ? "0" : length).intValue(),
+										  Integer.valueOf(zipLength.length() == 0 ? "0" : zipLength).intValue(),
+										  cal.getTimeInMillis());
+					}
+					//Log.d(TAG, "ze.getParentPath() " + ze.getParentPath());
+					zip.entries.put(path, ze);
+				}
+			} else if (count == 2) {
+				Log.d(TAG, "count " + count + ", " + line);
+				final Matcher mEnd = patEnd.matcher(line);
+				if (mEnd.matches()) {
+					zip.unZipSize = Long.valueOf(mEnd.group(3));
+					zip.zipSize = Long.valueOf(mEnd.group(4));
+					zip.fileCount = Integer.valueOf(mEnd.group(5));
+					zip.folderCount = Integer.valueOf(mEnd.group(7));
+					count++;
+				}
+			}
+		}
+		Collection<ZipEntry> values = new LinkedList<ZipEntry>(zip.entries.values());
+		Collection<ZipEntry> valuesNew;
+		while (values.size() > 0) {
+			valuesNew = new LinkedList<ZipEntry>();
+			for (ZipEntry ze1 : values) {
+				//Log.d(TAG, zip.entries.get(ze.parentPath) + ".");
+				if (!"/".equals(ze1.parentPath) && zip.entries.get(ze1.parentPath) == null) {
+					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, 0, 0, 0);
+					valuesNew.add(zipEntry);
+					zip.entries.put(ze1.parentPath, zipEntry);
+				}
+			}
+			values = valuesNew;
+		}
+		Log.d(TAG, zip.toString());
+		return zip;
 	}
+
+//	7-Zip (a) [32] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+//	p7zip Version 16.02 (locale=utf8,Utf16=on,HugeFiles=off,32 bits,4 CPUs x86)
+//
+//	Scanning the drive for archives:
+//	1 file, 1463 bytes (2 KiB)
+//
+//	Listing archive: /sdcard/.aide/annotations.jar
+//
+//	--
+//	Path = /sdcard/.aide/annotations.jar
+//	Type = zip
+//	Physical Size = 1463
+//
+//	Date      Time    Attr         Size   Compressed  Name
+//	------------------- ----- ------------ ------------  ------------------------
+//	2012-03-16 15:41:28 D....            0            2  META-INF
+//	2012-03-16 15:41:28 .....           71           71  META-INF/MANIFEST.MF
+//	2012-03-16 15:41:28 D....            0            0  android
+//	2012-03-16 15:41:28 D....            0            0  android/annotation
+//	2012-03-16 15:41:28 .....          433          269  android/annotation/TargetApi.class
+//	2012-03-16 15:41:28 .....          509          317  android/annotation/SuppressLint.class
+//	------------------- ----- ------------ ------------  ------------------------
+//	2012-03-16 15:41:28               1013          659  3 files, 3 folders
+
+	private final static Pattern ENTRY_PATTERN = Pattern.compile("[ \\d]{4}[-/ ][ \\d]{2}[- /][ \\d]{2} [ \\d]{2}[ :][ \\d]{2}[ :][ \\d]{2} ([D\\.]).{3}[A\\.] [ \\d]{12}[ \\d]{15}([^\r\n]+)", Pattern.UNICODE_CASE);
 
 	public Collection<String> listing(String pathArchive7z, String password) throws IOException {
 		try {
 			initStream();
-			if (password == null || password.trim().length() == 0) {
+			if (password == null || password.length() == 0) {
 				password = "";
 			} else {
 				password = "-p\"" + password + "\"";

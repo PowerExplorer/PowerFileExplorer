@@ -66,7 +66,7 @@ public class LoadFolderSpaceData extends AsyncTask<Void, Long, Pair<String, List
 
             List<PieEntry> entries = createEntriesFromArray(dataArray, false);
 
-            return new Pair<>(Formatter.formatFileSize(context, totalSpace), entries);
+            return new Pair<String, List<PieEntry>>(Formatter.formatFileSize(context, totalSpace), entries);
         }
 
         return null;

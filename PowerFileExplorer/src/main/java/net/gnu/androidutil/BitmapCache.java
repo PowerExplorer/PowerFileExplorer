@@ -8,7 +8,7 @@ import android.app.*;
 
 public class BitmapCache {
 
-	private static final String TAG = "BitmapCache";
+	//private static final String TAG = "BitmapCache";
 
 	private LruCache<String, Bitmap> sCache2;
 
@@ -44,7 +44,7 @@ public class BitmapCache {
 	public void put(final String url, final Bitmap bitmap) {
 		//try {
 		if (url != null && bitmap != null) {
-			Log.d(TAG, url + " put " + bitmap.getByteCount());
+			//Log.d(TAG, url + " put " + bitmap.getByteCount());
 			sCache2.put(url, bitmap);
 		}
 		//} catch (RuntimeException re) {

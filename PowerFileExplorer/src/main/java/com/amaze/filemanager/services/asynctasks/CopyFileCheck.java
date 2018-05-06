@@ -214,20 +214,20 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
             else if (dialogState == DO_FOR_ALL_ELEMENTS.REPLACE)
                 replaceFiles(path, filesToCopy, conflictingFiles);
         } else {
-            CopyNode c = !copyFolder.hasStarted()? copyFolder.startCopy():copyFolder.goToNextNode();
+            CopyNode copyNode = !copyFolder.hasStarted()? copyFolder.startCopy():copyFolder.goToNextNode();
 
-            if (c != null) {
+            if (copyNode != null) {
                 counter = 0;
 
-                paths.add(c.getPath());
-                filesToCopyPerFolder.add(c.filesToCopy);
+                paths.add(copyNode.getPath());
+                filesToCopyPerFolder.add(copyNode.filesToCopy);
 
                 if (dialogState == null)
-                    onEndDialog(c.path, c.filesToCopy, c.conflictingFiles);
+                    onEndDialog(copyNode.path, copyNode.filesToCopy, copyNode.conflictingFiles);
                 else if (dialogState == DO_FOR_ALL_ELEMENTS.DO_NOT_REPLACE)
-                    doNotReplaceFiles(c.path, c.filesToCopy, c.conflictingFiles);
+                    doNotReplaceFiles(copyNode.path, copyNode.filesToCopy, copyNode.conflictingFiles);
                 else if (dialogState == DO_FOR_ALL_ELEMENTS.REPLACE)
-                    replaceFiles(c.path, c.filesToCopy, c.conflictingFiles);
+                    replaceFiles(copyNode.path, copyNode.filesToCopy, copyNode.conflictingFiles);
             } else {
                 finishCopying(paths, filesToCopyPerFolder);
             }
@@ -277,9 +277,9 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
                 //This is used because in newer devices the user has to accept a permission,
                 // see MainActivity.onActivityResult()
                 mainActivity.oparrayListList = filesToCopyPerFolder;
-                mainActivity.oparrayList = null;
+                mainActivity.originPaths_oparrayList = null;
                 mainActivity.operation = move ? DataUtils.MOVE : DataUtils.COPY;
-                mainActivity.oppatheList = paths;
+                mainActivity.originPaths_oppatheList = paths;
             } else {
                 if (!move) {
                     for (int i = 0; i < filesToCopyPerFolder.size(); i++) {
