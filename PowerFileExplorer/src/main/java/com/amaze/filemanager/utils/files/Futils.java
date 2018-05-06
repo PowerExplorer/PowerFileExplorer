@@ -76,6 +76,7 @@ import java.util.Date;
 import jcifs.smb.SmbFile;
 import net.gnu.explorer.ExplorerActivity;
 import android.util.Log;
+import net.gnu.util.FileUtil;
 
 /**
  * Functions that deal with files
@@ -179,11 +180,11 @@ public class Futils {
         if (Build.VERSION.SDK_INT >= 19) {
             MediaScannerConnection.scanFile(c, new String[]{path}, null, new MediaScannerConnection.OnScanCompletedListener() {
 
-                @Override
-                public void onScanCompleted(String path, Uri uri) {
+					@Override
+					public void onScanCompleted(String path, Uri uri) {
 
-                }
-            });
+					}
+				});
         } else {
             Uri contentUri = Uri.fromFile(new File(path));
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
@@ -191,7 +192,7 @@ public class Futils {
         }
     }
 
-    public static void crossfade(View buttons,final View pathbar) {
+    public static void crossfade(View buttons, final View pathbar) {
         // Set the content view to 0% opacity but visible, so that it is visible
         // (but fully transparent) during the animation.
         buttons.setAlpha(0f);
@@ -201,18 +202,18 @@ public class Futils {
         // Animate the content view to 100% opacity, and clear any animation
         // listener set on the view.
         buttons.animate()
-                .alpha(1f)
-                .setDuration(100)
-                .setListener(null);
+			.alpha(1f)
+			.setDuration(100)
+			.setListener(null);
         pathbar.animate()
-                .alpha(0f)
-                .setDuration(100)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        pathbar.setVisibility(View.GONE);
-                    }
-                });
+			.alpha(0f)
+			.setDuration(100)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					pathbar.setVisibility(View.GONE);
+				}
+			});
         // Animate the loading view to 0% opacity. After the animation ends,
         // set its visibility to GONE as an optimization step (it won't
         // participate in layout passes, etc.)
@@ -223,27 +224,27 @@ public class Futils {
             ObjectAnimator animator = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f);
             animator.setDuration(300); //ms
             animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    view.setVisibility(View.VISIBLE);
-                }
-            });
+					@Override
+					public void onAnimationStart(Animator animation) {
+						view.setVisibility(View.VISIBLE);
+					}
+				});
             animator.start();
         } else {
 
             ObjectAnimator animator = ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0f);
             animator.setDuration(300); //ms
             animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    view.setVisibility(View.GONE);
-                }
-            });
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						view.setVisibility(View.GONE);
+					}
+				});
             animator.start();
         }
     }
 
-    public static void crossfadeInverse(final View buttons,final View pathbar) {
+    public static void crossfadeInverse(final View buttons, final View pathbar) {
         // Set the content view to 0% opacity but visible, so that it is visible
         // (but fully transparent) during the animation.
 
@@ -253,18 +254,18 @@ public class Futils {
         // Animate the content view to 100% opacity, and clear any animation
         // listener set on the view.
         pathbar.animate()
-                .alpha(1f)
-                .setDuration(500)
-                .setListener(null);
+			.alpha(1f)
+			.setDuration(500)
+			.setListener(null);
         buttons.animate()
-                .alpha(0f)
-                .setDuration(500)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        buttons.setVisibility(View.GONE);
-                    }
-                });
+			.alpha(0f)
+			.setDuration(500)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					buttons.setVisibility(View.GONE);
+				}
+			});
         // Animate the loading view to 0% opacity. After the animation ends,
         // set its visibility to GONE as an optimization step (it won't
         // participate in layout passes, etc.)
@@ -286,12 +287,12 @@ public class Futils {
 
                 Futils.copyToClipboard(context, s);
                 Toast.makeText(context,
-                        context.getResources().getString(R.string.cloud_share_copied), Toast.LENGTH_LONG).show();
+							   context.getResources().getString(R.string.cloud_share_copied), Toast.LENGTH_LONG).show();
             }
         }.execute(path);
     }
 
-    public static void shareFiles(ArrayList<File> a, Activity c,AppTheme appTheme,int fab_skin) {
+    public static void shareFiles(ArrayList<File> a, Activity c, AppTheme appTheme, int fab_skin) {
 
         ArrayList<Uri> uris = new ArrayList<>();
         boolean b = true;
@@ -307,11 +308,11 @@ public class Futils {
                 }
             }
 
-        if (!b || mime==(null))
+        if (!b || mime == (null))
             mime = "*/*";
         try {
 
-            new ShareTask(c,uris,appTheme,fab_skin).execute(mime);
+            new ShareTask(c, uris, appTheme, fab_skin).execute(mime);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -320,7 +321,7 @@ public class Futils {
     public static float readableFileSizeFloat(long size) {
         if (size <= 0)
             return 0;
-        float digitGroups = (float) (size / (1024*1024));
+        float digitGroups = (float) (size / (1024 * 1024));
         return digitGroups;
     }
 
@@ -333,9 +334,9 @@ public class Futils {
     public static void openunknown(File f, Context c, boolean forcechooser) {
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
-		Log.d(TAG, "openunknown " + f + ", " + forcechooser);
-        String type = MimeTypes.getMimeType(f);
-        if(type!=null && type.trim().length()!=0 && !type.equals("*/*")) {
+		String type = MimeTypes.getMimeType(f);
+        Log.d(TAG, "openunknown " + f + ", " + forcechooser + ", " + type);
+        if (type != null && type.trim().length() != 0 && !type.equals("*/*")) {
 
             //Uri uri=fileToContentUri(c, f);
             //if(uri==null) 
@@ -344,19 +345,18 @@ public class Futils {
 
             Intent startintent;
             if (forcechooser) {
-                startintent=Intent.createChooser(intent, c.getResources().getString(R.string.openwith));
+                startintent = Intent.createChooser(intent, c.getResources().getString(R.string.openwith));
             } else {
-                startintent=intent;
+                startintent = intent;
             }
             try {
                 c.startActivity(startintent);
             } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
-                Toast.makeText(c,R.string.noappfound,Toast.LENGTH_SHORT).show();
-                openWith(f,c);
+                Toast.makeText(c, R.string.noappfound, Toast.LENGTH_SHORT).show();
+                openWith(f, c);
             }
         } else {
-
             // failed to load mime type
             openWith(f, c);
         }
@@ -375,17 +375,17 @@ public class Futils {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         String type = f.getType();
-        if(type!=null && type.trim().length()!=0 && !type.equals("*/*")) {
+        if (type != null && type.trim().length() != 0 && !type.equals("*/*")) {
             intent.setDataAndType(f.getUri(), type);
             Intent startintent;
-            if (forcechooser) startintent=Intent.createChooser(intent, c.getResources().getString(R.string.openwith));
-            else startintent=intent;
+            if (forcechooser) startintent = Intent.createChooser(intent, c.getResources().getString(R.string.openwith));
+            else startintent = intent;
             try {
                 c.startActivity(startintent);
             } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
-                Toast.makeText(c,R.string.noappfound,Toast.LENGTH_SHORT).show();
-                openWith(f,c);
+                Toast.makeText(c, R.string.noappfound, Toast.LENGTH_SHORT).show();
+                openWith(f, c);
             }
         } else {
             openWith(f, c);
@@ -402,8 +402,8 @@ public class Futils {
     public static String normalizeMediaPath(String path) {
         // Retrieve all the paths and check that we have this environment vars
         if (TextUtils.isEmpty(EMULATED_STORAGE_SOURCE) ||
-                TextUtils.isEmpty(EMULATED_STORAGE_TARGET) ||
-                TextUtils.isEmpty(EXTERNAL_STORAGE)) {
+			TextUtils.isEmpty(EMULATED_STORAGE_TARGET) ||
+			TextUtils.isEmpty(EXTERNAL_STORAGE)) {
             return path;
         }
 
@@ -434,7 +434,7 @@ public class Futils {
         final String where = MediaStore.MediaColumns.DATA + " = ?";
         Uri baseUri = MediaStore.Files.getContentUri(volume);
         boolean isMimeTypeImage = false, isMimeTypeVideo = false, isMimeTypeAudio = false;
-        isMimeTypeImage = Icons.isPicture( path);
+        isMimeTypeImage = Icons.isPicture(path);
         if (!isMimeTypeImage) {
             isMimeTypeVideo = Icons.isVideo(path);
             if (!isMimeTypeVideo) {
@@ -462,7 +462,7 @@ public class Futils {
                     isValid = true;
                 } else {
                     int type = c.getInt(c.getColumnIndexOrThrow(
-                            MediaStore.Files.FileColumns.MEDIA_TYPE));
+											MediaStore.Files.FileColumns.MEDIA_TYPE));
                     isValid = type != 0;
                 }
 
@@ -485,47 +485,47 @@ public class Futils {
      * @param f
      * @param c
      */
-    public static void openWith(final File f,final Context c) {
+    public static void openWith(final File f, final Context c) {
         MaterialDialog.Builder a=new MaterialDialog.Builder(c);
         a.title(c.getResources().getString(R.string.openas));
         String[] items=new String[]{c.getResources().getString(R.string.text),c.getResources().getString(R.string.image),c.getResources().getString(R.string.video),c.getResources().getString(R.string.audio),c.getResources().getString(R.string.database),c.getResources().getString(R.string.other)};
 
         a.items(items).itemsCallback(new MaterialDialog.ListCallback() {
-            @Override
-            public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                Uri uri = fileToContentUri(c, f);
-                if (uri == null) uri = Uri.fromFile(f);
-                Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
-                switch (i) {
-                    case 0:
-                        intent.setDataAndType(uri, "text/*");
-                        break;
-                    case 1:
-                        intent.setDataAndType(uri, "image/*");
-                        break;
-                    case 2:
-                        intent.setDataAndType(uri, "video/*");
-                        break;
-                    case 3:
-                        intent.setDataAndType(uri, "audio/*");
-                        break;
-                    case 4:
-                        intent = new Intent(c, DbViewer.class);
-                        intent.putExtra("path", f.getPath());
-                        break;
-                    case 5:
-                        intent.setDataAndType(uri, "*/*");
-                        break;
-                }
-                try {
-                    c.startActivity(intent);
-                } catch (Exception e) {
-                    Toast.makeText(c, R.string.noappfound, Toast.LENGTH_SHORT).show();
-                    openWith(f, c);
-                }
-            }
-        });
+				@Override
+				public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+					Uri uri = fileToContentUri(c, f);
+					if (uri == null) uri = Uri.fromFile(f);
+					Intent intent = new Intent();
+					intent.setAction(android.content.Intent.ACTION_VIEW);
+					switch (i) {
+						case 0:
+							intent.setDataAndType(uri, "text/*");
+							break;
+						case 1:
+							intent.setDataAndType(uri, "image/*");
+							break;
+						case 2:
+							intent.setDataAndType(uri, "video/*");
+							break;
+						case 3:
+							intent.setDataAndType(uri, "audio/*");
+							break;
+						case 4:
+							intent = new Intent(c, DbViewer.class);
+							intent.putExtra("path", f.getPath());
+							break;
+						case 5:
+							intent.setDataAndType(uri, "*/*");
+							break;
+					}
+					try {
+						c.startActivity(intent);
+					} catch (Exception e) {
+						Toast.makeText(c, R.string.noappfound, Toast.LENGTH_SHORT).show();
+						openWith(f, c);
+					}
+				}
+			});
         try {
             a.build().show();
         } catch (Exception e) {
@@ -533,47 +533,47 @@ public class Futils {
         }
     }
 
-    public void openWith(final DocumentFile f,final Context c) {
+    public void openWith(final DocumentFile f, final Context c) {
         MaterialDialog.Builder a=new MaterialDialog.Builder(c);
         a.title(c.getResources().getString(R.string.openas));
         String[] items=new String[]{c.getResources().getString(R.string.text),c.getResources().getString(R.string.image),c.getResources().getString(R.string.video),c.getResources().getString(R.string.audio),c.getResources().getString(R.string.database),c.getResources().getString(R.string.other)};
 
         a.items(items).itemsCallback(new MaterialDialog.ListCallback() {
-            @Override
-            public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+				@Override
+				public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
 
-                Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                switch (i) {
-                    case 0:
-                        intent.setDataAndType(f.getUri(), "text/*");
-                        break;
-                    case 1:
-                        intent.setDataAndType(f.getUri(), "image/*");
-                        break;
-                    case 2:
-                        intent.setDataAndType(f.getUri(), "video/*");
-                        break;
-                    case 3:
-                        intent.setDataAndType(f.getUri(), "audio/*");
-                        break;
-                    case 4:
-                        intent = new Intent(c, DbViewer.class);
-                        intent.putExtra("path", f.getUri());
-                        break;
-                    case 5:
-                        intent.setDataAndType(f.getUri(), "*/*");
-                        break;
-                }
-                try {
-                    c.startActivity(intent);
-                } catch (Exception e) {
-                    Toast.makeText(c, R.string.noappfound, Toast.LENGTH_SHORT).show();
-                    openWith(f, c);
-                }
-            }
-        });
+					Intent intent = new Intent();
+					intent.setAction(android.content.Intent.ACTION_VIEW);
+					intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+					switch (i) {
+						case 0:
+							intent.setDataAndType(f.getUri(), "text/*");
+							break;
+						case 1:
+							intent.setDataAndType(f.getUri(), "image/*");
+							break;
+						case 2:
+							intent.setDataAndType(f.getUri(), "video/*");
+							break;
+						case 3:
+							intent.setDataAndType(f.getUri(), "audio/*");
+							break;
+						case 4:
+							intent = new Intent(c, DbViewer.class);
+							intent.putExtra("path", f.getUri());
+							break;
+						case 5:
+							intent.setDataAndType(f.getUri(), "*/*");
+							break;
+					}
+					try {
+						c.startActivity(intent);
+					} catch (Exception e) {
+						Toast.makeText(c, R.string.noappfound, Toast.LENGTH_SHORT).show();
+						openWith(f, c);
+					}
+				}
+			});
         try {
             a.build().show();
         } catch (Exception e) {
@@ -590,7 +590,7 @@ public class Futils {
     public boolean canGoBack(Context context, HFile currentFile) {
         switch (currentFile.getMode()) {
 
-            // we're on main thread and can't list the cloud files
+				// we're on main thread and can't list the cloud files
             case DROPBOX:
             case BOX:
             case GDRIVE:
@@ -607,83 +607,83 @@ public class Futils {
 
     public static long[] getSpaces(HFile hFile, Context context, final OnProgressUpdate<Long[]> updateState) {
         /*if(hFile.isSmb()) {
-            if (hFile.isDirectory(context)) {
+		 if (hFile.isDirectory(context)) {
 
-            }
-            return new long[]{-1, -1, -1};
-        } else if (hFile.isDropBoxFile()) {
-            CloudStorage cloudStorageDropbox = dataUtils.getAccount(OpenMode.DROPBOX);
-            CloudMetaData fileMetaDataDropbox = cloudStorageDropbox.getMetadata(CloudUtil.stripPath(OpenMode.DROPBOX,
-                    hFile.getPath()));
+		 }
+		 return new long[]{-1, -1, -1};
+		 } else if (hFile.isDropBoxFile()) {
+		 CloudStorage cloudStorageDropbox = dataUtils.getAccount(OpenMode.DROPBOX);
+		 CloudMetaData fileMetaDataDropbox = cloudStorageDropbox.getMetadata(CloudUtil.stripPath(OpenMode.DROPBOX,
+		 hFile.getPath()));
 
-            return new long[]{cloudStorageDropbox.getAllocation().getTotal(),
-                    (cloudStorageDropbox.getAllocation().getTotal() - cloudStorageDropbox.getAllocation().getUsed()),
-                    folderSizeCloud(OpenMode.DROPBOX, fileMetaDataDropbox)
-            };
-        } else if (hFile.isBoxFile()) {
-            CloudStorage cloudStorageBox = dataUtils.getAccount(OpenMode.BOX);
-            CloudMetaData fileMetaDataBox = cloudStorageBox.getMetadata(CloudUtil.stripPath(OpenMode.BOX,
-                    hFile.getPath()));
+		 return new long[]{cloudStorageDropbox.getAllocation().getTotal(),
+		 (cloudStorageDropbox.getAllocation().getTotal() - cloudStorageDropbox.getAllocation().getUsed()),
+		 folderSizeCloud(OpenMode.DROPBOX, fileMetaDataDropbox)
+		 };
+		 } else if (hFile.isBoxFile()) {
+		 CloudStorage cloudStorageBox = dataUtils.getAccount(OpenMode.BOX);
+		 CloudMetaData fileMetaDataBox = cloudStorageBox.getMetadata(CloudUtil.stripPath(OpenMode.BOX,
+		 hFile.getPath()));
 
-            return new long[]{cloudStorageBox.getAllocation().getTotal(),
-                    (cloudStorageBox.getAllocation().getTotal() - cloudStorageBox.getAllocation().getUsed()),
-                    folderSizeCloud(OpenMode.BOX, fileMetaDataBox)
-            };
-        } else if (hFile.isGoogleDriveFile()) {
-            CloudStorage cloudStorageGDrive = dataUtils.getAccount(OpenMode.GDRIVE);
+		 return new long[]{cloudStorageBox.getAllocation().getTotal(),
+		 (cloudStorageBox.getAllocation().getTotal() - cloudStorageBox.getAllocation().getUsed()),
+		 folderSizeCloud(OpenMode.BOX, fileMetaDataBox)
+		 };
+		 } else if (hFile.isGoogleDriveFile()) {
+		 CloudStorage cloudStorageGDrive = dataUtils.getAccount(OpenMode.GDRIVE);
 
-            CloudMetaData fileMetaDataGDrive = cloudStorageGDrive.getMetadata(CloudUtil.stripPath(OpenMode.GDRIVE,
-                    hFile.getPath()));
+		 CloudMetaData fileMetaDataGDrive = cloudStorageGDrive.getMetadata(CloudUtil.stripPath(OpenMode.GDRIVE,
+		 hFile.getPath()));
 
-            return new long[]{cloudStorageGDrive.getAllocation().getTotal(),
-                    (cloudStorageGDrive.getAllocation().getTotal() - cloudStorageGDrive.getAllocation().getUsed()),
-                    folderSizeCloud(OpenMode.GDRIVE, fileMetaDataGDrive)
-            };
-        } else if (hFile.isOneDriveFile()) {
-            CloudStorage cloudStorageOneDrive = dataUtils.getAccount(OpenMode.ONEDRIVE);
+		 return new long[]{cloudStorageGDrive.getAllocation().getTotal(),
+		 (cloudStorageGDrive.getAllocation().getTotal() - cloudStorageGDrive.getAllocation().getUsed()),
+		 folderSizeCloud(OpenMode.GDRIVE, fileMetaDataGDrive)
+		 };
+		 } else if (hFile.isOneDriveFile()) {
+		 CloudStorage cloudStorageOneDrive = dataUtils.getAccount(OpenMode.ONEDRIVE);
 
-            CloudMetaData fileMetaDataOneDrive = cloudStorageOneDrive.getMetadata(CloudUtil.stripPath(OpenMode.ONEDRIVE,
-                    hFile.getPath()));
-            return new long[]{cloudStorageOneDrive.getAllocation().getTotal(),
-                    (cloudStorageOneDrive.getAllocation().getTotal() - cloudStorageOneDrive.getAllocation().getUsed()),
-                    folderSizeCloud(OpenMode.ONEDRIVE, fileMetaDataOneDrive)
-            };
-        } else if (!hFile.isOtgFile() && !hFile.isCustomPath()
-                && !android.util.Patterns.EMAIL_ADDRESS.matcher(hFile.getPath()).matches()) {
-            try {
-                File file = new File(hFile.getPath());
-                final long totalSpace = file.getTotalSpace(),
-                        freeSpace = file.getFreeSpace(),
-                        folderSize = folderSize(hFile,
-                                new OnProgressUpdate<Long>() {
-                                    @Override
-                                    public void onUpdate(Long data) {
-                                        if(updateState != null)
-                                            updateState.onUpdate(new Long[] {totalSpace, freeSpace, data});
-                                    }
-                                });
+		 CloudMetaData fileMetaDataOneDrive = cloudStorageOneDrive.getMetadata(CloudUtil.stripPath(OpenMode.ONEDRIVE,
+		 hFile.getPath()));
+		 return new long[]{cloudStorageOneDrive.getAllocation().getTotal(),
+		 (cloudStorageOneDrive.getAllocation().getTotal() - cloudStorageOneDrive.getAllocation().getUsed()),
+		 folderSizeCloud(OpenMode.ONEDRIVE, fileMetaDataOneDrive)
+		 };
+		 } else if (!hFile.isOtgFile() && !hFile.isCustomPath()
+		 && !android.util.Patterns.EMAIL_ADDRESS.matcher(hFile.getPath()).matches()) {
+		 try {
+		 File file = new File(hFile.getPath());
+		 final long totalSpace = file.getTotalSpace(),
+		 freeSpace = file.getFreeSpace(),
+		 folderSize = folderSize(hFile,
+		 new OnProgressUpdate<Long>() {
+		 @Override
+		 public void onUpdate(Long data) {
+		 if(updateState != null)
+		 updateState.onUpdate(new Long[] {totalSpace, freeSpace, data});
+		 }
+		 });
 
-                final long totalSpace = hFile.length(context);
-                final long freeSpace = hFile.getUsableSpace();
-                long folderSize = 0l;
+		 final long totalSpace = hFile.length(context);
+		 final long freeSpace = hFile.getUsableSpace();
+		 long folderSize = 0l;
 
-                if (hFile.isDirectory(context)) {
-                    folderSize = folderSize(new File(hFile.getPath()),
-                            new OnProgressUpdate<Long>() {
-                                @Override
-                                public void onUpdate(Long data) {
-                                    if(updateState != null)
-                                        updateState.onUpdate(new Long[] {totalSpace, freeSpace, data});
-                                }
-                    });
-                }
-                return new long[] {totalSpace, freeSpace, folderSize};
-            } catch (Exception e) {
-                return new long[]{-1, -1, -1};
-            }
-        } else {
-            return new long[]{-1, -1, -1};
-        }*/
+		 if (hFile.isDirectory(context)) {
+		 folderSize = folderSize(new File(hFile.getPath()),
+		 new OnProgressUpdate<Long>() {
+		 @Override
+		 public void onUpdate(Long data) {
+		 if(updateState != null)
+		 updateState.onUpdate(new Long[] {totalSpace, freeSpace, data});
+		 }
+		 });
+		 }
+		 return new long[] {totalSpace, freeSpace, folderSize};
+		 } catch (Exception e) {
+		 return new long[]{-1, -1, -1};
+		 }
+		 } else {
+		 return new long[]{-1, -1, -1};
+		 }*/
 
         long totalSpace = hFile.getTotal(context);
         long freeSpace = hFile.getUsableSpace();
@@ -700,9 +700,9 @@ public class Futils {
     public static boolean copyToClipboard(Context context, String text) {
         try {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context
-                    .getSystemService(context.CLIPBOARD_SERVICE);
+				.getSystemService(context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData
-                    .newPlainText(context.getString(R.string.clipboard_path_copy), text);
+				.newPlainText(context.getString(R.string.clipboard_path_copy), text);
             clipboard.setPrimaryClip(clip);
             return true;
         } catch (Exception e) {
@@ -751,6 +751,7 @@ public class Futils {
     }
 
     public void openFile(final File f, final ExplorerActivity m) {
+        Log.d(TAG, "openFile " + f.getAbsolutePath());
         boolean defaultHandler = isSelfDefault(f, m);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(m);
 //        if (defaultHandler && f.getName().toLowerCase().endsWith(".zip") ||
@@ -760,7 +761,7 @@ public class Futils {
 //                f.getName().toLowerCase().endsWith(".tar.gz")) {
 //            GeneralDialogCreation.showArchiveDialog(f, m);
 //        } else 
-		if(f.getName().toLowerCase().endsWith(".apk")) {
+		if (f.getName().toLowerCase().endsWith(".apk")) {
             GeneralDialogCreation.showPackageDialog(f, m);
         } else 
 		if (defaultHandler && f.getName().toLowerCase().endsWith(".db")) {
@@ -775,12 +776,12 @@ public class Futils {
             intent.setDataAndType(uri, "audio/*");
 
             // Behold! It's the  legendary easter egg!
-            if (studio_count!=0) {
+            if (studio_count != 0) {
                 new CountDownTimer(studio_count, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        int sec = (int)millisUntilFinished/1000;
-                        if (studioCount!=null)
+                        int sec = (int)millisUntilFinished / 1000;
+                        if (studioCount != null)
                             studioCount.cancel();
                         studioCount = Toast.makeText(m, sec + "", Toast.LENGTH_LONG);
                         studioCount.show();
@@ -788,27 +789,29 @@ public class Futils {
 
                     @Override
                     public void onFinish() {
-                        if (studioCount!=null)
+                        if (studioCount != null)
                             studioCount.cancel();
                         studioCount = Toast.makeText(m, m.getString(R.string.opening),
-                                Toast.LENGTH_LONG);
+													 Toast.LENGTH_LONG);
                         studioCount.show();
                         m.startActivity(intent);
                     }
                 }.start();
             } else
                 m.startActivity(intent);
-        } else {
+			//} else if (FileUtil.extractiblePattern.matcher(f.getName()).matches()) {
+
+		} else {
             try {
                 openunknown(f, m, false);
             } catch (Exception e) {
-                Toast.makeText(m, m.getResources().getString(R.string.noappfound),Toast.LENGTH_LONG).show();
+                Toast.makeText(m, m.getResources().getString(R.string.noappfound), Toast.LENGTH_LONG).show();
                 openWith(f, m);
             }
         }
     }
 
-    private boolean isSelfDefault(File f, Context c){
+    private boolean isSelfDefault(File f, Context c) {
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(f), MimeTypes.getMimeType(f));
@@ -830,62 +833,62 @@ public class Futils {
         try {
             openunknown(f, m, false);
         } catch (Exception e) {
-            Toast.makeText(m, m.getResources().getString(R.string.noappfound),Toast.LENGTH_LONG).show();
+            Toast.makeText(m, m.getResources().getString(R.string.noappfound), Toast.LENGTH_LONG).show();
             openWith(f, m);
         }
 
         // not supporting inbuilt activities for now
         /*if (f.getName().toLowerCase().endsWith(".zip") ||
-                f.getName().toLowerCase().endsWith(".jar") ||
-                f.getName().toLowerCase().endsWith(".rar")||
-                f.getName().toLowerCase().endsWith(".tar") ||
-                f.getName().toLowerCase().endsWith(".tar.gz")) {
-            //showArchiveDialog(f, m);
-        } else if(f.getName().toLowerCase().endsWith(".apk")) {
-            //showPackageDialog(f, m);
-        } else if (f.getName().toLowerCase().endsWith(".db")) {
-            Intent intent = new Intent(m, DbViewer.class);
-            intent.putExtra("path", f.getUri());
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            m.startActivity(intent);
-        }  else if (Icons.isAudio(f.getName())) {
-            final int studio_count = sharedPref.getInt("studio", 0);
-            final Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.setDataAndType(f.getUri(), "audio*//*");
+		 f.getName().toLowerCase().endsWith(".jar") ||
+		 f.getName().toLowerCase().endsWith(".rar")||
+		 f.getName().toLowerCase().endsWith(".tar") ||
+		 f.getName().toLowerCase().endsWith(".tar.gz")) {
+		 //showArchiveDialog(f, m);
+		 } else if(f.getName().toLowerCase().endsWith(".apk")) {
+		 //showPackageDialog(f, m);
+		 } else if (f.getName().toLowerCase().endsWith(".db")) {
+		 Intent intent = new Intent(m, DbViewer.class);
+		 intent.putExtra("path", f.getUri());
+		 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		 m.startActivity(intent);
+		 }  else if (Icons.isAudio(f.getName())) {
+		 final int studio_count = sharedPref.getInt("studio", 0);
+		 final Intent intent = new Intent();
+		 intent.setAction(Intent.ACTION_VIEW);
+		 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		 intent.setDataAndType(f.getUri(), "audio*//*");
 
-            // Behold! It's the  legendary easter egg!
-            if (studio_count!=0) {
-                new CountDownTimer(studio_count, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        int sec = (int)millisUntilFinished/1000;
-                        if (studioCount!=null)
-                            studioCount.cancel();
-                        studioCount = Toast.makeText(m, sec + "", Toast.LENGTH_LONG);
-                        studioCount.show();
-                    }
+		 // Behold! It's the  legendary easter egg!
+		 if (studio_count!=0) {
+		 new CountDownTimer(studio_count, 1000) {
+		 @Override
+		 public void onTick(long millisUntilFinished) {
+		 int sec = (int)millisUntilFinished/1000;
+		 if (studioCount!=null)
+		 studioCount.cancel();
+		 studioCount = Toast.makeText(m, sec + "", Toast.LENGTH_LONG);
+		 studioCount.show();
+		 }
 
-                    @Override
-                    public void onFinish() {
-                        if (studioCount!=null)
-                            studioCount.cancel();
-                        studioCount = Toast.makeText(m, m.getString(R.string.opening), Toast.LENGTH_LONG);
-                        studioCount.show();
-                        m.startActivity(intent);
-                    }
-                }.start();
-            } else
-                m.startActivity(intent);
-        } else {
-            try {
-                openunknown(f, m, false);
-            } catch (Exception e) {
-                Toast.makeText(m, m.getResources().getString(R.string.noappfound),Toast.LENGTH_LONG).show();
-                openWith(f, m);
-            }
-        }*/
+		 @Override
+		 public void onFinish() {
+		 if (studioCount!=null)
+		 studioCount.cancel();
+		 studioCount = Toast.makeText(m, m.getString(R.string.opening), Toast.LENGTH_LONG);
+		 studioCount.show();
+		 m.startActivity(intent);
+		 }
+		 }.start();
+		 } else
+		 m.startActivity(intent);
+		 } else {
+		 try {
+		 openunknown(f, m, false);
+		 } catch (Exception e) {
+		 Toast.makeText(m, m.getResources().getString(R.string.noappfound),Toast.LENGTH_LONG).show();
+		 openWith(f, m);
+		 }
+		 }*/
     }
 
     /**
@@ -902,7 +905,7 @@ public class Futils {
     public static ArrayList<HFile> toHFileArray(ArrayList<String> a) {
         ArrayList<HFile> b = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
-            HFile hFile=new HFile(OpenMode.UNKNOWN,a.get(i));
+            HFile hFile=new HFile(OpenMode.UNKNOWN, a.get(i));
             hFile.generateMode(null);
             b.add(hFile);
         }
@@ -918,14 +921,14 @@ public class Futils {
         boolean linked = false;
         String name = "", link = "", size = "-1", date = "";
         String[] array = line.split(" ");
-        if(array.length<6)return null;
+        if (array.length < 6)return null;
         for (int i = 0; i < array.length; i++) {
             if (array[i].contains("->") && array[0].startsWith("l")) {
                 linked = true;
             }
         }
         int p = getColonPosition(array);
-        if(p!=-1){
+        if (p != -1) {
             date = array[p - 1] + " | " + array[p];
             size = array[p - 2];}
         if (!linked) {
@@ -943,31 +946,31 @@ public class Futils {
                 link = link + " " + array[i];
             }
         }
-        long Size = (size==null || size.trim().length()==0)?-1:Long.parseLong(size);
-        if(date.trim().length()>0) {
+        long Size = (size == null || size.trim().length() == 0) ?-1: Long.parseLong(size);
+        if (date.trim().length() > 0) {
             ParsePosition pos = new ParsePosition(0);
             SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd | HH:mm");
             Date stringDate = simpledateformat.parse(date, pos);
-            BaseFile baseFile=new BaseFile(name,array[0],stringDate.getTime(),Size,true);
+            BaseFile baseFile=new BaseFile(name, array[0], stringDate.getTime(), Size, true);
             baseFile.setLink(link);
             return baseFile;
-        }else {
-            BaseFile baseFile= new BaseFile(name,array[0],new File("/").lastModified(),Size,true);
+        } else {
+            BaseFile baseFile= new BaseFile(name, array[0], new File("/").lastModified(), Size, true);
             baseFile.setLink(link);
             return baseFile;
         }
     }
 
-    private static int getLinkPosition(String[] array){
-        for(int i=0;i<array.length;i++){
-            if(array[i].contains("->"))return i;
+    private static int getLinkPosition(String[] array) {
+        for (int i=0;i < array.length;i++) {
+            if (array[i].contains("->"))return i;
         }
         return  0;
     }
 
-    private static int getColonPosition(String[] array){
-        for(int i=0;i<array.length;i++){
-            if(array[i].contains(":"))return i;
+    private static int getColonPosition(String[] array) {
+        for (int i=0;i < array.length;i++) {
+            if (array[i].contains(":"))return i;
         }
         return  -1;
     }
@@ -980,41 +983,41 @@ public class Futils {
         int owner = 0;// TODO: 17/5/2017 many variables are unused
         if (permLine.charAt(1) == 'r') {
             owner += READ;
-            read[0]=true;
+            read[0] = true;
         }
         if (permLine.charAt(2) == 'w') {
             owner += WRITE;
-            write[0]=true;
+            write[0] = true;
         }
         if (permLine.charAt(3) == 'x') {
             owner += EXECUTE;
-            execute[0]=true;
+            execute[0] = true;
         }
         int group = 0;
         if (permLine.charAt(4) == 'r') {
             group += READ;
-            read[1]=true;
+            read[1] = true;
         }
         if (permLine.charAt(5) == 'w') {
             group += WRITE;
-            write[1]=true;
+            write[1] = true;
         }
         if (permLine.charAt(6) == 'x') {
             group += EXECUTE;
-            execute[1]=true;
+            execute[1] = true;
         }
         int world = 0;
         if (permLine.charAt(7) == 'r') {
             world += READ;
-            read[2]=true;
+            read[2] = true;
         }
         if (permLine.charAt(8) == 'w') {
             world += WRITE;
-            write[2]=true;
+            write[2] = true;
         }
         if (permLine.charAt(9) == 'x') {
             world += EXECUTE;
-            execute[2]=true;
+            execute[2] = true;
         }
         arrayList.add(read);
         arrayList.add(write);
@@ -1031,12 +1034,12 @@ public class Futils {
     public static boolean isPathAccesible(String dir, SharedPreferences pref) {
         File f = new File(dir);
         boolean showIfHidden = pref.getBoolean(Preffrag.PREFERENCE_SHOW_HIDDENFILES, false),
-                isDirSelfOrParent = dir.endsWith("/.") || dir.endsWith("/.."),
-                showIfRoot = pref.getBoolean(Preffrag.PREFERENCE_ROOTMODE, false);
+			isDirSelfOrParent = dir.endsWith("/.") || dir.endsWith("/.."),
+			showIfRoot = pref.getBoolean(Preffrag.PREFERENCE_ROOTMODE, false);
 
         return f.exists() && f.isDirectory()
-                && (!f.isHidden() || (showIfHidden && !isDirSelfOrParent))
-                && (!isRoot(dir) || showIfRoot);
+			&& (!f.isHidden() || (showIfHidden && !isDirSelfOrParent))
+			&& (!isRoot(dir) || showIfRoot);
 
         // TODO: 2/5/2017 use another system that doesn't create new object
     }

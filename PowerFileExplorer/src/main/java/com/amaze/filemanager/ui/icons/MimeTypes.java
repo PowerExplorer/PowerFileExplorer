@@ -88,8 +88,14 @@ public final class MimeTypes {
         MIME_TYPES.put("lrf", "application/octet-stream");
         MIME_TYPES.put("jar", "application/java-archive");
         MIME_TYPES.put("xz", "application/x-xz");
-        MIME_TYPES.put("Z", "application/x-compress");
-
+        MIME_TYPES.put("z", "application/x-compress");
+		MIME_TYPES.put("7z", "application/x-7z");
+		MIME_TYPES.put("rar", "application/x-rar-compressed");
+		MIME_TYPES.put("zip", "application/zip");
+		MIME_TYPES.put("tar", "application/x-tar");
+		MIME_TYPES.put("zpaq", "application/x-zpaq");
+		MIME_TYPES.put("lzh", "application/x-lzh");
+		
         MIME_TYPES.put("bat", "application/x-msdownload");
         MIME_TYPES.put("ksh", "text/plain");
         MIME_TYPES.put("sh", "application/x-sh");

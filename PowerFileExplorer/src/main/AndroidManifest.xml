@@ -217,7 +217,7 @@
                 <data android:mimeType="application/x-compressed"/>
                 <data android:mimeType="application/octet-stream"/>
                 <data android:mimeType="application/x-tar"/>
-
+				<data android:mimeType="application/x-zpaq"/>
                 <data android:mimeType="application/x-lzh"/>
 
                 <data android:pathPattern=".*\.zip"/>
@@ -237,7 +237,8 @@
                 <data android:pathPattern=".*\.tar.bz2"/>
 				<data android:pathPattern=".*\.html"/>
 				<data android:pathPattern=".*\.aze"/>
-					
+				<data android:pathPattern=".*\.zpaq"/>
+				
 				<data android:mimeType="application/pdf"/>
                 <data android:mimeType="application/vnd.ms-excel"/>
 				<data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>

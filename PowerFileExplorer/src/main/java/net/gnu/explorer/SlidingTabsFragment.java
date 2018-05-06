@@ -337,6 +337,20 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		return fragment;
 	}
 
+	Fragment addZip(final Frag.TYPE t, final String path) {
+
+		final Frag fragment = new ZipFragment();
+		fragment.type = Frag.TYPE.ZIP;
+		fragment.currentPathTitle = path;
+		final Bundle bundle = new Bundle();
+		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, path);
+		fragment.setArguments(bundle);
+
+		fragment.slidingTabsFragment = this;
+		mTabs.add(new PagerItem(fragment));
+		return fragment;
+	}
+
 	public boolean circular() {
 		return true;
 	}
