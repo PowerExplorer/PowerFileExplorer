@@ -29,6 +29,7 @@ import android.graphics.PorterDuff;
 import android.app.Activity;
 import net.gnu.util.Util;
 import com.amaze.filemanager.utils.OpenMode;
+import android.widget.ImageView;
 
 public class SlidingTabsFragment extends Fragment implements TabAction {
 
@@ -199,7 +200,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					if (activ instanceof ExplorerActivity) {
 						final ExplorerActivity activity = (ExplorerActivity) activ;
 						if (createFragment.type == Frag.TYPE.EXPLORER) {
-							activity.dir = ((ContentFragment) createFragment).dirTemp4Search;
+							activity.dir = ((ContentFragment) createFragment).currentPathTitle;
 
 							if (side == Side.LEFT) {
 								activity.curContentFrag = (ContentFragment) createFragment;
@@ -227,7 +228,8 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						if (createFragment instanceof FileFrag) {
 							FileFrag fileFrag = ((FileFrag)createFragment);
 							if (fileFrag.selectedInList1.size() == 0 && 
-								(((fileFrag instanceof ContentFragment) && activity.COPY_PATH == null && activity.MOVE_PATH == null) 
+								(((fileFrag instanceof ContentFragment) && activity.COPY_PATH == null && activity.MOVE_PATH == null
+								&& activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null) 
 								|| (!(fileFrag instanceof ContentFragment)))) {
 								if (fileFrag.commands.getVisibility() == View.VISIBLE) {
 									fileFrag.horizontalDivider6.setVisibility(View.GONE);
@@ -235,13 +237,54 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 									fileFrag.commands.setVisibility(View.GONE);
 								}
 							} else {
-								fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-								fileFrag.commands.setVisibility(View.VISIBLE);
-								fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+								if (fileFrag.commands.getVisibility() == View.GONE) {
+									fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+									fileFrag.commands.setVisibility(View.VISIBLE);
+									fileFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+								}
 								if (fileFrag instanceof ContentFragment) {
 									((ContentFragment)createFragment).updateDelPaste();
 								}
 							}
+							if (fileFrag instanceof ContentFragment) {
+								if (activity.balance == 0) {
+									if (side == SlidingTabsFragment.Side.LEFT && !activity.swap
+										|| side == SlidingTabsFragment.Side.RIGHT && activity.swap) {
+										((ContentFragment)fileFrag).moreLeft.setVisibility(View.VISIBLE);
+										((ContentFragment)fileFrag).moreRight.setVisibility(View.GONE);
+									} else {
+										((ContentFragment)fileFrag).moreLeft.setVisibility(View.GONE);
+										((ContentFragment)fileFrag).moreRight.setVisibility(View.VISIBLE);
+									}
+
+									View findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.book);
+									findViewById.setVisibility(View.GONE);
+
+									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
+									findViewById.setVisibility(View.GONE);
+
+//			findViewById = ((ContentFragment)fileFrag).findViewById(R.id.encrypts);
+//			findViewById.setVisibility(View.GONE);
+
+									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
+									findViewById.setVisibility(View.GONE);
+								} else {
+									((ContentFragment)fileFrag).moreLeft.setVisibility(View.GONE);
+									((ContentFragment)fileFrag).moreRight.setVisibility(View.GONE);
+
+									View findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.book);
+									findViewById.setVisibility(View.VISIBLE);
+
+									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
+									findViewById.setVisibility(View.VISIBLE);
+
+//			findViewById = ((ContentFragment)fileFrag).findViewById(R.id.encrypts);
+//			findViewById.setVisibility(View.VISIBLE);
+
+									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
+									findViewById.setVisibility(View.VISIBLE);
+								}
+							} 
 						} 
 					} else {
 
@@ -285,7 +328,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		File f;
 		Bundle bundle;
 		ContentFragment contentFrag;
-		
+
 		bundle = new Bundle();
 		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, prevPath);//EXTRA_DIR_PATH
 		bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
@@ -296,7 +339,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		contentFrag.setArguments(bundle);
 		contentFrag.slidingTabsFragment = this;
 		mTabs.add(new PagerItem(contentFrag));
-		
+
 		for (int i = fs.length - 1; i >= 0; i--) {
 			f = fs[i];
 			Log.d(TAG, f + ".");
@@ -634,7 +677,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			return pagerAdapter.getItem(0).type == t ? 0 : -1;
 		}
 	}
-	
+
 	void updateSpan() {
 		Log.d(TAG, "updateSpan ");
 		for (PagerItem pi : mTabs) {
@@ -656,10 +699,15 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					final int no = frag.commands.getChildCount();
 					Button b;
 					for (int i = 0; i < no; i++) {
-						b = (Button) frag.commands.getChildAt(i);
-						b.setTextColor(ExplorerActivity.TEXT_COLOR);
-						b.getCompoundDrawables()[1].setAlpha(0xff);
-						b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+						final View childAt = frag.commands.getChildAt(i);
+						if (childAt instanceof Button) {
+							b = (Button) childAt;
+							b.setTextColor(ExplorerActivity.TEXT_COLOR);
+							b.getCompoundDrawables()[1].setAlpha(0xff);
+							b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+						} else {
+							((ImageView)childAt).setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+						}
 					}
 				}
 				if (changeTime && pi.frag.getContext() != null) {

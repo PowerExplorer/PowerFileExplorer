@@ -366,7 +366,7 @@ public class GeneralDialogCreation {
 						};
 						final StringBuilder sb = new StringBuilder();
 						for (ZipEntry ze : itemsToDelete) {
-							sb.append(ze.path).append("|");
+							sb.append(ze.path).append("\n");
 						}
 						new DecompressTask(mainActivity,
 										   zip.file.getAbsolutePath(),
@@ -376,7 +376,7 @@ public class GeneralDialogCreation {
 										   "",
 										   "",
 										   0,
-										   "x",
+										   "d",
 										   r).execute();
 					} else 
 						Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();

@@ -273,15 +273,15 @@
 		/>
 		<ImageButton
 			android:layout_width="54dp"
-			android:layout_height="match_parent"
+			android:layout_height="24dp"
 			android:id="@+id/icons"
 			android:background="@drawable/ripple"
 			android:layout_centerVertical="true"
 			android:paddingLeft="0dp"
 			android:paddingRight="0dp"
-			android:paddingTop="2dp"
-			android:paddingBottom="2dp"
-
+			android:paddingTop="0dp"
+			android:paddingBottom="0dp"
+			android:scaleType="fitCenter"
 			android:layout_gravity="center"
 			android:src="@drawable/ic_more_vert_black_48dp"/>
 
@@ -444,22 +444,16 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal">
 
-			<Button
+			<ImageView
 				android:id="@+id/moreLeft"
 				android:layout_width="32dp"
 				android:layout_height="56dp"
 				android:layout_gravity="center"
-				android:text="More"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:src="@drawable/ic_more_vert_black_48dp"
 				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				
-				android:paddingBottom="0dp"
-				android:paddingTop="10dp"
-				android:drawablePadding="2dp"
+				android:layout_weight="1"
 				android:layout_alignBaseline="@+id/compresss"
 			/>
 		
@@ -475,7 +469,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				
+				android:layout_weight="2"
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:layout_alignBaseline="@+id/compresss"
@@ -493,7 +487,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				
+				android:layout_weight="2"
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:layout_alignBaseline="@+id/compresss"
@@ -511,7 +505,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				
+				android:layout_weight="2"
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:layout_alignBaseline="@+id/compresss"
@@ -529,7 +523,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				
+				android:layout_weight="2"
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:layout_alignBaseline="@+id/compresss"
@@ -547,7 +541,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				
+				android:layout_weight="2"
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
@@ -565,7 +559,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				
+				android:layout_weight="2"
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
@@ -577,6 +571,7 @@
 				android:clickable="true"
 				android:layout_width="64dp"
 				android:layout_height="56dp"
+				android:layout_weight="2"
 				android:text="Hide"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
@@ -595,6 +590,7 @@
 				android:clickable="true"
 				android:layout_width="64dp"
 				android:layout_height="56dp"
+				android:layout_weight="2"
 				android:text="Create Shortcut"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
@@ -613,6 +609,7 @@
 				android:clickable="true"
 				android:layout_width="64dp"
 				android:layout_height="56dp"
+				android:layout_weight="2"
 				android:text="Bookmark"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
@@ -656,29 +653,22 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				
+				android:layout_weight="2"
 				android:paddingBottom="0dp"
 				android:paddingTop="6dp"
 				android:drawablePadding="0dp"
 				android:layout_alignBaseline="@+id/compresss"
 			/>
 
-			<Button
+			<ImageView
 				android:id="@+id/moreRight"
 				android:layout_width="32dp"
 				android:layout_height="56dp"
 				android:layout_gravity="center"
-				android:text="More"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:src="@drawable/ic_more_vert_black_48dp"
 				android:gravity="center"
-				android:textSize="10sp"
-				android:textStyle="normal"
-				
-				android:paddingBottom="0dp"
-				android:paddingTop="10dp"
-				android:drawablePadding="2dp"
 				android:layout_alignBaseline="@+id/compresss"
 			/>
 

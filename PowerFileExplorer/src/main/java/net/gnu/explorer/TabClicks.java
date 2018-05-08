@@ -4,6 +4,7 @@ import android.content.*;
 import android.view.*;
 import android.widget.*;
 import android.util.*;
+import net.gnu.texteditor.TextEditorActivity;
 
 public class TabClicks {
 
@@ -22,7 +23,7 @@ public class TabClicks {
 		}
 		final PopupMenu popup = new PopupMenu(ctx, v);
 		final Frag.TYPE type = fra.type;
-		if (type == Frag.TYPE.TEXT) {
+		if (type == Frag.TYPE.TEXT && fra.fragActivity instanceof TextEditorActivity) {
 			popup.getMenuInflater().inflate(R.menu.newtexttab, popup.getMenu());
 		} else {
 			popup.getMenuInflater().inflate(R.menu.tabs_popup, popup.getMenu());
@@ -35,7 +36,7 @@ public class TabClicks {
 			menu.findItem(R.id.closeOthers).setVisible(false);
 		}
 
-		if (type == Frag.TYPE.TEXT) {
+		if (type == Frag.TYPE.TEXT && fra.fragActivity instanceof TextEditorActivity) {
 			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(final MenuItem item) {
 						Log.d(TAG, "clicked " + item);

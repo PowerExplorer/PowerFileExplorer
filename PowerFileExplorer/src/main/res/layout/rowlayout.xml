@@ -101,7 +101,7 @@
         android:layout_marginStart="16dp"
         android:padding="8dp"
         android:clickable="true"
-        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"/>
+        android:src="@drawable/ic_more_vert_black_48dp"/>
 
     <RelativeLayout
         android:layout_toRightOf="@id/icon_frame_parent"

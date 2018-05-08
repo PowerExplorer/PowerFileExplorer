@@ -37,36 +37,12 @@
 		android:showAsAction="always"
 		android:icon="@drawable/ic_action_share_white"/>
 
-	<item android:id="@+id/addshortcut"
-		android:title="Create Shortcut"
-		android:showAsAction="always"
-		android:icon="@drawable/ic_action_create_shortcut"/>
-
-	<item android:id="@+id/book"
-		android:title="Bookmark"
-		android:showAsAction="always"
-		android:icon="@drawable/add_to_favorites_48"/>
-
-	<item android:id="@+id/hide"
-		android:icon="@drawable/ic_visibility_off_black_48dp"
-		android:showAsAction="always"
-		android:title="Hide"/>
-
-    <item android:id="@+id/scan"
-		android:title="Scan"
-		android:showAsAction="always"
-		android:icon="@drawable/ic_menu_scan_include"/>
-	
-	<item android:id="@+id/encrypt"
-		android:title="Encrypt"
-		android:showAsAction="always"
-		android:icon="@drawable/ic_material_dialog_fs_locked"/>
 	
 	<item android:id="@+id/info"
 		android:title="Information"
 		android:showAsAction="always"
 		android:icon="@drawable/ic_action_info"/>
-	
+
 	<item android:id="@+id/name"
 		android:title="Copy Name" />
 

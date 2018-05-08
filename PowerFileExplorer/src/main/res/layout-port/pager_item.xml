@@ -284,15 +284,16 @@
 		/>
 		<ImageButton
 			android:layout_width="54dp"
-			android:layout_height="match_parent"
+			android:layout_height="24dp"
 			android:id="@+id/icons"
 			android:background="@drawable/ripple"
 			android:layout_centerVertical="true"
 			android:paddingLeft="0dp"
 			android:paddingRight="0dp"
-			android:paddingTop="2dp"
-			android:paddingBottom="2dp"
+			android:paddingTop="0dp"
+			android:paddingBottom="0dp"
 			android:layout_gravity="center"
+			android:scaleType="fitCenter"
 			android:src="@drawable/ic_more_vert_black_48dp"/>
 
 		<TextView
@@ -460,15 +461,15 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
-			<Button
+			<ImageView
 				android:id="@+id/moreLeft"
 				android:layout_width="32dp"
 				android:layout_height="56dp"
 				android:layout_gravity="center"
-				android:text="More"
+				android:text=""
 				android:singleLine="true"
 				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:src="@drawable/ic_more_vert_black_48dp"
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
@@ -676,15 +677,15 @@
 				android:drawablePadding="0dp"
 			/>
 
-			<Button
+			<ImageView
 				android:id="@+id/moreRight"
 				android:layout_width="32dp"
 				android:layout_height="56dp"
 				android:layout_gravity="center"
-				android:text="More"
+				android:text=""
 				android:singleLine="true"
 				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_more_vert_black_48dp"
+				android:src="@drawable/ic_more_vert_black_48dp"
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"

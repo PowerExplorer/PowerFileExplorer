@@ -524,10 +524,10 @@ public final class Andro7za {
 				bw.flush();
 				bw.close();
 			}
+			String includesTmp2 = Util.isEmpty(includes) ? "" :  " -ir@" + includesTmp + " ";
+			otherArgs.add(includesTmp2);
 		}
-		String includesTmp2 = Util.isEmpty(includes) ? "" :  " -xr@" + includesTmp + " ";
-		otherArgs.add(includesTmp2);
-
+		
 		String excludesTmp = "";
 		if (excludes != null && excludes.trim().length() > 0) {
 			excludesTmp = ExplorerApplication.PRIVATE_PATH + zArchive.substring(zArchive.lastIndexOf("/")) + ".exc." + System.currentTimeMillis();BufferedWriter bw = new BufferedWriter(new FileWriter(excludesTmp));
@@ -541,10 +541,10 @@ public final class Andro7za {
 				bw.flush();
 				bw.close();
 			}
+			String excludesTmp2 = Util.isEmpty(excludes) ? "" :  " -xr@" + excludesTmp + " ";
+			otherArgs.add(excludesTmp2);
 		}
-		String excludesTmp2 = Util.isEmpty(excludes) ? "" :  " -xr@" + excludesTmp + " ";
-		otherArgs.add(excludesTmp2);
-
+		
 		int ret = 0;
 		
 		otherArgs.add("-bb");
@@ -635,15 +635,15 @@ public final class Andro7za {
 						ze = new ZipEntry(null, 
 										  path,
 										  true,
-										  Integer.valueOf(length.length() == 0 ? "0" : length).intValue(),
-										  Integer.valueOf(zipLength.length() == 0 ? "0" : zipLength).intValue(),
+										  Integer.valueOf(length.length() == 0 ? "-1" : length).intValue(),
+										  Integer.valueOf(zipLength.length() == 0 ? "-1" : zipLength).intValue(),
 										  cal.getTimeInMillis());
 					} else {
 						ze = new ZipEntry(null, 
 										  path,
 										  false,
-										  Integer.valueOf(length.length() == 0 ? "0" : length).intValue(),
-										  Integer.valueOf(zipLength.length() == 0 ? "0" : zipLength).intValue(),
+										  Integer.valueOf(length.length() == 0 ? "-1" : length).intValue(),
+										  Integer.valueOf(zipLength.length() == 0 ? "-1" : zipLength).intValue(),
 										  cal.getTimeInMillis());
 					}
 					//Log.d(TAG, "ze.getParentPath() " + ze.getParentPath());
@@ -668,7 +668,7 @@ public final class Andro7za {
 			for (ZipEntry ze1 : values) {
 				//Log.d(TAG, zip.entries.get(ze.parentPath) + ".");
 				if (!"/".equals(ze1.parentPath) && zip.entries.get(ze1.parentPath) == null) {
-					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, 0, 0, 0);
+					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, -1, -1, 0);
 					valuesNew.add(zipEntry);
 					zip.entries.put(ze1.parentPath, zipEntry);
 				}

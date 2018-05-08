@@ -92,6 +92,7 @@ import android.text.format.Formatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Comparator;
+import net.gnu.p7zip.DecompressTask;
 
 public class ContentFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -129,7 +130,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	private FileObserver mFileObserver;
 	private Drawable drawableDelete;
 	private Drawable drawablePaste;
-	String dirTemp4Search = "";
+	View moreLeft;
+	View moreRight;
 	public boolean selection, results = false, SHOW_HIDDEN, CIRCULAR_IMAGES, SHOW_PERMISSIONS, SHOW_SIZE, SHOW_LAST_MODIFIED;
 	String suffix = "*"; // "*" : files + folders,  "" only folder, ".*" only file "; *" split pattern
 	String mimes = "*/*";
@@ -193,10 +195,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	@Override
 	public void clone(final Frag frag, final boolean fake) {
 		final ContentFragment contentFrag = (ContentFragment) frag;
-		//Log.i(TAG, "clone " + frag + ", " + contentFrag.currentPathTitle + ", " + contentFrag.dirTemp4Search + ", listView " + listView + ", srcAdapter " + srcAdapter + ", gridLayoutManager " + gridLayoutManager);
+		//Log.i(TAG, "clone " + frag + ", " + contentFrag.currentPathTitle + ", " + contentFrag.currentPathTitle + ", listView " + listView + ", srcAdapter " + srcAdapter + ", gridLayoutManager " + gridLayoutManager);
 		type = contentFrag.type;
-		currentPathTitle = contentFrag.dirTemp4Search;
-		dirTemp4Search = contentFrag.dirTemp4Search;
+		currentPathTitle = contentFrag.currentPathTitle;
 		
 		suffix = contentFrag.suffix;
 		String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
@@ -339,9 +340,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			deletePastesBtn.setOnClickListener(this);
 			view.findViewById(R.id.renames).setOnClickListener(this);
 			view.findViewById(R.id.shares).setOnClickListener(this);
-			final View moreLeft = view.findViewById(R.id.moreLeft);
+			moreLeft = view.findViewById(R.id.moreLeft);
 			moreLeft.setOnClickListener(this);
-			final View moreRight = view.findViewById(R.id.moreRight);
+			moreRight = view.findViewById(R.id.moreRight);
 			moreRight.setOnClickListener(this);
 			if (activity.balance != 0) {
 				moreLeft.setVisibility(View.GONE);
@@ -359,10 +360,13 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				findViewById = view.findViewById(R.id.shortcuts);
 				findViewById.setVisibility(View.VISIBLE);
 			} else {
-				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-					moreLeft.setVisibility(View.GONE);
-				} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && !activity.swap
+					|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.swap) {
 					moreRight.setVisibility(View.GONE);
+					moreLeft.setVisibility(View.VISIBLE);
+				} else {
+					moreLeft.setVisibility(View.GONE);
+					moreRight.setVisibility(View.VISIBLE);
 				}
 			}
 			view.findViewById(R.id.book).setOnClickListener(this);
@@ -499,7 +503,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				});
 
 			if (args != null) {
-				if (currentPathTitle == null) {//"".equals(currentPathTitle) || 
+				if (currentPathTitle.length() == 0) {//"".equals(currentPathTitle) || 
 					currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH);
 				} else {
 					args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
@@ -570,7 +574,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
 				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
 				multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-				dirTemp4Search = (String) savedInstanceState.get("dirTemp4Search");
+				currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
 
 				allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
 				setRecyclerViewLayoutManager();
@@ -593,7 +597,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					} else if (searchMode) {
 						searchMode = !searchMode;
 						manageSearchUI(searchMode);
-						changeDir(dirTemp4Search, false);
+						changeDir(currentPathTitle, false);
 					}
 				}
 			}
@@ -611,7 +615,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		if (s.length() > 0) {
 			textSearch.afterTextChanged(s);
 		} else if (type == Frag.TYPE.EXPLORER) {
-        	changeDir(dirTemp4Search, false);
+        	changeDir(currentPathTitle, false);
 		} else {
 			LayoutElement f;
 			boolean changed = false;
@@ -669,9 +673,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //		outState.putStringArrayList("dataSourceL1", Util.collectionFile2StringArrayList(dataSourceL1));
 //		outState.putBoolean("searchMode", searchMode);
 //		outState.putString("searchVal", quicksearch.getText().toString());
-//		outState.putString("dirTemp4Search", dirTemp4Search);
+//		outState.putString("currentPathTitle", currentPathTitle);
 		outState.putBoolean("allCbx.isEnabled", allCbx.isEnabled());
-		outState.putString("dirTemp4Search", dirTemp4Search);
+		outState.putString("currentPathTitle", currentPathTitle);
 		
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
@@ -700,7 +704,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		
 		outState.put("searchMode", searchMode);
 		outState.put("searchVal", searchET.getText().toString());
-		outState.put("dirTemp4Search", dirTemp4Search);
+		outState.put("currentPathTitle", currentPathTitle);
 		outState.put("allCbx.isEnabled", allCbx.isEnabled());
 
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
@@ -729,7 +733,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 		searchMode = savedInstanceState.get("searchMode");
 		searchVal = (String) savedInstanceState.get("searchVal");
-		dirTemp4Search = (String) savedInstanceState.get("dirTemp4Search");
+		currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
 		
 		allCbx.setEnabled(savedInstanceState.get("allCbx.isEnabled"));
 		srcAdapter.notifyDataSetChanged();
@@ -737,7 +741,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		setRecyclerViewLayoutManager();
 		gridLayoutManager.scrollToPositionWithOffset(savedInstanceState.get("index"), savedInstanceState.get("top"));
 
-		updateDir(dirTemp4Search);
+		updateDir(currentPathTitle);
 	}
 
 	boolean isEncryptOpen = false;       // do we have to open a file when service is begin destroyed
@@ -839,7 +843,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			if (currentPathTitle != null) {
 				changeDir(currentPathTitle, false);
 			} else {
-				updateDir(dirTemp4Search);
+				updateDir(currentPathTitle);
 			}
 		}
     }
@@ -1004,7 +1008,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume index " + activity.slideFrag.indexOfMTabs(this) + ", " + /*activity.slideFrag2.indexOfMTabs(this) + ", " + */ slidingTabsFragment.side + ", " + type + ", fake=" + fake + ", " + currentPathTitle + ", dirTemp4Search=" + dirTemp4Search);
+        Log.d(TAG, "onResume index " + activity.slideFrag.indexOfMTabs(this) + ", " + /*activity.slideFrag2.indexOfMTabs(this) + ", " + */ slidingTabsFragment.side + ", " + type + ", fake=" + fake + ", " + currentPathTitle + ", currentPathTitle=" + currentPathTitle);
 		super.onResume();
 		fragActivity.registerReceiver(receiver2, new IntentFilter("loadlist"));
 
@@ -1016,7 +1020,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			if (mFileObserver != null) {
 				mFileObserver.stopWatching();
 			}
-			mFileObserver = createFileObserver(dirTemp4Search);
+			mFileObserver = createFileObserver(currentPathTitle);
 			mFileObserver.startWatching();
 			
 			activity = (ExplorerActivity)getActivity();
@@ -1024,7 +1028,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			selectionStatusTV.setText(selectedInList1.size() 
 									 + "/" + dataSourceL1.size());
 
-			final File curDir = new File(dirTemp4Search);//currentPathTitle == null ? dirTemp4Search : currentPathTitle);
+			final File curDir = new File(currentPathTitle);//currentPathTitle == null ? currentPathTitle : currentPathTitle);
 			rightStatus.setText(
 				"Free " + Util.nf.format(curDir.getFreeSpace() / (1 << 20))
 				+ " MiB. Used " + Util.nf.format((curDir.getTotalSpace() - curDir.getFreeSpace()) / (1 << 20))
@@ -1096,7 +1100,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		//Log.d(TAG, "getTitle() openMode " + openMode + ", " + currentPathTitle + ", CUSTOM " + openMode.equals(openMode.CUSTOM) + ", " + this);
 		if (type == Frag.TYPE.EXPLORER) {
 			if (currentPathTitle == null) {
-				return new File(dirTemp4Search).getName();
+				return "";//new File("").getName();
 			} else if ("/".equals(currentPathTitle)) {
 				return "/";
 			} else if (openMode.equals(openMode.CUSTOM)) {
@@ -1712,7 +1716,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					copies.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i2))
 				}
 				activity.COPY_PATH = copies;
-
+				
 				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {//type == -1
 					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
@@ -1732,7 +1736,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					copie.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i3))
 				}
 				activity.MOVE_PATH = copie;
-
+				
 				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
 					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
@@ -1752,12 +1756,44 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 															activity, selectedInList1, activity.getAppTheme());
 
 				} else {
-					String path = currentPathTitle;
-					ArrayList<BaseFile> arrayList = activity.COPY_PATH != null ? activity.COPY_PATH: activity.MOVE_PATH;
-					boolean move = activity.MOVE_PATH != null;
-					new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode)
-						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
-					activity.MOVE_PATH = null;
+					if (activity.MOVE_PATH != null || activity.COPY_PATH != null) {
+						String path = currentPathTitle;
+						ArrayList<BaseFile> arrayList = activity.COPY_PATH != null ? activity.COPY_PATH: activity.MOVE_PATH;
+						boolean move = activity.MOVE_PATH != null;
+						new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode)
+							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
+						activity.MOVE_PATH = null;
+					} else if (activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {
+						final List<String> stList = activity.EXTRACT_PATH != null ? activity.EXTRACT_PATH: activity.EXTRACT_MOVE_PATH;
+						final Runnable r = new Runnable() {
+							@Override
+							public void run() {
+								final ArrayList<BaseFile> arrayList = new ArrayList<>(stList.size());
+								for (String s : stList) {
+									arrayList.add(new BaseFile(ExplorerApplication.PRIVATE_PATH + (s.startsWith("/") ? "" : "/") + s));
+									Log.d(TAG, "EXTRACT_PATH " + new File(ExplorerApplication.PRIVATE_PATH + (s.startsWith("/") ? "" : "/") + s).length());
+								}
+								final boolean move = activity.EXTRACT_MOVE_PATH != null;
+								new CopyFileCheck(ContentFragment.this, currentPathTitle, move, activity, ThemedActivity.rootMode)
+									.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
+								activity.EXTRACT_MOVE_PATH = null;
+							}
+						};
+						final StringBuilder sb = new StringBuilder();
+						for (String le : stList) {
+							sb.append(le).append("\n");
+						}
+						new DecompressTask(fragActivity,
+										   activity.zip.file.getAbsolutePath(),
+										   ExplorerApplication.PRIVATE_PATH,
+										   sb.toString(),
+										   "",
+										   "",
+										   "",
+										   0,
+										   "x",
+										   r).execute();
+					}
 				}
 				break;
 //			case R.id.extract:
@@ -1815,7 +1851,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 					}
 				}
-
+				
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 
 						@Override
@@ -2060,7 +2096,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	boolean back() {
 		Map<String, Object> softBundle;
 		//Log.d(TAG, "back " + backStack.size());
-		if (backStack.size() > 1 && (softBundle = backStack.pop()) != null && softBundle.get("dataSourceL1") != null) {
+		if (backStack.size() >= 1 && (softBundle = backStack.pop()) != null && softBundle.get("dataSourceL1") != null) {
 			//Log.d(TAG, "back " + softBundle);
 			reload(softBundle);
 			return true;
@@ -2087,8 +2123,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			if (type == Frag.TYPE.SELECTION) {
 				searchET.setHint("Search");
 			} else {
-				searchET.setHint("Search " + new File(dirTemp4Search).getName());//((currentPathTitle != null) ? new File(currentPathTitle).getName() : new File(dirTemp4Search).getName()));
-				currentPathTitle = null;
+				searchET.setHint("Search " + new File(currentPathTitle).getName());
 			}
 			searchET.requestFocus();
 			//imm.showSoftInput(quicksearch, InputMethodManager.SHOW_FORCED);
@@ -2105,7 +2140,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				dataSourceL1.addAll(tempOriDataSourceL1);
 			} else {
 				topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
-				currentPathTitle = dirTemp4Search;
+				currentPathTitle = currentPathTitle;
 				updateList();
 			}
 		}
@@ -2329,7 +2364,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						}
 
 						final String curPath = curDir.getAbsolutePath();
-						if (!dirTemp4Search.equals(curPath)) {
+						if (!currentPathTitle.equals(curPath)) {
 							if (backStack.size() > ExplorerActivity.NUM_BACK) {
 								backStack.remove(0);
 							}
@@ -2350,7 +2385,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							tempPreviewL2 = null;
 						}
 						currentPathTitle = curPath;
-						dirTemp4Search = currentPathTitle;
+						currentPathTitle = currentPathTitle;
 						//Log.d(TAG, Util.collectionToString(history, true, "\n"));
 						
 						if (mFileObserver != null) {
@@ -2726,11 +2761,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			if (!mSwipeRefreshLayout.isRefreshing()) {
 				mSwipeRefreshLayout.setRefreshing(true);
 			}
-//			if (type == Frag.TYPE.SELECTION) {
-//				searchMode = true;
-//			} else {
-//				setSearchMode(true);
-//			}
 			searchVal = searchET.getText().toString();
 			showToast("Searching...");
 			dataSourceL1.clear();
@@ -2739,14 +2769,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 		@Override
 		protected ArrayList<LayoutElement> doInBackground(String... params) {
-			Log.d("SearchFileNameTask", "dirTemp4Search " + dirTemp4Search);
+			Log.d("SearchFileNameTask", "currentPathTitle " + currentPathTitle);
 			final ArrayList<LayoutElement> tempAppList = new ArrayList<>();
 			if (type == Frag.TYPE.SELECTION) {
 				final Collection<LayoutElement> c = FileUtil.getFilesBy(tempOriDataSourceL1, params[0], true);
 				//Log.d(TAG, "getFilesBy " + Util.collectionToString(c, true, "\n"));
 				tempAppList.addAll(c);
 			} else {
-				File file = new File(dirTemp4Search);
+				File file = new File(currentPathTitle);
 
 				if (file.exists()) {
 					Collection<File> c = FileUtil.getFilesBy(file.listFiles(), params[0], true);
@@ -2758,7 +2788,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					// Log.d("dataSourceL1 new task",
 					// Util.collectionToString(dataSourceL1, true, "\n"));
 				} else {
-					showToast(dirTemp4Search + " is not existed");
+					showToast(currentPathTitle + " is not existed");
 				}
 			}
 			Collections.sort(tempAppList, fileListSorter);
@@ -2776,7 +2806,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			srcAdapter.notifyDataSetChanged();
 			selectionStatusTV.setText(selectedInList1.size() 
 									 + "/" + dataSourceL1.size());
-			File file = new File(dirTemp4Search);
+			File file = new File(currentPathTitle);
 			rightStatus.setText(
 				"Free " + Util.nf.format(file.getFreeSpace() / (1 << 20))
 				+ " MiB. Used " + Util.nf.format((file.getTotalSpace() - file.getFreeSpace()) / (1 << 20))
@@ -2808,24 +2838,28 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			menu.findItem(R.id.hide).setVisible(false);
 			menu.findItem(R.id.swap).setVisible(false);
 			menu.findItem(R.id.biggerequalpanel).setVisible(false);
+			menu.findItem(R.id.sameFolder).setVisible(false);
+			menu.findItem(R.id.hideToolbar).setVisible(false);
+		} else {
+			menu.findItem(R.id.sameFolder).setVisible(true);
 		}
 		MenuItem mi = menu.findItem(R.id.clearSelection);
 		if (selectedInList1.size() == 0) {
-			mi.setEnabled(false);
+			mi.setVisible(false);
 		} else {
-			mi.setEnabled(true);
+			mi.setVisible(true);
 		}
 		mi = menu.findItem(R.id.rangeSelection);
 		if (selectedInList1.size() > 1) {
-			mi.setEnabled(true);
+			mi.setVisible(true);
 		} else {
-			mi.setEnabled(false);
+			mi.setVisible(false);
 		}
 		mi = menu.findItem(R.id.undoClearSelection);
 		if (tempSelectedInList1.size() > 0) {
-			mi.setEnabled(true);
+			mi.setVisible(true);
 		} else {
-			mi.setEnabled(false);
+			mi.setVisible(false);
 		}
         mi = menu.findItem(R.id.hide);
 		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.right.getVisibility() == View.VISIBLE
@@ -2836,16 +2870,19 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
         mi = menu.findItem(R.id.biggerequalpanel);
 		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
-			mi.setEnabled(false);
+			mi.setVisible(false);
 		} else {
-			mi.setEnabled(true);
+			mi.setVisible(true);
 			if (slidingTabsFragment.width <= 0) {
 				mi.setTitle("Wider panel");
 			} else {
 				mi.setTitle("2 panels equal");
 			}
 		}
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        if (activity.COPY_PATH == null && activity.MOVE_PATH == null && activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null) {
+			menu.findItem(R.id.hideToolbar).setVisible(false);
+		}
+		popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					Log.d(TAG, item.getTitle() + ".");
 					switch (item.getItemId())  {
@@ -2880,7 +2917,32 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							break;
 						case R.id.biggerequalpanel:
 							biggerequalpanel();
-
+							break;
+						case R.id.sameFolder:
+							if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+								changeDir(activity.curExplorerFrag.currentPathTitle, true);
+							} else {
+								changeDir(activity.curContentFrag.currentPathTitle, true);
+							}
+							break;
+						case R.id.hideToolbar:
+							activity.COPY_PATH = null;
+							activity.MOVE_PATH = null;
+							activity.EXTRACT_PATH = null;
+							activity.EXTRACT_MOVE_PATH = null;
+							if (activity.curExplorerFrag.selectedInList1.size() == 0 && activity.curExplorerFrag.commands.getVisibility() == View.VISIBLE) {
+								activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+								activity.curExplorerFrag.commands.setVisibility(View.GONE);
+								activity.curExplorerFrag.horizontalDivider6.setVisibility(View.GONE);
+								activity.curExplorerFrag.updateDelPaste();
+							} 
+							if (activity.curContentFrag.selectedInList1.size() == 0 && activity.curContentFrag.commands.getVisibility() == View.VISIBLE) {
+								activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+								activity.curContentFrag.commands.setVisibility(View.GONE);
+								activity.curContentFrag.horizontalDivider6.setVisibility(View.GONE);
+								activity.curContentFrag.updateDelPaste();
+							}
+							break;
 					}
 					return true;
 				}

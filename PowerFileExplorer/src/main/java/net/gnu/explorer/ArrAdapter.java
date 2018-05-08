@@ -768,18 +768,18 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 							// chọn mới đầu tiên
 							if (contentFrag.selectedInList1.size() == 0) {
 								contentFrag.selectedInList1.add(rowItem);
-								if (contentFrag.commands.getVisibility() == View.GONE) {
-									contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
-									contentFrag.commands.setVisibility(View.VISIBLE);
-									contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-								}
+//								if (contentFrag.commands.getVisibility() == View.GONE) {
+//									contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+//									contentFrag.commands.setVisibility(View.VISIBLE);
+//									contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+//								}
 							} else {
 								if (contentFrag.selectedInList1.remove(rowItem)) { // đã chọn
-									if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
-										contentFrag.horizontalDivider6.setVisibility(View.GONE);
-										contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
-										contentFrag.commands.setVisibility(View.GONE);
-									}
+//									if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+//										contentFrag.horizontalDivider6.setVisibility(View.GONE);
+//										contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+//										contentFrag.commands.setVisibility(View.GONE);
+//									}
 								} else { // chọn mới bỏ cũ
 									contentFrag.selectedInList1.clear();
 									contentFrag.selectedInList1.add(rowItem);
@@ -1163,22 +1163,20 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 					}
 				} else { // single file
 					if (f.isFile()) {
-						// chọn mới đầu tiên
 						if (contentFrag.selectedInList1.size() == 0) {
 							contentFrag.selectedInList1.add(rowItem);
-							if (contentFrag.commands.getVisibility() == View.GONE) {
-								contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
-								contentFrag.commands.setVisibility(View.VISIBLE);
-								contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-							}
+//							if (contentFrag.commands.getVisibility() == View.GONE) {
+//								contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.grow_from_bottom));
+//								contentFrag.commands.setVisibility(View.VISIBLE);
+//								contentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+//							}
 						} else {
 							if (contentFrag.selectedInList1.remove(rowItem)) {
-								// đã chọn
-								if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
-									contentFrag.horizontalDivider6.setVisibility(View.GONE);
-									contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
-									contentFrag.commands.setVisibility(View.GONE);
-								} 
+//								if (contentFrag.selectedInList1.size() == 0 && contentFrag.activity.COPY_PATH == null && contentFrag.activity.MOVE_PATH == null && contentFrag.commands.getVisibility() == View.VISIBLE) {
+//									contentFrag.horizontalDivider6.setVisibility(View.GONE);
+//									contentFrag.commands.setAnimation(AnimationUtils.loadAnimation(contentFrag.activity, R.anim.shrink_from_top));
+//									contentFrag.commands.setVisibility(View.GONE);
+//								} 
 							} else {
 								// chọn mới bỏ cũ
 								contentFrag.selectedInList1.clear();
@@ -1187,9 +1185,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 						}
 					} else { //", "Directory
 						contentFrag.selectedInList1.clear();
-						if (contentFrag.currentPathTitle == null || contentFrag.currentPathTitle.length() > 0) {
-							contentFrag.changeDir(contentFrag.dirTemp4Search, true);
-						}
+						contentFrag.changeDir(contentFrag.currentPathTitle, true);
 					}
 				}
 				notifyDataSetChanged();

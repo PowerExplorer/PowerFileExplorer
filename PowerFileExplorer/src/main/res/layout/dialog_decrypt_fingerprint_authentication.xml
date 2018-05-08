@@ -10,7 +10,7 @@
     <com.amaze.filemanager.ui.views.ThemedImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_fingerprint_grey600_36dp"
+        android:src="@drawable/ic_fingerprint_white_36dp"
         />
 
     <com.amaze.filemanager.ui.views.ThemedTextView

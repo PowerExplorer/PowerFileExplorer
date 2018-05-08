@@ -190,7 +190,7 @@ public class Zpaq {
 
 				path = matcher.group(6);
 				final String length = matcher.group(4).trim();
-				final long intValue = Long.valueOf(length.length() == 0 ? "0" : length).longValue();
+				final long intValue = Long.valueOf(length.length() == 0 ? "-1" : length).longValue();
 				zip.unZipSize += intValue;
 				if (path.endsWith("/")) {
 					ze = new ZipEntry(null, 
@@ -218,7 +218,7 @@ public class Zpaq {
 			for (ZipEntry ze1 : values) {
 				//Log.d(TAG, zip.entries.get(ze.parentPath) + ".");
 				if (!"/".equals(ze1.parentPath) && zip.entries.get(ze1.parentPath) == null) {
-					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, 0, 0, 0);
+					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, -1, -1, 0);
 					valuesNew.add(zipEntry);
 					zip.entries.put(ze1.parentPath, zipEntry);
 				}

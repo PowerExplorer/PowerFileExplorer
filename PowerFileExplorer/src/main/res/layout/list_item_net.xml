@@ -74,7 +74,7 @@
 				android:layout_gravity="center_vertical"
 				android:paddingLeft="15dp"
 				android:paddingRight="15dp"
-				android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"/>
+				android:src="@drawable/ic_more_vert_black_48dp"/>
 			
 			<!--TextView
 				android:id="@+id/more"

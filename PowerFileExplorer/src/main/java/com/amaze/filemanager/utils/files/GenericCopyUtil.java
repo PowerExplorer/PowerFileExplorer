@@ -125,7 +125,7 @@ public class GenericCopyUtil {
                     ContentResolver contentResolver = mContext.getContentResolver();
                     DocumentFile documentSourceFile = FileUtil.getDocumentFile(file,
 																			   mSourceFile.isDirectory(), mContext);
-
+					Log.d(TAG, file + ", " + mSourceFile);
                     bufferedInputStream = new BufferedInputStream(contentResolver
 																  .openInputStream(documentSourceFile.getUri()), DEFAULT_BUFFER_SIZE);
                 }

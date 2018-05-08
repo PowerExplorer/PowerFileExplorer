@@ -23,6 +23,9 @@ public class BaseFile extends HFile implements Parcelable {
         super(OpenMode.FILE, path);
         this.path = path;
 		f = new File(path);
+		this.date = f.lastModified();
+        this.size = f.length();
+        this.isDirectory = f.isDirectory();
     }
 
 //	@Override

@@ -21,7 +21,7 @@ import java.util.List;
 public class DataUtils {
 
     public static final int DELETE = 0, COPY = 1, MOVE = 2, NEW_FOLDER = 3,
-	RENAME = 4, NEW_FILE = 5, EXTRACT = 6, COMPRESS = 7, UPDATE_ZIP = 8, DELETE_IN_ZIP = 9, ADD_TO_ZIP = 10;
+	RENAME = 4, NEW_FILE = 5, EXTRACT = 6, COMPRESS = 7, UPDATE_ZIP = 8, DELETE_IN_ZIP = 9, ADD_TO_ZIP = 10, EXTRACT_COPY_FROM_ZIP = 11, EXTRACT_MOVE_FROM_ZIP = 12;
 
     private ArrayList<String> hiddenfiles = new ArrayList<>(), gridfiles = new ArrayList<>(),
 	listfiles = new ArrayList<>(), history = new ArrayList<>(), storages = new ArrayList<>();

@@ -1,36 +1,34 @@
 package net.gnu.explorer;
 
-import android.support.v7.widget.RecyclerView;
-import android.widget.TextView;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import java.util.ArrayList;
 import android.content.res.TypedArray;
-import android.view.ViewGroup;
-import android.view.LayoutInflater;
-import android.text.TextUtils;
-import net.gnu.util.Util;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
-import android.view.MenuInflater;
-import android.graphics.drawable.Drawable;
-import net.gnu.util.FileUtil;
-import android.graphics.PorterDuff;
-import android.view.MenuItem;
-import net.gnu.androidutil.AndroidUtils;
-import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
-import android.view.animation.AnimationUtils;
-import com.amaze.filemanager.ui.icons.MimeTypes;
-import android.util.Log;
-import java.io.File;
-import net.dongliu.apk.parser.ApkParser;
-import com.amaze.filemanager.utils.files.CryptUtil;
-import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
-import com.amaze.filemanager.utils.files.Futils;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.text.format.Formatter;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
+import com.amaze.filemanager.ui.icons.MimeTypes;
+import com.amaze.filemanager.utils.files.Futils;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import net.dongliu.apk.parser.ApkParser;
+import net.gnu.androidutil.AndroidUtils;
 import net.gnu.p7zip.DecompressTask;
+import net.gnu.util.FileUtil;
+import net.gnu.util.Util;
 
 public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder> {
 
@@ -221,6 +219,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 			final String[] list = le.list();
 			final int length = list == null ? 0 : list.length;
 			size.setText(Util.nf.format(length) + " item");
+			attr.setText("Folder");
 			if (viewType == 1) {
 				type.setText("Folder");
 				lastModified.setText(Util.dtf.format(le.lastModified));
@@ -254,7 +253,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 			if (id == R.id.more) {
 				final MenuBuilder menuBuilder = new MenuBuilder(zipFrag.activity);
 				final MenuInflater inflater = new MenuInflater(zipFrag.activity);
-				inflater.inflate(R.menu.file_commands, menuBuilder);
+				inflater.inflate(R.menu.zip_commands, menuBuilder);
 				final MenuPopupHelper optionsMenu = new MenuPopupHelper(zipFrag.activity , menuBuilder, zipFrag.searchButton);
 				optionsMenu.setForceShowIcon(true);
 
@@ -266,13 +265,6 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 					}
 				}
 
-				MenuItem findItem;
-				findItem = menuBuilder.findItem(R.id.encrypt);
-				findItem.setVisible(false);
-				//Log.d(TAG, rowItem.name + ", " + findItem + ", " + FileUtil.extractiblePattern.matcher(rowItem.name).matches());
-//				if (!rowItem.isDirectory && rowItem.name.toLowerCase().endsWith(CryptUtil.CRYPT_EXTENSION)) {
-//					findItem.setTitle("Decrypt");
-//				}
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
@@ -283,7 +275,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									activity.COPY_PATH = null;
 									activity.MOVE_PATH = null;
 									ArrayList<String> copies = new ArrayList<>(1);
-									copies.add(zipFrag.dirTemp4Search + "|" + rowItem.path);//dataSourceL1.get(plist.get(i2))
+									copies.add(rowItem.path);//zipFrag.currentPathTitle + "|" + 
 									activity.EXTRACT_PATH = copies;
 
 									if (activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
@@ -303,7 +295,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									activity.COPY_PATH = null;
 									activity.MOVE_PATH = null;
 									copies = new ArrayList<>(1);
-									copies.add(zipFrag.dirTemp4Search + "|" + rowItem.path);//dataSourceL1.get(plist.get(i2))
+									copies.add(zipFrag.currentPathTitle + "|" + rowItem.path);
 									activity.EXTRACT_MOVE_PATH = copies;
 
 									if (activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
@@ -364,7 +356,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									extractZe(rowItem, r);
 									break;
 								case R.id.extract:
-									activity.decompress(zipFrag.dirTemp4Search, new File(zipFrag.dirTemp4Search).getParent(), rowItem.path, true);
+									activity.decompress(zipFrag.currentPathTitle, new File(zipFrag.currentPathTitle).getParent(), rowItem.path, true);
 									break;
 							}
 
@@ -411,15 +403,15 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									zFrag.changeDir(rowItem.path, true, null);
 								}
 							};
-							zFrag.load(zipFrag.dirTemp4Search, r);
+							zFrag.load(zipFrag.currentPathTitle, r);
 							slidingTabsFragment.setCurrentItem(tabIndex2, true);
 						} else {
-							slidingTabsFragment.addTab(Frag.TYPE.ZIP, zipFrag.dirTemp4Search);
+							slidingTabsFragment.addTab(Frag.TYPE.ZIP, zipFrag.currentPathTitle);
 							zipFrag.listView.postDelayed(new Runnable() {
 									@Override
 									public void run() {
 										final ZipFragment zFrag = (ZipFragment) pagerAdapter.getItem(slidingTabsFragment.pageSelected);
-										zFrag.changeDir(zipFrag.dirTemp4Search, true, null);
+										zFrag.changeDir(rowItem.path, true, null);
 									}
 								}, 100);
 						}
@@ -498,7 +490,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 		private void extractZe(final ZipEntry rowItem, Runnable r) {
 			Log.d(TAG, "extractZe " + rowItem);
 			new DecompressTask(zipFrag.fragActivity,
-							   zipFrag.dirTemp4Search,
+							   zipFrag.currentPathTitle,
 							   ExplorerApplication.PRIVATE_PATH,
 							   rowItem.path,
 							   "",

@@ -53,7 +53,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	private static final String TAG = "Frag";
 
 	public TYPE type = TYPE.EXPLORER;
-	public String currentPathTitle;
+	public String currentPathTitle = "";
 	protected String title;
 
 	protected ViewGroup sortBarLayout;

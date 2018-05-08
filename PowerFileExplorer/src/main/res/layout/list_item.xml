@@ -79,7 +79,7 @@
 				android:paddingLeft="10dp"
 				android:paddingRight="10dp"
 				android:background="@drawable/ripple"
-				android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"/>
+				android:src="@drawable/ic_more_vert_black_48dp"/>
 
 		</RelativeLayout>
 		

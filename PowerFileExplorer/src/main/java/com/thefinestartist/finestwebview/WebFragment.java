@@ -681,10 +681,10 @@ View.OnClickListener {
 		}
 
 		{ // Icons
-			updateIcon(close, rtl ? R.drawable.more : R.drawable.close);
+			updateIcon(close, rtl ? R.drawable.ic_more_vert_black_48dp : R.drawable.close);
 			updateIcon(back, R.drawable.back);
 			updateIcon(forward, R.drawable.forward);
-			updateIcon(more, rtl ? R.drawable.close : R.drawable.more);
+			updateIcon(more, rtl ? R.drawable.close : R.drawable.ic_more_vert_black_48dp);
 		}
 
 		{ // Divider
