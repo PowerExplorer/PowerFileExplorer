@@ -51,9 +51,11 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
     private boolean rootMode;
     //private ZipViewer zipViewer;
     private DataUtils dataUtils = DataUtils.getInstance();
+	private Runnable r;
 
-    public DeleteTask(ContentResolver c, Context cd) {
+    public DeleteTask(Context cd, Runnable r) {
         this.ctx = cd;
+		this.r = r;
         rootMode = PreferenceManager.getDefaultSharedPreferences(cd).getBoolean("rootmode", false);
     }
 
@@ -169,6 +171,9 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
 //        } else if (zipViewer==null) {
 //            Toast.makeText(cd, cd.getResources().getString(R.string.done), Toast.LENGTH_SHORT).show();
         }
+		if (r != null) {
+			r.run();
+		}
 
 //        if (zipViewer!=null) {
 //            zipViewer.files.clear();

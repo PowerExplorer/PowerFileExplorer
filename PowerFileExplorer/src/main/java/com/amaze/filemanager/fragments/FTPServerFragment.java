@@ -446,7 +446,7 @@ public class FTPServerFragment extends Fragment {
         password.setText(getResources().getString(R.string.password) + ": " +
                 passwordBulleted);
 
-        ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_grey600_24dp));
+        ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_visibility_black_48dp));
 
         if (passwordDecrypted.equals("")) {
             ftpPasswordVisibleButton.setVisibility(View.GONE);
@@ -461,11 +461,11 @@ public class FTPServerFragment extends Fragment {
                     // password was not visible, let's make it visible
                     password.setText(getResources().getString(R.string.password) + ": " +
                             passwordDecrypted);
-                    ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_off_grey600_24dp));
+                    ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_visibility_off_black_48dp));
                 } else {
                     // password was visible, let's hide it
                     password.setText(getResources().getString(R.string.password) + ": " + passwordBulleted);
-                    ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_grey600_24dp));
+                    ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_visibility_black_48dp));
                 }
             }
         });

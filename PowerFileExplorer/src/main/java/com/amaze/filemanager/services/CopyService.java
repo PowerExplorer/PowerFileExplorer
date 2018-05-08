@@ -345,7 +345,7 @@ public class CopyService extends Service {
                         if (!failedFOps.contains(a))
                             toDelete.add(a);
                     }
-                    new DeleteTask(getContentResolver(), c).execute((toDelete));
+                    new DeleteTask(c, null).execute((toDelete));//getContentResolver(), 
                 }
             }
 
@@ -415,7 +415,8 @@ public class CopyService extends Service {
         mNotifyManager.cancelAll();
 
         if(failedOps.size()==0) return;
-
+		Log.e("CopyService.generateNotification", failedOps + ", " + move);
+		
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(c);
         mBuilder.setContentTitle(c.getString(R.string.operationunsuccesful));
         mBuilder.setContentText(c.getString(R.string.copy_error).replace("%s",

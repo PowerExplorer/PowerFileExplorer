@@ -54,6 +54,7 @@ public class ThemedActivity extends BasicActivity {
 	public final static int FROM_PREVIOUS_IO_ACTION = 3;
 	public Zip zip;
 	public List<ZipEntry> filesInZip;
+	public Runnable callback;;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +105,7 @@ public class ThemedActivity extends BasicActivity {
 			}
 			switch (operation) {
 				case DataUtils.DELETE://deletion
-					new DeleteTask(null, this).execute((originPaths_oparrayList));
+					new DeleteTask(this, null).execute((originPaths_oparrayList));
 					break;
 				case DataUtils.RENAME:
                     MainActivityHelper.rename(OpenMode.FILE, (originPath_oppathe),

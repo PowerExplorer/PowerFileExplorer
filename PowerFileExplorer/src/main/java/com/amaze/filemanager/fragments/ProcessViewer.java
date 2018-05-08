@@ -64,6 +64,8 @@ import net.gnu.explorer.ExplorerActivity;
 import android.support.v7.widget.CardView;
 import android.support.v4.app.DialogFragment;
 import com.amaze.filemanager.utils.color.ColorPreference;
+import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 
 public class ProcessViewer extends DialogFragment {
 
@@ -80,10 +82,10 @@ public class ProcessViewer extends DialogFragment {
     private LineData mLineData = new LineData();
     private long time = 0L;
     private TextView mProgressTypeText, mProgressFileNameText,
-            mProgressBytesText, mProgressFileText,  mProgressSpeedText, mProgressTimer;
+	mProgressBytesText, mProgressFileText,  mProgressSpeedText, mProgressTimer;
 
 	boolean copyCancelled = false;
-	
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -132,12 +134,12 @@ public class ProcessViewer extends DialogFragment {
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-										   
+
             copyCancelled = false;
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             CopyService.LocalBinder localBinder = (CopyService.LocalBinder) service;
             CopyService copyService = localBinder.getService();
-			for (int i=0; i<copyService.getDataPackageSize(); i++) {
+			for (int i=0; i < copyService.getDataPackageSize(); i++) {
                 processResults(copyService.getDataPackage(i), ServiceType.COPY);
             }
 
@@ -145,26 +147,26 @@ public class ProcessViewer extends DialogFragment {
             mLineChart.animateXY(500, 500);
 
             copyService.setProgressListener(new CopyService.ProgressListener() {
-                @Override
-                public void onUpdate(final DataPackage dataPackage) {
-                    if (getActivity() == null || getActivity().getSupportFragmentManager().
-						findFragmentByTag(ExplorerActivity.KEY_INTENT_PROCESS_VIEWER) == null) {
-                        // callback called when we're not inside the app
-                        return;
-                    }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            processResults(dataPackage, ServiceType.COPY);
-                        }
-                    });
-                }
+					@Override
+					public void onUpdate(final DataPackage dataPackage) {
+						if (getActivity() == null || getActivity().getSupportFragmentManager().
+							findFragmentByTag(ExplorerActivity.KEY_INTENT_PROCESS_VIEWER) == null) {
+							// callback called when we're not inside the app
+							return;
+						}
+						getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									processResults(dataPackage, ServiceType.COPY);
+								}
+							});
+					}
 
-                @Override
-                public void refresh() {
+					@Override
+					public void refresh() {
 
-                }
-            });
+					}
+				});
         }
 
         @Override
@@ -225,7 +227,7 @@ public class ProcessViewer extends DialogFragment {
             ZipTask.LocalBinder localBinder = (ZipTask.LocalBinder) service;
             ZipTask zipTask = localBinder.getService();
 
-            for (int i=0; i<zipTask.getDataPackageSize(); i++) {
+            for (int i=0; i < zipTask.getDataPackageSize(); i++) {
 
                 processResults(zipTask.getDataPackage(i), ServiceType.COMPRESS);
             }
@@ -234,25 +236,25 @@ public class ProcessViewer extends DialogFragment {
             mLineChart.animateXY(500, 500);
 
             zipTask.setProgressListener(new ZipTask.ProgressListener() {
-                @Override
-                public void onUpdate(final DataPackage dataPackage) {
-                    if (getActivity() == null) {
-                        // callback called when we're not inside the app
-                        return;
-                    }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            processResults(dataPackage, ServiceType.COMPRESS);
-                        }
-                    });
-                }
+					@Override
+					public void onUpdate(final DataPackage dataPackage) {
+						if (getActivity() == null) {
+							// callback called when we're not inside the app
+							return;
+						}
+						getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									processResults(dataPackage, ServiceType.COMPRESS);
+								}
+							});
+					}
 
-                @Override
-                public void refresh() {
+					@Override
+					public void refresh() {
 
-                }
-            });
+					}
+				});
         }
 
         @Override
@@ -267,37 +269,37 @@ public class ProcessViewer extends DialogFragment {
             EncryptService.LocalBinder binder = (EncryptService.LocalBinder) service;
             EncryptService encryptService = binder.getService();
 
-            for (int i=0; i<encryptService.getDataPackageSize(); i++) {
+            for (int i=0; i < encryptService.getDataPackageSize(); i++) {
                 DataPackage dataPackage = encryptService.getDataPackage(i);
                 processResults(dataPackage, dataPackage.isMove() ? ServiceType.DECRYPT
-                        : ServiceType.ENCRYPT);
+							   : ServiceType.ENCRYPT);
             }
 
             // animate the chart a little after initial values have been applied
             mLineChart.animateXY(500, 500);
 
             encryptService.setProgressListener(new EncryptService.ProgressListener() {
-                @Override
-                public void onUpdate(final DataPackage dataPackage) {
-                    if (getActivity() == null) {
-                        // callback called when we're not inside the app
-                        return;
-                    }
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+					@Override
+					public void onUpdate(final DataPackage dataPackage) {
+						if (getActivity() == null) {
+							// callback called when we're not inside the app
+							return;
+						}
+						getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
 
-                            processResults(dataPackage, dataPackage.isMove() ? ServiceType.DECRYPT
-                                    : ServiceType.ENCRYPT);
-                        }
-                    });
-                }
+									processResults(dataPackage, dataPackage.isMove() ? ServiceType.DECRYPT
+												   : ServiceType.ENCRYPT);
+								}
+							});
+					}
 
-                @Override
-                public void refresh() {
+					@Override
+					public void refresh() {
 
-                }
-            });
+					}
+				});
         }
 
         @Override
@@ -343,7 +345,7 @@ public class ProcessViewer extends DialogFragment {
      */
     enum ServiceType {
         COPY, EXTRACT, COMPRESS, ENCRYPT, DECRYPT
-    }
+		}
 
     public void processResults(final DataPackage dataPackage, ServiceType serviceType) {
         if (dataPackage != null) {
@@ -363,32 +365,32 @@ public class ProcessViewer extends DialogFragment {
             }
 
             addEntry(Futils.readableFileSizeFloat(doneBytes),
-                    Futils.readableFileSizeFloat(dataPackage.getSpeedRaw()));
+					 Futils.readableFileSizeFloat(dataPackage.getSpeedRaw()));
 
             mProgressFileNameText.setText(name);
 
             Spanned bytesText = Html.fromHtml(getResources().getString(R.string.written)
-                    + " <font color='" + accentColor + "'><i>" + Formatter.formatFileSize(getContext(), doneBytes)
-                    + " </font></i>" + getResources().getString(R.string.out_of) + " <i>"
-                    + Formatter.formatFileSize(getContext(), total) + "</i>");
+											  + " <font color='" + accentColor + "'><i>" + Formatter.formatFileSize(getContext(), doneBytes)
+											  + " </font></i>" + getResources().getString(R.string.out_of) + " <i>"
+											  + Formatter.formatFileSize(getContext(), total) + "</i>");
             mProgressBytesText.setText(bytesText);
 
             Spanned fileProcessedSpan = Html.fromHtml(getResources().getString(R.string.processing_file)
-                    + " <font color='" + accentColor + "'><i>" + (dataPackage.getSourceProgress())
-                    + " </font></i>" + getResources().getString(R.string.of) + " <i>"
-                    + dataPackage.getSourceFiles() + "</i>");
+													  + " <font color='" + accentColor + "'><i>" + (dataPackage.getSourceProgress())
+													  + " </font></i>" + getResources().getString(R.string.of) + " <i>"
+													  + dataPackage.getSourceFiles() + "</i>");
             mProgressFileText.setText(fileProcessedSpan);
 
             Spanned speedSpan = Html.fromHtml(getResources().getString(R.string.current_speed)
-                    + ": <font color='" + accentColor + "'><i>"
-                    + Formatter.formatFileSize(getContext(), dataPackage.getSpeedRaw())
-                    + "/s</font></i>");
+											  + ": <font color='" + accentColor + "'><i>"
+											  + Formatter.formatFileSize(getContext(), dataPackage.getSpeedRaw())
+											  + "/s</font></i>");
             mProgressSpeedText.setText(speedSpan);
 
             Spanned timerSpan = Html.fromHtml(getResources().getString(R.string.service_timer)
-                    + ": <font color='" + accentColor + "'><i>"
-                    + formatTimer(++time)
-                    + "</font></i>");
+											  + ": <font color='" + accentColor + "'><i>"
+											  + formatTimer(++time)
+											  + "</font></i>");
 
             mProgressTimer.setText(timerSpan);
         }
@@ -412,15 +414,16 @@ public class ProcessViewer extends DialogFragment {
     private void setupDrawables(ServiceType serviceType, boolean isMove) {
         switch (serviceType) {
             case COPY:
-                if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_content_copy_white_36dp));
-                } else {
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_content_copy_grey600_36dp));
-                }
+//                if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
+//                    mProgressImage.setImageDrawable(getResources()
+//                            .getDrawable(R.drawable.ic_content_copy_white_36dp));
+//                } else {
+				Drawable drawable = getResources().getDrawable(R.drawable.ic_content_copy_white_36dp);
+				drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				mProgressImage.setImageDrawable(drawable);
+                //}
                 mProgressTypeText.setText(isMove ? getResources().getString(R.string.moving)
-                        : getResources().getString(R.string.copying));
+										  : getResources().getString(R.string.copying));
                 cancelBroadcast(new Intent(CopyService.TAG_BROADCAST_COPY_CANCEL));
                 break;
 //            case EXTRACT:
@@ -436,38 +439,44 @@ public class ProcessViewer extends DialogFragment {
 //                cancelBroadcast(new Intent(ExtractService.TAG_BROADCAST_EXTRACT_CANCEL));
 //                break;
             case COMPRESS:
-                if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
+                //if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
 
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_zip_box_white_36dp));
-                } else {
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_zip_box_grey600_36dp));
-                }
+                    drawable = getResources()
+						.getDrawable(R.drawable.ic_zip_box_white_36dp);
+					drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					mProgressImage.setImageDrawable(drawable);
+//                } else {
+//                    mProgressImage.setImageDrawable(getResources()
+//													.getDrawable(R.drawable.ic_zip_box_white_36dp));
+//                }
                 mProgressTypeText.setText(getResources().getString(R.string.compressing));
                 cancelBroadcast(new Intent(ZipTask.KEY_COMPRESS_BROADCAST_CANCEL));
                 break;
             case ENCRYPT:
-                if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
+                //if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
 
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_folder_lock_white_36dp));
-                } else {
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_folder_lock_grey600_36dp));
-                }
+                    drawable = getResources()
+						.getDrawable(R.drawable.ic_folder_lock_white_36dp);
+					drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					mProgressImage.setImageDrawable(drawable);
+//                } else {
+//                    mProgressImage.setImageDrawable(getResources()
+//													.getDrawable(R.drawable.ic_folder_lock_white_36dp));
+//                }
                 mProgressTypeText.setText(getResources().getString(R.string.crypt_encrypting));
                 cancelBroadcast(new Intent(EncryptService.TAG_BROADCAST_CRYPT_CANCEL));
                 break;
             case DECRYPT:
-                if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
+                //if (mainActivity.getAppTheme().equals(AppTheme.DARK)) {
 
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_folder_lock_open_white_36dp));
-                } else {
-                    mProgressImage.setImageDrawable(getResources()
-                            .getDrawable(R.drawable.ic_folder_lock_open_grey600_36dp));
-                }
+                    drawable = getResources()
+						.getDrawable(R.drawable.ic_folder_lock_open_white_36dp);
+					drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					mProgressImage.setImageDrawable(drawable);
+//                } else {
+//                    mProgressImage.setImageDrawable(getResources()
+//													.getDrawable(R.drawable.ic_folder_lock_open_white_36dp));
+//                }
                 mProgressTypeText.setText(getResources().getString(R.string.crypt_decrypting));
                 cancelBroadcast(new Intent(EncryptService.TAG_BROADCAST_CRYPT_CANCEL));
                 break;
@@ -481,20 +490,20 @@ public class ProcessViewer extends DialogFragment {
     private void cancelBroadcast(final Intent intent) {
 
         mCancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(),
-                        getResources().getString(R.string.stopping), Toast.LENGTH_LONG).show();
-                getActivity().sendBroadcast(intent);
-                mProgressTypeText.setText(getResources().getString(R.string.cancelled));
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getActivity(),
+								   getResources().getString(R.string.stopping), Toast.LENGTH_LONG).show();
+					getActivity().sendBroadcast(intent);
+					mProgressTypeText.setText(getResources().getString(R.string.cancelled));
 //                mProgressSpeedText.setText("");
 //                mProgressFileText.setText("");
 //                mProgressBytesText.setText("");
 //                mProgressFileNameText.setText("");
-				mCancelButton.setEnabled(false);
-				copyCancelled = true;
-            }
-        });
+					mCancelButton.setEnabled(false);
+					copyCancelled = true;
+				}
+			});
     }
 
     /**
@@ -505,7 +514,7 @@ public class ProcessViewer extends DialogFragment {
     private void addEntry(float xValue, float yValue) {
 
         ILineDataSet dataSet = mLineData.getDataSetByIndex(0);
-        if (dataSet==null) {
+        if (dataSet == null) {
             // adding set for first time
             dataSet = createDataSet();
             mLineData.addDataSet(dataSet);

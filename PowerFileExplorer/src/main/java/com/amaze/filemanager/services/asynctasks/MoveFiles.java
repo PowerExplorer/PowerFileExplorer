@@ -59,12 +59,14 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, Void, Boolean> {
     private ArrayList<String> paths;
     private Context context;
     private OpenMode mode;
+	final Runnable r;
 
-    public MoveFiles(ArrayList<ArrayList<BaseFile>> files, Frag ma, Context context, OpenMode mode) {
+    public MoveFiles(ArrayList<ArrayList<BaseFile>> files, Frag ma, Context context, OpenMode mode, final Runnable r) {
         mainFrag = ma;
         this.context = context;
         this.files = files;
         this.mode = mode;
+		this.r = r;
     }
 
     @Override
@@ -198,5 +200,8 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, Void, Boolean> {
                 ServiceWatcherUtil.runService(context, intent);
             }
         }
+		if (r != null) {
+			r.run();
+		}
     }
 }

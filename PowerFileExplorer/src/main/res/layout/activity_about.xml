@@ -138,7 +138,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginLeft="@dimen/material_generic"
                             android:layout_marginRight="@dimen/material_generic_medium"
-                            android:src="@drawable/ic_history_grey600_24dp"
+                            android:src="@drawable/ic_history_black_36dp"
                             android:layout_centerVertical="true"
                             />
                         <RelativeLayout
@@ -581,7 +581,7 @@
                             android:layout_alignParentLeft="true"
                             android:layout_marginLeft="@dimen/material_generic"
                             android:layout_marginRight="@dimen/material_generic_medium"
-                            android:src="@drawable/ic_star_grey600_24dp"
+                            android:src="@drawable/ic_star_white_18dp"
                             android:layout_centerVertical="true"
                             />
 

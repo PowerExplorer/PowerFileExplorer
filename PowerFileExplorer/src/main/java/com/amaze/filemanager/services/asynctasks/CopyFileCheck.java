@@ -67,16 +67,17 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
     private final ArrayList<String> paths = new ArrayList<>();
     private final ArrayList<ArrayList<BaseFile>> filesToCopyPerFolder = new ArrayList<>();
     private ArrayList<BaseFile> filesToCopy;    // a copy of params sent to this
-
-    public CopyFileCheck(FileFrag ma, String path, Boolean move, ExplorerActivity con, boolean rootMode) {
+	final Runnable r;
+	
+    public CopyFileCheck(FileFrag ma, String path, Boolean move, ExplorerActivity con, boolean rootMode, final Runnable r) {
         mainFrag = ma;
         this.move = move;
         mainActivity = con;
         context = con;
         openMode = mainFrag.openMode;
         this.rootMode = rootMode;
-
         this.path = path;
+		this.r = r;
     }
 
     @Override
@@ -287,7 +288,7 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
                         startService(filesToCopyPerFolder.get(i), paths.get(i), openMode);
                     }
                 } else {
-                    new MoveFiles(filesToCopyPerFolder, mainFrag, context, openMode)
+                    new MoveFiles(filesToCopyPerFolder, mainFrag, context, openMode, r)
                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, paths);
                 }
             }

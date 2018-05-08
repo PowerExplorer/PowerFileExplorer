@@ -678,8 +678,20 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					ArrayList<LayoutElement> ele = new ArrayList<LayoutElement>();
 					ele.add(new LayoutElement(f));
 					//if (mContext instanceof ExplorerActivity) {
+					final Runnable r = new Runnable() {
+						@Override
+						public void run() {
+							postDelayed(new Runnable() {
+									@Override
+									public void run() {
+										imageViewPagerAdapter.notifyDataSetChanged();
+										thumbnailRecyclerAdapter.notifyDataSetChanged();
+									}
+								}, 0);
+						}
+					};
 					GeneralDialogCreation.deleteFilesDialog(mContext, //getLayoutElements(),
-															(ThemedActivity)mContext, ele, ((ThemedActivity)mContext).getAppTheme());
+															(ThemedActivity)mContext, ele, ((ThemedActivity)mContext).getAppTheme(), r);
 					//}
 					//new Futils().deleteFiles(ele, (ExplorerActivity)mContext, /*positions, */((ThemedActivity)mContext).getAppTheme());
 

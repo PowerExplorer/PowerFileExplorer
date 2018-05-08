@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
 import net.gnu.explorer.ContentFragment;
+import android.util.Log;
 
 /**
  * Created by root on 11/22/15, modified by Emmanuel Messulam<emmanuelbendavid@gmail.com>
@@ -313,9 +314,11 @@ public class MainActivityHelper {
 											// couldn't change the entry, leave it alone
 										}
 									}
-								} else
+								} else {
+									Log.e("MainHelper.rename", oldPath + ", " + newPath);
 									Toast.makeText(themedActivity, themedActivity.getString(R.string.operationunsuccesful),
 												   Toast.LENGTH_SHORT).show();
+								}
 
 							}
 						});
@@ -514,9 +517,11 @@ public class MainActivityHelper {
 
 								if (b) {
 									ma.updateList();
-								} else
+								} else {
+									Log.e("MainHelper.mkdir", path + ".");
 									Toast.makeText(ma.getActivity(), ma.getString(R.string.operationunsuccesful),
 												   Toast.LENGTH_SHORT).show();
+								}
 							}
 						});
 				}
@@ -539,7 +544,7 @@ public class MainActivityHelper {
     public void deleteFiles(ArrayList<BaseFile> itemsToDelete) {
         if (itemsToDelete == null || itemsToDelete.size() == 0) return;
         if (itemsToDelete.get(0).isSmb()) {
-            new DeleteTask(null, mainActivity).execute((itemsToDelete));
+            new DeleteTask(mainActivity, null).execute((itemsToDelete));
             return;
         }
         int mode = checkFolder(new File(itemsToDelete.get(0).getPath()).getParentFile(), mainActivity);
@@ -547,7 +552,7 @@ public class MainActivityHelper {
             mainActivity.originPaths_oparrayList = (itemsToDelete);
             mainActivity.operation = DataUtils.DELETE;
         } else if (mode == 1 || mode == 0)
-            new DeleteTask(null, mainActivity).execute((itemsToDelete));
+            new DeleteTask(mainActivity, null).execute((itemsToDelete));
         else 
 			Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
     }

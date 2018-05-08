@@ -100,7 +100,7 @@ public class HiddenAdapter extends RecyclerArrayAdapter<HFile, HiddenAdapter.Vie
                         final BaseFile baseFile = new BaseFile(path + "/.nomedia");
                         baseFile.setMode(OpenMode.FILE);
                         a.add(baseFile);
-                        new DeleteTask(context.getActivity().getContentResolver(), c).execute((a));
+                        new DeleteTask(c, null).execute((a));//context.getActivity().getContentResolver(), 
                     }
                     dataUtils.removeHiddenFile(path);
                     remove(position);

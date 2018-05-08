@@ -1211,7 +1211,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 	private void manageSearchUI(boolean search) {
 		if (search == true) {
-			searchButton.setImageResource(R.drawable.ic_arrow_back_grey600);
+			searchButton.setImageResource(R.drawable.ic_arrow_back_white_36dp);
 			topflipper.setDisplayedChild(topflipper.indexOfChild(quickLayout));
 			if (type == Frag.TYPE.SELECTION) {
 				searchET.setHint("Search");

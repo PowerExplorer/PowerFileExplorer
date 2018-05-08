@@ -51,7 +51,7 @@ public class GlideImageLoader {
 					.skipMemoryCache(true)
 					.diskCacheStrategy(DiskCacheStrategy.NONE)
 					.signature(new StringSignature(f.lastModified() + " " + f.length()))//file.getAbsolute()
-					.placeholder(R.drawable.ic_doc_image_dark)
+					.placeholder(R.drawable.ic_doc_image)
 					.into(imageView);//(sMain = new Simple(imageView, callback)));
 			} else if (SVG_PATTERN.matcher(name).matches()) {
 				Glide.clear(imageView);
@@ -86,7 +86,7 @@ public class GlideImageLoader {
 					//.fitCenter()
 					//.crossFade()
 					.signature(new StringSignature(f.lastModified() + " " + f.length()))//file.getAbsolute()
-					.placeholder(R.drawable.ic_doc_image_dark)
+					.placeholder(R.drawable.ic_doc_image)
 					//.error(R.drawable.image_error)
 					//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					.into(imageView);//(sMain = new Simple(imageView, callback)));
@@ -131,7 +131,7 @@ public class GlideImageLoader {
 					.skipMemoryCache(true)
 					.diskCacheStrategy(DiskCacheStrategy.RESULT)
 					.signature(new StringSignature(f.lastModified() + " " + f.length()))//file.getAbsolute()
-					.placeholder(R.drawable.ic_doc_image_dark)
+					.placeholder(R.drawable.ic_doc_image)
 					.into(thumbnailView);//(sMain = new Simple(imageView, callback)));
 			} else if (SVG_PATTERN.matcher(name).matches()) {
 				Glide.clear(thumbnailView);
@@ -165,7 +165,7 @@ public class GlideImageLoader {
 					.fitCenter()
 					//.crossFade()
 					.signature(new StringSignature(f.lastModified() + " " + f.length()))
-					.placeholder(R.drawable.ic_doc_image_dark)
+					.placeholder(R.drawable.ic_doc_image)
 					//.error(R.drawable.image_error)
 					//.override(dpToPx, dpToPx)
 					.into(thumbnailView);//(sThumb = new Simple(thumbnailView, null)));// tranh setTag

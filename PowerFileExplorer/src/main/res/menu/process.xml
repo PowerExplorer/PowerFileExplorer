@@ -13,7 +13,7 @@
         android:title="@string/uninstall" 
 		android:icon="@drawable/uninstall"/>
     <item
-        android:id="@+id/info"
+        android:id="@+id/properties"
         android:title="@string/properties" 
 		android:icon="@drawable/operation_button_info"/>
 	<item

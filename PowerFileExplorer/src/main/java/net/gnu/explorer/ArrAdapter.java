@@ -1,71 +1,50 @@
 package net.gnu.explorer;
 
-import android.widget.TextView;
-import android.support.v7.widget.RecyclerView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.view.View;
-import java.io.File;
-import java.util.ArrayList;
-import android.util.Log;
-import android.content.res.TypedArray;
-import android.view.ViewGroup;
-import android.view.LayoutInflater;
-import android.text.TextUtils;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.support.v7.app.AlertDialog;
-import android.content.DialogInterface;
-import net.gnu.androidutil.AndroidPathUtils;
-import com.amaze.filemanager.utils.files.Futils;
 import android.content.Intent;
-import android.net.Uri;
-import net.gnu.androidutil.AndroidUtils;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.MenuPopupHelper;
-import android.view.MenuInflater;
-import net.gnu.util.FileUtil;
-import net.dongliu.apk.parser.ApkParser;
-import com.amaze.filemanager.database.CryptHandler;
-import com.amaze.filemanager.database.models.EncryptedEntry;
-import com.amaze.filemanager.utils.files.CryptUtil;
-
-import android.graphics.Typeface;
-import android.view.Gravity;
-import com.amaze.filemanager.utils.OpenMode;
-import android.util.TypedValue;
-import android.view.MenuItem;
-import com.amaze.filemanager.utils.ServiceWatcherUtil;
-import net.gnu.util.Util;
-import android.graphics.Color;
-import com.amaze.filemanager.ui.icons.MimeTypes;
-import android.view.animation.AnimationUtils;
-import android.widget.Toast;
-import com.amaze.filemanager.ui.LayoutElement;
-import com.amaze.filemanager.activities.BasicActivity;
-import com.amaze.filemanager.filesystem.BaseFile;
 import android.content.SharedPreferences;
-import com.amaze.filemanager.services.EncryptService;
-
-import android.preference.PreferenceManager;
-import javax.crypto.Cipher;
-import android.text.format.Formatter;
-import com.afollestad.materialdialogs.MaterialDialog;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
+import android.preference.PreferenceManager;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.text.format.Formatter;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.amaze.filemanager.activities.ThemedActivity;
-import com.afollestad.materialdialogs.DialogAction;
-import com.amaze.filemanager.filesystem.HFile;
-import com.amaze.filemanager.utils.DataUtils;
-import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
+import com.amaze.filemanager.filesystem.BaseFile;
 import com.amaze.filemanager.fragments.preference_fragments.Preffrag;
-import com.amaze.filemanager.utils.cloud.CloudUtil;
-import jcifs.smb.SmbFile;
-import java.net.MalformedURLException;
+import com.amaze.filemanager.services.EncryptService;
+import com.amaze.filemanager.ui.LayoutElement;
+import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
+import com.amaze.filemanager.ui.icons.MimeTypes;
+import com.amaze.filemanager.utils.DataUtils;
 import com.amaze.filemanager.utils.OTGUtil;
-import android.content.res.Resources;
+import com.amaze.filemanager.utils.cloud.CloudUtil;
+import com.amaze.filemanager.utils.files.CryptUtil;
+import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
+import com.amaze.filemanager.utils.files.Futils;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
+import jcifs.smb.SmbFile;
+import net.dongliu.apk.parser.ApkParser;
+import net.gnu.androidutil.AndroidUtils;
+import net.gnu.util.FileUtil;
+import net.gnu.util.Util;
 
 public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHolder> {
 
@@ -171,6 +150,11 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		//Log.d(TAG, "onBindViewHolder " + position);
 
 		final LayoutElement le = mDataset.get(position);
+//		if (!le.bf.exists()) {
+//			mDataset.remove(le);
+//			contentFrag.selectedInList1.remove(le);
+//			notifyItemRemoved(position);
+//		}
 		final String fPath = le.path;
 		final String fName = le.name;
 
@@ -507,9 +491,22 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 								case R.id.delete:
 									ArrayList<LayoutElement> ele = new ArrayList<LayoutElement>(1);
 									ele.add(rowItem);
+									final Runnable r = new Runnable() {
+										@Override
+										public void run() {
+											contentFrag.listView.postDelayed(new Runnable() {
+													@Override
+													public void run() {
+														contentFrag.dataSourceL1.remove(rowItem);
+														contentFrag.selectedInList1.remove(rowItem);
+														contentFrag.srcAdapter.notifyDataSetChanged();
+													}
+											}, 0);
+										}
+									};
 									//new Futils().deleteFiles(ele, fileFrag.activity, /*positions, */activity.getAppTheme());
 									GeneralDialogCreation.deleteFilesDialog(activity, //getLayoutElements(),
-																			activity, ele, activity.getAppTheme());
+																			activity, ele, activity.getAppTheme(), r);
 									break;
 								case R.id.share:
 									switch (rowItem.getMode()) {

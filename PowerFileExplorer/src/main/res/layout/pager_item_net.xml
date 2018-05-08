@@ -434,7 +434,7 @@
 				android:text="Share"
 				android:singleLine="true"
 				android:background="@drawable/ripple"
-				android:drawableTop="@drawable/ic_action_share_white"
+				android:drawableTop="@drawable/ic_action_share"
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"

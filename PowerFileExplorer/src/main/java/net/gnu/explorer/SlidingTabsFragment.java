@@ -228,9 +228,9 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						if (createFragment instanceof FileFrag) {
 							FileFrag fileFrag = ((FileFrag)createFragment);
 							if (fileFrag.selectedInList1.size() == 0 && 
-								(((fileFrag instanceof ContentFragment) && activity.COPY_PATH == null && activity.MOVE_PATH == null
+								(((fileFrag.type == Frag.TYPE.EXPLORER) && activity.COPY_PATH == null && activity.MOVE_PATH == null
 								&& activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null) 
-								|| (!(fileFrag instanceof ContentFragment)))) {
+								|| (fileFrag.type != Frag.TYPE.EXPLORER))) {
 								if (fileFrag.commands.getVisibility() == View.VISIBLE) {
 									fileFrag.horizontalDivider6.setVisibility(View.GONE);
 									fileFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));

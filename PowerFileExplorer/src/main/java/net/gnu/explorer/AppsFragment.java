@@ -472,7 +472,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		if (search == true) {
 			searchET.setHint("Search ");
 			searchButton.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-			searchButton.setImageResource(R.drawable.ic_arrow_back_grey600);
+			searchButton.setImageResource(R.drawable.ic_arrow_back_white_36dp);
 			//topflipper.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
 			topflipper.setDisplayedChild(topflipper.indexOfChild(quickLayout));
 			searchMode = true;
@@ -1047,7 +1047,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 								} else {
 									files.add(f1);
 								}
-								new DeleteTask(AppsFragment.this.getContext().getContentResolver(), AppsFragment.this.getContext()).execute((files));
+								new DeleteTask(AppsFragment.this.getContext(), null).execute((files));
 							}
 						}).build().show();
 				} else {
@@ -1101,7 +1101,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 		//Log.d("AppsAdapter", new ObjectDumper(rowItem).dump() + "");
 		ab.add(baseFile);
-		new CopyFileCheck(fileFrag, BACKUP_PATH, false, fileFrag.activity, ThemedActivity.rootMode).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ab);
+		new CopyFileCheck(fileFrag, BACKUP_PATH, false, fileFrag.activity, ThemedActivity.rootMode, null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ab);
 
 	}
 }

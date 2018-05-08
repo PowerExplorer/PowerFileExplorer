@@ -82,6 +82,7 @@ import net.gnu.explorer.ZipEntry;
 import net.gnu.p7zip.Zip;
 import net.gnu.explorer.ExplorerApplication;
 import net.gnu.p7zip.DecompressTask;
+import android.util.Log;
 
 /**
  * Here are a lot of function that create material dialogs
@@ -140,7 +141,7 @@ public class GeneralDialogCreation {
     @SuppressWarnings("ConstantConditions")
     public static void deleteFilesDialog(final Context c, //final ArrayList<LayoutElement> layoutElements,
                                          final ThemedActivity mainActivity, final List<LayoutElement> positions,
-                                         AppTheme appTheme) {
+                                         final AppTheme appTheme, final Runnable run) {
 
         final ArrayList<BaseFile> itemsToDelete = new ArrayList<>();
         int accentColor = mainActivity.getColorPreference().getColor(ColorUsage.ACCENT);
@@ -161,15 +162,16 @@ public class GeneralDialogCreation {
 					//mainActivity.mainActivityHelper.deleteFiles(itemsToDelete);
 					if (itemsToDelete == null || itemsToDelete.size() == 0) return;
 					if (itemsToDelete.get(0).isSmb()) {
-						new DeleteTask(null, mainActivity).execute((itemsToDelete));
+						new DeleteTask(mainActivity, run).execute((itemsToDelete));
 						return;
 					}
 					int mode = MainActivityHelper.checkFolder(new File(itemsToDelete.get(0).getPath()).getParentFile(), mainActivity);
 					if (mode == 2) {
 						mainActivity.originPaths_oparrayList = (itemsToDelete);
 						mainActivity.operation = DataUtils.DELETE;
+						mainActivity.callback = run;
 					} else if (mode == 1 || mode == 0)
-						new DeleteTask(null, mainActivity).execute((itemsToDelete));
+						new DeleteTask(mainActivity, run).execute((itemsToDelete));
 					else 
 						Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
 				}
@@ -1372,6 +1374,7 @@ public class GeneralDialogCreation {
 								@Override
 								public void onCommandResult(int commandCode, int exitCode, List<String> output) {
 									if (exitCode<0) {
+										Log.e("GeneralDialogCreation.setPermissionsDialog", output + ".");
 										Toast.makeText(context, mainFrag.getString(R.string.operationunsuccesful),
 													   Toast.LENGTH_LONG).show();
 									} else {

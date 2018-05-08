@@ -783,7 +783,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
                 // we've opened the file and are ready to delete it
                 ArrayList<BaseFile> baseFiles = new ArrayList<>();
                 baseFiles.add(encryptBaseFile);
-                new DeleteTask(fragActivity.getContentResolver(), fragActivity).execute(baseFiles);
+                new DeleteTask(fragActivity, null).execute(baseFiles);
             }
         }
     }
@@ -1716,7 +1716,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					copies.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i2))
 				}
 				activity.COPY_PATH = copies;
-				
+				activity.callback = null;
 				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {//type == -1
 					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
@@ -1736,7 +1736,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					copie.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i3))
 				}
 				activity.MOVE_PATH = copie;
-				
+				activity.callback = new Runnable() {
+					@Override
+					public void run() {
+						dataSourceL1.removeAll(selectedInList1);
+						selectedInList1.clear();
+						srcAdapter.notifyDataSetChanged();
+					}
+				};
 				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
 					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
@@ -1752,17 +1759,26 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			case R.id.deletes_pastes:
 				Log.d(TAG, "deletesPastes selectedInList1.size() " + selectedInList1.size());
 				if (selectedInList1.size() > 0) {
+					activity.callback = new Runnable() {
+						@Override
+						public void run() {
+							dataSourceL1.removeAll(selectedInList1);
+							selectedInList1.clear();
+							srcAdapter.notifyDataSetChanged();
+						}
+					};
 					GeneralDialogCreation.deleteFilesDialog(activity, //getLayoutElements(),
-															activity, selectedInList1, activity.getAppTheme());
-
+															activity, selectedInList1, activity.getAppTheme(), activity.callback);
+					activity.callback = null;
 				} else {
 					if (activity.MOVE_PATH != null || activity.COPY_PATH != null) {
 						String path = currentPathTitle;
 						ArrayList<BaseFile> arrayList = activity.COPY_PATH != null ? activity.COPY_PATH: activity.MOVE_PATH;
 						boolean move = activity.MOVE_PATH != null;
-						new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode)
+						new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode, activity.callback)
 							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
 						activity.MOVE_PATH = null;
+						activity.callback = null;
 					} else if (activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {
 						final List<String> stList = activity.EXTRACT_PATH != null ? activity.EXTRACT_PATH: activity.EXTRACT_MOVE_PATH;
 						final Runnable r = new Runnable() {
@@ -1774,7 +1790,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 									Log.d(TAG, "EXTRACT_PATH " + new File(ExplorerApplication.PRIVATE_PATH + (s.startsWith("/") ? "" : "/") + s).length());
 								}
 								final boolean move = activity.EXTRACT_MOVE_PATH != null;
-								new CopyFileCheck(ContentFragment.this, currentPathTitle, move, activity, ThemedActivity.rootMode)
+								new CopyFileCheck(ContentFragment.this, currentPathTitle, move, activity, ThemedActivity.rootMode, null)
 									.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
 								activity.EXTRACT_MOVE_PATH = null;
 							}
@@ -2118,7 +2134,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	private void manageSearchUI(boolean search) {
 		if (search == true) {
-			searchButton.setImageResource(R.drawable.ic_arrow_back_grey600);
+			searchButton.setImageResource(R.drawable.ic_arrow_back_white_36dp);
 			topflipper.setDisplayedChild(topflipper.indexOfChild(quickLayout));
 			if (type == Frag.TYPE.SELECTION) {
 				searchET.setHint("Search");

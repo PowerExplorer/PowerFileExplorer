@@ -960,7 +960,7 @@ View.OnClickListener {
 		}
 
 		{ // ProgressBar
-			progressBar.setVisibility(showProgressBar ? View.VISIBLE : View.GONE);
+			progressBar.setVisibility(showProgressBar && (currentPathTitle.length() > 0) ? View.VISIBLE : View.GONE);
 			progressBar.getProgressDrawable().setColorFilter(progressBarColor, PorterDuff.Mode.SRC_IN);
 			progressBar.setMinimumHeight((int) progressBarHeight);
 			CoordinatorLayout.LayoutParams params =

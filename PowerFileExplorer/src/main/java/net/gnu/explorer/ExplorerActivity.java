@@ -441,7 +441,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		imageView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		mDrawerList.addHeaderView(imageView);
 		
-		if (Intent.ACTION_MAIN.equals(action)) {
+		if (Intent.ACTION_MAIN.equals(action) || Intent.ACTION_VIEW.equals(action)) {
 			findViewById(R.id.buttons).setVisibility(View.GONE);
 		}
 
@@ -1260,7 +1260,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 											   ContextCompat.getDrawable(this, R.drawable.ic_star_white_18dp)));
             if (quickAccessPref[1])
                 sectionItems.add(new EntryItem(getResources().getString(R.string.recent), "6",
-											   ContextCompat.getDrawable(this, R.drawable.ic_history_white_48dp)));
+											   ContextCompat.getDrawable(this, R.drawable.ic_history_black_36dp)));
             if (quickAccessPref[2])
                 sectionItems.add(new EntryItem(getResources().getString(R.string.images), "0",
 											   ContextCompat.getDrawable(this, R.drawable.ic_doc_image)));
@@ -1385,7 +1385,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
             }
             switch (operation) {
                 case DataUtils.DELETE://deletion
-                    new DeleteTask(null, this).execute((originPaths_oparrayList));
+                    new DeleteTask(this, null).execute((originPaths_oparrayList));
                     break;
                 case DataUtils.DELETE_IN_ZIP:
                     Runnable r = new Runnable() {
@@ -1410,10 +1410,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 									   r).execute();
                     break;
                 case DataUtils.ADD_TO_ZIP:
-                    new DeleteTask(null, this).execute((originPaths_oparrayList));
+                    new DeleteTask(this, null).execute((originPaths_oparrayList));
                     break;
                 case DataUtils.UPDATE_ZIP:
-                    new DeleteTask(null, this).execute((originPaths_oparrayList));
+                    new DeleteTask(this, null).execute((originPaths_oparrayList));
                     break;
                 case DataUtils.COPY://copying
                     //legacy compatibility
@@ -1443,7 +1443,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
                         originPath_oppathe = "";
                     }
                     new MoveFiles(oparrayListList, slideFrag1Selected ? curContentFrag : curExplorerFrag,
-								  this, OpenMode.FILE)
+								  this, OpenMode.FILE, null)
 						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, originPaths_oppatheList);
                     break;
                 case DataUtils.NEW_FOLDER://mkdir
@@ -2374,7 +2374,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
             } else {
 				if (FileUtil.extractiblePattern.matcher(new File(path).getName()).matches()) {
 					final SlidingTabsFragment.PagerAdapter pagerAdapter = slideFrag.pagerAdapter;
-					final int tabIndex2 = SlidingTabsFragment.getFragTypeIndex(curContentFrag, Frag.TYPE.ZIP);
+					final int tabIndex2 = slideFrag.getFragIndex(Frag.TYPE.ZIP);
 						if (tabIndex2 >= 0) {
 							final ZipFragment zFrag = (ZipFragment) pagerAdapter.getItem(tabIndex2);
 							zFrag.load(path, null);

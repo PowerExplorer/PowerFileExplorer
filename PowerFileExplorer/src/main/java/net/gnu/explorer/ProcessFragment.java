@@ -399,7 +399,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 	public void manageUi(boolean search) {
 		if (search == true) {
 			searchET.setHint("Search ");
-			searchButton.setImageResource(R.drawable.ic_arrow_back_grey600);
+			searchButton.setImageResource(R.drawable.ic_arrow_back_white_36dp);
 			//topflipper.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
 			topflipper.setDisplayedChild(topflipper.indexOfChild(quickLayout));
 			searchMode = true;

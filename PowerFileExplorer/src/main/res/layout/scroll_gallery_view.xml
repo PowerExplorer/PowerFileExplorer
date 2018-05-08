@@ -117,7 +117,7 @@
 						android:paddingTop="4dp"
 						android:paddingBottom="4dp"
 						android:background="@drawable/ripple"
-						android:src="@drawable/ic_action_share_white"
+						android:src="@drawable/ic_action_share"
 					/>
 					<ImageButton android:id="@+id/counterClockwiseButton"
 						android:layout_width="wrap_content"
