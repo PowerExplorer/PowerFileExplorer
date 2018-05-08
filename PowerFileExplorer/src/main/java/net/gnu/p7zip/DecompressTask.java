@@ -90,6 +90,8 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		try {
 			wl.acquire();
 			List<String> fiList = Arrays.asList(fList.split("\\|+\\s*"));
+			include = include.replaceAll("\\|+\\s*", "\n");
+			exclude = exclude.replaceAll("\\|+\\s*", "\n");
 			Log.d(TAG, "doInBackground fiList " + fiList);
 			File f = new File(saveTo);
 			if (!f.exists()) {

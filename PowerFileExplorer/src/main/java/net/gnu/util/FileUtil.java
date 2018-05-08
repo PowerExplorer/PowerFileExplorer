@@ -72,6 +72,7 @@ public class FileUtil {
 	public static final String extractibleExtension = "(zpaq|7z|bz2|bzip2|tbz2|tbz|001|gz|gzip|tgz|tar|dump|swm|xz|txz|zip|zipx|jar|apk|xpi|odt|ods|odp|docx|xlsx|pptx|epub|apm|ar|a|deb|lib|arj|cab|chm|chw|chi|chq|msi|msp|doc|xls|ppt|cpio|cramfs|dmg|ext|ext2|ext3|ext4|img|fat|hfs|hfsx|hxs|hxi|hxr|hxq|hxw|lit|ihex|iso|lzh|lha|lzma|mbr|mslz|mub|nsis|ntfs|rar|r00|rpm|ppmd|qcow|qcow2|qcow2c|squashfs|udf|iso|scap|uefif|vdi|vhd|vmdk|wim|esd|xar|pkg|z|taz)";
 	public static Pattern extractibleExtensionPattern = Pattern.compile(FileUtil.extractibleExtension, Pattern.CASE_INSENSITIVE);
 	public static Pattern extractiblePattern = Pattern.compile(".*?\\." + FileUtil.extractibleExtension, Pattern.CASE_INSENSITIVE);
+	public static final Pattern TEXT_PATTERN = Pattern.compile(".*?\\.([dxs]?htm[l]?|txt|java|c|cpp|h|hpp|xml|md|lua|sh|bat|list|depend|js|jsp|mk|config|configure|machine|asm|css|desktop|inc|i|plist|pro|py|s|iml|pro|gradle|cfg|gitignore|sh|properties|pod|classpath|mk|md|javascript|json|bak)", Pattern.CASE_INSENSITIVE);
 	
 	public static void main(String[] args) throws Exception {
 ////		exec("/data/data/com.aide.ui/files/ndksupport-20150805/bin/ls", new String[] {"-l", "/sdcard/"}, null);

@@ -1781,24 +1781,37 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						activity.callback = null;
 					} else if (activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {
 						final List<String> stList = activity.EXTRACT_PATH != null ? activity.EXTRACT_PATH: activity.EXTRACT_MOVE_PATH;
-						final Runnable r = new Runnable() {
-							@Override
-							public void run() {
-								final ArrayList<BaseFile> arrayList = new ArrayList<>(stList.size());
-								for (String s : stList) {
-									arrayList.add(new BaseFile(ExplorerApplication.PRIVATE_PATH + (s.startsWith("/") ? "" : "/") + s));
-									Log.d(TAG, "EXTRACT_PATH " + new File(ExplorerApplication.PRIVATE_PATH + (s.startsWith("/") ? "" : "/") + s).length());
-								}
-								final boolean move = activity.EXTRACT_MOVE_PATH != null;
-								new CopyFileCheck(ContentFragment.this, currentPathTitle, move, activity, ThemedActivity.rootMode, null)
-									.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
-								activity.EXTRACT_MOVE_PATH = null;
-							}
-						};
 						final StringBuilder sb = new StringBuilder();
 						for (String le : stList) {
 							sb.append(le).append("\n");
 						}
+						final Runnable r = new Runnable() {
+							@Override
+							public void run() {
+								final ArrayList<BaseFile> arrayList = new ArrayList<>(stList.size());
+								final boolean move = activity.EXTRACT_MOVE_PATH != null;
+								for (String s : stList) {
+									arrayList.add(new BaseFile(ExplorerApplication.PRIVATE_PATH + (s.startsWith("/") ? "" : "/") + s));
+									//Log.d(TAG, "EXTRACT_PATH " + new File(ExplorerApplication.PRIVATE_PATH + (s.startsWith("/") ? "" : "/") + s).length());
+								}
+								new CopyFileCheck(ContentFragment.this, currentPathTitle, move, activity, ThemedActivity.rootMode, null)
+									.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
+								activity.EXTRACT_MOVE_PATH = null;
+								if (move) {
+									new DecompressTask(fragActivity,
+													   activity.zip.file.getAbsolutePath(),
+													   ExplorerApplication.PRIVATE_PATH,
+													   sb.toString(),
+													   "",
+													   "",
+													   "",
+													   0,
+													   "d",
+													   activity.callback).execute();
+									activity.callback = null;
+								}
+							}
+						};
 						new DecompressTask(fragActivity,
 										   activity.zip.file.getAbsolutePath(),
 										   ExplorerApplication.PRIVATE_PATH,

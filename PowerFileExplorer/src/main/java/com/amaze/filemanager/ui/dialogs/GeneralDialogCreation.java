@@ -334,7 +334,7 @@ public class GeneralDialogCreation {
     @SuppressWarnings("ConstantConditions")
     public static void deleteFilesDialog(final Context c, //final ArrayList<LayoutElement> layoutElements,
                                          final ThemedActivity mainActivity, final Zip zip, final List<ZipEntry> itemsToDelete,
-                                         AppTheme appTheme) {
+                                         AppTheme appTheme, final Runnable rr) {
 
         //final ArrayList<ZipEntry> itemsToDelete = new ArrayList<>();
         int accentColor = mainActivity.getColorPreference().getColor(ColorUsage.ACCENT);
@@ -363,6 +363,9 @@ public class GeneralDialogCreation {
 						Runnable r = new Runnable() {
 							@Override
 							public void run() {
+								if (rr != null) {
+									rr.run();
+								}
 								Toast.makeText(mainActivity, "Deletion finished", Toast.LENGTH_SHORT).show();
 							}
 						};

@@ -612,13 +612,13 @@ public final class Andro7za {
 		String path;
 		while (m.find() && count < 3) {
 			line = m.group();
-			//Log.d(TAG, line);
+			Log.d(TAG, line);
 			if ("------------------- ----- ------------ ------------  ------------------------".equals(line)) {
 				count++;
-				Log.d(TAG, "count " + count);
+				//Log.d(TAG, "count " + count);
 			} else if (count == 1) {
 				final Matcher matcher = zipEntryInfoPattern.matcher(line);
-				Log.d(TAG, "count " + count + ", " + line);
+				//Log.d(TAG, "count " + count + ", " + line);
 				if (matcher.matches()) {
 					final String group1 = matcher.group(1).trim();
 					if (group1.length() > 0) {
@@ -650,7 +650,7 @@ public final class Andro7za {
 					zip.entries.put(path, ze);
 				}
 			} else if (count == 2) {
-				Log.d(TAG, "count " + count + ", " + line);
+				//Log.d(TAG, "count " + count + ", " + line);
 				final Matcher mEnd = patEnd.matcher(line);
 				if (mEnd.matches()) {
 					zip.unZipSize = Long.valueOf(mEnd.group(3));

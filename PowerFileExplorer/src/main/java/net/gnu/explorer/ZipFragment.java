@@ -100,6 +100,7 @@ import java.util.TreeSet;
 import net.gnu.p7zip.Andro7za;
 import net.gnu.p7zip.Zip;
 import net.gnu.zpaq.Zpaq;
+import net.gnu.p7zip.DecompressTask;
 
 public class ZipFragment extends FileFrag implements View.OnClickListener {
 
@@ -171,13 +172,13 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	@Override
 	public void load(final String path) {
 		currentPathTitle = path;
-		changeDir(path, false, null);
+		changeDir(currentPathTitle, true, false, null);
 	}
 
 	@Override
 	public void load(final String path, final Runnable run) {
 		currentPathTitle = path;
-		changeDir(path, false, run);
+		changeDir(currentPathTitle, true, false, run);
 	}
 
 	@Override
@@ -286,208 +287,208 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		super.onViewCreated(view, savedInstanceState);
 		andro7za = new Andro7za(fragActivity);
 		zpaq = new Zpaq(fragActivity);
-		
+
 		//if (slidingTabsFragment != null) {
-			final String order;
+		final String order;
 
-			if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
-				order = AndroidUtils.getSharedPreference(activity, "ZipFragSortTypeR", "Name ▲");
-				spanCount = AndroidUtils.getSharedPreference(activity, "ZipFrag.SPAN_COUNTR", 1);
-			} else {
-				order = AndroidUtils.getSharedPreference(activity, "ZipFragSortTypeL", "Name ▲");
-				spanCount = AndroidUtils.getSharedPreference(activity, "ZipFrag.SPAN_COUNTL", 1);
+		if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+			order = AndroidUtils.getSharedPreference(activity, "ZipFragSortTypeR", "Name ▲");
+			spanCount = AndroidUtils.getSharedPreference(activity, "ZipFrag.SPAN_COUNTR", 1);
+		} else {
+			order = AndroidUtils.getSharedPreference(activity, "ZipFragSortTypeL", "Name ▲");
+			spanCount = AndroidUtils.getSharedPreference(activity, "ZipFrag.SPAN_COUNTL", 1);
+		}
+
+		SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
+
+		scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
+		mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
+
+		drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
+		drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
+		deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
+
+		view.findViewById(R.id.copys).setOnClickListener(this);
+		view.findViewById(R.id.cuts).setOnClickListener(this);
+		deletePastesBtn.setOnClickListener(this);
+		view.findViewById(R.id.renames).setOnClickListener(this);
+		view.findViewById(R.id.shares).setOnClickListener(this);
+
+		view.findViewById(R.id.moreLeft).setVisibility(View.GONE);
+		view.findViewById(R.id.moreRight).setVisibility(View.GONE);
+		view.findViewById(R.id.dirMore).setVisibility(View.GONE);
+		view.findViewById(R.id.infos).setOnClickListener(this);
+
+		final View compresssBtn = view.findViewById(R.id.compresss);
+		((Button)compresssBtn).setText("Decompress");
+		compresssBtn.setOnClickListener(this);
+
+		if (selectedInList1.size() == 0 && activity.COPY_PATH == null && activity.MOVE_PATH == null) {
+			if (commands.getVisibility() == View.VISIBLE) {
+				horizontalDivider6.setVisibility(View.GONE);
+				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
+				commands.setVisibility(View.GONE);
 			}
-			
-			SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
-
-			scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
-			mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
-			
-			drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
-			drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
-			deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
-
-			view.findViewById(R.id.copys).setOnClickListener(this);
-			view.findViewById(R.id.cuts).setOnClickListener(this);
-			deletePastesBtn.setOnClickListener(this);
-			view.findViewById(R.id.renames).setOnClickListener(this);
-			view.findViewById(R.id.shares).setOnClickListener(this);
-			
-			view.findViewById(R.id.moreLeft).setVisibility(View.GONE);
-			view.findViewById(R.id.moreRight).setVisibility(View.GONE);
-			
-			view.findViewById(R.id.infos).setOnClickListener(this);
-			
-			final View compresssBtn = view.findViewById(R.id.compresss);
-			((Button)compresssBtn).setText("Decompress");
-			compresssBtn.setOnClickListener(this);
-			
-			if (selectedInList1.size() == 0 && activity.COPY_PATH == null && activity.MOVE_PATH == null) {
-				if (commands.getVisibility() == View.VISIBLE) {
-					horizontalDivider6.setVisibility(View.GONE);
-					commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-					commands.setVisibility(View.GONE);
-				}
-			} else if (commands.getVisibility() == View.GONE) {
-				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-				commands.setVisibility(View.VISIBLE);
-				horizontalDivider6.setVisibility(View.VISIBLE);
-			}
-			mSwipeRefreshLayout.setEnabled(false);
-			listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-					public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-						//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
-						if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
-							if (dy > activity.density << 4 && selStatusLayout.getVisibility() == View.VISIBLE) {
-								selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-								selStatusLayout.setVisibility(View.GONE);
-								horizontalDivider0.setVisibility(View.GONE);
-								horizontalDivider12.setVisibility(View.GONE);
-								sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-								sortBarLayout.setVisibility(View.GONE);
-							} else if (dy < -activity.density << 4 && selStatusLayout.getVisibility() == View.GONE) {
-								selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-								selStatusLayout.setVisibility(View.VISIBLE);
-								horizontalDivider0.setVisibility(View.VISIBLE);
-								horizontalDivider12.setVisibility(View.VISIBLE);
-								sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-								sortBarLayout.setVisibility(View.VISIBLE);
-							}
-							lastScroll = System.currentTimeMillis();
+		} else if (commands.getVisibility() == View.GONE) {
+			commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+			commands.setVisibility(View.VISIBLE);
+			horizontalDivider6.setVisibility(View.VISIBLE);
+		}
+		mSwipeRefreshLayout.setEnabled(false);
+		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+					//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
+					if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
+						if (dy > activity.density << 4 && selStatusLayout.getVisibility() == View.VISIBLE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							selStatusLayout.setVisibility(View.GONE);
+							horizontalDivider0.setVisibility(View.GONE);
+							horizontalDivider12.setVisibility(View.GONE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							sortBarLayout.setVisibility(View.GONE);
+						} else if (dy < -activity.density << 4 && selStatusLayout.getVisibility() == View.GONE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							selStatusLayout.setVisibility(View.VISIBLE);
+							horizontalDivider0.setVisibility(View.VISIBLE);
+							horizontalDivider12.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							sortBarLayout.setVisibility(View.VISIBLE);
 						}
+						lastScroll = System.currentTimeMillis();
 					}
-				});
+				}
+			});
 
-			DefaultItemAnimator animator = new DefaultItemAnimator();
-			animator.setAddDuration(500);
-			listView.setItemAnimator(animator);
+		DefaultItemAnimator animator = new DefaultItemAnimator();
+		animator.setAddDuration(500);
+		listView.setItemAnimator(animator);
 
-			clearButton.setOnClickListener(this);
-			searchButton.setOnClickListener(this);
+		clearButton.setOnClickListener(this);
+		searchButton.setOnClickListener(this);
 
-			searchET.addTextChangedListener(textSearch);
-			mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+		searchET.addTextChangedListener(textSearch);
+		mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-					@Override
-					public boolean onScale(ScaleGestureDetector detector) {
-						Log.d(TAG, "onScale getCurrentSpan " + detector.getCurrentSpan() + ", getPreviousSpan " + detector.getPreviousSpan() + ", getTimeDelta " + detector.getTimeDelta());
-						//if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 50) {
-						//Log.d(TAG, "onScale " + (detector.getCurrentSpan() - detector.getPreviousSpan()) + ", getTimeDelta " + detector.getTimeDelta());
-						if (detector.getCurrentSpan() - detector.getPreviousSpan() < -80 * activity.density) {
-							if (spanCount == 1) {
-								spanCount = 2;
-								setRecyclerViewLayoutManager();
-								return true;
-							} else if (spanCount == 2 && slidingTabsFragment.width >= 0) {
-								if (activity.right.getVisibility() == View.GONE || activity.left.getVisibility() == View.GONE) {
-									spanCount = 8;
-								} else {
-									spanCount = 4;
-								}
-								setRecyclerViewLayoutManager();
-								return true;
+				@Override
+				public boolean onScale(ScaleGestureDetector detector) {
+					Log.d(TAG, "onScale getCurrentSpan " + detector.getCurrentSpan() + ", getPreviousSpan " + detector.getPreviousSpan() + ", getTimeDelta " + detector.getTimeDelta());
+					//if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 50) {
+					//Log.d(TAG, "onScale " + (detector.getCurrentSpan() - detector.getPreviousSpan()) + ", getTimeDelta " + detector.getTimeDelta());
+					if (detector.getCurrentSpan() - detector.getPreviousSpan() < -80 * activity.density) {
+						if (spanCount == 1) {
+							spanCount = 2;
+							setRecyclerViewLayoutManager();
+							return true;
+						} else if (spanCount == 2 && slidingTabsFragment.width >= 0) {
+							if (activity.right.getVisibility() == View.GONE || activity.left.getVisibility() == View.GONE) {
+								spanCount = 8;
+							} else {
+								spanCount = 4;
 							}
-						} else if (detector.getCurrentSpan() - detector.getPreviousSpan() > 80 * activity.density) {
-							if ((spanCount == 4 || spanCount == 8)) {
-								spanCount = 2;
-								setRecyclerViewLayoutManager();
-								return true;
-							} else if (spanCount == 2) {
-								spanCount = 1;
-								setRecyclerViewLayoutManager();
-								return true;
-							} 
+							setRecyclerViewLayoutManager();
+							return true;
 						}
-						return false;
+					} else if (detector.getCurrentSpan() - detector.getPreviousSpan() > 80 * activity.density) {
+						if ((spanCount == 4 || spanCount == 8)) {
+							spanCount = 2;
+							setRecyclerViewLayoutManager();
+							return true;
+						} else if (spanCount == 2) {
+							spanCount = 1;
+							setRecyclerViewLayoutManager();
+							return true;
+						} 
 					}
-				});
-
-			listView.setOnTouchListener(new View.OnTouchListener() {
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						//Log.d(TAG, "onTouch " + event);
-						select(true);
-						mScaleGestureDetector.onTouchEvent(event);
-						return false;
-					}
-				});
-			if (args != null) {
-				if (currentPathTitle == null) {
-					currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
-				} else {
-					args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);
+					return false;
 				}
-				//Log.d(TAG, "onViewCreated.dir " + dir);
-				if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
-					savedInstanceState = args;
+			});
+
+		listView.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					//Log.d(TAG, "onTouch " + event);
+					select(true);
+					mScaleGestureDetector.onTouchEvent(event);
+					return false;
 				}
-			}
-			allName.setText("Name");
-			allSize.setText("Size");
-			allDate.setText("Date");
-			allType.setText("Type");
-			switch (order) {
-				case "Name ▼":
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.DESCENDING);
-					allName.setText("Name ▼");
-					break;
-				case "Date ▲":
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.ASCENDING);
-					allDate.setText("Date ▲");
-					break;
-				case "Date ▼":
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.DESCENDING);
-					allDate.setText("Date ▼");
-					break;
-				case "Size ▲":
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.ASCENDING);
-					allSize.setText("Size ▲");
-					break;
-				case "Size ▼":
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.DESCENDING);
-					allSize.setText("Size ▼");
-					break;
-				case "Type ▲":
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.ASCENDING);
-					allType.setText("Type ▲");
-					break;
-				case "Type ▼":
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.DESCENDING);
-					allType.setText("Type ▼");
-					break;
-				default:
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.ASCENDING);
-					allName.setText("Name ▲");
-					break;
-			}
-
-			//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
-			if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
-				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-				currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
-
-				allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
-				setRecyclerViewLayoutManager();
-				//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
-				setDirectoryButtons();
-				
-				final int index  = savedInstanceState.getInt("index");
-				final int top  = savedInstanceState.getInt("top");
-				//Log.d(TAG, "index = " + index + ", " + top);
-				gridLayoutManager.scrollToPositionWithOffset(index, top);
+			});
+		if (args != null) {
+			if (currentPathTitle == null) {
+				currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
 			} else {
-				setRecyclerViewLayoutManager();
-				if (!fake) {
-					if (currentPathTitle != null) {
-						changeDir(currentPathTitle, false, null);
-					} else if (searchMode) {
-						searchMode = !searchMode;
-						manageSearchUI(searchMode);
-						changeDir(currentPathTitle, false, null);
-					}
+				args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);
+			}
+			//Log.d(TAG, "onViewCreated.dir " + dir);
+			if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
+				savedInstanceState = args;
+			}
+		}
+		allName.setText("Name");
+		allSize.setText("Size");
+		allDate.setText("Date");
+		allType.setText("Type");
+		switch (order) {
+			case "Name ▼":
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.DESCENDING);
+				allName.setText("Name ▼");
+				break;
+			case "Date ▲":
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.ASCENDING);
+				allDate.setText("Date ▲");
+				break;
+			case "Date ▼":
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.DESCENDING);
+				allDate.setText("Date ▼");
+				break;
+			case "Size ▲":
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.ASCENDING);
+				allSize.setText("Size ▲");
+				break;
+			case "Size ▼":
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.DESCENDING);
+				allSize.setText("Size ▼");
+				break;
+			case "Type ▲":
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.ASCENDING);
+				allType.setText("Type ▲");
+				break;
+			case "Type ▼":
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.DESCENDING);
+				allType.setText("Type ▼");
+				break;
+			default:
+				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.ASCENDING);
+				allName.setText("Name ▲");
+				break;
+		}
+
+		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
+		if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
+			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+			currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
+
+			allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
+			setRecyclerViewLayoutManager();
+			//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
+			setDirectoryButtons();
+
+			final int index  = savedInstanceState.getInt("index");
+			final int top  = savedInstanceState.getInt("top");
+			//Log.d(TAG, "index = " + index + ", " + top);
+			gridLayoutManager.scrollToPositionWithOffset(index, top);
+		} else {
+			setRecyclerViewLayoutManager();
+			if (!fake) {
+				if (currentPathTitle != null) {
+					changeDir(currentPathTitle, true, false, null);
+				} else if (searchMode) {
+					searchMode = !searchMode;
+					manageSearchUI(searchMode);
+					changeDir(currentPathTitle, true, false, null);
 				}
 			}
-			updateColor(view);
+		}
+		updateColor(view);
 		//}
 	}
 
@@ -654,7 +655,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		Log.d(TAG, "updateList " + this);
 		if (!fake) {
 			if (currentPathTitle != null) {
-				changeDir(currentPathTitle, false, null);
+				changeDir(currentPathTitle, true, false, null);
 			} else {
 				updateDir(currentPathTitle);
 			}
@@ -686,7 +687,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			ib.setGravity(Gravity.CENTER);
 			ib.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View view) {
-						changeDir("/", true, null);
+						changeDir("/", false, true, null);
 					}
 				});
 			mDirectoryButtons.addView(ib);
@@ -705,9 +706,9 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 						public void onClick(View view) {
 							String dir2 = (String) view.getTag();
 							if (dir2.equals(curPath)) {
-								changeDir(dir2, false, null);
+								changeDir(dir2, false, false, null);
 							} else {
-								changeDir(dir2, true, null);
+								changeDir(dir2, false, true, null);
 							}
 						}
 					});
@@ -752,14 +753,15 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 									public void onClick(DialogInterface dialog, int whichButton) {
 										String name = editText.getText().toString();
 										Log.d(TAG, "new " + name);
-										File newF = new File(name);
-										if (newF.exists()) {
-											if (newF.isDirectory()) {
+										//File newF = new File(name);
+										ZipEntry newF = zip.entries.get(name);
+										if (newF != null) {
+											if (newF.isDirectory) {
 												curPath = name;
-												changeDir(curPath, true, null);
+												changeDir(curPath, false, true, null);
 											} else {
-												curPath = newF.getParent();
-												changeDir(newF.getParentFile().getAbsolutePath(), true, null);
+												curPath = newF.parentPath;
+												changeDir(curPath, false, true, null);
 											}
 											dialog.dismiss();
 										} else {
@@ -897,16 +899,16 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	}
 
 
-	public void loadlist(String path, /*boolean back, */OpenMode openMode) {
-        /*if(openMode==-1 && android.util.Patterns.EMAIL_ADDRESS.matcher(path).matches())
-		 bindDrive(path);
-		 else */
-//        if (loadList != null) loadList.cancel(true);
-//        loadList = new LoadFiles();//LoadList(activity, activity, /*back, */this, openMode);
-//        loadList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (path));
-		changeDir(path, true, null);
-		
-    }
+//	public void loadlist(String path, /*boolean back, */OpenMode openMode) {
+//        /*if(openMode==-1 && android.util.Patterns.EMAIL_ADDRESS.matcher(path).matches())
+//		 bindDrive(path);
+//		 else */
+////        if (loadList != null) loadList.cancel(true);
+////        loadList = new LoadFiles();//LoadList(activity, activity, /*back, */this, openMode);
+////        loadList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (path));
+//		changeDir(path, true, true, null);
+//		
+//    }
 
 	private void showStatus() {
 		if (sortBarLayout.getVisibility() == View.GONE) {
@@ -1059,7 +1061,17 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				}
 				activity.zip = zip;
 				activity.EXTRACT_MOVE_PATH = copie;
-				
+				activity.callback = new Runnable() {
+					@Override
+					public void run() {
+						changeDir(currentPathTitle, true, false, new Runnable() {
+								@Override
+								public void run() {
+									changeDir(curPath, false, true, null);
+								}
+							});
+					}
+				};
 				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.multiFiles && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
 					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
@@ -1074,9 +1086,20 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				break;
 			case R.id.deletes_pastes:
 				Log.d(TAG, "deletesPastes selectedInList1.size() " + selectedInList1.size());
+				activity.callback = new Runnable() {
+					@Override
+					public void run() {
+						changeDir(currentPathTitle, true, false, new Runnable() {
+								@Override
+								public void run() {
+									changeDir(curPath, false, true, null);
+								}
+							});
+					}
+				};
 				if (selectedInList1.size() > 0) {
 					GeneralDialogCreation.deleteFilesDialog(activity, //getLayoutElements(),
-															activity, zip, (List<ZipEntry>)selectedInList1, activity.getAppTheme());
+															activity, zip, (List<ZipEntry>)selectedInList1, activity.getAppTheme(), activity.callback);
 				} else {
 					
 				}
@@ -1106,12 +1129,27 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 						Toast.makeText(activity, getResources().getString(R.string.share_limit),
 									   Toast.LENGTH_SHORT).show();
 					else {
-						ArrayList<File> arrayList = new ArrayList<>(selectedInList1.size());
+						final ArrayList<File> arrayList = new ArrayList<>(selectedInList1.size());
+						final StringBuilder sb = new StringBuilder();
 						for (ZipEntry i : selectedInList1) {
 							arrayList.add(new File(ExplorerApplication.PRIVATE_PATH + "/" + i.path));
+							sb.append(i.path).append("\n");
 						}
-
-						Futils.shareFiles(arrayList, activity, activity.getAppTheme(), accentColor);
+						new DecompressTask(fragActivity,
+							currentPathTitle,
+							ExplorerApplication.PRIVATE_PATH,
+							sb.toString(),
+							"",
+							"",
+							"",
+							0,
+							"x",
+							new Runnable() {
+								@Override
+								public void run() {
+									Futils.shareFiles(arrayList, activity, activity.getAppTheme(), accentColor);
+								}		   
+							}).execute();
 					}
 				}
 				break;
@@ -1246,7 +1284,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		}
 	}
 
-	public void changeDir(final String curDir, final boolean doScroll, final Runnable run) {
+	public void changeDir(final String curDir, final boolean fromBeginZip, final boolean doScroll, final Runnable run) {
 		Log.d(TAG, "changeDir " + curDir + ", doScroll " + doScroll + ", " + type + ", " + slidingTabsFragment.side);
 		if (fake) {
 			return;
@@ -1254,19 +1292,21 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		loadList.cancel(true);
 		searchTask.cancel(true);
 		loadList = new LoadFiles();
-		loadList.execute(curDir, doScroll, run);
+		loadList.execute(curDir, fromBeginZip, doScroll, run);
 	}
 	
 	private class LoadFiles extends AsyncTask<Object, String, List<ZipEntry>> {
-
+		
+		private boolean fromBeginZip;
 		private Boolean doScroll;
 		private Runnable run;
 		
 		@Override
 		protected List<ZipEntry> doInBackground(Object... params) {
 			String path = (String) params[0];
-			doScroll = (Boolean) params[1];
-			run = (Runnable) params[2];
+			fromBeginZip = (Boolean) params[1];
+			doScroll = (Boolean) params[2];
+			run = (Runnable) params[3];
 
 			noMedia = false;
 			List<ZipEntry> dataSourceL1a = new LinkedList<>();
@@ -1291,7 +1331,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				}
 				//Log.d(TAG, Util.collectionToString(history, true, "\n"));
 
-				if (zip == null || !zip.file.getAbsolutePath().equals(currentPathTitle)) {
+				if (fromBeginZip || zip == null) {//} || !zip.file.getAbsolutePath().equals(currentPathTitle)) {
 					if (mFileObserver != null) {
 						mFileObserver.stopWatching();
 					}
@@ -1303,10 +1343,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 						zip = zpaq.listing(currentPathTitle, "");
 					}
 					curPath = "/";
-					currentPathTitle = currentPathTitle;
 					activity.zip = zip;
-				} else if (path.equals(currentPathTitle)) {
-					curPath = "/";
 				} else {
 					curPath = path;
 				}

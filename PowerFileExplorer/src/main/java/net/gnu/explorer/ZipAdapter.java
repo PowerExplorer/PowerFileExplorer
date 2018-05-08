@@ -274,6 +274,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									//copy(v);
 									activity.COPY_PATH = null;
 									activity.MOVE_PATH = null;
+									activity.EXTRACT_MOVE_PATH = null;
 									ArrayList<String> copies = new ArrayList<>(1);
 									copies.add(rowItem.path);//zipFrag.currentPathTitle + "|" + 
 									activity.EXTRACT_PATH = copies;
@@ -294,10 +295,22 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 								case R.id.cut:
 									activity.COPY_PATH = null;
 									activity.MOVE_PATH = null;
+									activity.EXTRACT_PATH = null;
 									copies = new ArrayList<>(1);
-									copies.add(zipFrag.currentPathTitle + "|" + rowItem.path);
+									copies.add(rowItem.path);
+									activity.zip = zipFrag.zip;
 									activity.EXTRACT_MOVE_PATH = copies;
-
+									activity.callback = new Runnable() {
+										@Override
+										public void run() {
+											zipFrag.changeDir(zipFrag.currentPathTitle, true, false, new Runnable() {
+													@Override
+													public void run() {
+														zipFrag.changeDir(rowItem.parentPath, false, true, null);
+													}
+												});
+										}
+									};
 									if (activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
 										activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 										activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
@@ -318,8 +331,19 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									ArrayList<ZipEntry> ele = new ArrayList<ZipEntry>(1);
 									ele.add(rowItem);
 									//new Futils().deleteFiles(ele, fileFrag.activity, /*positions, */activity.getAppTheme());
+									activity.callback = new Runnable() {
+										@Override
+										public void run() {
+											zipFrag.changeDir(zipFrag.currentPathTitle, true, false, new Runnable() {
+													@Override
+													public void run() {
+														zipFrag.changeDir(rowItem.parentPath, false, true, null);
+													}
+												});
+										}
+									};
 									GeneralDialogCreation.deleteFilesDialog(activity, //getLayoutElements(),
-																			activity, zipFrag.zip, ele, activity.getAppTheme());
+																			activity, zipFrag.zip, ele, activity.getAppTheme(), activity.callback);
 									break;
 								case R.id.share:
 									Runnable r = new Runnable() {
@@ -400,7 +424,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 							final Runnable r = new Runnable() {
 								@Override
 								public void run() {
-									zFrag.changeDir(rowItem.path, true, null);
+									zFrag.changeDir(rowItem.path, false, true, null);
 								}
 							};
 							zFrag.load(zipFrag.currentPathTitle, r);
@@ -411,7 +435,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									@Override
 									public void run() {
 										final ZipFragment zFrag = (ZipFragment) pagerAdapter.getItem(slidingTabsFragment.pageSelected);
-										zFrag.changeDir(rowItem.path, true, null);
+										zFrag.changeDir(rowItem.path, false, true, null);
 									}
 								}, 100);
 						}
@@ -435,7 +459,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 				notifyDataSetChanged();
 			} else if (rowItem.isDirectory) { 
 				if (zipFrag.selectedInList1.size() == 0) { 
-					zipFrag.changeDir(path, true, null);
+					zipFrag.changeDir(path, false, true, null);
 				} else {
 					if (zipFrag.selectedInList1.remove(rowItem)) {
 						if (zipFrag.selectedInList1.size() == 0 && zipFrag.activity.COPY_PATH == null && zipFrag.activity.MOVE_PATH == null && zipFrag.commands.getVisibility() == View.VISIBLE) {

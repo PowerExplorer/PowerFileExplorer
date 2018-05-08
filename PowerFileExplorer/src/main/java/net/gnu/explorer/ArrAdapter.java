@@ -966,7 +966,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 //				 || mime.startsWith("application/x-fictionbook")
 //				 || f.getName().toLowerCase().endsWith(".doc")) {
 //			pagerAdapter.getItem(i = Frag.TYPE.FBReader.ordinal()).load(fPath);
-		} else if (mime.startsWith("text")) {
+		} else if (mime.startsWith("text") || FileUtil.TEXT_PATTERN.matcher(ele.name).matches()) {
 			//pagerAdapter.getItem(i = Frag.TYPE.TEXT.ordinal()).load(fPath);
 			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.TEXT);
 			if (tabIndex2 >= 0) {

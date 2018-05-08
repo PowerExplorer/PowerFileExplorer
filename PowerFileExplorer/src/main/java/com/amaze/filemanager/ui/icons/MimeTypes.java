@@ -89,7 +89,7 @@ public final class MimeTypes {
         MIME_TYPES.put("jar", "application/java-archive");
         MIME_TYPES.put("xz", "application/x-xz");
         MIME_TYPES.put("z", "application/x-compress");
-		MIME_TYPES.put("7z", "application/x-7z");
+		MIME_TYPES.put("7z", "application/x-7z-compressed");
 		MIME_TYPES.put("rar", "application/x-rar-compressed");
 		MIME_TYPES.put("zip", "application/zip");
 		MIME_TYPES.put("tar", "application/x-tar");
@@ -141,6 +141,20 @@ public final class MimeTypes {
         MIME_TYPES.put("mkv", "video/x-matroska");
 
 		MIME_TYPES.put("chm", "application/x-chm");
+		MIME_TYPES.put("iml", "application/x-iml");
+		MIME_TYPES.put("pro", "application/x-pro");
+		MIME_TYPES.put("gradle", "application/x-gradle");
+		MIME_TYPES.put("cfg", "application/x-cfg");
+		MIME_TYPES.put("gitignore", "application/x-gitignore");
+		MIME_TYPES.put("sh", "application/x-sh");
+		MIME_TYPES.put("properties", "application/x-properties");
+		MIME_TYPES.put("pod", "application/x-pod");
+		MIME_TYPES.put("classpath", "application/x-classpath");
+		MIME_TYPES.put("mk", "application/x-mk");
+		MIME_TYPES.put("md", "application/x-md");
+		MIME_TYPES.put("javascript", "application/javascript");
+		MIME_TYPES.put("json", "application/json");
+		MIME_TYPES.put("xml", "application/xml");
     }
 
 	public static String getMimeType(String path) {
