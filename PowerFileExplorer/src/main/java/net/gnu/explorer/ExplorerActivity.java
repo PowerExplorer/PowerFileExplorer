@@ -166,13 +166,12 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public static int BASE_BACKGROUND = 0xFFFFFFE8;
 	public static int IN_DATA_SOURCE_2 = 0xFFFFF8D9;
 	public static int IS_PARTIAL = 0xFFFFF0CF;
-	//public static final int GREY = Color.parseColor("#ff444444");
 	public static final int LIGHT_GREY = 0xff909090;
 	public static int TEXT_COLOR = 0xff404040;
 	public static int DIR_COLOR = Color.BLACK;
 	public static int DOT = 0xffa0a0a0;
 	public static int FILE_COLOR = Color.BLACK;
-	public static int DIVIDER_COLOR = 0xff707070;//-16777216
+	public static int DIVIDER_COLOR = 0xff707070;
 	
 	public static final String PREVIOUS_SELECTED_FILES = "net.gnu.explorer.selectedFiles";
 	
@@ -244,17 +243,13 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public ContentFragment curContentFrag;
 	int curContentFragIndex = 1;
 	ContentFragment curSelectionFrag;
-	int curSelectionFragIndex = -1;
+	//int curSelectionFragIndex = -1;
 	
 	SlidingTabsFragment slideFrag2 = null;
 	ContentFragment curSelectionFrag2;
-	int curSelectionFragIndex2 = 2;
+	//int curSelectionFragIndex2 = 2;
 	public ContentFragment curExplorerFrag;
 	int curExplorerFragIndex = 1;
-	
-//	public int operation = -1;
-//    public ArrayList<BaseFile> oparrayList;
-//    public ArrayList<ArrayList<BaseFile>> oparrayListList;
 	
     public static final int INTENT_WRITE_REQUEST_CODE = 1;
 
@@ -339,7 +334,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public static final Pattern DIR_SEPARATOR = Pattern.compile("/");
 	public int storage_count = 0; // number of storage available (internal/external/otg etc)
 	private DrawerAdapter adapter;
-	//private HistoryManager history, grid;
+	
 	private static final int SELECT_MINUS_2 = -2, NO_VALUE = -1, SELECT_0 = 0, SELECT_102 = 102;
 	private int selectedStorage = 0;
 	
@@ -462,28 +457,27 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		if (savedInstanceState == null) {
 			density = (int)(resources.getDisplayMetrics().density);
 			
-			suffix = intent.getStringExtra(EXTRA_FILTER_FILETYPE);
-			suffix = (suffix == null) ? "" : suffix;
-			
-			mimes = intent.getStringExtra(EXTRA_FILTER_MIMETYPE);
-			mimes = (mimes == null) ? "" : mimes;
-
 			final String extraTitle = intent.getStringExtra(EXTRA_TITLE);
 			if (intent.hasExtra(EXTRA_TITLE)) {
 				setTitle(extraTitle);
 			} else {
 				setTitle(R.string.pick_title);
 			}
+
+			suffix = intent.getStringExtra(EXTRA_FILTER_FILETYPE);
+			suffix = (suffix == null) ? "" : suffix.trim();
 			
 			multiFiles = intent.getBooleanExtra(EXTRA_MULTI_SELECT, true);
+			
+			mimes = intent.getStringExtra(EXTRA_FILTER_MIMETYPE);
+			//mimes = (mimes == null) ? "" : mimes;
+
 			if (ACTION_MULTI_SELECT.equals(action)) {//both dir & file
 				if (suffix.length() == 0) {
 					suffix = "*";
 				}
 			} else if (ACTION_PICK_DIRECTORY.equals(action)) {//dir
-				if (suffix.length() > 0) {
-					suffix = "";
-				}
+				suffix = "";
 			} else if (ACTION_PICK_FILE.equals(action)) {//file
 				if (suffix.length() == 0) {
 					suffix = ".*";
@@ -503,28 +497,17 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			slideFrag.side = SlidingTabsFragment.Side.LEFT;
 			final Uri data = intent.getData();
 			dir = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : intent.getStringExtra(EXTRA_ABSOLUTE_PATH) ;
-			if (dir != null) {//} || !"*".equals(suffix) || mimes.length() != 0 || previousSelectedStr != null) {
+			if (dir != null) {
 				Log.d(TAG, "slideFrag.addTab(dir, suffix, mimes, multiFiles)");
 				File file = new File(dir);
 				if (file.isDirectory()) {
 					//slideFrag.addTab(dir, suffix, mimes, multiFiles);
-					slideFrag.initLeftContentFragmentTabs(AndroidUtils.getSharedPreference(this, "curContentFragPath", dir));
-//					final Bundle bundle = new Bundle();
-//					bundle.putString(EXTRA_ABSOLUTE_PATH, dir);
-//					bundle.putString(EXTRA_FILTER_FILETYPE, suffix);
-//					bundle.putBoolean(EXTRA_MULTI_SELECT, multiFiles);
-//					bundle.putString(EXTRA_FILTER_MIMETYPE, mimes);
-//					bundle.putBoolean(EXTRA_WRITEABLE_ONLY, intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false));
-//					bundle.putBoolean(EXTRA_DIRECTORIES_ONLY, intent.getBooleanExtra(EXTRA_DIRECTORIES_ONLY, false));
-//					bundle.putStringArray(PREVIOUS_SELECTED_FILES, previousSelectedStr);
-//
-//					final ContentFragment contentFrag = new ContentFragment();
-//					contentFrag.setArguments(bundle);
-//					contentFrag.slidingTabsFragment = slideFrag;
-//					slideFrag.addPagerItem(contentFrag);
+					slideFrag.initLeftContentFragmentTabs(AndroidUtils.getSharedPreference(this, "curContentFragPath", dir), 
+														  suffix, multiFiles, mimes, previousSelectedStr, intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false));
 				} else if (FileUtil.extractiblePattern.matcher(file.getName()).matches()) {
-					slideFrag.addTab(file.getParent(), suffix, mimes, multiFiles);
 					slideFrag.addZip(Frag.TYPE.ZIP, dir);
+					slideFrag.addTab(file.getParent(), suffix, mimes, multiFiles);
+					curContentFragIndex = 2;
 				} else {
 					slideFrag.addTab(file.getParent(), suffix, mimes, multiFiles);
 					getFutils().openFile(file, this);
@@ -538,7 +521,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 					AndroidUtils.setDefaultPickFilePath(this, dir);
 				}
 				Log.d(TAG, "slideFrag.initContentFragmentTabs()");
-				slideFrag.initLeftContentFragmentTabs(AndroidUtils.getSharedPreference(this, "curContentFragPath", dir));
+				slideFrag.initLeftContentFragmentTabs(AndroidUtils.getSharedPreference(this, "curContentFragPath", dir),
+													  suffix, multiFiles, mimes, previousSelectedStr, intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false));
 			}
 		} else {
 			suffix = savedInstanceState.getString(EXTRA_FILTER_FILETYPE, "");
@@ -549,7 +533,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			slideFrag1Selected = savedInstanceState.getBoolean("slideFrag1Selected");
 			slideFrag = (SlidingTabsFragment) supportFragmentManager.findFragmentByTag("slideFrag");
 			curContentFragIndex = savedInstanceState.getInt("curContentFragIndex");
-			curSelectionFragIndex = savedInstanceState.getInt("curSelectionFragIndex");
+			//curSelectionFragIndex = savedInstanceState.getInt("curSelectionFragIndex");
 			
 			COPY_PATH = savedInstanceState.getParcelableArrayList("COPY_PATH");
 			MOVE_PATH = savedInstanceState.getParcelableArrayList("MOVE_PATH");
@@ -558,7 +542,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			originPaths_oparrayList = savedInstanceState.getParcelableArrayList("oparrayList");
 			operation = savedInstanceState.getInt("operation");
 			selectedStorage = savedInstanceState.getInt("selectitem", SELECT_0);
-			//mainFragment = (Main) savedInstanceState.getParcelable("main_fragment");
+			
 			if (adapter != null) {
 				adapter.toggleChecked(selectedStorage);
 			}
@@ -596,8 +580,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				slideFrag2 = new SlidingTabsFragment();
 				slideFrag2.side = SlidingTabsFragment.Side.RIGHT;
 				if (intent.getStringExtra(EXTRA_ABSOLUTE_PATH) != null ||
-					!"*".equals(suffix) || mimes.length() != 0 || previousSelectedStr != null) {
-					Log.d(TAG, "slideFrag2.addTab(previousSelectedStr)");
+					!"*".equals(suffix) || mimes != null || previousSelectedStr != null) {
+					Log.d(TAG, "slideFrag2.addTab(previousSelectedStr) " + dir + ", " + suffix + ", " + mimes + ", " + multiFiles);
 					slideFrag2.addTab(previousSelectedStr);
 				} else {
 					Log.d(TAG, "slideFrag2.addTab(\"/storage\", suffix, mimes, multiFiles)");
@@ -607,7 +591,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			} else {
 				slideFrag2 = (SlidingTabsFragment) supportFragmentManager.findFragmentByTag("slideFrag2");
 				curExplorerFragIndex = savedInstanceState.getInt("curExplorerFragIndex");
-				curSelectionFragIndex2 = savedInstanceState.getInt("curSelectionFragIndex2");
+				//curSelectionFragIndex2 = savedInstanceState.getInt("curSelectionFragIndex2");
 				//Log.d(TAG, "curExploreFragIndex " + curExploreFragIndex + ", curSelectionFrag2Index " + curSelectionFrag2Index);
 			}
 			transaction.replace(R.id.content_fragment2, slideFrag2, "slideFrag2");
@@ -979,11 +963,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		outState.putBoolean("slideFrag1Selected", slideFrag1Selected);
 		outState.putInt("curContentFragIndex", (curContentFragIndex=slideFrag.realFragCount() == 1 ? 0 : slideFrag.indexOfMTabs(curContentFrag)+1));
 		AndroidUtils.setSharedPreference(this, "curContentFragPath", curContentFrag.currentPathTitle);
-		outState.putInt("curSelectionFragIndex", (curSelectionFragIndex=curSelectionFrag != null ? slideFrag.indexOfMTabs(curSelectionFrag) + 1: -1));
+		//outState.putInt("curSelectionFragIndex", (curSelectionFragIndex=curSelectionFrag != null ? slideFrag.indexOfMTabs(curSelectionFrag) + 1: -1));
 		if (slideFrag2 != null) {
 			outState.putInt("curExplorerFragIndex", (curExplorerFragIndex=slideFrag2.realFragCount() == 1 ? 0 : slideFrag2.indexOfMTabs(curExplorerFrag)+1));
 			AndroidUtils.setSharedPreference(this, "curExplorerFragPath", curExplorerFrag.currentPathTitle);
-			outState.putInt("curSelectionFragIndex2", (curSelectionFragIndex2 = curSelectionFrag2 != null ? slideFrag2.indexOfMTabs(curSelectionFrag2) + 1: -1));
+			//outState.putInt("curSelectionFragIndex2", (curSelectionFragIndex2 = curSelectionFrag2 != null ? slideFrag2.indexOfMTabs(curSelectionFrag2) + 1: -1));
 		}
 		
         if (selectedStorage != NO_VALUE)
@@ -1040,15 +1024,12 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
         Log.d(TAG, "onResume");
 		super.onResume();
 		curContentFrag = (ContentFragment) slideFrag.getFragmentIndex(curContentFragIndex);
-		if (curSelectionFragIndex >= 0) {
-			curSelectionFrag = (ContentFragment) slideFrag.getFragmentIndex(curSelectionFragIndex);
-		}
+		curSelectionFrag = (ContentFragment) slideFrag.getFrag(Frag.TYPE.SELECTION);
+		
 		//Log.d(TAG, "onResume curContentFrag " + curContentFrag);
 		if (slideFrag2 != null) {
 			curExplorerFrag = (ContentFragment) slideFrag2.getFragmentIndex(curExplorerFragIndex);
-			if (curSelectionFragIndex2 >= 0) {
-				curSelectionFrag2 = (ContentFragment) slideFrag2.getFragmentIndex(curSelectionFragIndex2);
-			}
+			curSelectionFrag2 = (ContentFragment) slideFrag2.getFrag(Frag.TYPE.SELECTION);
 			Log.d(TAG, "onResume curContentFrag2 " + curSelectionFrag2);
 		}
 
@@ -1103,9 +1084,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
         final CryptHandler cryptHandler = new CryptHandler(this);
         cryptHandler.close();
-
-        /*if (mainFragment!=null)
-            mainFragment = null;*/
     }
 
     /**
@@ -2364,8 +2342,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
 				curContentFrag.mimes = intent.getStringExtra(EXTRA_FILTER_MIMETYPE);
 				curContentFrag.mimes = curContentFrag.mimes == null ? "*/*" : curContentFrag.mimes.toLowerCase();
+				
 				curContentFrag.mWriteableOnly = intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false);
-
 				curContentFrag.previousSelectedStr = intent.getStringArrayExtra(PREVIOUS_SELECTED_FILES);
 
 				curContentFrag.changeDir(path, true);

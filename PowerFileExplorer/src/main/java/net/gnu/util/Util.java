@@ -209,10 +209,10 @@ public class Util {
 		return sb.toString();
 	}
 
-	public static List<String> stringToList(String s, String sep) {
+	public static List<String> stringToList(final String s, String sep) {
 		sep = sep.replaceAll(HtmlUtil.SPECIAL_CHAR_PATTERNSTR, "\\\\$1");
-		String[] split = s.split(sep);
-		ArrayList<String> l = new ArrayList<String>(split.length);
+		final String[] split = s.split(sep);
+		final ArrayList<String> l = new ArrayList<String>(split.length);
 		for (String st : split) {
 			l.add(st);
 		}

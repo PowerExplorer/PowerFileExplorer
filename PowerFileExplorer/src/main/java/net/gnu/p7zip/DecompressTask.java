@@ -39,7 +39,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 	private Zpaq zpaq;
 	Runnable run;
 	private static final String TAG = "DecompressTask";
-
+	
 	public DecompressTask(DecompressFragment decompFrag) {
 		this.decompFrag = decompFrag;
 		this.activity = decompFrag.getActivity();
@@ -184,7 +184,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 //			if (progress[0].indexOf("\n") >= 0) {
 //				++rowNum;
 //			}
-			if (++rowNum > 6) {
+			if (++rowNum > 24) {
 				sb = new StringBuilder(sb.substring(sb.indexOf("\n") + 1));
 				//decompFrag.statusTV.setText("");
 			} 

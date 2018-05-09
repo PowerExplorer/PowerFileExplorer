@@ -63,8 +63,8 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 	transient Button mBtnOK;
 	private transient Button mBtnCancel;
-	private transient Button filesBtn;
-	private transient Button saveToBtn;
+	private transient View filesBtn;
+	private transient View saveToBtn;
 	private transient ImageButton historyBtn;
 	private transient ImageButton historySaveBtn;
 	transient EditText fileET;
@@ -86,17 +86,17 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 	transient CheckBox deleteFilesAfterArchivingCB;
 
 	transient CheckBox solidArchiveCB;
-//	transient CheckBox testCB;
-//	transient CheckBox createSeparateArchivesCB;
+	transient CheckBox testCB;
+	transient CheckBox createSeparateArchivesCB;
 	transient CheckBox archiveNameMaskCB;
 	//transient CheckBox workingDirectoryCB;
-	//transient CheckBox otherParametersCB;
+	transient CheckBox otherParametersCB;
 	//transient Button workingDirectoryBtn;
 
 	String solidArchive = "";
-//	private String test;
-//	private String createSeparateArchives;
-	private String archiveNameMask;
+	boolean test = false;
+	boolean createSeparateArchives = false;
+	String archiveNameMask;
 	//String workingDirectory;
 
 	transient TextView statusTV;
@@ -151,12 +151,12 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		solidArchiveET = (EditText) view.findViewById(R.id.solidArchiveET);
 		//workingDirectoryET = (EditText) view.findViewById(R.id.workingDirectoryET);
 		archiveNameMaskET = (EditText) view.findViewById(R.id.archiveNameMaskET);
-		view.findViewById(R.id.mode).setOnClickListener(this);
+		//view.findViewById(R.id.mode).setOnClickListener(this);
 		compressLevelSpinner = (Spinner) view.findViewById(R.id.level);
 		typeRadioGroup = (RadioGroup) view.findViewById(R.id.type);
 		volUnitRadioGroup = (RadioGroup) view.findViewById(R.id.volumeUnit);
-		filesBtn = (Button) view.findViewById(R.id.filesBtn);
-		saveToBtn = (Button) view.findViewById(R.id.saveToBtn);
+		filesBtn = view.findViewById(R.id.filesBtn);
+		saveToBtn = view.findViewById(R.id.saveToBtn);
 		statusTV = (TextView) view.findViewById(R.id.status);
 		historyBtn = (ImageButton) view.findViewById(R.id.historyBtn);
 		historySaveBtn = (ImageButton) view.findViewById(R.id.historySaveBtn);
@@ -167,12 +167,15 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		encryptFileNamesCB = (CheckBox)view.findViewById(R.id.encryptFileNamesCB);
 
 		solidArchiveCB = (CheckBox)view.findViewById(R.id.solidArchiveCB);
-		//testCB = (CheckBox)view.findViewById(R.id.testCB);
-		//createSeparateArchivesCB = (CheckBox)view.findViewById(R.id.createSeparateArchivesCB);
+		testCB = (CheckBox)view.findViewById(R.id.testCB);
+		createSeparateArchivesCB = (CheckBox)view.findViewById(R.id.createSeparateArchivesCB);
 		archiveNameMaskCB = (CheckBox)view.findViewById(R.id.archiveNameMaskCB);
 		//workingDirectoryCB = (CheckBox)view.findViewById(R.id.workingDirectoryCB);
 		//workingDirectoryBtn = (Button)view.findViewById(R.id.workingDirectoryBtn);
-
+		
+		getView().findViewById(R.id.config).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.status).setVisibility(View.GONE);
+		
 		typeRadioGroup.setOnCheckedChangeListener(this);
 		deleteFilesAfterArchivingCB.setOnCheckedChangeListener(this);
 
@@ -290,6 +293,8 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		compressTask = new CompressTask(this);
 		compressTask.execute();
 		mBtnOK.setText("Cancel");
+		getView().findViewById(R.id.config).setVisibility(View.GONE);
+		getView().findViewById(R.id.status).setVisibility(View.VISIBLE);
 	}
 	
 	public void onItemSelected(
@@ -307,16 +312,16 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 	@Override
 	public void onClick(final View p1) {
 		switch (p1.getId()) {
-			case R.id.mode: 
-				final View view = getView();
-				if (((ToggleButton)p1).isChecked()) {
-					view.findViewById(R.id.advancedLayout).setVisibility(View.VISIBLE);
-					view.findViewById(R.id.basicLayout).setVisibility(View.GONE);
-				} else {
-					view.findViewById(R.id.basicLayout).setVisibility(View.VISIBLE);
-					view.findViewById(R.id.advancedLayout).setVisibility(View.GONE);
-				}
-				break;
+//			case R.id.mode: 
+//				final View view = getView();
+//				if (((ToggleButton)p1).isChecked()) {
+//					//view.findViewById(R.id.advancedLayout).setVisibility(View.VISIBLE);
+//					view.findViewById(R.id.basicLayout).setVisibility(View.GONE);
+//				} else {
+//					view.findViewById(R.id.basicLayout).setVisibility(View.VISIBLE);
+//					//view.findViewById(R.id.advancedLayout).setVisibility(View.GONE);
+//				}
+//				break;
 			case R.id.cancelDir:
 				dismiss();
 				break;
@@ -407,6 +412,8 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 				} else {
 					compressTask.cancel(true);
 					mBtnOK.setText("Compress");
+					getView().findViewById(R.id.config).setVisibility(View.VISIBLE);
+					getView().findViewById(R.id.status).setVisibility(View.GONE);
 				}
 				break;
 		}
@@ -442,7 +449,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 				encryptFileNamesCB.setEnabled(true);
 			}
 			if (otherParametersET.getText().length() == 0) {
-				otherParametersET.setText("-mqs=on -mt=on");
+				otherParametersET.setText("-mqs=on");
 			}
 		} else {
 			solidArchiveET.setText("-ms=off");
@@ -487,28 +494,28 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 					}
 					break;
 				}
-//			case (R.id.testCB) : {
-////					if (checkBox.isChecked()) {
-////						otherArgsET.setEnabled(true);
-////					} else {
-////						otherArgsET.setText("");
-////						otherArgsET.setEnabled(false);
-////					}
-//					break;
-//				}
-//			case (R.id.createSeparateArchivesCB) : {
-////					if (checkBox.isChecked()) {
-////						otherArgsET.setEnabled(true);
-////					} else {
-////						otherArgsET.setText("");
-////						otherArgsET.setEnabled(false);
-////					}
-//					break;
-//				}
+			case (R.id.testCB) : {
+//					if (checkBox.isChecked()) {
+//						otherArgsET.setEnabled(true);
+//					} else {
+//						otherArgsET.setText("");
+//						otherArgsET.setEnabled(false);
+//					}
+					break;
+				}
+			case (R.id.createSeparateArchivesCB) : {
+//					if (checkBox.isChecked()) {
+//						otherArgsET.setEnabled(true);
+//					} else {
+//						otherArgsET.setText("");
+//						otherArgsET.setEnabled(false);
+//					}
+					break;
+				}
 			case (R.id.archiveNameMaskCB) : {
 					if (checkBox.isChecked()) {
 						archiveNameMaskET.setEnabled(true);
-						archiveNameMaskET.setText("YYYYMMDDhhmmss");
+						archiveNameMaskET.setText("yyyy-MM-dd HH.mm.ss");
 					} else {
 						archiveNameMaskET.setText("");
 						archiveNameMaskET.setEnabled(false);
@@ -552,8 +559,8 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 			deleteFilesAfterArchiving = deleteFilesAfterArchivingCB.isChecked() ? "-sdel" : "";
 			encryptFileNames = encryptFileNamesCB.isChecked() ? "-mhe=on" : "";
 			solidArchive = solidArchiveET.getText().toString();
-//			test = testCB.getText().toString();
-//			createSeparateArchives = createSeparateArchivesCB.getText().toString();
+			test = testCB.isChecked();
+			createSeparateArchives = createSeparateArchivesCB.isChecked();
 			archiveNameMask = archiveNameMaskET.getText().toString();
 			//workingDirectory = workingDirectoryET.getText().toString();
 			otherParameters = otherParametersET.getText().toString();
@@ -613,8 +620,8 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		solidArchiveET.setText(solidArchive);
 		solidArchiveCB.setChecked(solidArchive != null && !solidArchive.trim().equals("-ms=off"));
 
-//		test = testCB.getText().toString();
-//		createSeparateArchives = createSeparateArchivesCB.getText().toString();
+		testCB.setChecked(test);
+		createSeparateArchivesCB.setChecked(createSeparateArchives);
 		archiveNameMaskET.setText(archiveNameMask);
 //		workingDirectoryET.setText(workingDirectory);
 //		boolean dir = workingDirectory.length() > 0;
@@ -623,9 +630,6 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 //		workingDirectoryCB.setChecked(dir);
 
 		otherParametersET.setText(otherParameters);
-//		boolean param = otherParameters.length() > 0;
-//		otherParametersET.setEnabled(param);
-		//otherParametersCB.setChecked(param);
 		Log.d(TAG, "restore() 4 " + this);
 
 	}

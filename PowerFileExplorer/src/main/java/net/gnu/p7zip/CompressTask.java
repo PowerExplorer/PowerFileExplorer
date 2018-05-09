@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import net.gnu.zpaq.Zpaq;
 import net.gnu.androidutil.ForegroundService;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class CompressTask extends AsyncTask<String, String, String> implements UpdateProgress {
 
@@ -39,7 +41,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 //	private String encryptFileNames = "";
 
 	private List<String> otherArgs;
-	
+
 	private String[] levels = new String[]{"-mx0", "-mx1", "-mx3", "-mx5", "-mx7", "-mx9"};
 	private String[] zpaqLevels = new String[]{"-m0", "-m1", "-m2", "-m3", "-m4", "-m5"};
 	//String[] types = new String[]{"-t7z", "-tzip", "-tgz", "-ttar"};
@@ -50,52 +52,58 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 	private PowerManager.WakeLock wl;
 	private Andro7za andro7za;
 	private Zpaq zpaq;
-	
+	private boolean test = false;
+	private boolean createSeparateArchives = false;
+	private String archiveNameMask = "";
+
 	public CompressTask(CompressFragment compressFrag) {
-		
+
 		this.compressFrag = compressFrag;
 		compressFrag.compressTask = this;
-		
+
 		activity = compressFrag.getActivity();
 		andro7za = new Andro7za(activity);
 		zpaq = new Zpaq(activity);
-		
+
 		this.lf = compressFrag.fileET.getText().toString();
-		
-		String fName = compressFrag.saveToET.getText().toString();
+
+		String fName = compressFrag.saveToET.getText().toString().trim();
 		if (fName.matches(FileUtil.compressibleExtension)) {
 			this.archive = fName;
 		} else {
 			this.archive = fName + "." + ((RadioButton)compressFrag.getView().findViewById(compressFrag.typeRadioGroup.getCheckedRadioButtonId())).getTag();// + "/" + compressFrag.fName
 		}
-		
-		type = compressFrag.getView().findViewById(compressFrag.typeRadioGroup.getCheckedRadioButtonId()).getTag()+"";
-		
+
+		type = compressFrag.getView().findViewById(compressFrag.typeRadioGroup.getCheckedRadioButtonId()).getTag() + "";
+
 		this.password = compressFrag.passwordET.getText().toString();
-		
+
 		if (type.equals("zpaq")) {
 			level = zpaqLevels[compressFrag.compressLevelSpinner.getSelectedItemPosition()];
 		} else {
 			level = levels[compressFrag.compressLevelSpinner.getSelectedItemPosition()];
 		}
-		
+
 		if (compressFrag.volumeValET.length() > 0) {
 			volume = "" + ((RadioButton)compressFrag.getView().findViewById(compressFrag.volUnitRadioGroup.getCheckedRadioButtonId())).getTag();//volumes[compressFrag.volumeUnit];
 			volume = compressFrag.volumeValET.getText() + volume;
 		}
-		
+
 		excludes = compressFrag.excludeET.getText().toString();
-		
+
 		//String workingDirectory = compressFrag.workingDirectory.length() > 0 ? " -w\"" + compressFrag.workingDirectory + "\" " : "";
-		
+
 		String otherParameters = compressFrag.otherParametersET.getText().toString();
-		String[] otherArg = (type.equals("zpaq") ? otherParameters.replace("-mqs=on", "") : otherParameters).split("\\s+");
+		String[] otherArg = (type.equals("7z") ? otherParameters.replace("-mqs=on", "") : otherParameters).split("\\s+");
 		otherArgs = new ArrayList<String>(Arrays.asList(otherArg));
-		otherArgs.add(0, (type.equals("7z") ? (compressFrag.solidArchiveCB.isChecked()? compressFrag.solidArchiveET.getText().toString() :"-ms=off") : ""));
+		otherArgs.add(0, (type.equals("7z") ? (compressFrag.solidArchiveCB.isChecked() ? compressFrag.solidArchiveET.getText().toString() : "-ms=off") : ""));
 		otherArgs.add(0, (type.equals("7z") ? (compressFrag.encryptFileNamesCB.isChecked() ? "-mhe=on" : "") : ""));
 		otherArgs.add(0, compressFrag.deleteFilesAfterArchivingCB.isChecked() ? "-sdel" : "");
 		//otherArgs += workingDirectory;
-		
+		this.test = compressFrag.test;
+		this.createSeparateArchives = compressFrag.createSeparateArchives;
+		this.archiveNameMask = compressFrag.archiveNameMask.trim();
+
 	}
 
 	@Override
@@ -110,50 +118,142 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		try {
 			wl.acquire();
 			//JarUtil.createJAR("/sdcard/lib.jar", "/storage/emulated/0/AppProjects/Searcher/bin/classesdebug/");
-			File f = new File(archive).getParentFile();
+			final File f = new File(archive).getParentFile();
 			if (!f.exists()) {
 				f.mkdirs();
 			}
 			sb = new StringBuilder();
 			rowNum = 0;
 			publishProgress("Compressing " + archive);
-			if (!type.equals("zpaq")) {
-				List<String> l = Arrays.asList(lf.split("\\|+\\s*"));
-				int ret = andro7za.compress(
-					archive,
-					password, 
-					level, 
-					volume, 
-					l,
-					excludes,
-					otherArgs,
-					this);
-				if (ret == 1) {
-					publishProgress("Warning");
-					return "Warning";
-				} else if (ret == 2) {
-					publishProgress("Fatal error");
-					return "Fatal error";
-				} else if (ret == 7) {
-					publishProgress("Command line error");
-					return "Command line error";
-				} else if (ret == 8) {
-					publishProgress("Not enough memory for operation");
-					return "Not enough memory for operation";
-				} else if (ret == 255) {
-					publishProgress("User stopped the process");
-					return "User stopped the process";
+			final List<String> fList = Arrays.asList(lf.split("\\|+\\s*"));
+			final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat(archiveNameMask);
+			if (createSeparateArchives) {
+				final List<String> sList = new ArrayList<>(1);
+				if (archiveNameMask != null && archiveNameMask.length() > 0) {
+					for (String st : fList) {
+						sList.clear();
+						sList.add(st);
+						File file = new File(st);
+						if (!type.equals("zpaq")) {
+							int ret = andro7za.compress(
+								file.getParent() + "/" + file.getName() + "_" + TIME_FORMAT.format(Calendar.getInstance().getTimeInMillis()) + "." + type,
+								password, 
+								level, 
+								volume, 
+								sList,
+								excludes,
+								new ArrayList<String>(otherArgs),
+								this);
+							if (ret == 1) {
+								publishProgress("Warning");
+								return "Warning";
+							} else if (ret == 2) {
+								publishProgress("Fatal error");
+								return "Fatal error";
+							} else if (ret == 7) {
+								publishProgress("Command line error");
+								return "Command line error";
+							} else if (ret == 8) {
+								publishProgress("Not enough memory for operation");
+								return "Not enough memory for operation";
+							} else if (ret == 255) {
+								publishProgress("User stopped the process");
+								return "User stopped the process";
+							}
+						} else {
+							int ret = zpaq.compress(
+								file.getParent() + "/" + file.getName() + "_" + TIME_FORMAT.format(Calendar.getInstance().getTimeInMillis()) + "." + type,
+								password, 
+								level, 
+								st,
+								excludes,
+								new ArrayList<String>(otherArgs),
+								this);
+						}
+					}
+				} else {//!archiveNameMask
+					for (String st : fList) {
+						sList.clear();
+						sList.add(st);
+						File file = new File(st);
+						if (!type.equals("zpaq")) {
+							int ret = andro7za.compress(
+								file.getParent() + "/" + file.getName() + "." + type,
+								password, 
+								level, 
+								volume, 
+								sList,
+								excludes,
+								new ArrayList<String>(otherArgs),
+								this);
+							if (ret == 1) {
+								publishProgress("Warning");
+								return "Warning";
+							} else if (ret == 2) {
+								publishProgress("Fatal error");
+								return "Fatal error";
+							} else if (ret == 7) {
+								publishProgress("Command line error");
+								return "Command line error";
+							} else if (ret == 8) {
+								publishProgress("Not enough memory for operation");
+								return "Not enough memory for operation";
+							} else if (ret == 255) {
+								publishProgress("User stopped the process");
+								return "User stopped the process";
+							}
+						} else {
+							int ret = zpaq.compress(
+								file.getParent() + "/" + file.getName() + "." + type,
+								password, 
+								level, 
+								st,
+								excludes,
+								new ArrayList<String>(otherArgs),
+								this);
+						}
+					}
 				}
-			} else {
-				int ret = zpaq.compress(
-					archive, 
-					password, 
-					level, 
-					lf,
-					excludes,
-					otherArgs,
-					this);
+			} else { //!createSeparateArchives
+				int lastIndexOf = archive.lastIndexOf(".");
+				if (!type.equals("zpaq")) {
+					int ret = andro7za.compress(
+						archiveNameMask.length() == 0 ? archive : archive.substring(0, lastIndexOf) + "_" + TIME_FORMAT.format(Calendar.getInstance().getTimeInMillis()) + archive.substring(lastIndexOf),
+						password, 
+						level, 
+						volume, 
+						fList,
+						excludes,
+						otherArgs,
+						this);
+					if (ret == 1) {
+						publishProgress("Warning");
+						return "Warning";
+					} else if (ret == 2) {
+						publishProgress("Fatal error");
+						return "Fatal error";
+					} else if (ret == 7) {
+						publishProgress("Command line error");
+						return "Command line error";
+					} else if (ret == 8) {
+						publishProgress("Not enough memory for operation");
+						return "Not enough memory for operation";
+					} else if (ret == 255) {
+						publishProgress("User stopped the process");
+						return "User stopped the process";
+					}
+				} else {
+					int ret = zpaq.compress(
+						archiveNameMask.length() == 0 ? archive : archive.substring(0, lastIndexOf) + "_" + TIME_FORMAT.format(Calendar.getInstance().getTimeInMillis()) + archive.substring(lastIndexOf),
+						password, 
+						level, 
+						lf,
+						excludes,
+						otherArgs,
+						this);
+				}
 			}
+
 			return "";
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -202,8 +302,8 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		if (progress != null && progress.length > 0 
 			&& progress[0] != null && progress[0].trim().length() > 0) {
 //			Toast.makeText(activity, progress[0], Toast.LENGTH_LONG).show();
-			if (++rowNum > 2) {
-				sb = new StringBuilder(sb.substring(sb.indexOf("\n")+1));
+			if (++rowNum > 24) {
+				sb = new StringBuilder(sb.substring(sb.indexOf("\n") + 1));
 			} 
 			sb.append(progress[0]).append("\n");
 			compressFrag.statusTV.setText(sb);

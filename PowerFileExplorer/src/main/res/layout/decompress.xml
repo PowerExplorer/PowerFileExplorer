@@ -32,6 +32,7 @@
 			android:background="#ff0000ff" />
 
         <LinearLayout
+            android:id="@+id/config"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -71,18 +72,21 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="14sp" />
 
-                <Button
+                <ImageButton
 					android:id="@+id/filesBtn"
-					android:layout_width="64dp"
-					android:layout_height="48dp"
+					android:layout_width="54dp"
+					android:layout_height="40dp"
+					android:scaleType="fitCenter"
 					android:layout_toLeftOf="@+id/historyBtn"
 					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:src="@drawable/ic_more_horizontal_black_48dp"
 					android:text=" ... " />
 
 				<ImageButton
 					android:id="@+id/historyBtn"
-					android:layout_width="64dp"
-					android:layout_height="48dp"
+					android:layout_width="54dp"
+					android:layout_height="40dp"
+					android:scaleType="fitCenter"
 					android:layout_alignParentRight="true"
 					android:src="@drawable/ic_history_black_36dp"
 					/>
@@ -117,18 +121,21 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="14sp" />
 
-                <Button
+                <ImageButton
 					android:id="@+id/saveToBtn"
-					android:layout_width="64dp"
-					android:layout_height="48dp"
+					android:layout_width="54dp"
+					android:layout_height="40dp"
+					android:scaleType="fitCenter"
 					android:layout_toLeftOf="@+id/historySaveBtn"
 					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:src="@drawable/ic_more_horizontal_black_48dp"
 					android:text=" ... " />
 
 				<ImageButton
 					android:id="@+id/historySaveBtn"
-					android:layout_width="64dp"
-					android:layout_height="48dp"
+					android:layout_width="54dp"
+					android:layout_height="40dp"
+					android:scaleType="fitCenter"
 					android:layout_alignParentRight="true"
 					android:src="@drawable/ic_history_black_36dp"
 				/>
@@ -294,20 +301,22 @@
 					android:textAppearance="?android:attr/textAppearanceLarge"
 					android:textSize="14sp" />
 			</LinearLayout>
-
-            <TextView
-                android:id="@+id/status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-				android:lines="6"
-                android:layout_gravity="bottom"
-				android:paddingTop="0dp"
-				android:paddingBottom="0dp"
-				android:paddingLeft="6dp"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="14sp" />
         </LinearLayout>
+
+		<TextView
+			android:id="@+id/status"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:visibility="gone"
+			android:text=""
+			android:maxLines="24"
+			android:layout_gravity="bottom"
+			android:paddingTop="0dp"
+			android:paddingBottom="0dp"
+			android:paddingLeft="12dp"
+			android:paddingRight="12dp"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textSize="14sp" />
 
         <LinearLayout
             android:id="@+id/buttons"

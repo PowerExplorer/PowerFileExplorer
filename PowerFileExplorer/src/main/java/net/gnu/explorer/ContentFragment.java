@@ -510,25 +510,25 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				}
 				//Log.d(TAG, "onViewCreated.dir " + dir);
 				suffix = args.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*").trim().toLowerCase();
-				String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
-				suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
-				suffixSpliter = ".*?(" + suffixSpliter + ")";
-				suffixPattern = Pattern.compile(suffixSpliter);
-
+				
 				mimes = args.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
-				mimes = mimes == null ? "*/*" : mimes.toLowerCase();
 				//Log.d(TAG, "onViewCreated.suffix " + suffix);
 				multiFiles = args.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT);
 				//Log.d(TAG, "onViewCreated.multiFiles " + multiFiles);
 				if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
 					savedInstanceState = args;
 				}
-
-				if (!multiFiles) {
-					allCbx.setVisibility(View.GONE);
-				}
 			}
 
+			String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
+			suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
+			suffixSpliter = ".*?(" + suffixSpliter + ")";
+			suffixPattern = Pattern.compile(suffixSpliter);
+			if (!multiFiles) {
+				allCbx.setVisibility(View.GONE);
+			}
+			mimes = mimes == null ? "*/*" : mimes.toLowerCase();
+			
 			allName.setText("Name");
 			allSize.setText("Size");
 			allDate.setText("Date");

@@ -68,8 +68,8 @@ OnCheckedChangeListener, OnClickListener {
 
 	transient Button mBtnOK;
 	private transient Button mBtnCancel;
-	private transient Button filesBtn;
-	private transient Button saveToBtn;
+	private transient View filesBtn;
+	private transient View saveToBtn;
 	private transient ImageButton historyBtn;
 	private transient ImageButton historySaveBtn;
 	
@@ -109,8 +109,7 @@ OnCheckedChangeListener, OnClickListener {
 							 Bundle savedInstanceState) {
 		Log.d(TAG, "onCreateView " + savedInstanceState);
 		super.onCreateView(inflater, container, savedInstanceState);
-		View view = inflater.inflate(R.layout.decompress, container, false);
-		return view;
+		return inflater.inflate(R.layout.decompress, container, false);
 	}
 
 	@Override
@@ -129,8 +128,8 @@ OnCheckedChangeListener, OnClickListener {
 		otherArgsET = (EditText) view.findViewById(R.id.otherParametersET);
 		passwordET = (ShowHidePasswordEditText) view.findViewById(R.id.password);
 		overwriteModeSpinner = (Spinner) view.findViewById(R.id.overwrite);
-		filesBtn = (Button) view.findViewById(R.id.filesBtn);
-		saveToBtn = (Button) view.findViewById(R.id.saveToBtn);
+		filesBtn = view.findViewById(R.id.filesBtn);
+		saveToBtn = view.findViewById(R.id.saveToBtn);
 		statusTV = (TextView) view.findViewById(R.id.status);
 		extractWithFullPathsCB = (CheckBox) view.findViewById(R.id.extractWithFullPathsCB);
 		historyBtn = (ImageButton) view.findViewById(R.id.historyBtn);
@@ -144,7 +143,8 @@ OnCheckedChangeListener, OnClickListener {
 		overwriteModeSpinner.setAdapter(adapter);
 		overwriteModeSpinner.setOnItemSelectedListener(this);
 		extractWithFullPathsCB.setOnCheckedChangeListener(this);
-		
+		getView().findViewById(R.id.config).setVisibility(View.VISIBLE);
+		getView().findViewById(R.id.status).setVisibility(View.GONE);
 		Log.d(TAG, "onViewCreated files " + files + ", fileET " + fileET.getText() + ", saveTo " + saveTo + ", saveToET " + saveToET.getText());
 		//Log.d(TAG, Util.arrayToString(fileET.getText().toString().split("\\|+\\s*"), true, "\n"));
 		
@@ -207,6 +207,7 @@ OnCheckedChangeListener, OnClickListener {
 
 	@Override
 	public void onClick(final View p1) {
+		Log.d(TAG, "restore");
 		switch (p1.getId()) {
 			case R.id.cancelDir:
 				dismiss();
@@ -255,9 +256,13 @@ OnCheckedChangeListener, OnClickListener {
 					decompressTask = new DecompressTask(this);
 					decompressTask.execute();
 					mBtnOK.setText("Cancel");
+					getView().findViewById(R.id.config).setVisibility(View.GONE);
+					getView().findViewById(R.id.status).setVisibility(View.VISIBLE);
 				} else {
 					decompressTask.cancel(true);
 					mBtnOK.setText("Decompress");
+					getView().findViewById(R.id.config).setVisibility(View.VISIBLE);
+					getView().findViewById(R.id.status).setVisibility(View.GONE);
 				}
 				break;
 		}
@@ -365,6 +370,7 @@ OnCheckedChangeListener, OnClickListener {
 	}
 
 	private void restore() {
+		Log.d(TAG, "restore");
 		fileET.setText(files);
 		saveToET.setText(saveTo);
 		includeET.setText(include);

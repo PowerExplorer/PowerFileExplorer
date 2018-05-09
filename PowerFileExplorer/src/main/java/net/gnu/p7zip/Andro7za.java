@@ -515,7 +515,7 @@ public final class Andro7za {
 			includesTmp = ExplorerApplication.PRIVATE_PATH + zArchive.substring(zArchive.lastIndexOf("/")) + ".inc." + System.currentTimeMillis();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(includesTmp));
 			try {
-				List<String> l = Util.stringToList(includes, "[\r\n]+");
+				final List<String> l = Util.stringToList(includes, "[\r\n|]+\\s*");
 				for (String st : l) {
 					bw.write(st);
 					bw.newLine();
@@ -524,7 +524,7 @@ public final class Andro7za {
 				bw.flush();
 				bw.close();
 			}
-			String includesTmp2 = Util.isEmpty(includes) ? "" :  " -ir@" + includesTmp + " ";
+			final String includesTmp2 = Util.isEmpty(includes) ? "" :  " -ir@" + includesTmp + " ";
 			otherArgs.add(includesTmp2);
 		}
 		

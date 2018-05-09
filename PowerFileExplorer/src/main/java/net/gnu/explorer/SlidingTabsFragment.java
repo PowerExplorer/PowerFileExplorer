@@ -212,10 +212,10 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						} else if (createFragment.type == Frag.TYPE.SELECTION) {
 							if (side == Side.LEFT) {
 								activity.curSelectionFrag = (ContentFragment) createFragment;
-								activity.curSelectionFragIndex = getFragIndex(Frag.TYPE.SELECTION);
+								//activity.curSelectionFragIndex = getFragIndex(Frag.TYPE.SELECTION);
 							} else {
 								activity.curSelectionFrag2 = (ContentFragment) createFragment;
-								activity.curSelectionFragIndex2 = getFragIndex(Frag.TYPE.SELECTION);
+								//activity.curSelectionFragIndex2 = getFragIndex(Frag.TYPE.SELECTION);
 							}
 						}
 						createFragment.select(true);
@@ -320,23 +320,32 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			});
 	}
 
-	void initLeftContentFragmentTabs(final String prevPath) {
+	void initLeftContentFragmentTabs(final String prevPath, final String suffix, final boolean multiFiles, final String mimes,
+									 final String[] previousSelectedStr, final boolean writeableOnly) {
 		final File storage = new File("/storage");
 		final File[] fs = storage.listFiles();
 
 		//String[] st = sdCardPath.split(":");
 		File f;
-		Bundle bundle;
+		
 		ContentFragment contentFrag;
 
-		bundle = new Bundle();
-		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, prevPath);//EXTRA_DIR_PATH
-		bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-		bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+//		final Bundle bundle = new Bundle();
+//		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, prevPath);//EXTRA_DIR_PATH
+//		bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+//		bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
 
 		contentFrag = new ContentFragment();
 		contentFrag.type = Frag.TYPE.EXPLORER;
-		contentFrag.setArguments(bundle);
+		
+		contentFrag.currentPathTitle = prevPath;
+		contentFrag.suffix = (suffix == null) ? "*" : suffix;
+		contentFrag.multiFiles = multiFiles;
+		contentFrag.mimes = mimes == null || mimes.length() == 0 ? "*/*" : mimes.toLowerCase();
+		contentFrag.previousSelectedStr = previousSelectedStr;
+		contentFrag.mWriteableOnly = writeableOnly;
+		
+		//contentFrag.setArguments(bundle);
 		contentFrag.slidingTabsFragment = this;
 		mTabs.add(new PagerItem(contentFrag));
 
@@ -344,14 +353,20 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			f = fs[i];
 			Log.d(TAG, f + ".");
 			if (f.canWrite()) {
-				bundle = new Bundle();
-				bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, f.getAbsolutePath());//EXTRA_DIR_PATH
-				bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-				bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+//				bundle = new Bundle();
+//				bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, f.getAbsolutePath());//EXTRA_DIR_PATH
+//				bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+//				bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
 
 				contentFrag = new ContentFragment();
 				contentFrag.type = Frag.TYPE.EXPLORER;
-				contentFrag.setArguments(bundle);
+				
+				contentFrag.currentPathTitle = f.getAbsolutePath();
+				contentFrag.suffix = "*";
+				contentFrag.multiFiles = true;
+				contentFrag.mimes = "*/*";
+
+				//contentFrag.setArguments(bundle);
 				contentFrag.slidingTabsFragment = this;
 				mTabs.add(new PagerItem(contentFrag));//f.getAbsolutePath(), ".*", true, null));
 			}
@@ -662,6 +677,16 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			}
 		}
 		return -1;
+	}
+
+	public Frag getFrag(final Frag.TYPE t) {
+		for (PagerItem pi : mTabs) {
+			//Log.d(TAG, "indexOf frag " + frag + ", pi.frag " + pi.frag);
+			if (t == pi.frag.type) {
+				return pi.frag;
+			} 
+		}
+		return null;
 	}
 
 	public int getFragIndex(final Frag.TYPE t) {

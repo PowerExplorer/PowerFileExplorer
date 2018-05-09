@@ -170,11 +170,13 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 				sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
 			}
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+				activity.dir = activity.curContentFrag.currentPathTitle;
 				if (activity.slideFrag2 != null && (sortBarLayoutOther = activity.slideFrag2.getCurrentFragment().sortBarLayout) != null) {
 					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 				}
 				activity.slideFrag1Selected = sel;
-			} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+			} else {
+				activity.dir = activity.curExplorerFrag.currentPathTitle;
 				if ((sortBarLayoutOther = activity.slideFrag.getCurrentFragment().sortBarLayout) != null) {
 					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 				}
@@ -185,11 +187,13 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 				sortBarLayout.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 			}
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+				activity.dir = activity.curExplorerFrag.currentPathTitle;
 				if ((sortBarLayoutOther = activity.slideFrag2.getCurrentFragment().sortBarLayout) != null) {
 					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
 				}
 				activity.slideFrag1Selected = sel;
-			} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+			} else {
+				activity.dir = activity.curContentFrag.currentPathTitle;
 				if ((sortBarLayoutOther = activity.slideFrag.getCurrentFragment().sortBarLayout) != null) {
 					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
 				}
