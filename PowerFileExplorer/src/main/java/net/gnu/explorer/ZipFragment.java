@@ -834,8 +834,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		
 		if (zip != null) {
 			rightStatus.setText(
-				"Free " + Util.nf.format(zip.file.length() / (1 << 20))
-				+ " MiB. Used " + Util.nf.format((zip.unZipSize) / (1 << 20)));
+				"Free " + Formatter.formatFileSize(activity, zip.file.length())
+				+ " MiB. Used " + Formatter.formatFileSize(activity, zip.unZipSize));
 		}
 	}
 
@@ -1105,7 +1105,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				}
 				break;
 			case R.id.renames:
-				rename(selectedInList1);
+				rename((ZipEntry)selectedInList1.get(0));
 				break;
 			case R.id.compresss:
 				if (selectedInList1.size() == 0) {
@@ -1162,9 +1162,81 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		}
 	}
 
-    public void rename(List l) {
-        
-    }
+	public void rename(final ZipEntry f) {
+		MaterialDialog.Builder builder = new MaterialDialog.Builder(activity);
+		String name = f.name;
+		builder.input("", name, false, new MaterialDialog.InputCallback() {
+				@Override
+				public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
+
+				}
+			});
+		builder.theme(activity.getAppTheme().getMaterialDialogTheme());
+		builder.title(getResources().getString(R.string.rename));
+
+		builder.onNegative(new MaterialDialog.SingleButtonCallback() {
+				@Override
+				public void onClick(MaterialDialog dialog, DialogAction which) {
+					dialog.cancel();
+				}
+			});
+
+		builder.onPositive(new MaterialDialog.SingleButtonCallback() {
+				@Override
+				public void onClick(MaterialDialog dialog, DialogAction which) {
+					String name = dialog.getInputEditText().getText().toString();
+					if (zip.entries.get(name) != null) {
+						dialog.show();
+						Toast.makeText(activity, getString(R.string.fileexist),
+									   Toast.LENGTH_SHORT).show();
+					} else {
+						List<String> l = new ArrayList<String>(2);
+						l.add(f.path);
+						l.add(name);
+						new DecompressTask(fragActivity,
+							currentPathTitle,
+							ExplorerApplication.PRIVATE_PATH,
+							"",
+							"",
+							"",
+							l,
+							0,
+							"rn",
+							new Runnable() {
+								@Override
+								public void run() {
+									changeDir(currentPathTitle, true, false, new Runnable() {
+											@Override
+											public void run() {
+												changeDir(f.parentPath, false, true, null);
+											}
+										});
+								}
+							}).execute();
+					}
+				}
+			});
+
+		builder.positiveText(R.string.save);
+		builder.negativeText(R.string.cancel);
+		builder.positiveColor(accentColor).negativeColor(accentColor).widgetColor(accentColor);
+		final MaterialDialog materialDialog = builder.build();
+		materialDialog.show();
+		Log.d(TAG, "rename " + name);//f.getNameString(getContext()));
+
+		// place cursor at the starting of edit text by posting a runnable to edit text
+		// this is done because in case android has not populated the edit text layouts yet, it'll
+		// reset calls to selection if not posted in message queue
+		materialDialog.getInputEditText().post(new Runnable() {
+				@Override
+				public void run() {
+					if (!f.isDirectory) {
+						int lastIndexOf = f.path.lastIndexOf(".");
+						materialDialog.getInputEditText().setSelection(lastIndexOf>=0 ? lastIndexOf : lastIndexOf + 1);
+					}
+				}
+			});
+	}
 
 	private class TextSearch implements TextWatcher {
 		public void beforeTextChanged(CharSequence s, int start, int end, int count) {
@@ -1384,11 +1456,13 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			}
 			showStatus();
 
-			if (activity.COPY_PATH == null && activity.MOVE_PATH == null && commands.getVisibility() == View.VISIBLE) {//commands != null && 
+			if (activity.COPY_PATH == null && activity.MOVE_PATH == null && 
+				activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null && commands.getVisibility() == View.VISIBLE) {//commands != null && 
 				horizontalDivider6.setVisibility(View.GONE);
 				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
 				commands.setVisibility(View.GONE);
-			} else if (activity.COPY_PATH != null || activity.MOVE_PATH != null) {//commands != null && 
+			} else if (activity.COPY_PATH != null || activity.MOVE_PATH != null
+				|| activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {//commands != null && 
 				if (commands.getVisibility() == View.GONE) {
 					horizontalDivider6.setVisibility(View.VISIBLE);
 					commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));

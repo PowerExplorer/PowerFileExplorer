@@ -2134,17 +2134,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 	}
 
-	public void changeDir(final String curDir, final boolean doScroll) {
-		Log.d(TAG, "changeDir " + curDir + ", doScroll " + doScroll + ", " + type + ", " + slidingTabsFragment.side);
-		if (fake) {
-			return;
-		}
-		loadList.cancel(true);
-		searchTask.cancel(true);
-		loadList = new LoadFiles();
-		loadList.execute(curDir, doScroll);
-	}
-
 	private void manageSearchUI(boolean search) {
 		if (search == true) {
 			searchButton.setImageResource(R.drawable.ic_arrow_back_white_36dp);
@@ -2179,7 +2168,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		searchMode = !searchMode;
 		manageSearchUI(searchMode);
 	}
-	
+
 //    private void updateProgress(int progress, int maxProgress) {
 //        // Only update the progress bar every n steps...
 //        if ((progress % 50) == 0) {
@@ -2193,11 +2182,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //        }
 //    }
 
-
-    protected void updateNoAccessMessage(boolean showMessage) {
-        mMessageView.setVisibility(showMessage ? View.VISIBLE : View.GONE);
-    }
-	
+//    protected void updateNoAccessMessage(boolean showMessage) {
+//        mMessageView.setVisibility(showMessage ? View.VISIBLE : View.GONE);
+//    }
 
 //	private class FileListMessageHandler extends Handler {
 //        @Override
@@ -2239,8 +2226,17 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //            }
 //        }
 //    }
-	
-	
+
+	public void changeDir(final String curDir, final boolean doScroll) {
+		Log.d(TAG, "changeDir " + curDir + ", doScroll " + doScroll + ", " + type + ", " + slidingTabsFragment.side);
+		if (fake) {
+			return;
+		}
+		loadList.cancel(true);
+		searchTask.cancel(true);
+		loadList = new LoadFiles();
+		loadList.execute(curDir, doScroll);
+	}
 	private class LoadFiles extends AsyncTask<Object, String, List<LayoutElement>> {
 
 		private Boolean doScroll;
@@ -2414,7 +2410,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							tempPreviewL2 = null;
 						}
 						currentPathTitle = curPath;
-						currentPathTitle = currentPathTitle;
 						//Log.d(TAG, Util.collectionToString(history, true, "\n"));
 						
 						if (mFileObserver != null) {
@@ -2532,11 +2527,13 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				}
 			}
 
-			if (activity.COPY_PATH == null && activity.MOVE_PATH == null && commands.getVisibility() == View.VISIBLE) {//commands != null && 
+			if (activity.COPY_PATH == null && activity.MOVE_PATH == null &&
+				activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null && commands.getVisibility() == View.VISIBLE) {//commands != null && 
 				horizontalDivider6.setVisibility(View.GONE);
 				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
 				commands.setVisibility(View.GONE);
-			} else if (activity.COPY_PATH != null || activity.MOVE_PATH != null) {//commands != null && 
+			} else if (activity.COPY_PATH != null || activity.MOVE_PATH != null
+					 || activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {//commands != null && 
 				if (commands.getVisibility() == View.GONE) {
 					horizontalDivider6.setVisibility(View.VISIBLE);
 					commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));

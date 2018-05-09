@@ -470,7 +470,7 @@ public final class Andro7za {
 		String zArchive, 
 		String password, 
 		String overwriteMode, 
-		String pathToExtract, 
+		String saveTo, 
 		String includes, 
 		String excludes,
 		List<String> otherArgs, 
@@ -481,10 +481,26 @@ public final class Andro7za {
 			  cmd + ", " +
 			  zArchive + "," +
 			  overwriteMode + "," +
-			  pathToExtract + "," +
+			  saveTo + "," +
 			  includes + "," +
 			  excludes + ", " +
 			  otherArgs);
+
+		if (saveTo == null) {
+			saveTo = ExplorerApplication.PRIVATE_PATH;
+		}
+		if (("x".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) && saveTo.length() > 0) {
+			File f = new File(saveTo);
+			if (!f.exists()) {
+				if (!f.mkdirs()) {
+					throw new IOException("Can't create " + f.getAbsolutePath());
+				}
+			}
+			saveTo = "-o" + saveTo;
+			otherArgs.add(0, saveTo);
+		}
+		
+		otherArgs.add(0, "-bb");
 
 		if (password == null || password.length() == 0) {
 			password = "";
@@ -493,22 +509,12 @@ public final class Andro7za {
 			otherArgs.add(0, password);
 		}
 
-		if (Util.isEmpty(overwriteMode)) {
-			overwriteMode = " -aos ";
-		}
-		otherArgs.add(0, overwriteMode);
-
-		if (pathToExtract == null) {
-			pathToExtract = ExplorerApplication.PRIVATE_PATH;
-		}
-		File f = new File(pathToExtract);
-		if (!f.exists()) {
-			if (!f.mkdirs()) {
-				throw new IOException("Can't create " + f.getAbsolutePath());
+		if ("x".equalsIgnoreCase(cmd) || "e".equalsIgnoreCase(cmd)) {
+			if (Util.isEmpty(overwriteMode)) {
+				overwriteMode = " -aos ";
 			}
+			otherArgs.add(0, overwriteMode);
 		}
-		pathToExtract = "-o" + pathToExtract;
-		otherArgs.add(pathToExtract);
 
 		String includesTmp = "";
 		if (includes != null && includes.trim().length() > 0) {
@@ -547,7 +553,6 @@ public final class Andro7za {
 		
 		int ret = 0;
 		
-		otherArgs.add("-bb");
 		otherArgs.add(0, zArchive);
 		otherArgs.add(0, cmd);
 		otherArgs.add(0, p7z);
@@ -569,7 +574,7 @@ public final class Andro7za {
 	
 	private final Pattern patLn = Pattern.compile("[^\n]+");
 	private final Pattern zipEntryInfoPattern = Pattern.compile("([ \\d]{4}[-/ ][ \\d]{2}[- /][ \\d]{2}) ([ \\d]{2}[ :][ \\d]{2}[ :][ \\d]{2}) ([D\\.]).{4} ([ \\d]{12}) ([ \\d]{12})  ([^\r\n]+)", Pattern.UNICODE_CASE);
-	private final Pattern patEnd = Pattern.compile("([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)");
+	private final Pattern patEnd = Pattern.compile("([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s*([^\\s]*)\\s*([^\\s]*)");
 	
 	public Zip listCmd(final String pathArchive7z, String password) {
 		List<String> otherArgs = new ArrayList<>();
@@ -650,13 +655,15 @@ public final class Andro7za {
 					zip.entries.put(path, ze);
 				}
 			} else if (count == 2) {
-				//Log.d(TAG, "count " + count + ", " + line);
 				final Matcher mEnd = patEnd.matcher(line);
 				if (mEnd.matches()) {
+					Log.d(TAG, "count " + count + ", " + line);
 					zip.unZipSize = Long.valueOf(mEnd.group(3));
 					zip.zipSize = Long.valueOf(mEnd.group(4));
 					zip.fileCount = Integer.valueOf(mEnd.group(5));
-					zip.folderCount = Integer.valueOf(mEnd.group(7));
+					if (mEnd.groupCount() > 8) {
+						zip.folderCount = Integer.valueOf(mEnd.group(7));
+					}
 					count++;
 				}
 			}

@@ -83,6 +83,7 @@ import net.gnu.p7zip.Zip;
 import net.gnu.explorer.ExplorerApplication;
 import net.gnu.p7zip.DecompressTask;
 import android.util.Log;
+import net.gnu.util.Util;
 
 /**
  * Here are a lot of function that create material dialogs
@@ -556,105 +557,105 @@ public class GeneralDialogCreation {
                                              ThemedActivity base, boolean isRoot, AppTheme appTheme,
                                              boolean showPermissions, boolean forStorage) {
         final ExecutorService executor = Executors.newFixedThreadPool(3);
-        final Context c = base.getApplicationContext();
+        final Context ctx = base.getApplicationContext();
         int accentColor = base.getColorPreference().getColor(ColorUsage.ACCENT);
         long last = baseFile.getDate();
         final String date = Utils.getDate(last),
-			items = c.getString(R.string.calculating),
+			items = ctx.getString(R.string.calculating),
 			name  = baseFile.getName(),
-			parent = baseFile.getReadablePath(baseFile.getParent(c));
+			parent = baseFile.getReadablePath(baseFile.getParent(ctx));
 
         MaterialDialog.Builder builder = new MaterialDialog.Builder(base);
-        builder.title(c.getString(R.string.properties));
+        builder.title(ctx.getString(R.string.properties));
         builder.theme(appTheme.getMaterialDialogTheme());
 
-        View v = base.getLayoutInflater().inflate(R.layout.properties_dialog, null);
-        TextView itemsText = (TextView) v.findViewById(R.id.size);
+        View view = base.getLayoutInflater().inflate(R.layout.properties_dialog, null);
+        TextView itemsText = (TextView) view.findViewById(R.id.size);
 
         /*View setup*/ {
-            TextView mNameTitle = (TextView) v.findViewById(R.id.title_name);
+            TextView mNameTitle = (TextView) view.findViewById(R.id.title_name);
             mNameTitle.setTextColor(accentColor);
 
-            TextView mDateTitle = (TextView) v.findViewById(R.id.title_date);
+            TextView mDateTitle = (TextView) view.findViewById(R.id.title_date);
             mDateTitle.setTextColor(accentColor);
 
-            TextView mSizeTitle = (TextView) v.findViewById(R.id.title_size);
+            TextView mSizeTitle = (TextView) view.findViewById(R.id.title_size);
             mSizeTitle.setTextColor(accentColor);
 
-            TextView mLocationTitle = (TextView) v.findViewById(R.id.title_location);
+            TextView mLocationTitle = (TextView) view.findViewById(R.id.title_location);
             mLocationTitle.setTextColor(accentColor);
 
-            TextView md5Title = (TextView) v.findViewById(R.id.title_md5);
+            TextView md5Title = (TextView) view.findViewById(R.id.title_md5);
             md5Title.setTextColor(accentColor);
 
-            TextView sha256Title = (TextView) v.findViewById(R.id.title_sha256);
+            TextView sha256Title = (TextView) view.findViewById(R.id.title_sha256);
             sha256Title.setTextColor(accentColor);
 
-            ((TextView) v.findViewById(R.id.name)).setText(name);
-            ((TextView) v.findViewById(R.id.location)).setText(parent);
+            ((TextView) view.findViewById(R.id.name)).setText(name);
+            ((TextView) view.findViewById(R.id.location)).setText(parent);
             itemsText.setText(items);
-            ((TextView) v.findViewById(R.id.date)).setText(date);
+            ((TextView) view.findViewById(R.id.date)).setText(date);
 
-            LinearLayout mNameLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_name);
-            LinearLayout mLocationLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_location);
-            LinearLayout mSizeLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_size);
-            LinearLayout mDateLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_date);
+            LinearLayout mNameLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_name);
+            LinearLayout mLocationLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_location);
+            LinearLayout mSizeLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_size);
+            LinearLayout mDateLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_date);
 
             // setting click listeners for long press
             mNameLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View v) {
-						Futils.copyToClipboard(c, name);
-						Toast.makeText(c, c.getResources().getString(R.string.name)+" "+
-									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						Futils.copyToClipboard(ctx, name);
+						Toast.makeText(ctx, ctx.getResources().getString(R.string.name)+" "+
+									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
 				});
             mLocationLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View v) {
-						Futils.copyToClipboard(c, parent);
-						Toast.makeText(c, c.getResources().getString(R.string.location)+" "+
-									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						Futils.copyToClipboard(ctx, parent);
+						Toast.makeText(ctx, ctx.getResources().getString(R.string.location)+" "+
+									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
 				});
             mSizeLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View v) {
-						Futils.copyToClipboard(c, items);
-						Toast.makeText(c, c.getResources().getString(R.string.size)+" "+
-									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						Futils.copyToClipboard(ctx, items);
+						Toast.makeText(ctx, ctx.getResources().getString(R.string.size)+" "+
+									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
 				});
             mDateLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View v) {
-						Futils.copyToClipboard(c, date);
-						Toast.makeText(c, c.getResources().getString(R.string.date)+" "+
-									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						Futils.copyToClipboard(ctx, date);
+						Toast.makeText(ctx, ctx.getResources().getString(R.string.date)+" "+
+									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
 				});
         }
 
-        CountItemsOrAndSize countItemsOrAndSize = new CountItemsOrAndSize(c, itemsText, baseFile, forStorage);
+        CountItemsOrAndSize countItemsOrAndSize = new CountItemsOrAndSize(ctx, itemsText, baseFile, forStorage);
         countItemsOrAndSize.executeOnExecutor(executor);
 
 
-        GenerateHashes hashGen = new GenerateHashes(baseFile, c, v);
+        GenerateHashes hashGen = new GenerateHashes(baseFile, ctx, view);
         hashGen.executeOnExecutor(executor);
 
         /*Chart creation and data loading*/ {
-            boolean isRightToLeft = c.getResources().getBoolean(R.bool.is_right_to_left);
+            boolean isRightToLeft = ctx.getResources().getBoolean(R.bool.is_right_to_left);
             boolean isDarkTheme = appTheme.getMaterialDialogTheme()==Theme.DARK;
-            PieChart chart = (PieChart) v.findViewById(R.id.chart);
+            PieChart chart = (PieChart) view.findViewById(R.id.chart);
 
             chart.setTouchEnabled(false);
             chart.setDrawEntryLabels(false);
             chart.setDescription(null);
-            chart.setNoDataText(c.getString(R.string.loading));
+            chart.setNoDataText(ctx.getString(R.string.loading));
             chart.setRotationAngle(!isRightToLeft? 0f:180f);
             chart.setHoleColor(Color.TRANSPARENT);
             chart.setCenterTextColor(isDarkTheme? Color.WHITE:Color.BLACK);
@@ -668,10 +669,10 @@ public class GeneralDialogCreation {
             chart.animateY(1000);
 
             if (forStorage) {
-                final String[] LEGENDS = new String[]{c.getString(R.string.used), c.getString(R.string.free)};
-                final int[] COLORS = {Utils.getColor(c, R.color.piechart_red), Utils.getColor(c, R.color.piechart_green)};
+                final String[] LEGENDS = new String[]{ctx.getString(R.string.used), ctx.getString(R.string.free)};
+                final int[] COLORS = {Utils.getColor(ctx, R.color.piechart_red), Utils.getColor(ctx, R.color.piechart_green)};
 
-                long totalSpace = baseFile.getTotal(c),
+                long totalSpace = baseFile.getTotal(ctx),
 					freeSpace = baseFile.getUsableSpace(),
 					usedSpace = totalSpace-freeSpace;
 
@@ -689,15 +690,15 @@ public class GeneralDialogCreation {
                 set.setSelectionShift(0f);
 
                 PieData pieData = new PieData(set);
-                pieData.setValueFormatter(new SizeFormatter(c));
+                pieData.setValueFormatter(new SizeFormatter(ctx));
                 pieData.setValueTextColor(isDarkTheme? Color.WHITE:Color.BLACK);
 
-                String totalSpaceFormatted = Formatter.formatFileSize(c, totalSpace);
+                String totalSpaceFormatted = Formatter.formatFileSize(ctx, totalSpace);
 
-                chart.setCenterText(new SpannableString(c.getString(R.string.total)+"\n"+totalSpaceFormatted));
+                chart.setCenterText(new SpannableString(ctx.getString(R.string.total)+"\n"+totalSpaceFormatted));
                 chart.setData(pieData);
             } else {
-                LoadFolderSpaceData loadFolderSpaceData = new LoadFolderSpaceData(c, appTheme, chart, baseFile);
+                LoadFolderSpaceData loadFolderSpaceData = new LoadFolderSpaceData(ctx, appTheme, chart, baseFile);
                 loadFolderSpaceData.executeOnExecutor(executor);
             }
 
@@ -708,11 +709,11 @@ public class GeneralDialogCreation {
             //final Frag main = ((MainActivity) base).mainFragment;
             ExplorerActivity ma = (ExplorerActivity) base;
             final Frag main = ma.slideFrag1Selected? ma.curContentFrag :ma.curExplorerFrag;//ma.mainFragment;
-            AppCompatButton appCompatButton = (AppCompatButton) v.findViewById(R.id.permissionsButton);
+            AppCompatButton appCompatButton = (AppCompatButton) view.findViewById(R.id.permissionsButton);
             appCompatButton.setAllCaps(true);
 
-            final View permissionsTable = v.findViewById(R.id.permtable);
-            final View button = v.findViewById(R.id.set);
+            final View permissionsTable = view.findViewById(R.id.permtable);
+            final View button = view.findViewById(R.id.set);
             if (isRoot&&permissions.length()>6) {
                 appCompatButton.setVisibility(View.VISIBLE);
                 appCompatButton.setOnClickListener(new View.OnClickListener() {
@@ -721,7 +722,7 @@ public class GeneralDialogCreation {
 							if (permissionsTable.getVisibility()==View.GONE) {
 								permissionsTable.setVisibility(View.VISIBLE);
 								button.setVisibility(View.VISIBLE);
-								setPermissionsDialog(permissionsTable, button, baseFile, permissions, c,
+								setPermissionsDialog(permissionsTable, button, baseFile, permissions, ctx,
 													 main);
 							} else {
 								button.setVisibility(View.GONE);
@@ -732,7 +733,7 @@ public class GeneralDialogCreation {
             }
         }
 
-        builder.customView(v, true);
+        builder.customView(view, true);
         builder.positiveText(base.getResources().getString(R.string.ok));
         builder.positiveColor(accentColor);
         builder.dismissListener(new DialogInterface.OnDismissListener() {
@@ -755,11 +756,11 @@ public class GeneralDialogCreation {
     }
 
     public static void showPropertiesDialog(final ZipEntry zipEntry, ThemedActivity base, AppTheme appTheme,
-									 long totalZipLength, long totalUnzipLength) {
+											long totalZipLength, long totalUnzipLength) {
         final Context c = base.getApplicationContext();
         int accentColor = base.getColorPreference().getColor(ColorUsage.ACCENT);
         final String date = Utils.getDate(zipEntry.lastModified);
-			
+
         MaterialDialog.Builder builder = new MaterialDialog.Builder(base);
         builder.title(c.getString(R.string.properties));
         builder.theme(appTheme.getMaterialDialogTheme());
@@ -789,7 +790,7 @@ public class GeneralDialogCreation {
             ((TextView) v.findViewById(R.id.name)).setText(zipEntry.name);
             ((TextView) v.findViewById(R.id.location)).setText(zipEntry.parentPath);
             ((TextView) v.findViewById(R.id.date)).setText(date);
-
+			itemsText.setText(Util.nf.format(zipEntry.length) + "B");
             LinearLayout mNameLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_name);
             LinearLayout mLocationLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_location);
             LinearLayout mSizeLinearLayout = (LinearLayout) v.findViewById(R.id.properties_dialog_size);
@@ -800,7 +801,7 @@ public class GeneralDialogCreation {
 					@Override
 					public boolean onLongClick(View v) {
 						Futils.copyToClipboard(c, zipEntry.name);
-						Toast.makeText(c, c.getResources().getString(R.string.name)+" "+
+						Toast.makeText(c, c.getResources().getString(R.string.name) + " " +
 									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
@@ -809,7 +810,7 @@ public class GeneralDialogCreation {
 					@Override
 					public boolean onLongClick(View v) {
 						Futils.copyToClipboard(c, zipEntry.parentPath);
-						Toast.makeText(c, c.getResources().getString(R.string.location)+" "+
+						Toast.makeText(c, c.getResources().getString(R.string.location) + " " +
 									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
@@ -818,7 +819,7 @@ public class GeneralDialogCreation {
 					@Override
 					public boolean onLongClick(View v) {
 						Futils.copyToClipboard(c, "");//items
-						Toast.makeText(c, c.getResources().getString(R.string.size)+" "+
+						Toast.makeText(c, c.getResources().getString(R.string.size) + " " +
 									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
@@ -827,11 +828,25 @@ public class GeneralDialogCreation {
 					@Override
 					public boolean onLongClick(View v) {
 						Futils.copyToClipboard(c, date);
-						Toast.makeText(c, c.getResources().getString(R.string.date)+" "+
+						Toast.makeText(c, c.getResources().getString(R.string.date) + " " +
 									   c.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
 						return false;
 					}
 				});
+			builder.customView(v, true);
+			builder.positiveText(base.getResources().getString(R.string.ok));
+			builder.positiveColor(accentColor);
+			builder.dismissListener(new DialogInterface.OnDismissListener() {
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						//executor.shutdown();
+					}
+				});
+
+			MaterialDialog materialDialog = builder.build();
+			materialDialog.show();
+			materialDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+
         }
     }
 	

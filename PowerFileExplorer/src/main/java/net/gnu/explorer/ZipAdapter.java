@@ -29,6 +29,9 @@ import net.gnu.androidutil.AndroidUtils;
 import net.gnu.p7zip.DecompressTask;
 import net.gnu.util.FileUtil;
 import net.gnu.util.Util;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.DialogAction;
+import android.widget.Toast;
 
 public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder> {
 
@@ -247,8 +250,8 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 			//final Integer pos = Integer.valueOf(v.getContentDescription().toString());
 			final ZipEntry rowItem = mDataset.get(pos);
 			final String path = rowItem.path;
-			Log.d(TAG, "onClick, " + rowItem.path + ", " + v);
-			
+			Log.d(TAG, "onClick, " + rowItem.path + ", " + v.getTag());
+
 			final int id = v.getId();
 			if (id == R.id.more) {
 				final MenuBuilder menuBuilder = new MenuBuilder(zipFrag.activity);
@@ -268,6 +271,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
+							Log.d(TAG, "onClick, " + rowItem.path + ", " + item);
 							final ExplorerActivity activity = zipFrag.activity;
 							switch (item.getItemId()) {
 								case R.id.copy:
@@ -325,7 +329,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									activity.curContentFrag.updateDelPaste();
 									break;
 								case R.id.rename:
-									//zipFrag.rename();
+									zipFrag.rename(rowItem);
 									break;
 								case R.id.delete:
 									ArrayList<ZipEntry> ele = new ArrayList<ZipEntry>(1);
@@ -357,9 +361,15 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									extractZe(rowItem, r);
 									break;
 								case R.id.info:
-									GeneralDialogCreation.showPropertiesDialog(rowItem,
-																			   activity, 
-																			   activity.getAppTheme(), zipFrag.totalZipLength, zipFrag.totalUnzipLength);
+									r = new Runnable() {
+										@Override
+										public void run() {
+											GeneralDialogCreation.showPropertiesDialog(rowItem,
+																					   activity, 
+																					   activity.getAppTheme(), zipFrag.totalZipLength, zipFrag.totalUnzipLength);
+										}
+									};
+									extractZe(rowItem, r);
 									break;
 								case R.id.name:
 									AndroidUtils.copyToClipboard(activity, rowItem.name);

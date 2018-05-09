@@ -83,6 +83,31 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		this.run = run;
 	}
 
+	public DecompressTask(Activity activity, 
+						  String files, 
+						  String saveTo, 
+						  String include, 
+						  String exclude, 
+						  String password, 
+						  List<String> otherArgs, 
+						  int overwriteModeSpinner, 
+						  String command, 
+						  Runnable run) {
+		this.activity = activity;
+		andro7za = new Andro7za(activity);
+		zpaq = new Zpaq(activity);
+		this.fList = files;
+		this.saveTo = saveTo;
+		this.include = include;
+		this.exclude = exclude;
+		this.password = password;
+		this.otherArgs = otherArgs;
+		szmode = modes[overwriteModeSpinner];
+		zpaqmode = zpaqmodes[overwriteModeSpinner];
+		this.command = command;
+		this.run = run;
+	}
+
 	protected String doInBackground(String... urls) {
 		start = System.currentTimeMillis();
 		PowerManager pm = (PowerManager)activity.getSystemService(Context.POWER_SERVICE);
@@ -93,10 +118,13 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 			include = include.replaceAll("\\|+\\s*", "\n");
 			exclude = exclude.replaceAll("\\|+\\s*", "\n");
 			Log.d(TAG, "doInBackground fiList " + fiList);
-			File f = new File(saveTo);
-			if (!f.exists()) {
-				f.mkdirs();
+			if (saveTo != null && saveTo.length() > 0) {
+				File f = new File(saveTo);
+				if (!f.exists()) {
+					f.mkdirs();
+				}
 			}
+			
 			int ret = 0;
 			List<String> args = new ArrayList<>();
 			for (String archiveName : fiList) {
