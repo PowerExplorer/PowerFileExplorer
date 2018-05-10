@@ -69,7 +69,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	private Toast toast = null;
     
 	public static final enum TYPE {
-		EMPTY, EXPLORER, ZIP, SELECTION, TEXT, WEB, PDF, CHM, PHOTO, MEDIA, APP, TRAFFIC_STATS, PROCESS//FBReader, 
+		EMPTY, EXPLORER, ZIP, SELECTION, FTP, TEXT, WEB, PDF, CHM, PHOTO, MEDIA, APP, TRAFFIC_STATS, PROCESS//FBReader, 
 		};
 
 	public static Frag getFrag(final SlidingTabsFragment sliding, final TYPE t, final String path) {
@@ -108,6 +108,8 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 			frag = new PhotoFragment();
 		} else if (t == TYPE.TRAFFIC_STATS) {
 			frag = new DataTrackerFrag();
+		} else if (t == TYPE.FTP) {
+			frag = new FTPServerFragment();
 		} else if (t == TYPE.EXPLORER) {
 			frag = new ContentFragment();
 		} 

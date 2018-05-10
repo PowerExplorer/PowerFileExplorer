@@ -95,6 +95,8 @@ public class TabClicks {
 						menu.findItem(R.id.photo).setVisible(false);
 					} else if (frag.type == Frag.TYPE.CHM) {
 						menu.findItem(R.id.chm).setVisible(false);
+					} else if (frag.type == Frag.TYPE.FTP) {
+						menu.findItem(R.id.ftp).setVisible(false);
 					} else if (frag.type == Frag.TYPE.EXPLORER) {
 						explorerCount++;
 					} 
@@ -128,6 +130,8 @@ public class TabClicks {
 							tabAction.addTab(Frag.TYPE.WEB, null);
 						} else if (R.id.pdf == itemId) {
 							tabAction.addTab(Frag.TYPE.PDF, null);
+						} else if (R.id.ftp == itemId) {
+							tabAction.addTab(Frag.TYPE.FTP, null);
 						} else if (R.id.chm == itemId) {
 							tabAction.addTab(Frag.TYPE.CHM, null);
 						} else if (R.id.photo == itemId) {

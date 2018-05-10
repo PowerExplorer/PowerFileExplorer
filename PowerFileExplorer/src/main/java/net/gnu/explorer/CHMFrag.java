@@ -126,7 +126,13 @@ public class CHMFrag extends Frag {
 	public void updateColor(final View rootView) {
 		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 	}
-	
+
+	public boolean back() {
+		if (webview.canGoBack()) {
+			webview.goBack();
+		}
+		return true;
+	}
 
     //@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

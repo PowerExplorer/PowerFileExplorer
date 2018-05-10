@@ -2610,6 +2610,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 						curSelectionFrag.searchButton();
 					} else if (currentFragment.type == Frag.TYPE.ZIP) {
 						((ZipFragment)currentFragment).back();
+					} else if (currentFragment.type == Frag.TYPE.CHM) {
+						((CHMFrag)currentFragment).back();
 					}
 				} else if (slideFrag2 != null) {
 					final Frag currentFragment = slideFrag2.getCurrentFragment();
@@ -2624,6 +2626,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 						curSelectionFrag2.searchButton();
 					} else if (currentFragment.type == Frag.TYPE.ZIP) {
 						((ZipFragment)currentFragment).back();
+					} else if (currentFragment.type == Frag.TYPE.CHM) {
+						((CHMFrag)currentFragment).back();
 					}
 				}
 				mBackPressed = System.currentTimeMillis();

@@ -458,15 +458,15 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 			solidArchiveCB.setChecked(false);
 			solidArchiveCB.setEnabled(false);
 			getView().findViewById(R.id.solidArchiveParameterInfo).setEnabled(false);
+			otherParameters = otherParametersET.getText().toString();
+			otherParameters = otherParameters.replaceAll("-mqs=on", "");
+			otherParametersET.setText(otherParameters);
 		}
 		if (p1.getCheckedRadioButtonId() == R.id.zpaq) {
 			deleteFilesAfterArchivingCB.setChecked(false);
 			deleteFilesAfterArchivingCB.setEnabled(false);
 			updateCB.setChecked(true);
 			updateCB.setEnabled(false);
-			otherParameters = otherParametersET.getText().toString();
-			otherParameters = otherParameters.replaceAll("-mqs=on", "");
-			otherParametersET.setText(otherParameters);
 		} else {
 			deleteFilesAfterArchivingCB.setEnabled(true);
 			updateCB.setEnabled(true);

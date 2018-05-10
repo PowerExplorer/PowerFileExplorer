@@ -1,41 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+	android:orientation="vertical"
+>
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/card_view_ftp"
-        android:layout_margin="@dimen/material_generic"
+        android:layout_gravity="center"
+		android:layout_margin="@dimen/material_generic"
         app:cardElevation="@dimen/material_generic_card_elevation"
-        >
-        <LinearLayout
+	>
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            >
+		>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/material_generic"
+                android:paddingRight="@dimen/material_generic"
                 android:paddingBottom="@dimen/material_generic"
                 android:paddingTop="@dimen/material_generic"
-                >
+			>
 
                 <!-- status -->
                 <TextView
                     android:id="@+id/text_view_ftp_status"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/material_generic_medium"
+                    android:layout_height="wrap_content"
                     android:textSize="@dimen/material_generic_title"
                     android:maxLines="1"
-                    />
+				/>
 
                 <View
                     android:id="@+id/divider_ftp_status"
@@ -44,31 +47,52 @@
                     android:background="@color/divider"
                     android:layout_marginTop="@dimen/material_generic"
                     android:layout_marginBottom="@dimen/material_generic"
-                    />
+				/>
 
                 <!-- username -->
-                <TextView
-                    android:id="@+id/text_view_ftp_username"
+				<LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/material_generic_title"
+                    android:orientation="horizontal"
+					android:layout_gravity="center_vertical"
                     android:layout_marginBottom="@dimen/material_generic"
-                    />
+				>
+					<TextView
+						android:id="@+id/text_view_ftp_username"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minEms="15"
+						android:layout_weight="1"
+						android:textSize="@dimen/material_generic_title"
+					/>
+					<ImageView
+                        android:id="@+id/changeUser"
+                        android:src="@drawable/ic_more_horizontal_black_48dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+						android:background="?selectableItemBackground"
+                        android:layout_marginLeft="@dimen/material_generic"
+					/>
+				</LinearLayout>
 
                 <!-- password -->
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    >
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+					android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/material_generic"
+				>
 
                     <TextView
                         android:id="@+id/text_view_ftp_password"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/material_generic_title"
-                        android:layout_marginBottom="@dimen/material_generic"
-                        />
+                        android:minEms="13"
+						android:layout_weight="1"
+						android:textSize="@dimen/material_generic_title"
+					/>
 
                     <ImageButton
                         android:id="@+id/ftp_password_visible"
@@ -76,32 +100,108 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackground"
-                        android:layout_marginLeft="@dimen/material_generic_medium"
-                        />
+                        android:layout_marginLeft="@dimen/material_generic"
+					/>
+
+					<ImageView
+                        android:id="@+id/changePassword"
+                        android:src="@drawable/ic_more_horizontal_black_48dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+						android:background="?selectableItemBackground"
+                        android:layout_marginLeft="@dimen/material_generic"
+					/>
                 </LinearLayout>
 
                 <!-- port -->
-                <TextView
-                    android:id="@+id/text_view_ftp_port"
+				<LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/material_generic_title"
+                    android:orientation="horizontal"
+					android:layout_gravity="center_vertical"
                     android:layout_marginBottom="@dimen/material_generic"
+				>
+					<TextView
+						android:id="@+id/text_view_ftp_port"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minEms="15"
+						android:layout_weight="1"
+						android:textSize="@dimen/material_generic_title"
                     />
+					<ImageView
+						android:id="@+id/changeFtpPort"
+						android:src="@drawable/ic_more_horizontal_black_48dp"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:background="?selectableItemBackground"
+						android:layout_marginLeft="@dimen/material_generic"
+					/>
+				</LinearLayout>
 
                 <!-- shared path -->
-                <TextView
-                    android:id="@+id/text_view_ftp_path"
+				<LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/material_generic_title"
+                    android:orientation="horizontal"
+					android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/material_generic"
+				>
+					<TextView
+						android:id="@+id/text_view_ftp_path"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minEms="15"
+						android:layout_weight="1"
+						android:textSize="@dimen/material_generic_title"
                     />
-            </LinearLayout>
+
+					<ImageView
+						android:id="@+id/changeSharedPath"
+						android:src="@drawable/ic_more_horizontal_black_48dp"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:background="?selectableItemBackground"
+						android:layout_marginLeft="@dimen/material_generic"
+					/>
+				</LinearLayout>
+
+				<LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+					android:layout_gravity="center_vertical"
+					android:layout_marginBottom="@dimen/material_generic"
+				>
+					<TextView
+						android:id="@+id/text_view_timeout"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minEms="15"
+						android:layout_weight="1"
+						android:textSize="@dimen/material_generic_title"
+                    />
+
+					<ImageView
+						android:id="@+id/changeTimeOut"
+						android:src="@drawable/ic_more_horizontal_black_48dp"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:background="?selectableItemBackground"
+						android:layout_marginLeft="@dimen/material_generic"
+					/>
+				</LinearLayout>
+
+            <!--</LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical">-->
 
                 <View
                     android:id="@+id/divider_ftp_start"
@@ -109,18 +209,18 @@
                     android:layout_height="@dimen/height_divider"
                     android:background="@color/divider"
                     android:layout_marginBottom="@dimen/material_generic"
-                    />
+				/>
 
                 <Button
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/material_generic_medium"
+                    android:layout_height="wrap_content"
                     android:text="@string/start_ftp"
                     android:id="@+id/startStopButton"
                     android:background="?android:attr/selectableItemBackground"
-                    android:layout_marginBottom="@dimen/material_generic"
-                    />
+                    
+				/>
             </LinearLayout>
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
     </android.support.v7.widget.CardView>
-</LinearLayout>
+</FrameLayout>

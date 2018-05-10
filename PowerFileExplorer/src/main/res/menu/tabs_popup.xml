@@ -25,6 +25,8 @@
 		android:title="File Explorer" />
     <item android:id="@+id/selection"
 		android:title="Selection" />
+	<item android:id="@+id/ftp"
+		android:title="FTP Server" />
     <item android:id="@+id/text"
 		android:title="Text" />
     <item android:id="@+id/web"

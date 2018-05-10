@@ -149,7 +149,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	
 	@Override
 	public String toString() {
-		return "type " + type + ", " + slidingTabsFragment.side + ", fake=" + fake + ", suffix=" + suffix + ", mimes=" + mimes + ", multi=" + multiFiles + ", currentPathTitle " + currentPathTitle + ", " + super.toString();
+		return "type " + type + ", " + slidingTabsFragment + ", fake=" + fake + ", suffix=" + suffix + ", mimes=" + mimes + ", multi=" + multiFiles + ", currentPathTitle " + currentPathTitle + ", " + super.toString();
 	}
 
 	public static ContentFragment newInstance(final SlidingTabsFragment sliding, final String dir, final String suffix, final String mimes, final boolean multiFiles, Bundle bundle) {//, int se) {//FragmentActivity ctx, 
