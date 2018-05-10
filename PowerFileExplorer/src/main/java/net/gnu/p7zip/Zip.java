@@ -2,18 +2,19 @@ package net.gnu.p7zip;
 
 import java.io.File;
 import java.util.Set;
-import net.gnu.explorer.ZipEntry;
+import net.gnu.p7zip.ZipEntry;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.TreeMap;
 
 public class Zip {
 	
 	public final File file;
 	public long zipSize = 0;
 	public long unZipSize = 0;
-	public final Map<String, ZipEntry> entries = new HashMap<>();
+	public final Map<String, ZipEntry> entries = new TreeMap<>();
 	public int folderCount = 0;
 	public int fileCount = 0;
 

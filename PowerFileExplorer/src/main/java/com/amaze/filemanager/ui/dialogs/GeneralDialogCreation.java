@@ -78,7 +78,7 @@ import net.gnu.explorer.Frag;
 import net.gnu.explorer.ContentFragment;
 import com.amaze.filemanager.services.DeleteTask;
 import com.amaze.filemanager.utils.MainActivityHelper;
-import net.gnu.explorer.ZipEntry;
+import net.gnu.p7zip.ZipEntry;
 import net.gnu.p7zip.Zip;
 import net.gnu.explorer.ExplorerApplication;
 import net.gnu.p7zip.DecompressTask;

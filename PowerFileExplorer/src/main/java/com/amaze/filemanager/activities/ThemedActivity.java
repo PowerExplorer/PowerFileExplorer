@@ -31,7 +31,7 @@ import com.amaze.filemanager.utils.MainActivityHelper;
 import com.amaze.filemanager.utils.OpenMode;
 import net.gnu.p7zip.Zip;
 import java.util.List;
-import net.gnu.explorer.ZipEntry;
+import net.gnu.p7zip.ZipEntry;
 
 /**
  * Created by arpitkh996 on 03-03-2016.

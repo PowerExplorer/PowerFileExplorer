@@ -461,7 +461,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			frag = Frag.getFrag(this, t, path);
 			pagerItem = new PagerItem(frag);
 		}
-
 		addFrag(frag, pagerItem);
 	}
 

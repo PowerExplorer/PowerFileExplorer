@@ -19,14 +19,14 @@ android:checkable ="true"
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:id="@+id/clearSelection"
+		android:title="Clear Selection" />
+
     <item android:id="@+id/inversion"
 		android:title="Inversion" />
 
     <item android:id="@+id/rangeSelection"
 		android:title="Range Selection" />
-
-    <item android:id="@+id/clearSelection"
-		android:title="Clear Selection" />
 
     <item android:id="@+id/undoClearSelection"
 		android:title="Undo Clear Selection" />

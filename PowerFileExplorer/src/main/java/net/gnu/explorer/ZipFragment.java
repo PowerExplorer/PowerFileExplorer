@@ -101,6 +101,8 @@ import net.gnu.p7zip.Andro7za;
 import net.gnu.p7zip.Zip;
 import net.gnu.zpaq.Zpaq;
 import net.gnu.p7zip.DecompressTask;
+import net.gnu.p7zip.ZipEntry;
+import net.gnu.p7zip.ZipListSorter;
 
 public class ZipFragment extends FileFrag implements View.OnClickListener {
 
@@ -126,7 +128,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	private LoadFiles loadList = new LoadFiles();
 	private int file_count, folder_count, columns;
 	
-	private ZipListSorter ZipListSorter;
+	private ZipListSorter zipListSorter;
 	private LinkedList<Map<String, Object>> backStack = new LinkedList<>();
 	//private LinkedList<String> history = new LinkedList<>();
 	private FileObserver mFileObserver;
@@ -146,6 +148,10 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	private Zpaq zpaq;
 	public Zip zip;
 	private String curPath;
+	
+	public ZipFragment() {
+		type = TYPE.ZIP;
+	}
 	
 	@Override
 	public String toString() {
@@ -429,35 +435,35 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		allType.setText("Type");
 		switch (order) {
 			case "Name ▼":
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.DESCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.DESCENDING);
 				allName.setText("Name ▼");
 				break;
 			case "Date ▲":
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.ASCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.ASCENDING);
 				allDate.setText("Date ▲");
 				break;
 			case "Date ▼":
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.DESCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.DESCENDING);
 				allDate.setText("Date ▼");
 				break;
 			case "Size ▲":
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.ASCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.ASCENDING);
 				allSize.setText("Size ▲");
 				break;
 			case "Size ▼":
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.DESCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.DESCENDING);
 				allSize.setText("Size ▼");
 				break;
 			case "Type ▲":
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.ASCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.ASCENDING);
 				allType.setText("Type ▲");
 				break;
 			case "Type ▼":
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.DESCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.DESCENDING);
 				allType.setText("Type ▼");
 				break;
 			default:
-				ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.ASCENDING);
+				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.ASCENDING);
 				allName.setText("Name ▲");
 				break;
 		}
@@ -535,7 +541,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	Map<String, Object> onSaveInstanceState() {
 		Map<String, Object> outState = new TreeMap<>();
 		//Log.d(TAG, "Map onSaveInstanceState " + dir + ", " + outState);
-		outState.put(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+		outState.put(ExplorerActivity.EXTRA_ABSOLUTE_PATH, curPath);//EXTRA_DIR_PATH
 		
 		final ArrayList<ZipEntry> dataSource = new ArrayList<>(dataSourceL1.size());
 		dataSource.addAll(dataSourceL1);
@@ -549,19 +555,21 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		outState.put("searchVal", searchET.getText().toString());
 		outState.put("currentPathTitle", currentPathTitle);
 		outState.put("allCbx.isEnabled", allCbx.isEnabled());
-
+		outState.put("allCbx.isSelected", allCbx.isSelected());
+		
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
         final int top = (vi == null) ? 0 : vi.getTop();
 		outState.put("index", index);
 		outState.put("top", top);
-
+		outState.put("tempPreviewL2", tempPreviewL2);
+		
         return outState;
 	}
 
 	void reload(Map<String, Object> savedInstanceState) {
 		Log.d(TAG, "reload currentPathTitle " + currentPathTitle + ", "  + savedInstanceState);
-		currentPathTitle = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+		curPath = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 		selectedInList1.clear();
 		selectedInList1.addAll((ArrayList<ZipEntry>) savedInstanceState.get("selectedInList1"));
 		dataSourceL1.clear();
@@ -574,14 +582,23 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		searchMode = savedInstanceState.get("searchMode");
 		searchVal = (String) savedInstanceState.get("searchVal");
 		currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
-		
+		tempPreviewL2 = (ZipEntry) savedInstanceState.get("tempPreviewL2");
 		allCbx.setEnabled(savedInstanceState.get("allCbx.isEnabled"));
+		allCbx.setSelected(savedInstanceState.get("allCbx.isSelected"));
 		srcAdapter.notifyDataSetChanged();
 		
 		setRecyclerViewLayoutManager();
 		gridLayoutManager.scrollToPositionWithOffset(savedInstanceState.get("index"), savedInstanceState.get("top"));
-
-		updateDir(currentPathTitle);
+		
+		if (allCbx.isSelected()) {
+			selectionStatusTV.setText(dataSourceL1.size() 
+									  + "/" + dataSourceL1.size());
+		} else {
+			selectionStatusTV.setText(selectedInList1.size() 
+									  + "/" + dataSourceL1.size());
+		}
+		
+		setDirectoryButtons();
 	}
 
 	@Override
@@ -657,7 +674,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			if (currentPathTitle != null) {
 				changeDir(currentPathTitle, true, false, null);
 			} else {
-				updateDir(currentPathTitle);
+				updateDir();
 			}
 		}
     }
@@ -668,7 +685,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 		if (curPath != null) {
 			mDirectoryButtons.removeAllViews();
-			String[] parts = curPath.split("/");
+			String[] parts = (curPath.startsWith("/") ? curPath : "/" + curPath).split("/");
 
 			final TextView ib = new TextView(activity);
 			final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -696,7 +713,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			View v;
 			TextView b = null;
 			for (int i = 1; i < parts.length; i++) {
-				folder += "/" + parts[i];
+				folder += (curPath.startsWith("/") ? "/" : "") + parts[i];
 				v = activity.getLayoutInflater().inflate(R.layout.dir, null);
 				b = (TextView) v.findViewById(R.id.name);
 				b.setText(parts[i]);
@@ -783,8 +800,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		}
 	}
 
-	public void updateDir(String d) {
-		Log.d(TAG, "updateDir " + d);
+	public void updateDir() {
+		Log.d(TAG, "updateDir " + curPath);
 		setDirectoryButtons();
 		
 		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
@@ -860,7 +877,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	}
 
 	void updateL2() {
-		Collections.sort(dataSourceL1, ZipListSorter);
+		Collections.sort(dataSourceL1, zipListSorter);
 		updateTemp();
 	}
 
@@ -957,66 +974,66 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			case R.id.allName:
 				if (allName.getText().toString().equals("Name ▲")) {
 					allName.setText("Name ▼");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.DESCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Name ▼");
 				} else {
 					allName.setText("Name ▲");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.NAME, ZipListSorter.ASCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Name ▲");
 				}
 				//Log.d(TAG, "activity.slideFrag.indexOf " + activity.slideFrag.indexOf(ContentFragment.this));
 				allDate.setText("Date");
 				allSize.setText("Size");
 				allType.setText("Type");
-				Collections.sort(dataSourceL1, ZipListSorter);
+				Collections.sort(dataSourceL1, zipListSorter);
 				srcAdapter.notifyDataSetChanged();
 				break;
 			case R.id.allType:
 				if (allType.getText().toString().equals("Type ▲")) {
 					allType.setText("Type ▼");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.DESCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Type ▼");
 				} else {
 					allType.setText("Type ▲");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.TYPE, ZipListSorter.ASCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Type ▲");
 				}
 				allName.setText("Name");
 				allDate.setText("Date");
 				allSize.setText("Size");
-				Collections.sort(dataSourceL1, ZipListSorter);
+				Collections.sort(dataSourceL1, zipListSorter);
 				srcAdapter.notifyDataSetChanged();
 				break;
 			case R.id.allDate:
 				if (allDate.getText().toString().equals("Date ▲")) {
 					allDate.setText("Date ▼");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.DESCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Date ▼");
 				} else {
 					allDate.setText("Date ▲");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.DATE, ZipListSorter.ASCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Date ▲");
 				}
 				allName.setText("Name");
 				allSize.setText("Size");
 				allType.setText("Type");
-				Collections.sort(dataSourceL1, ZipListSorter);
+				Collections.sort(dataSourceL1, zipListSorter);
 				srcAdapter.notifyDataSetChanged();
 				break;
 			case R.id.allSize:
 				if (allSize.getText().toString().equals("Size ▲")) {
 					allSize.setText("Size ▼");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.DESCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Size ▼");
 				} else {
 					allSize.setText("Size ▲");
-					ZipListSorter = new ZipListSorter(ZipListSorter.DIR_TOP, ZipListSorter.SIZE, ZipListSorter.ASCENDING);
+					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Size ▲");
 				}
 				allName.setText("Name");
 				allDate.setText("Date");
 				allType.setText("Type");
-				Collections.sort(dataSourceL1, ZipListSorter);
+				Collections.sort(dataSourceL1, zipListSorter);
 				srcAdapter.notifyDataSetChanged();
 				break;
 			case R.id.icons:
@@ -1323,12 +1340,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		if (search == true) {
 			searchButton.setImageResource(R.drawable.ic_arrow_back_white_36dp);
 			topflipper.setDisplayedChild(topflipper.indexOfChild(quickLayout));
-			if (type == Frag.TYPE.SELECTION) {
-				searchET.setHint("Search");
-			} else {
-				searchET.setHint("Search " + new File(currentPathTitle).getName());//((currentPathTitle != null) ? new File(currentPathTitle).getName() : new File(currentPathTitle).getName()));
-				currentPathTitle = null;
-			}
+			searchET.setHint("Search " + new File(currentPathTitle).getName());
 			searchET.requestFocus();
 			//imm.showSoftInput(quicksearch, InputMethodManager.SHOW_FORCED);
 			imm.showSoftInput(searchET, InputMethodManager.SHOW_IMPLICIT);
@@ -1339,7 +1351,6 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			searchET.setText("");
 			searchButton.setImageResource(R.drawable.ic_action_search);
 			topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
-			currentPathTitle = currentPathTitle;
 			updateList();
 		}
 	}
@@ -1347,7 +1358,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	boolean back() {
 		Map<String, Object> softBundle;
 		//Log.d(TAG, "back " + backStack.size());
-		if (backStack.size() > 1 && (softBundle = backStack.pop()) != null && softBundle.get("dataSourceL1") != null) {
+		if (backStack.size() >= 1 && (softBundle = backStack.pop()) != null && softBundle.get("dataSourceL1") != null) {
 			//Log.d(TAG, "back " + softBundle);
 			reload(softBundle);
 			return true;
@@ -1386,19 +1397,19 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			if (currentPathTitle == null) {
 				return dataSourceL1a;
 			}
-			Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + openMode + ", " + ZipFragment.this);
+			Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + fromBeginZip + ", " + ZipFragment.this);
 			folder_count = 0;
 			file_count = 0;
 			// we're neither in OTG not in SMB, load the list based on root/general filesystem
 			//dataSourceL1a = new LinkedList<LayoutElement>();
 			try {
-				if (!currentPathTitle.equals(path)) {
+				if (!fromBeginZip) {
 					if (backStack.size() > ExplorerActivity.NUM_BACK) {
 						backStack.remove(0);
 					}
-					final Map<String, Object> bun = onSaveInstanceState();
-					backStack.push(bun);
-
+					backStack.push(onSaveInstanceState());
+				} else {
+					backStack.clear();
 					tempPreviewL2 = null;
 				}
 				//Log.d(TAG, Util.collectionToString(history, true, "\n"));
@@ -1423,11 +1434,17 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 					tempPreviewL2 = null;
 				}
 				Log.d(TAG, path + ", " + zip);
-				for (ZipEntry get : zip.entries.values()) {
-					if (get.parentPath.equals(curPath)) {
-						dataSourceL1a.add(get);
+				final ZipEntry get2 = zip.entries.get(curPath);
+				if (get2 != null) {
+					dataSourceL1a.addAll(get2.list);
+				} else {
+					for (ZipEntry get : zip.entries.values()) {
+						if (get.parentPath.equals(curPath)) {
+							dataSourceL1a.add(get);
+						}
 					}
 				}
+				
 			} catch (Throwable e) {
 				publishProgress(e.getMessage());
 				e.printStackTrace();
@@ -1435,7 +1452,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			}
 
 			if (dataSourceL1a != null) //} && !(openMode == OpenMode.CUSTOM && ((currentPathTitle).equals("5") || (currentPathTitle).equals("6"))))
-				Collections.sort(dataSourceL1a, ZipListSorter);
+				Collections.sort(dataSourceL1a, zipListSorter);
 
 			return dataSourceL1a;
 		}
@@ -1487,7 +1504,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			}
 			Log.d(TAG, "LoadFiles.onPostExecute " + currentPathTitle + ", " + zip);
 
-			updateDir(currentPathTitle);
+			updateDir();
 			
 			if (dataSourceL1.size() == 0) {
 				nofilelayout.setVisibility(View.VISIBLE);
@@ -1518,18 +1535,19 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 		@Override
 		protected List<ZipEntry> doInBackground(String... params) {
-			Log.d("SearchFileNameTask", "currentPathTitle " + currentPathTitle);
 			final List<ZipEntry> tempAppList = new LinkedList<>();
-			Set<String> keys = zip.entries.keySet();
-			final int length = currentPathTitle.length();
-			String paramLowerCase = params[0].toLowerCase();
-			for (String le : keys) {
-				if (le.startsWith(curPath) && le.substring(length).toLowerCase().contains(paramLowerCase)) {
-					tempAppList.add(zip.entries.get(le));
+			final Collection<ZipEntry> keys = zip.entries.values();
+			final int length = curPath.length() - 1;
+			final String paramLowerCase = params[0].toLowerCase();
+			Log.d("SearchFileNameTask", "currentPathTitle " + currentPathTitle + ", " + curPath + ", " + paramLowerCase);
+			for (ZipEntry le : keys) {
+				Log.d("SearchFileNameTask", le + ", " + le.path);
+				if (le.parentPath.startsWith(curPath) && le.path.substring(length).toLowerCase().contains(paramLowerCase)) {
+					tempAppList.add(le);
 				}
 			}
-			// Log.d("dataSourceL1 new task", Util.collectionToString(dataSourceL1, true, "\n"));
-			Collections.sort(tempAppList, ZipListSorter);
+			Log.d("dataSourceL1 new task", Util.collectionToString(tempAppList, true, "\n"));
+			Collections.sort(tempAppList, zipListSorter);
 			return tempAppList;
 		}
 

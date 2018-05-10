@@ -13,7 +13,7 @@ import java.util.List;
 import net.gnu.explorer.ExplorerApplication;
 import net.gnu.p7zip.Zip;
 import java.util.ArrayList;
-import net.gnu.explorer.ZipEntry;
+import net.gnu.p7zip.ZipEntry;
 import java.util.regex.Pattern;
 import java.util.Calendar;
 import java.util.regex.Matcher;
@@ -217,11 +217,22 @@ public class Zpaq {
 			valuesNew = new LinkedList<ZipEntry>();
 			for (ZipEntry ze1 : values) {
 				//Log.d(TAG, zip.entries.get(ze.parentPath) + ".");
-				if (!"/".equals(ze1.parentPath) && zip.entries.get(ze1.parentPath) == null) {
-					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, -1, -1, 0);
-					valuesNew.add(zipEntry);
-					zip.entries.put(ze1.parentPath, zipEntry);
-				}
+				ZipEntry zeParent = zip.entries.get(ze1.parentPath);
+				if (!"/".equals(ze1.parentPath)) {
+					if (zeParent == null) {
+						zeParent = new ZipEntry(null, ze1.parentPath, true, 1, -1, ze1.lastModified);
+						valuesNew.add(zeParent);
+						zip.entries.put(ze1.parentPath, zeParent);
+					} else {
+						if (ze1.isDirectory) {
+							zeParent.length += ze1.length;
+						} else {
+							zeParent.length++;
+						}
+						zeParent.lastModified = zeParent.lastModified < ze1.lastModified ? ze1.lastModified : zeParent.lastModified;
+					}
+					zeParent.list.add(ze1);
+				} 
 			}
 			values = valuesNew;
 		}

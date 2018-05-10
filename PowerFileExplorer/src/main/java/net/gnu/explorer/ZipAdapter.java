@@ -32,6 +32,7 @@ import net.gnu.util.Util;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.DialogAction;
 import android.widget.Toast;
+import net.gnu.p7zip.ZipEntry;
 
 public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder> {
 
@@ -217,12 +218,16 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 				lastModified.setText(Util.df.format(le.lastModified));
 			}
 			size.setText(Util.nf.format(le.length) + " B");
-			attr.setText(Util.nf.format(le.zipLength) + " B");
+			if (le.zipLength >= 0) {
+				attr.setText(Util.nf.format(le.zipLength) + " B");
+			} else {
+				attr.setText("n/a");
+			}
 		} else {
-			final String[] list = le.list();
-			final int length = list == null ? 0 : list.length;
+			//final String[] list = le.list();
+			final int length = le.list.size();//list == null ? 0 : list.length;
 			size.setText(Util.nf.format(length) + " item");
-			attr.setText("Folder");
+			attr.setText(Util.nf.format(le.length));
 			if (viewType == 1) {
 				type.setText("Folder");
 				lastModified.setText(Util.dtf.format(le.lastModified));

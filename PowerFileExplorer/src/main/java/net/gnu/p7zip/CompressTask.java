@@ -55,7 +55,8 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 	private boolean test = false;
 	private boolean createSeparateArchives = false;
 	private String archiveNameMask = "";
-
+	private String cmd = "";
+	
 	public CompressTask(CompressFragment compressFrag) {
 
 		this.compressFrag = compressFrag;
@@ -64,7 +65,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		activity = compressFrag.getActivity();
 		andro7za = new Andro7za(activity);
 		zpaq = new Zpaq(activity);
-
+		cmd = compressFrag.update ? "u" : "a";
 		this.lf = compressFrag.fileET.getText().toString();
 
 		String fName = compressFrag.saveToET.getText().toString().trim();
@@ -136,6 +137,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 						File file = new File(st);
 						if (!type.equals("zpaq")) {
 							int ret = andro7za.compress(
+								cmd,
 								file.getParent() + "/" + file.getName() + "_" + TIME_FORMAT.format(Calendar.getInstance().getTimeInMillis()) + "." + type,
 								password, 
 								level, 
@@ -178,6 +180,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 						File file = new File(st);
 						if (!type.equals("zpaq")) {
 							int ret = andro7za.compress(
+								cmd,
 								file.getParent() + "/" + file.getName() + "." + type,
 								password, 
 								level, 
@@ -218,6 +221,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 				int lastIndexOf = archive.lastIndexOf(".");
 				if (!type.equals("zpaq")) {
 					int ret = andro7za.compress(
+						cmd,
 						archiveNameMask.length() == 0 ? archive : archive.substring(0, lastIndexOf) + "_" + TIME_FORMAT.format(Calendar.getInstance().getTimeInMillis()) + archive.substring(lastIndexOf),
 						password, 
 						level, 

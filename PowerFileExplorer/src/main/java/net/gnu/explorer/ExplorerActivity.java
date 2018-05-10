@@ -119,6 +119,7 @@ import static com.amaze.filemanager.fragments.preference_fragments.Preffrag.PREF
 import static com.amaze.filemanager.fragments.preference_fragments.Preffrag.PREFERENCE_SHOW_SIDEBAR_QUICKACCESSES;
 import android.support.v4.app.Fragment;
 import net.gnu.p7zip.DecompressTask;
+import net.gnu.p7zip.ZipEntry;
 
 
 public class ExplorerActivity extends ThemedActivity implements OnRequestPermissionsResultCallback,

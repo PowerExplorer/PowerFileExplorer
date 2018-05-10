@@ -102,7 +102,6 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 			frag = new MediaPlayerFragment();
 		} else if (t == TYPE.ZIP) {
 			frag = new ZipFragment();
-			frag.type = TYPE.ZIP;
 		} else if (t == TYPE.CHM) {
 			frag = new CHMFrag();
 		} else if (t == TYPE.PHOTO) {

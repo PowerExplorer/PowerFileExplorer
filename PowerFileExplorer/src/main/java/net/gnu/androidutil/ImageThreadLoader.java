@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.ExplorerApplication;
 import net.gnu.explorer.R;
-import net.gnu.explorer.ZipEntry;
+import net.gnu.p7zip.ZipEntry;
 import net.gnu.util.FileUtil;
 //import com.bumptech.glide.*;
 

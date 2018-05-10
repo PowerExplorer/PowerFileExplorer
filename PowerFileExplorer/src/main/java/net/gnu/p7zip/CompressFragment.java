@@ -84,6 +84,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 	transient CheckBox encryptFileNamesCB;
 	transient CheckBox deleteFilesAfterArchivingCB;
+	transient CheckBox updateCB;
 
 	transient CheckBox solidArchiveCB;
 	transient CheckBox testCB;
@@ -102,6 +103,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 	transient TextView statusTV;
 
 	String deleteFilesAfterArchiving = "";
+	boolean update = false;
 	String encryptFileNames = "";
 	transient CompressTask compressTask;
 
@@ -165,7 +167,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 		deleteFilesAfterArchivingCB = (CheckBox)view.findViewById(R.id.deleteFilesAfterArchivingCB);
 		encryptFileNamesCB = (CheckBox)view.findViewById(R.id.encryptFileNamesCB);
-
+		updateCB = (CheckBox)view.findViewById(R.id.updateCB);
 		solidArchiveCB = (CheckBox)view.findViewById(R.id.solidArchiveCB);
 		testCB = (CheckBox)view.findViewById(R.id.testCB);
 		createSeparateArchivesCB = (CheckBox)view.findViewById(R.id.createSeparateArchivesCB);
@@ -457,11 +459,17 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 			solidArchiveCB.setEnabled(false);
 			getView().findViewById(R.id.solidArchiveParameterInfo).setEnabled(false);
 		}
-		if (p1.getCheckedRadioButtonId() != R.id.zpaq) {
-			deleteFilesAfterArchivingCB.setEnabled(true);
-		} else {
+		if (p1.getCheckedRadioButtonId() == R.id.zpaq) {
 			deleteFilesAfterArchivingCB.setChecked(false);
 			deleteFilesAfterArchivingCB.setEnabled(false);
+			updateCB.setChecked(true);
+			updateCB.setEnabled(false);
+			otherParameters = otherParametersET.getText().toString();
+			otherParameters = otherParameters.replaceAll("-mqs=on", "");
+			otherParametersET.setText(otherParameters);
+		} else {
+			deleteFilesAfterArchivingCB.setEnabled(true);
+			updateCB.setEnabled(true);
 		}
 	}
 
@@ -557,6 +565,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 			volumeUnit = volUnitRadioGroup.getCheckedRadioButtonId();
 
 			deleteFilesAfterArchiving = deleteFilesAfterArchivingCB.isChecked() ? "-sdel" : "";
+			update = updateCB.isChecked();
 			encryptFileNames = encryptFileNamesCB.isChecked() ? "-mhe=on" : "";
 			solidArchive = solidArchiveET.getText().toString();
 			test = testCB.isChecked();
@@ -615,6 +624,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		volUnitRadioGroup.check(volumeUnit);
 		compressLevelSpinner.setSelection(level);
 
+		updateCB.setChecked(update);
 		deleteFilesAfterArchivingCB.setChecked(deleteFilesAfterArchiving.equals("-sdel") ? true : false);
 		encryptFileNamesCB.setChecked(passwordET.getText().length() > 0 && encryptFileNames.equals("-mhe=on") ? true : false);
 		solidArchiveET.setText(solidArchive);

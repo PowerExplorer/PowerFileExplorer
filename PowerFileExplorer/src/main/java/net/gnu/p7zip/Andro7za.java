@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.gnu.explorer.ExplorerApplication;
-import net.gnu.explorer.ZipEntry;
+import net.gnu.p7zip.ZipEntry;
 import net.gnu.util.FileUtil;
 import net.gnu.util.Util;
 import org.magiclen.magiccommand.Command;
@@ -290,6 +290,7 @@ public final class Andro7za {
 	}
 
 	public int compress(
+		String cmd,
 		String archiveName, 
 		String password, 
 		String level, 
@@ -300,7 +301,9 @@ public final class Andro7za {
 		UpdateProgress update) 
 	throws IOException {
 
-		Log.d(TAG, "compress " + archiveName + "," +
+		Log.d(TAG, "compress " + 
+			  cmd + ", " + 
+			  archiveName + "," +
 			  level + "," +
 			  fileList + "," +
 			  volume + "," +
@@ -342,7 +345,7 @@ public final class Andro7za {
 		} else {
 			fileListTmp2 = archiveName.substring(0, archiveName.lastIndexOf(".")) + ".tar";
 			List<String> args = new ArrayList<String>(otherArgs);
-			compress(fileListTmp2, password, level, volume, fileList, excludes, args, update);
+			compress(cmd, fileListTmp2, password, level, volume, new ArrayList<String>(fileList), excludes, args, update);
 			excludesTmp2 = "";
 		}
 
@@ -499,7 +502,7 @@ public final class Andro7za {
 			saveTo = "-o" + saveTo;
 			otherArgs.add(0, saveTo);
 		}
-		
+
 		otherArgs.add(0, "-bb");
 
 		if (password == null || password.length() == 0) {
@@ -533,7 +536,7 @@ public final class Andro7za {
 			final String includesTmp2 = Util.isEmpty(includes) ? "" :  " -ir@" + includesTmp + " ";
 			otherArgs.add(includesTmp2);
 		}
-		
+
 		String excludesTmp = "";
 		if (excludes != null && excludes.trim().length() > 0) {
 			excludesTmp = ExplorerApplication.PRIVATE_PATH + zArchive.substring(zArchive.lastIndexOf("/")) + ".exc." + System.currentTimeMillis();BufferedWriter bw = new BufferedWriter(new FileWriter(excludesTmp));
@@ -550,9 +553,9 @@ public final class Andro7za {
 			String excludesTmp2 = Util.isEmpty(excludes) ? "" :  " -xr@" + excludesTmp + " ";
 			otherArgs.add(excludesTmp2);
 		}
-		
+
 		int ret = 0;
-		
+
 		otherArgs.add(0, zArchive);
 		otherArgs.add(0, cmd);
 		otherArgs.add(0, p7z);
@@ -571,11 +574,11 @@ public final class Andro7za {
 		new File(excludesTmp).delete();
 		return ret;
 	}
-	
+
 	private final Pattern patLn = Pattern.compile("[^\n]+");
 	private final Pattern zipEntryInfoPattern = Pattern.compile("([ \\d]{4}[-/ ][ \\d]{2}[- /][ \\d]{2}) ([ \\d]{2}[ :][ \\d]{2}[ :][ \\d]{2}) ([D\\.]).{4} ([ \\d]{12}) ([ \\d]{12})  ([^\r\n]+)", Pattern.UNICODE_CASE);
 	private final Pattern patEnd = Pattern.compile("([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s*([^\\s]*)\\s*([^\\s]*)");
-	
+
 	public Zip listCmd(final String pathArchive7z, String password) {
 		List<String> otherArgs = new ArrayList<>();
 		final StringBuilder sb = new StringBuilder(16);
@@ -607,7 +610,7 @@ public final class Andro7za {
 		command.run();
 		final int ret = commandListener.ret;
 		Log.d(TAG, "ret " + ret + ", command: " + command);
-		
+
 		String line ="";
 		final Matcher m = patLn.matcher(sb.toString());
 		int count = 0;
@@ -632,7 +635,7 @@ public final class Andro7za {
 						cal.set(Integer.valueOf(date[0]).intValue(), Integer.valueOf(date[1]).intValue() - 1, Integer.valueOf(date[2]).intValue(), 
 								Integer.valueOf(time[0]).intValue(), Integer.valueOf(time[1]).intValue(), Integer.valueOf(time[2]).intValue());
 					}
-					
+
 					path = matcher.group(6);
 					final String length = matcher.group(4).trim();
 					final String zipLength = matcher.group(5).trim();
@@ -640,7 +643,7 @@ public final class Andro7za {
 						ze = new ZipEntry(null, 
 										  path,
 										  true,
-										  Integer.valueOf(length.length() == 0 ? "-1" : length).intValue(),
+										  Integer.valueOf(length.length() == 0 ? "0" : length).intValue(),
 										  Integer.valueOf(zipLength.length() == 0 ? "-1" : zipLength).intValue(),
 										  cal.getTimeInMillis());
 					} else {
@@ -674,11 +677,22 @@ public final class Andro7za {
 			valuesNew = new LinkedList<ZipEntry>();
 			for (ZipEntry ze1 : values) {
 				//Log.d(TAG, zip.entries.get(ze.parentPath) + ".");
-				if (!"/".equals(ze1.parentPath) && zip.entries.get(ze1.parentPath) == null) {
-					ZipEntry zipEntry = new ZipEntry(null, ze1.parentPath, true, -1, -1, 0);
-					valuesNew.add(zipEntry);
-					zip.entries.put(ze1.parentPath, zipEntry);
-				}
+				ZipEntry zeParent = zip.entries.get(ze1.parentPath);
+				if (!"/".equals(ze1.parentPath)) {
+					if (zeParent == null) {
+						zeParent = new ZipEntry(null, ze1.parentPath, true, 1, -1, ze1.lastModified);
+						valuesNew.add(zeParent);
+						zip.entries.put(ze1.parentPath, zeParent);
+					} else {
+						if (ze1.isDirectory) {
+							zeParent.length += ze1.length;
+						} else {
+							zeParent.length++;
+						}
+						zeParent.lastModified = zeParent.lastModified < ze1.lastModified ? ze1.lastModified : zeParent.lastModified;
+					}
+					zeParent.list.add(ze1);
+				} 
 			}
 			values = valuesNew;
 		}
