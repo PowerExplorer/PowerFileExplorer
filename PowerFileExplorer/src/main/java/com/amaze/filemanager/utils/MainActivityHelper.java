@@ -392,7 +392,9 @@ public class MainActivityHelper {
             intent2.putExtra(ZipTask.KEY_COMPRESS_PATH, file.getPath());
             intent2.putExtra(ZipTask.KEY_COMPRESS_FILES, baseFiles);
             ServiceWatcherUtil.runService(mainActivity, intent2);
-        } else Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
+        } else {
+			Toast.makeText(mainActivity, R.string.not_allowed, Toast.LENGTH_SHORT).show();
+		}
     }
 
 

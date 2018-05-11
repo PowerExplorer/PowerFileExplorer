@@ -86,7 +86,7 @@ public class ZipTask extends Service {
 
         File zipFile = new File(path);
         mZipPath = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(PreferenceUtils.KEY_PATH_COMPRESS, path);
+			.getString(PreferenceUtils.KEY_PATH_COMPRESS, path);
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (!mZipPath.equals(path)) {
             mZipPath.concat(mZipPath.endsWith("/") ? (zipFile.getName()) : ("/" + zipFile.getName()));
@@ -107,7 +107,7 @@ public class ZipTask extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setContentTitle(getResources().getString(R.string.compressing))
-                .setSmallIcon(R.drawable.ic_zip_box_white_36dp);
+			.setSmallIcon(R.drawable.ic_zip_box_white_36dp);
         startForeground(Integer.parseInt("789" + startId), mBuilder.build());
         b.putInt("id", startId);
         b.putParcelableArrayList(KEY_COMPRESS_FILES, baseFiles);
@@ -161,13 +161,13 @@ public class ZipTask extends Service {
             totalBytes = Futils.getTotalBytes(baseFiles, c);
             progressHandler = new ProgressHandler(baseFiles.size(), totalBytes);
             progressHandler.setProgressListener(new ProgressHandler.ProgressListener() {
-                @Override
-                public void onProgressed(String fileName, int sourceFiles, int sourceProgress,
-                                         long totalSize, long writtenSize, int speed) {
-                    publishResults(id, fileName, sourceFiles, sourceProgress,
-                            totalSize, writtenSize, speed, false);
-                }
-            });
+					@Override
+					public void onProgressed(String fileName, int sourceFiles, int sourceProgress,
+											 long totalSize, long writtenSize, int speed) {
+						publishResults(id, fileName, sourceFiles, sourceProgress,
+									   totalSize, writtenSize, speed, false);
+					}
+				});
 
             DataPackage intent1 = new DataPackage();
             intent1.setName(baseFiles.get(0).getName());
@@ -263,7 +263,7 @@ public class ZipTask extends Service {
             int title = R.string.compressing;
             mBuilder.setContentTitle(c.getResources().getString(title));
             mBuilder.setContentText(new File(fileName).getName() + " " +
-                    Formatter.formatFileSize(c, done) + "/" + Formatter.formatFileSize(c, total));
+									Formatter.formatFileSize(c, done) + "/" + Formatter.formatFileSize(c, total));
             int id1 = Integer.parseInt("789" + id);
             mNotifyManager.notify(id1, mBuilder.build());
             if (done == total || total == 0) {
@@ -358,3 +358,4 @@ public class ZipTask extends Service {
     }
 
 }
+

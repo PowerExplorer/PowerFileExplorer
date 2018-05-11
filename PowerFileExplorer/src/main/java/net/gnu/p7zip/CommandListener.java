@@ -32,7 +32,7 @@ public class CommandListener implements org.magiclen.magiccommand.CommandListene
 			Log.d("CommandListener", "isError " + isError + ": " + message);
 		}
 		//tv.setText(tv.getText() + command.getCommand() + ": " + message + "\n");
-		//System.out.println(message);
+		//Log.d("CommandListener.commandRunning", message + ".");
 	}
 
 	@Override

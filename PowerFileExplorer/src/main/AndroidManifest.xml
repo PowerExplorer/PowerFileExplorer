@@ -637,14 +637,19 @@
             android:exported="false"
 			android:process=":net"/>
 
+		<!--<service
+            android:name = "net.gnu.explorer.ZipTaskService"
+            android:label = "Compressing"
+		/>-->
+	
         <!--<service
 		android:name = "com.amaze.filemanager.services.ExtractService"
 		android:label = "Extracting"
 		/>-->
-        <service
+        <!--<service
             android:name = "com.amaze.filemanager.services.ZipTask"
             android:label = "Compressing"
-		/>
+		/>-->
         <service
             android:name = "com.amaze.filemanager.services.CopyService"
             android:label = "Copying"

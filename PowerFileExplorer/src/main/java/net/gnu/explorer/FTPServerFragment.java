@@ -145,19 +145,7 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.startStopButton:
-				if (!FTPService.isRunning()) {
-					if (FTPService.isConnectedToWifi(getContext())
-						|| FTPService.isConnectedToLocalNetwork(getContext())
-						|| FTPService.isEnabledWifiHotspot(getContext()))
-						startServer();
-					else {
-						// no wifi and no eth, we shouldn't be here in the first place, because of broadcast
-						// receiver, but just to be sure
-						statusText.setText(spannedStatusNoConnection);
-					}
-				} else {
-					stopServer();
-				}
+				startStop();
 				break;
 			case R.id.changeUser:
 				login();
@@ -166,124 +154,152 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
 				login();
 				break;
 			case R.id.changeSharedPath:
-				MaterialDialog.Builder dialogBuilder = new MaterialDialog.Builder(fragActivity);
-                dialogBuilder.title(getString(R.string.ftp_path));
-                dialogBuilder.input(getString(R.string.ftp_path_hint),
-					getDefaultPathFromPreferences(),
-					false, new MaterialDialog.InputCallback() {
-						@Override
-						public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-
-						}
-					});
-                dialogBuilder.onPositive(new MaterialDialog.SingleButtonCallback() {
-						@Override
-						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-							EditText editText = dialog.getInputEditText();
-							if (editText != null) {
-								String path = editText.getText().toString();
-
-								File pathFile = new File(path);
-								if (pathFile.exists() && pathFile.isDirectory()) {
-
-									changeFTPServerPath(pathFile.getPath());
-
-									Toast.makeText(fragActivity, R.string.ftp_path_change_success,
-												   Toast.LENGTH_SHORT)
-                                        .show();
-								} else {
-									// try to get parent
-									File pathParentFile = new File(pathFile.getParent());
-									if (pathParentFile.exists() && pathParentFile.isDirectory()) {
-
-										changeFTPServerPath(pathParentFile.getPath());
-										Toast.makeText(fragActivity, R.string.ftp_path_change_success,
-													   Toast.LENGTH_SHORT)
-                                            .show();
-									} else {
-										// don't have access, print error
-
-										Toast.makeText(fragActivity, R.string.ftp_path_change_error_invalid,
-													   Toast.LENGTH_SHORT)
-                                            .show();
-									}
-								}
-							}
-						}
-					});
-
-                dialogBuilder.positiveText(getResources().getString(R.string.change).toUpperCase())
-					.negativeText(R.string.cancel)
-					.build()
-					.show();
+				changeSharedPath();
 				break;
 			case R.id.changeFtpPort:
-				int currentFtpPort = getDefaultPortFromPreferences();
-                new MaterialDialog.Builder(fragActivity)
-					.input(getString(R.string.ftp_port_edit_menu_title), Integer.toString(currentFtpPort), true, new MaterialDialog.InputCallback() {
-						@Override
-						public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-
-						}
-					})
-					.inputType(InputType.TYPE_CLASS_NUMBER)
-					.onPositive(new MaterialDialog.SingleButtonCallback() {
-						@Override
-						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-							EditText editText = dialog.getInputEditText();
-							if (editText != null) {
-								String name = editText.getText().toString();
-
-								int portNumber = Integer.parseInt(name);
-								if (portNumber < 1024) {
-									Toast.makeText(fragActivity, R.string.ftp_port_change_error_invalid, Toast.LENGTH_SHORT)
-										.show();
-								} else {
-									changeFTPServerPort(portNumber);
-									Toast.makeText(fragActivity, R.string.ftp_port_change_success, Toast.LENGTH_SHORT)
-										.show();
-								}
-							}
-						}
-					})
-					.positiveText(getResources().getString(R.string.change).toUpperCase())
-					.negativeText(R.string.cancel)
-					.build()
-					.show();
+				changeFtpPort();
                 break;
 			case R.id.changeTimeOut:
-				MaterialDialog.Builder timeoutBuilder = new MaterialDialog.Builder(fragActivity);
-
-                timeoutBuilder.title(getResources().getString(R.string.ftp_timeout) + " (" +
-									 getResources().getString(R.string.ftp_seconds) + ")");
-                timeoutBuilder.input(String.valueOf(FTPService.DEFAULT_TIMEOUT + " " +
-													getResources().getString(R.string.ftp_seconds)), String.valueOf(getFTPTimeout()),
-					true, new MaterialDialog.InputCallback() {
-						@Override
-						public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-
-							boolean isInputInteger;
-							try {
-								// try parsing for integer check
-								Integer.parseInt(input.toString());
-								isInputInteger = true;
-							} catch (NumberFormatException e) {
-								isInputInteger = false;
-							}
-
-							if (input.length() == 0 || !isInputInteger)
-								setFTPTimeout(FTPService.DEFAULT_TIMEOUT);
-							else
-								setFTPTimeout(Integer.valueOf(input.toString()).intValue());
-							timeoutTV.setText("Time out: " + getFTPTimeout());
-						}
-					});
-                timeoutBuilder.positiveText(getResources().getString(R.string.set).toUpperCase())
-					.negativeText(getResources().getString(R.string.cancel))
-					.build()
-					.show();
+				changeTimeOut();
 				break;
+		}
+	}
+
+	private void changeTimeOut() {
+		MaterialDialog.Builder timeoutBuilder = new MaterialDialog.Builder(fragActivity);
+
+		timeoutBuilder.title(getResources().getString(R.string.ftp_timeout) + " (" +
+							 getResources().getString(R.string.ftp_seconds) + ")");
+		timeoutBuilder.input(String.valueOf(FTPService.DEFAULT_TIMEOUT + " " +
+											getResources().getString(R.string.ftp_seconds)), String.valueOf(getFTPTimeout()),
+			true, new MaterialDialog.InputCallback() {
+				@Override
+				public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+
+					boolean isInputInteger;
+					try {
+						// try parsing for integer check
+						Integer.parseInt(input.toString());
+						isInputInteger = true;
+					} catch (NumberFormatException e) {
+						isInputInteger = false;
+					}
+
+					if (input.length() == 0 || !isInputInteger)
+						setFTPTimeout(FTPService.DEFAULT_TIMEOUT);
+					else
+						setFTPTimeout(Integer.valueOf(input.toString()).intValue());
+					timeoutTV.setText("Time out: " + getFTPTimeout());
+				}
+			});
+		timeoutBuilder.positiveText(getResources().getString(R.string.set).toUpperCase())
+			.negativeText(getResources().getString(R.string.cancel))
+			.build()
+			.show();
+	}
+
+	private void changeFtpPort() {
+		int currentFtpPort = getDefaultPortFromPreferences();
+		new MaterialDialog.Builder(fragActivity)
+			.input(getString(R.string.ftp_port_edit_menu_title), Integer.toString(currentFtpPort), true, new MaterialDialog.InputCallback() {
+				@Override
+				public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+
+				}
+			})
+			.inputType(InputType.TYPE_CLASS_NUMBER)
+			.onPositive(new MaterialDialog.SingleButtonCallback() {
+				@Override
+				public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+					EditText editText = dialog.getInputEditText();
+					if (editText != null) {
+						String name = editText.getText().toString();
+
+						int portNumber = Integer.parseInt(name);
+						if (portNumber < 1024) {
+							Toast.makeText(fragActivity, R.string.ftp_port_change_error_invalid, Toast.LENGTH_SHORT)
+								.show();
+						} else {
+							changeFTPServerPort(portNumber);
+							Toast.makeText(fragActivity, R.string.ftp_port_change_success, Toast.LENGTH_SHORT)
+								.show();
+						}
+					}
+				}
+			})
+			.positiveText(getResources().getString(R.string.change).toUpperCase())
+			.negativeText(R.string.cancel)
+			.build()
+			.show();
+	}
+
+	private void changeSharedPath() {
+		MaterialDialog.Builder dialogBuilder = new MaterialDialog.Builder(fragActivity);
+		dialogBuilder.title(getString(R.string.ftp_path));
+		dialogBuilder.input(getString(R.string.ftp_path_hint),
+			getDefaultPathFromPreferences(),
+			false, new MaterialDialog.InputCallback() {
+				@Override
+				public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+
+				}
+			});
+		dialogBuilder.onPositive(new MaterialDialog.SingleButtonCallback() {
+				@Override
+				public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+					EditText editText = dialog.getInputEditText();
+					if (editText != null) {
+						String path = editText.getText().toString();
+
+						File pathFile = new File(path);
+						if (pathFile.exists() && pathFile.isDirectory()) {
+
+							changeFTPServerPath(pathFile.getPath());
+
+							Toast.makeText(fragActivity, R.string.ftp_path_change_success,
+										   Toast.LENGTH_SHORT)
+								.show();
+						} else {
+							// try to get parent
+							File pathParentFile = new File(pathFile.getParent());
+							if (pathParentFile.exists() && pathParentFile.isDirectory()) {
+
+								changeFTPServerPath(pathParentFile.getPath());
+								Toast.makeText(fragActivity, R.string.ftp_path_change_success,
+											   Toast.LENGTH_SHORT)
+									.show();
+							} else {
+								// don't have access, print error
+
+								Toast.makeText(fragActivity, R.string.ftp_path_change_error_invalid,
+											   Toast.LENGTH_SHORT)
+									.show();
+							}
+						}
+					}
+				}
+			});
+
+		dialogBuilder.positiveText(getResources().getString(R.string.change).toUpperCase())
+			.negativeText(R.string.cancel)
+			.build()
+			.show();
+	}
+
+	private void startStop() {
+		if (!FTPService.isRunning()) {
+			if (FTPService.isConnectedToWifi(getContext())
+				|| FTPService.isConnectedToLocalNetwork(getContext())
+				|| FTPService.isEnabledWifiHotspot(getContext()))
+				startServer();
+			else {
+				// no wifi and no eth, we shouldn't be here in the first place, because of broadcast
+				// receiver, but just to be sure
+				statusText.setText(spannedStatusNoConnection);
+			}
+		} else {
+			stopServer();
 		}
 	}
 
@@ -356,203 +372,6 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
         timeoutTV.setTextColor(ExplorerActivity.TEXT_COLOR);
 	}
 
-//    @Override
-//    public void onActivityCreated(Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        setRetainInstance(true);
-////        mainActivity.getAppbar().setTitle(getResources().getString(R.string.ftp));
-////        mainActivity.floatingActionButton.hideMenuButton(true);
-////        mainActivity.buttonBarFrame.setVisibility(View.GONE);
-////        activity.supportInvalidateOptionsMenu();
-//
-//        //mainActivity.updateViews(new ColorDrawable(MainActivity.currentTab==1 ?
-//        //        skinTwoColor : skin_color));
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//
-//        switch (item.getItemId()) {
-//            case R.id.choose_ftp_port:
-//                int currentFtpPort = getDefaultPortFromPreferences();
-//
-//                new MaterialDialog.Builder(fragActivity)
-//					.input(getString(R.string.ftp_port_edit_menu_title), Integer.toString(currentFtpPort), true, new MaterialDialog.InputCallback() {
-//						@Override
-//						public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-//
-//						}
-//					})
-//					.inputType(InputType.TYPE_CLASS_NUMBER)
-//					.onPositive(new MaterialDialog.SingleButtonCallback() {
-//						@Override
-//						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//							EditText editText = dialog.getInputEditText();
-//							if (editText != null) {
-//								String name = editText.getText().toString();
-//
-//								int portNumber = Integer.parseInt(name);
-//								if (portNumber < 1024) {
-//									Toast.makeText(fragActivity, R.string.ftp_port_change_error_invalid, Toast.LENGTH_SHORT)
-//										.show();
-//								} else {
-//									changeFTPServerPort(portNumber);
-//									Toast.makeText(fragActivity, R.string.ftp_port_change_success, Toast.LENGTH_SHORT)
-//										.show();
-//								}
-//							}
-//						}
-//					})
-//					.positiveText(getResources().getString(R.string.change).toUpperCase())
-//					.negativeText(R.string.cancel)
-//					.build()
-//					.show();
-//                return true;
-//            case R.id.ftp_path:
-//                MaterialDialog.Builder dialogBuilder = new MaterialDialog.Builder(fragActivity);
-//                dialogBuilder.title(getString(R.string.ftp_path));
-//                dialogBuilder.input(getString(R.string.ftp_path_hint),
-//					getDefaultPathFromPreferences(),
-//					false, new MaterialDialog.InputCallback() {
-//						@Override
-//						public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-//
-//						}
-//					});
-//                dialogBuilder.onPositive(new MaterialDialog.SingleButtonCallback() {
-//						@Override
-//						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//
-//							EditText editText = dialog.getInputEditText();
-//							if (editText != null) {
-//								String path = editText.getText().toString();
-//
-//								File pathFile = new File(path);
-//								if (pathFile.exists() && pathFile.isDirectory()) {
-//
-//									changeFTPServerPath(pathFile.getPath());
-//
-//									Toast.makeText(fragActivity, R.string.ftp_path_change_success,
-//												   Toast.LENGTH_SHORT)
-//                                        .show();
-//								} else {
-//									// try to get parent
-//									File pathParentFile = new File(pathFile.getParent());
-//									if (pathParentFile.exists() && pathParentFile.isDirectory()) {
-//
-//										changeFTPServerPath(pathParentFile.getPath());
-//										Toast.makeText(fragActivity, R.string.ftp_path_change_success,
-//													   Toast.LENGTH_SHORT)
-//                                            .show();
-//									} else {
-//										// don't have access, print error
-//
-//										Toast.makeText(fragActivity, R.string.ftp_path_change_error_invalid,
-//													   Toast.LENGTH_SHORT)
-//                                            .show();
-//									}
-//								}
-//							}
-//						}
-//					});
-//
-//                dialogBuilder.positiveText(getResources().getString(R.string.change).toUpperCase())
-//					.negativeText(R.string.cancel)
-//					.build()
-//					.show();
-//                return true;
-//            case R.id.ftp_login:
-//                MaterialDialog.Builder loginDialogBuilder = new MaterialDialog.Builder(fragActivity);
-//
-//                LayoutInflater inflater = fragActivity.getLayoutInflater();
-//                View rootView = inflater.inflate(R.layout.dialog_ftp_login, null);
-//                initLoginDialogViews(rootView);
-//
-//                loginDialogBuilder.customView(rootView, true);
-//
-//                loginDialogBuilder.title(getString(R.string.ftp_login));
-//
-//                loginDialogBuilder.onPositive(new MaterialDialog.SingleButtonCallback() {
-//						@Override
-//						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//
-//							if (mAnonymousCheckBox.isChecked()) {
-//
-//								// remove preferences
-//								setFTPUsername("");
-//								setFTPPassword("");
-//							} else {
-//
-//								if (passwordEditText.getText().toString().equals("")) {
-//									passwordTextInput.setError(getResources().getString(R.string.field_empty));
-//								} else if (usernameEditText.getText().toString().equals("")) {
-//									usernameTextInput.setError(getResources().getString(R.string.field_empty));
-//								} else {
-//
-//									// password and username field not empty, let's set them to preferences
-//									setFTPUsername(usernameEditText.getText().toString());
-//									setFTPPassword(passwordEditText.getText().toString());
-//								}
-//							}
-//
-//							if (mSecureCheckBox.isChecked()) {
-//								setSecurePreference(true);
-//							} else setSecurePreference(false);
-//
-//							// TODO: Fix secure connection certification
-//							mSecureCheckBox.setEnabled(false);
-//							setSecurePreference(false);
-//							// TODO: Fix secure connection certification
-//						}
-//					});
-//
-//                loginDialogBuilder.positiveText(getResources().getString(R.string.set).toUpperCase())
-//					.negativeText(getResources().getString(R.string.cancel))
-//					.build()
-//					.show();
-//
-//                return true;
-//            case R.id.ftp_timeout:
-//                MaterialDialog.Builder timeoutBuilder = new MaterialDialog.Builder(fragActivity);
-//
-//                timeoutBuilder.title(getResources().getString(R.string.ftp_timeout) + " (" +
-//									 getResources().getString(R.string.ftp_seconds) + ")");
-//                timeoutBuilder.input(String.valueOf(FTPService.DEFAULT_TIMEOUT + " " +
-//													getResources().getString(R.string.ftp_seconds)), String.valueOf(getFTPTimeout()),
-//					true, new MaterialDialog.InputCallback() {
-//						@Override
-//						public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-//
-//							boolean isInputInteger;
-//							try {
-//								// try parsing for integer check
-//								Integer.parseInt(input.toString());
-//								isInputInteger = true;
-//							} catch (NumberFormatException e) {
-//								isInputInteger = false;
-//							}
-//
-//							if (input.length() == 0 || !isInputInteger)
-//								setFTPTimeout(FTPService.DEFAULT_TIMEOUT);
-//							else
-//								setFTPTimeout(Integer.valueOf(input.toString()).intValue());
-//						}
-//					});
-//                timeoutBuilder.positiveText(getResources().getString(R.string.set).toUpperCase())
-//					.negativeText(getResources().getString(R.string.cancel))
-//					.build()
-//					.show();
-//                return true;
-//        }
-//
-//        return false;
-//    }
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        mainActivity.getMenuInflater().inflate(R.menu.ftp_server_menu, menu);
-//    }
-
     private BroadcastReceiver mWifiReceiver = new BroadcastReceiver() {
 
         @Override
@@ -622,6 +441,7 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
         IntentFilter wifiFilter = new IntentFilter();
         wifiFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         getContext().registerReceiver(mWifiReceiver, wifiFilter);
+		
         IntentFilter ftpFilter = new IntentFilter();
         ftpFilter.addAction(FTPService.ACTION_STARTED);
         ftpFilter.addAction(FTPService.ACTION_STOPPED);
@@ -765,7 +585,9 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
 
         if (getSecurePreference()) {
             mSecureCheckBox.setChecked(true);
-        } else mSecureCheckBox.setChecked(false);
+        } else {
+			mSecureCheckBox.setChecked(false);
+		}
 
         // check if we have a keystore
         InputStream stream = getResources().openRawResource(R.raw.explorer);

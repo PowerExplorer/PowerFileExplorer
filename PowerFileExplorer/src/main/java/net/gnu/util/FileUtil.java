@@ -1383,34 +1383,36 @@ public class FileUtil {
 	}
 
 	/**
-	 0: number of files
-	 1: total length
+	 0: total length
+	 1: number of files
 	 2: number of directories
 	 */
-	public static void getDirSize(final File f, final long[] l) {
+	public static final long[] getDirSize(final File f) {
+		final long[] l = new long[]{0, 0, 0};
 		if (!f.isDirectory()) {
-			l[0]++;
-			l[1] += f.length();
+			l[0] += f.length();
+			l[1]++;
 		} else {
-			LinkedList<File> stk = new LinkedList<File>();
-			stk.add(f);
+			final LinkedList<File> folderQueue = new LinkedList<File>();
+			folderQueue.add(f);
 			File fi = null;
 			File[] fs;
-			while (stk.size() > 0) {
-				fi = stk.pop();
+			while (folderQueue.size() > 0) {
+				fi = folderQueue.pop();
 				fs = fi.listFiles();
 				if (fs != null)
 					for (File f2 : fs) {
 						if (f2.isDirectory()) {
-							stk.push(f2);
+							folderQueue.push(f2);
 							l[2]++;
 						} else {
-							l[0]++;
-							l[1] += f2.length();
+							l[0] += f2.length();
+							l[1]++;
 						}
 					}
 			}
 		}
+		return l;
 	}
 
 	public static Collection<File> getFiles(String fs, boolean includeFolder) {
@@ -1464,16 +1466,38 @@ public class FileUtil {
 		return set;
 	}
 
+	/**
+	 0: total length
+	 1: number of files
+	 2: number of directories
+	 */
+	public static long[] getFolderSize(final List<String> fList, final OnProgressUpdate<Long> updateState) {
+		final long[] ret = new long[] {0, 0, 0};
+		for (String st : fList) {
+			final long[] folderSize = getFolderSize(st, updateState);
+			ret[0] += folderSize[0];
+			ret[1] += folderSize[1];
+			ret[2] += folderSize[2];
+		}
+		return ret;
+	}
+
+	/**
+	 0: total length
+	 1: number of files
+	 2: number of directories
+	 */
 	public static long getFolderSize(final File f, final OnProgressUpdate<Long> updateState) {
 		Log.d("getFolderSize f", f.getAbsolutePath());
-		long size = 0;
+		//long size = 0;
+		long ret = 0;//new long[] {0, 0, 0};
 		long start = System.currentTimeMillis();
 		if (f != null && f.exists()) {
 			final LinkedList<File> folderQueue = new LinkedList<File>();
 			if (f.isDirectory()) {
 				folderQueue.push(f);
 			} else {
-				size += f.length();
+				ret += f.length();
 			}
 			File fi = null;
 			File[] fs;
@@ -1486,9 +1510,9 @@ public class FileUtil {
 							if (f2.isDirectory()) {
 								folderQueue.push(f2);
 							} else {
-								size += f2.length();
+								ret += f2.length();
 							}
-							updateState.onUpdate(size);
+							updateState.onUpdate(ret);
 						}
 					}
 				}
@@ -1501,7 +1525,69 @@ public class FileUtil {
 							if (f2.isDirectory()) {
 								folderQueue.push(f2);
 							} else {
-								size += f2.length();
+								ret += f2.length();
+							}
+						}
+					}
+				}
+			}
+
+		}
+		Log.d("getFolderSize f", f.getAbsolutePath() + ": " + Util.nf.format(ret) + ", took " + (System.currentTimeMillis() - start));
+		return ret;
+	}
+	
+	/**
+	 0: total length
+	 1: number of files
+	 2: number of directories
+	 */
+	public static long[] getFolderSize(final String fPath, final OnProgressUpdate<Long> updateState) {
+		final File f = new File(fPath);
+		Log.d("getFolderSize f", fPath);
+		//long size = 0;
+		long[] ret = new long[] {0, 0, 0};
+		long start = System.currentTimeMillis();
+		if (f != null && f.exists()) {
+			final LinkedList<File> folderQueue = new LinkedList<File>();
+			if (f.isDirectory()) {
+				folderQueue.push(f);
+				ret[2]++;
+			} else {
+				ret[0] += f.length();
+				ret[1]++;
+			}
+			File fi = null;
+			File[] fs;
+			if (updateState != null) {
+				while (folderQueue.size() > 0) {
+					fi = folderQueue.removeFirst();
+					fs = fi.listFiles();
+					if (fs != null) {
+						for (File f2 : fs) {
+							if (f2.isDirectory()) {
+								folderQueue.push(f2);
+								ret[2]++;
+							} else {
+								ret[0] += f2.length();
+								ret[1]++;
+							}
+							updateState.onUpdate(ret[0]);
+						}
+					}
+				}
+			} else {
+				while (folderQueue.size() > 0) {
+					fi = folderQueue.removeFirst();
+					fs = fi.listFiles();
+					if (fs != null) {
+						for (File f2 : fs) {
+							if (f2.isDirectory()) {
+								folderQueue.push(f2);
+								ret[2]++;
+							} else {
+								ret[0] += f2.length();
+								ret[1]++;
 							}
 						}
 					}
@@ -1509,8 +1595,8 @@ public class FileUtil {
 			}
 			
 		}
-		Log.d("getFolderSize f", f.getAbsolutePath() + ": " + Util.nf.format(size) + ", took " + (System.currentTimeMillis() - start));
-		return size;
+		Log.d("getFolderSize f", f.getAbsolutePath() + ": " + ret + ", took " + (System.currentTimeMillis() - start));
+		return ret;
 	}
 
 	public static Collection<File> getFiles(File f, boolean includeFolder) {

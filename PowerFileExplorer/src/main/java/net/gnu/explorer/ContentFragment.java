@@ -1008,7 +1008,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume index " + activity.slideFrag.indexOfMTabs(this) + ", " + /*activity.slideFrag2.indexOfMTabs(this) + ", " + */ slidingTabsFragment.side + ", " + type + ", fake=" + fake + ", " + currentPathTitle + ", currentPathTitle=" + currentPathTitle);
+        Log.d(TAG, "onResume index " + activity.slideFrag.indexOfMTabs(this) + ", " + /*activity.slideFrag2.indexOfMTabs(this) + ", " +  slidingTabsFragment.side + */", " + type + ", fake=" + fake + ", " + currentPathTitle + ", currentPathTitle=" + currentPathTitle);
 		super.onResume();
 		fragActivity.registerReceiver(receiver2, new IntentFilter("loadlist"));
 

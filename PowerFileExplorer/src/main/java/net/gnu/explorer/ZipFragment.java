@@ -686,7 +686,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		if (curPath != null) {
 			mDirectoryButtons.removeAllViews();
 			String[] parts = (curPath.startsWith("/") ? curPath : "/" + curPath).split("/");
-
+			Log.d(TAG, "setDirectoryButtons " + parts);
+			
 			final TextView ib = new TextView(activity);
 			final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -713,7 +714,13 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			View v;
 			TextView b = null;
 			for (int i = 1; i < parts.length; i++) {
-				folder += (curPath.startsWith("/") ? "/" : "") + parts[i];
+				if (i == 1) {
+					folder += (curPath.startsWith("/") ? "/" : "") + parts[i];
+				} else {
+					folder += "/" + parts[i];
+				}
+				Log.d(TAG, "setDirectoryButtons " + folder);
+				
 				v = activity.getLayoutInflater().inflate(R.layout.dir, null);
 				b = (TextView) v.findViewById(R.id.name);
 				b.setText(parts[i]);
@@ -1433,8 +1440,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				if (tempPreviewL2 != null && !zip.entries.containsKey(tempPreviewL2.path)) {
 					tempPreviewL2 = null;
 				}
-				Log.d(TAG, path + ", " + zip);
 				final ZipEntry get2 = zip.entries.get(curPath);
+				Log.d(TAG, curPath + ", " + path + ", " + zip + ", " + get2);
 				if (get2 != null) {
 					dataSourceL1a.addAll(get2.list);
 				} else {
@@ -1444,7 +1451,6 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 						}
 					}
 				}
-				
 			} catch (Throwable e) {
 				publishProgress(e.getMessage());
 				e.printStackTrace();

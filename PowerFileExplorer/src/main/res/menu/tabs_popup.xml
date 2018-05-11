@@ -42,7 +42,7 @@
     <item android:id="@+id/apps"
 		android:title="Apps" />
     <item android:id="@+id/traffic"
-		android:title="Traffic" />
+		android:title="Data Traffic" />
     <item android:id="@+id/process"
 		android:title="Process" />
 </menu>

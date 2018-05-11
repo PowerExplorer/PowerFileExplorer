@@ -62,7 +62,8 @@ public class ServiceWatcherUtil {
             public void run() {
 
                 // we don't have a file name yet, wait for service to set
-                if (progressHandler.getFileName()==null) handler.postDelayed(this, 1000);
+                if (progressHandler.getFileName()==null) 
+					handler.postDelayed(this, 1000);
 
                 progressHandler.addWrittenLength(POSITION);
 
@@ -102,7 +103,8 @@ public class ServiceWatcherUtil {
      * Thus avoids posting any callback after service has stopped.
      */
     public void stopWatch() {
-        if (handlerThread.isAlive()) handler.post(runnable);
+        if (handlerThread.isAlive()) 
+			handler.post(runnable);
     }
 
     /**
@@ -137,11 +139,11 @@ public class ServiceWatcherUtil {
             return;
         }*/
 
-        if (pendingIntents.size()==0) {
+        pendingIntents.add(intent);
+		if (pendingIntents.size()==1) {
             init(context);
         }
-        pendingIntents.add(intent);
-
+        
     }
 
     /**
@@ -170,7 +172,10 @@ public class ServiceWatcherUtil {
                 if (handlerThread==null || !handlerThread.isAlive()) {
                     // service is been finished, let's start this one
                     // pop recent intent from pendingIntents
-                    context.startService(pendingIntents.remove(pendingIntents.size()-1));
+                    final int size = pendingIntents.size();
+					if (size > 0) {
+						context.startService(pendingIntents.remove(size - 1));
+					}
 
                     if (pendingIntents.size()==0) {
                         // we've done all the work, free up resources (if not already killed by system)
@@ -179,14 +184,12 @@ public class ServiceWatcherUtil {
                         waitingThread.quit();
                         return;
                     } else {
-
                         notificationManager.notify(ID_NOTIFICATION_WAIT, mBuilder.build());
                     }
                 }
-                handler.postDelayed(this, 5000);
+                handler.postDelayed(this, 1000);
             }
         };
-
         handler.postDelayed(runnable, 0);
     }
 }

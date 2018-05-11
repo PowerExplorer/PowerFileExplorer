@@ -193,8 +193,9 @@ public class Zpaq {
 				final long intValue = Long.valueOf(length.length() == 0 ? "-1" : length).longValue();
 				zip.unZipSize += intValue;
 				if (path.endsWith("/")) {
+					path = path.substring(0, path.length() - 1);
 					ze = new ZipEntry(null, 
-									  path.substring(0, path.length() - 1),
+									  path,
 									  true,
 									  intValue,
 									  -1,

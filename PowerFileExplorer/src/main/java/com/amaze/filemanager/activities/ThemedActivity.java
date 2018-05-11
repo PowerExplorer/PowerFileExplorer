@@ -1,36 +1,32 @@
 package com.amaze.filemanager.activities;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import net.gnu.explorer.R;
+import com.amaze.filemanager.filesystem.BaseFile;
+import com.amaze.filemanager.services.DeleteTask;
 import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
+import com.amaze.filemanager.utils.DataUtils;
+import com.amaze.filemanager.utils.MainActivityHelper;
+import com.amaze.filemanager.utils.OpenMode;
 import com.amaze.filemanager.utils.PreferenceUtils;
 import com.amaze.filemanager.utils.color.ColorUsage;
 import com.amaze.filemanager.utils.theme.AppTheme;
 import java.util.ArrayList;
-import com.amaze.filemanager.filesystem.BaseFile;
-import android.util.Log;
-import android.content.Intent;
-import android.net.Uri;
-import com.amaze.filemanager.utils.DataUtils;
-import com.amaze.filemanager.services.DeleteTask;
-import com.amaze.filemanager.services.CopyService;
-import com.amaze.filemanager.utils.ServiceWatcherUtil;
-import com.amaze.filemanager.services.asynctasks.MoveFiles;
-import android.app.Activity;
-import com.amaze.filemanager.utils.MainActivityHelper;
-import com.amaze.filemanager.utils.OpenMode;
-import net.gnu.p7zip.Zip;
 import java.util.List;
+import net.gnu.explorer.R;
+import net.gnu.p7zip.Zip;
 import net.gnu.p7zip.ZipEntry;
 
 /**

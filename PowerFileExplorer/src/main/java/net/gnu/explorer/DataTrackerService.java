@@ -36,6 +36,7 @@ import android.text.format.Formatter;
 import android.net.ConnectivityManager;
 import android.util.Log;
 import net.gnu.util.Util;
+import android.os.Binder;
 
 public class DataTrackerService extends Service {
 
@@ -146,10 +147,18 @@ public class DataTrackerService extends Service {
 
 	}
 
+    private final IBinder mBinder = new LocalBinder();
     @Override
     public IBinder onBind(Intent intent) {
         Log.d("DataTrackerService", "onBind");
-        return null;
+		return mBinder;
+    }
+
+    public class LocalBinder extends Binder {
+        public DataTrackerService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return DataTrackerService.this;
+        }
     }
 
     @Override
@@ -284,16 +293,17 @@ public class DataTrackerService extends Service {
 	private long rateTotalTxSincePrev;
 	
     private synchronized void initiateUpdate() {
-		mBuilder.setContentTitle(String.format("↓%s@%s%s, ↑%s@%s%s, ⇅%s@%s%s", 
-											   Formatter.formatFileSize(getApplicationContext(), totalRxSincePrev), 
-											   Util.nf.format(rateTotalRxSincePrev), 
-											   unitTypeArr[unitType], 
-											   Formatter.formatFileSize(getApplicationContext(), totalTxSincePrev), 
-											   Util.nf.format(rateTotalTxSincePrev), 
-											   unitTypeArr[unitType],
-											   Formatter.formatFileSize(getApplicationContext(), (totalRxSincePrev + totalTxSincePrev)),
-											   Util.nf.format(rateTotalRxSincePrev + rateTotalTxSincePrev),
-											   unitTypeArr[unitType]));
+		mBuilder.setContentTitle("Data traffic");
+//		String.format("↓%s@%s%s, ↑%s@%s%s, ⇅%s@%s%s", 
+//											   Formatter.formatFileSize(getApplicationContext(), totalRxSincePrev), 
+//											   Util.nf.format(rateTotalRxSincePrev), 
+//											   unitTypeArr[unitType], 
+//											   Formatter.formatFileSize(getApplicationContext(), totalTxSincePrev), 
+//											   Util.nf.format(rateTotalTxSincePrev), 
+//											   unitTypeArr[unitType],
+//											   Formatter.formatFileSize(getApplicationContext(), (totalRxSincePrev + totalTxSincePrev)),
+//											   Util.nf.format(rateTotalRxSincePrev + rateTotalTxSincePrev),
+//											   unitTypeArr[unitType]));
 		if (rateTotalTxSincePrev == 0 && rateTotalRxSincePrev == 0) {
 			mBuilder.setSmallIcon(android.R.drawable.ic_menu_more);
 		} else if (rateTotalTxSincePrev == 0 && rateTotalRxSincePrev > 0) {
@@ -304,37 +314,48 @@ public class DataTrackerService extends Service {
 			mBuilder.setSmallIcon(android.R.drawable.ic_notification_overlay);
 		}
 		
-		long rateRxSincePrev;
-		long rateTxSincePrev;
-		final Context applicationContext = getApplicationContext();
 		final Notification.InboxStyle big = new Notification.InboxStyle();
-		
-		final int gap = pollRate * 1000 / appStatsList.size();
-		for (AppStats appStat : appStatsList) {
-			rateRxSincePrev = appStat.bytesRxSincePrev * 1000000 / (appStat.elapsedTimeSincePrev / 1000);
-			rateTxSincePrev = appStat.bytesTxSincePrev * 1000000 / (appStat.elapsedTimeSincePrev / 1000);
-			if (unitType > 3) {
-				rateRxSincePrev = (rateRxSincePrev >> (10 * (unitType - 4)));
-				rateTxSincePrev = (rateTxSincePrev >> (10 * (unitType - 4)));
-			} else {
-				rateRxSincePrev = ((rateRxSincePrev >> (10 * unitType)) << 3);
-				rateTxSincePrev = ((rateTxSincePrev >> (10 * unitType)) << 3);
-			}
-			big.addLine(String.format("%s\n↓%s@%s%s, ↑%s@%s%s, ⇅%s@%s%s", 
-									  appStat.name,
-									  Formatter.formatFileSize(applicationContext, appStat.bytesRxSincePrev), 
-									  Util.nf.format(rateRxSincePrev), 
-									  unitTypeArr[unitType], 
-									  Formatter.formatFileSize(applicationContext, appStat.bytesTxSincePrev), 
-									  Util.nf.format(rateTxSincePrev), 
-									  unitTypeArr[unitType],
-									  Formatter.formatFileSize(applicationContext, (appStat.bytesRxSincePrev + appStat.bytesTxSincePrev)),
-									  Util.nf.format(rateRxSincePrev + rateTxSincePrev),
-									  unitTypeArr[unitType]));
-			try {
-				Thread.sleep(gap);
-			} catch (InterruptedException e) {}
-		}
+		big.addLine(String.format("↓%s@%s%s", 
+								  Formatter.formatFileSize(getApplicationContext(), totalRxSincePrev), 
+								  Util.nf.format(rateTotalRxSincePrev), 
+								  unitTypeArr[unitType]));
+		big.addLine(String.format("↑%s@%s%s", 
+								  Formatter.formatFileSize(getApplicationContext(), totalTxSincePrev), 
+								  Util.nf.format(rateTotalTxSincePrev), 
+								  unitTypeArr[unitType]));
+		big.addLine(String.format("⇅%s@%s%s", 
+								  Formatter.formatFileSize(getApplicationContext(), (totalRxSincePrev + totalTxSincePrev)),
+								  Util.nf.format(rateTotalRxSincePrev + rateTotalTxSincePrev),
+								  unitTypeArr[unitType]));
+//		long rateRxSincePrev;
+//		long rateTxSincePrev;
+//		final Context applicationContext = getApplicationContext();
+//		final int gap = pollRate * 1000 / appStatsList.size();
+//		for (AppStats appStat : appStatsList) {
+//			rateRxSincePrev = appStat.bytesRxSincePrev * 1000000 / (appStat.elapsedTimeSincePrev / 1000);
+//			rateTxSincePrev = appStat.bytesTxSincePrev * 1000000 / (appStat.elapsedTimeSincePrev / 1000);
+//			if (unitType > 3) {
+//				rateRxSincePrev = (rateRxSincePrev >> (10 * (unitType - 4)));
+//				rateTxSincePrev = (rateTxSincePrev >> (10 * (unitType - 4)));
+//			} else {
+//				rateRxSincePrev = ((rateRxSincePrev >> (10 * unitType)) << 3);
+//				rateTxSincePrev = ((rateTxSincePrev >> (10 * unitType)) << 3);
+//			}
+//			big.addLine(String.format("%s\n↓%s@%s%s, ↑%s@%s%s, ⇅%s@%s%s", 
+//									  appStat.name,
+//									  Formatter.formatFileSize(applicationContext, appStat.bytesRxSincePrev), 
+//									  Util.nf.format(rateRxSincePrev), 
+//									  unitTypeArr[unitType], 
+//									  Formatter.formatFileSize(applicationContext, appStat.bytesTxSincePrev), 
+//									  Util.nf.format(rateTxSincePrev), 
+//									  unitTypeArr[unitType],
+//									  Formatter.formatFileSize(applicationContext, (appStat.bytesRxSincePrev + appStat.bytesTxSincePrev)),
+//									  Util.nf.format(rateRxSincePrev + rateTxSincePrev),
+//									  unitTypeArr[unitType]));
+//			try {
+//				Thread.sleep(gap);
+//			} catch (InterruptedException e) {}
+//		}
 		mNotifyMgr.notify(mNotificationId, mBuilder.setStyle(big).build());
     }
 
