@@ -147,8 +147,10 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		mBuilder.setContentIntent(resultPendingIntent);
 		mNotifyMgr.notify(mNotificationId, mBuilder.build());//mBuilder.setStyle(big)
 
+		if (compressFrag.adapter != null) {
 		compressFrag.adapter.clear();
 		compressFrag.adapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override
@@ -165,7 +167,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 				f.mkdirs();
 			}
 			//sb = new StringBuilder();
-			rowNum = 0;
+			//rowNum = 0;
 			publishProgress("Compressing " + archive);
 			final List<String> fList = Arrays.asList(lf.split("\\|+\\s*"));
 			final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat(archiveNameMask);
@@ -348,7 +350,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		Log.d(TAG, result);
 	}
 
-	private int rowNum = 0;
+	//private int rowNum = 0;
 	//private StringBuilder sb;
 	@Override
 	protected void onProgressUpdate(String... progress) {

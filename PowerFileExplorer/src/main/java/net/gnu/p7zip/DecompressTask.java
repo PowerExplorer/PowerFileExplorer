@@ -140,8 +140,11 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		mBuilder.setContentIntent(resultPendingIntent);
 		mNotifyMgr.notify(mNotificationId, mBuilder.build());//mBuilder.setStyle(big)
 
-		decompFrag.adapter.clear();
-		decompFrag.adapter.notifyDataSetChanged();
+		if (decompFrag != null && decompFrag.adapter != null) {
+			decompFrag.adapter.clear();
+			decompFrag.adapter.notifyDataSetChanged();
+		}
+		
 		
 	}
 
@@ -170,7 +173,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 					args.clear();
 					args.addAll(otherArgs);
 					//sb = new StringBuilder();
-					rowNum = 0;
+					//rowNum = 0;
 					if (archiveName.toLowerCase().endsWith(".zpaq")) {
 						ret = zpaq.decompress(archiveName, password, saveTo, zpaqmode, include, exclude, args, this);
 					} else {
@@ -205,7 +208,9 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 			if (wl != null && wl.isHeld()) {
 				wl.release();
 			}
-			decompFrag.stopService();
+			if (decompFrag != null) {
+				decompFrag.stopService();
+			}
 		}
 	}
 
@@ -218,7 +223,10 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		if (wl != null && wl.isHeld()) {
 			wl.release();
 		}
-		decompFrag.stopService();
+		if (decompFrag != null) {
+			decompFrag.stopService();
+		}
+		
 	}
 
 	@Override
@@ -251,7 +259,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		}
 	}
 
-	private int rowNum = 0;
+	//private int rowNum = 0;
 	//private StringBuilder sb = new StringBuilder();
 	@Override
 	protected void onProgressUpdate(String... progress) {
