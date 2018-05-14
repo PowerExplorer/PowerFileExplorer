@@ -471,8 +471,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
 		if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
 			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-			currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
-
+			//currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
+			curPath = (String) savedInstanceState.get("curPath");
 			allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
 			setRecyclerViewLayoutManager();
 			//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
@@ -527,7 +527,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 //		outState.putString("searchVal", quicksearch.getText().toString());
 //		outState.putString("currentPathTitle", currentPathTitle);
 		outState.putBoolean("allCbx.isEnabled", allCbx.isEnabled());
-		outState.putString("currentPathTitle", currentPathTitle);
+		outState.putString("curPath", curPath);
 		
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
@@ -541,7 +541,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	Map<String, Object> onSaveInstanceState() {
 		Map<String, Object> outState = new TreeMap<>();
 		//Log.d(TAG, "Map onSaveInstanceState " + dir + ", " + outState);
-		outState.put(ExplorerActivity.EXTRA_ABSOLUTE_PATH, curPath);//EXTRA_DIR_PATH
+		outState.put(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
 		
 		final ArrayList<ZipEntry> dataSource = new ArrayList<>(dataSourceL1.size());
 		dataSource.addAll(dataSourceL1);
@@ -553,9 +553,10 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		
 		outState.put("searchMode", searchMode);
 		outState.put("searchVal", searchET.getText().toString());
-		outState.put("currentPathTitle", currentPathTitle);
+		//outState.put("currentPathTitle", currentPathTitle);
 		outState.put("allCbx.isEnabled", allCbx.isEnabled());
 		outState.put("allCbx.isSelected", allCbx.isSelected());
+		outState.put("curPath", curPath);
 		
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
@@ -569,7 +570,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 	void reload(Map<String, Object> savedInstanceState) {
 		Log.d(TAG, "reload currentPathTitle " + currentPathTitle + ", "  + savedInstanceState);
-		curPath = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+		currentPathTitle = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+		curPath = (String) savedInstanceState.get("curPath");
 		selectedInList1.clear();
 		selectedInList1.addAll((ArrayList<ZipEntry>) savedInstanceState.get("selectedInList1"));
 		dataSourceL1.clear();
@@ -581,7 +583,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		}
 		searchMode = savedInstanceState.get("searchMode");
 		searchVal = (String) savedInstanceState.get("searchVal");
-		currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
+		//currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
 		tempPreviewL2 = (ZipEntry) savedInstanceState.get("tempPreviewL2");
 		allCbx.setEnabled(savedInstanceState.get("allCbx.isEnabled"));
 		allCbx.setSelected(savedInstanceState.get("allCbx.isSelected"));
@@ -1390,6 +1392,15 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		private boolean fromBeginZip;
 		private Boolean doScroll;
 		private Runnable run;
+		
+		protected void onCancelled(List<ZipEntry> result) {
+			if (andro7za != null) {
+				andro7za.cancel();
+			}
+			if (zpaq != null) {
+				zpaq.cancel();
+			}
+		}
 		
 		@Override
 		protected List<ZipEntry> doInBackground(Object... params) {

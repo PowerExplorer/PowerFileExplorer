@@ -46,6 +46,7 @@ import net.gnu.androidutil.AndroidUtils;
 import net.gnu.texteditor.TextFrag;
 import android.view.MotionEvent;
 import com.thefinestartist.finestwebview.WebFragment;
+import android.app.Activity;
 //import org.geometerplus.android.fbreader.FBReader;
 
 public abstract class Frag extends Fragment implements View.OnTouchListener, Cloneable, Serializable {
@@ -94,8 +95,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		} else if (t == TYPE.PDF) {
 			frag = new PdfFragment();
 		} else if (t == TYPE.WEB) {
-			frag = new WebFragment();//.newInstance(path);
-			frag.currentPathTitle = path;
+			frag = new WebFragment();
 //		} else if (t == TYPE.FBReader) {
 //			return new FBReader();
 		} else if (t == TYPE.MEDIA) {
@@ -148,7 +148,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	}
 
 	@Override
-	public void onSaveInstanceState(android.os.Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		//Log.d(TAG, "onSaveInstanceState" + path + ", " + outState);
 		super.onSaveInstanceState(outState);
 		outState.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);
@@ -156,7 +156,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	}
 
 	@Override
-	public boolean onTouch(View p1, MotionEvent p2) {
+	public boolean onTouch(final View p1, final MotionEvent p2) {
 		//Log.d(TAG, "onTouch " + p1 + ", " + p2);
 		if (activity != null) {
 			select(true);
@@ -224,7 +224,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		setRetainInstance(true);
 		AndroidUtils.setOnTouchListener(view, this);
 		final Bundle args = getArguments();
-		if (currentPathTitle == null && args != null) {
+		if ((currentPathTitle == null || currentPathTitle.length() == 0) && args != null) {
 			title = args.getString("title");
 			currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
 		}
@@ -270,7 +270,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
         //fixIcons(false);
     }
 
-    protected void showToast(String message) {
+    protected void showToast(final String message) {
         if (this.toast == null) {
             // Create toast if found null, it would he the case of first call only
             this.toast = Toast.makeText(fragActivity, message, Toast.LENGTH_SHORT);
@@ -286,4 +286,23 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
         this.toast.show();
     }
 
+	@Override
+	public void onAttach(final Activity activity) {
+		//Log.d(TAG, "onAttach " + title);
+		super.onAttach(activity);
+		this.fragActivity = (FragmentActivity) activity;
+		if (fragActivity instanceof ExplorerActivity) {
+			this.activity = (ExplorerActivity)fragActivity;
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		//Log.d(TAG, "onDetach " + title);
+		super.onDetach();
+		this.fragActivity = null;
+		this.activity = null;
+	}
+
+	
 }

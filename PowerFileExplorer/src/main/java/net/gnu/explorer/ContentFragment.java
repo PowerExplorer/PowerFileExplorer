@@ -284,325 +284,328 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 		}
 	}
-
+	
+//	public void onCreate(final Bundle savedInstanceState) {
+//		Log.d(TAG, "onCreate fake=" + fake + ", " + savedInstanceState + ", currentPathTitle " + currentPathTitle);
+//		super.onCreate(savedInstanceState);
+//	}
+	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-        //Log.d(TAG, "onCreateView fake=" + fake + ", dir=" + dir + ", " + savedInstanceState);
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+							 final Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView fake=" + fake + ", " + savedInstanceState + ", currentPathTitle " + currentPathTitle);
 		super.onCreateView(inflater, container, savedInstanceState);
 		return inflater.inflate(R.layout.pager_item, container, false);
     }
 
 	@Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
         final Bundle args = getArguments();
 		Log.d(TAG, "onViewCreated " + toString() + ", savedInstanceState=" + savedInstanceState + ", args " + args);
 		super.onViewCreated(view, savedInstanceState);
 
-		if (slidingTabsFragment != null) {
-			final int fragIndex;
-			final String order;
+		final int fragIndex;
+		final String order;
 
-			if (type == Frag.TYPE.EXPLORER) {
-				fragIndex = slidingTabsFragment.indexOfMTabs(this);
-				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-					order = AndroidUtils.getSharedPreference(activity, "ContentFragSortType" + fragIndex, "Name ▲");
-					spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag.SPAN_COUNT" + fragIndex, 1);
-				} else {
-					order = AndroidUtils.getSharedPreference(activity, "ExplorerFragSortType" + fragIndex, "Name ▲");
-					spanCount = AndroidUtils.getSharedPreference(activity, "ExplorerFrag.SPAN_COUNT" + fragIndex, 1);
-				} 
+		if (type == Frag.TYPE.EXPLORER) {
+			fragIndex = slidingTabsFragment.indexOfMTabs(this);
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+				order = AndroidUtils.getSharedPreference(activity, "ContentFragSortType" + fragIndex, "Name ▲");
+				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag.SPAN_COUNT" + fragIndex, 1);
 			} else {
-				fragIndex = -1;
-				if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
-					order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeR", "Name ▲");
-					spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTR", 1);
-				} else {
-					order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeL", "Name ▲");
-					spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTL", 1);
-				}
+				order = AndroidUtils.getSharedPreference(activity, "ExplorerFragSortType" + fragIndex, "Name ▲");
+				spanCount = AndroidUtils.getSharedPreference(activity, "ExplorerFrag.SPAN_COUNT" + fragIndex, 1);
+			} 
+		} else {
+			fragIndex = -1;
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
+				order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeR", "Name ▲");
+				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTR", 1);
+			} else {
+				order = AndroidUtils.getSharedPreference(activity, "ContentFrag2SortTypeL", "Name ▲");
+				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTL", 1);
 			}
-			Log.d(TAG, "onViewCreated index " + fragIndex + ", " + toString() + ", " + "args=" + args);
-			//Log.d(TAG, "sharedPreference " + fragIndex + ", " + order);
+		}
+		Log.d(TAG, "onViewCreated index " + fragIndex + ", " + toString() + ", " + "args=" + args);
+		//Log.d(TAG, "sharedPreference " + fragIndex + ", " + order);
 
-			SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
+		SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
 
-			scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
-			mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
-			dirMore = (ImageButton) view.findViewById(R.id.dirMore);
-			drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
-			drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
-			deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
+		scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
+		mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
+		dirMore = (ImageButton) view.findViewById(R.id.dirMore);
+		drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
+		drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
+		deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
 
 
-			view.findViewById(R.id.copys).setOnClickListener(this);
-			view.findViewById(R.id.cuts).setOnClickListener(this);
-			deletePastesBtn.setOnClickListener(this);
-			view.findViewById(R.id.renames).setOnClickListener(this);
-			view.findViewById(R.id.shares).setOnClickListener(this);
-			moreLeft = view.findViewById(R.id.moreLeft);
-			moreLeft.setOnClickListener(this);
-			moreRight = view.findViewById(R.id.moreRight);
-			moreRight.setOnClickListener(this);
-			if (activity.balance != 0) {
-				moreLeft.setVisibility(View.GONE);
-				moreRight.setVisibility(View.GONE);
+		view.findViewById(R.id.copys).setOnClickListener(this);
+		view.findViewById(R.id.cuts).setOnClickListener(this);
+		deletePastesBtn.setOnClickListener(this);
+		view.findViewById(R.id.renames).setOnClickListener(this);
+		view.findViewById(R.id.shares).setOnClickListener(this);
+		moreLeft = view.findViewById(R.id.moreLeft);
+		moreLeft.setOnClickListener(this);
+		moreRight = view.findViewById(R.id.moreRight);
+		moreRight.setOnClickListener(this);
+		if (activity.balance != 0) {
+			moreLeft.setVisibility(View.GONE);
+			moreRight.setVisibility(View.GONE);
 
-				View findViewById = view.findViewById(R.id.book);
-				findViewById.setVisibility(View.VISIBLE);
+			View findViewById = view.findViewById(R.id.book);
+			findViewById.setVisibility(View.VISIBLE);
 
-				findViewById = view.findViewById(R.id.hiddenfiles);
-				findViewById.setVisibility(View.VISIBLE);
+			findViewById = view.findViewById(R.id.hiddenfiles);
+			findViewById.setVisibility(View.VISIBLE);
 
 //			findViewById = view.findViewById(R.id.encrypts);
 //			findViewById.setVisibility(View.VISIBLE);
 
-				findViewById = view.findViewById(R.id.shortcuts);
-				findViewById.setVisibility(View.VISIBLE);
+			findViewById = view.findViewById(R.id.shortcuts);
+			findViewById.setVisibility(View.VISIBLE);
+		} else {
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && !activity.swap
+				|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.swap) {
+				moreRight.setVisibility(View.GONE);
+				moreLeft.setVisibility(View.VISIBLE);
 			} else {
-				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && !activity.swap
-					|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.swap) {
-					moreRight.setVisibility(View.GONE);
-					moreLeft.setVisibility(View.VISIBLE);
-				} else {
-					moreLeft.setVisibility(View.GONE);
-					moreRight.setVisibility(View.VISIBLE);
-				}
+				moreLeft.setVisibility(View.GONE);
+				moreRight.setVisibility(View.VISIBLE);
 			}
-			view.findViewById(R.id.book).setOnClickListener(this);
-			view.findViewById(R.id.hiddenfiles).setOnClickListener(this);
-			//view.findViewById(R.id.encrypts).setOnClickListener(this);
-			view.findViewById(R.id.infos).setOnClickListener(this);
-			view.findViewById(R.id.shortcuts).setOnClickListener(this);
-			view.findViewById(R.id.compresss).setOnClickListener(this);
-			if (selectedInList1.size() == 0 && activity.COPY_PATH == null && activity.MOVE_PATH == null) {
-				if (commands.getVisibility() == View.VISIBLE) {
-					horizontalDivider6.setVisibility(View.GONE);
-					commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-					commands.setVisibility(View.GONE);
-				}
-			} else if (commands.getVisibility() == View.GONE) {
-				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-				commands.setVisibility(View.VISIBLE);
-				horizontalDivider6.setVisibility(View.VISIBLE);
-			}
-
-			if (type == Frag.TYPE.SELECTION) {
-				removeBtn = (ImageButton) view.findViewById(R.id.remove);
-				removeAllBtn = (ImageButton) view.findViewById(R.id.removeAll);
-				addBtn = (ImageButton) view.findViewById(R.id.add);
-				addAllBtn = (ImageButton) view.findViewById(R.id.addAll);
-				selectionCommandsLayout = (LinearLayout) view.findViewById(R.id.selectionCommandsLayout);
-				topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommandsLayout));
-				dirMore.setVisibility(View.GONE);
-				if (dataSourceL1.size() == 0) {
-					searchButton.setEnabled(false);
-					nofilelayout.setVisibility(View.VISIBLE);
-					mSwipeRefreshLayout.setVisibility(View.GONE);
-				} else {
-					searchButton.setEnabled(true);
-					nofilelayout.setVisibility(View.GONE);
-					mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-				}
-				removeBtn.setOnClickListener(this);
-				removeAllBtn.setOnClickListener(this);
-				addBtn.setOnClickListener(this);
-				addAllBtn.setOnClickListener(this);
-			} else {
-				dirMore.setOnClickListener(this);
-				topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
-			}
-
-
-			listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-					public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-						//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
-						if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
-							if (dy > activity.density << 4 && selStatusLayout.getVisibility() == View.VISIBLE) {
-								selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-								selStatusLayout.setVisibility(View.GONE);
-								horizontalDivider0.setVisibility(View.GONE);
-								horizontalDivider12.setVisibility(View.GONE);
-								sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
-								sortBarLayout.setVisibility(View.GONE);
-							} else if (dy < -activity.density << 4 && selStatusLayout.getVisibility() == View.GONE) {
-								selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-								selStatusLayout.setVisibility(View.VISIBLE);
-								horizontalDivider0.setVisibility(View.VISIBLE);
-								horizontalDivider12.setVisibility(View.VISIBLE);
-								sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
-								sortBarLayout.setVisibility(View.VISIBLE);
-							}
-							lastScroll = System.currentTimeMillis();
-						}
-					}
-				});
-
-			DefaultItemAnimator animator = new DefaultItemAnimator();
-			animator.setAddDuration(500);
-			listView.setItemAnimator(animator);
-
-			clearButton.setOnClickListener(this);
-			searchButton.setOnClickListener(this);
-
-			searchET.addTextChangedListener(textSearch);
-			mSwipeRefreshLayout.setOnRefreshListener(this);
-			mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-
-					@Override
-					public boolean onScale(ScaleGestureDetector detector) {
-						Log.d(TAG, "onScale getCurrentSpan " + detector.getCurrentSpan() + ", getPreviousSpan " + detector.getPreviousSpan() + ", getTimeDelta " + detector.getTimeDelta());
-						//if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 50) {
-						//Log.d(TAG, "onScale " + (detector.getCurrentSpan() - detector.getPreviousSpan()) + ", getTimeDelta " + detector.getTimeDelta());
-						//mScaling = true;
-						mSwipeRefreshLayout.setEnabled(false);
-						if (detector.getCurrentSpan() - detector.getPreviousSpan() < -80 * activity.density) {
-							if (spanCount == 1) {
-								spanCount = 2;
-								setRecyclerViewLayoutManager();
-								mSwipeRefreshLayout.setEnabled(true);
-								return true;
-							} else if (spanCount == 2 && slidingTabsFragment.width >= 0) {
-								if (activity.right.getVisibility() == View.GONE || activity.left.getVisibility() == View.GONE) {
-									spanCount = 8;
-								} else {
-									spanCount = 4;
-								}
-								setRecyclerViewLayoutManager();
-								mSwipeRefreshLayout.setEnabled(true);
-								return true;
-							}
-						} else if (detector.getCurrentSpan() - detector.getPreviousSpan() > 80 * activity.density) {
-							if ((spanCount == 4 || spanCount == 8)) {
-								spanCount = 2;
-								setRecyclerViewLayoutManager();
-								mSwipeRefreshLayout.setEnabled(true);
-								return true;
-							} else if (spanCount == 2) {
-								spanCount = 1;
-								setRecyclerViewLayoutManager();
-								mSwipeRefreshLayout.setEnabled(true);
-								return true;
-							} 
-						}
-						//}
-						//mScaling = false;
-						mSwipeRefreshLayout.setEnabled(true);
-						return false;
-					}
-				});
-
-			listView.setOnTouchListener(new View.OnTouchListener() {
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						//Log.d(TAG, "onTouch " + event);
-						select(true);
-						mScaleGestureDetector.onTouchEvent(event);
-						return false;
-					}
-				});
-
-			if (args != null) {
-				if (currentPathTitle.length() == 0) {//"".equals(currentPathTitle) || 
-					currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH);
-				} else {
-					args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
-				}
-				//Log.d(TAG, "onViewCreated.dir " + dir);
-				suffix = args.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*").trim().toLowerCase();
-				
-				mimes = args.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
-				//Log.d(TAG, "onViewCreated.suffix " + suffix);
-				multiFiles = args.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT);
-				//Log.d(TAG, "onViewCreated.multiFiles " + multiFiles);
-				if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
-					savedInstanceState = args;
-				}
-			}
-
-			String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
-			suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
-			suffixSpliter = ".*?(" + suffixSpliter + ")";
-			suffixPattern = Pattern.compile(suffixSpliter);
-			if (!multiFiles) {
-				allCbx.setVisibility(View.GONE);
-			}
-			mimes = mimes == null ? "*/*" : mimes.toLowerCase();
-			
-			allName.setText("Name");
-			allSize.setText("Size");
-			allDate.setText("Date");
-			allType.setText("Type");
-			switch (order) {
-				case "Name ▼":
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.DESCENDING);
-					allName.setText("Name ▼");
-					break;
-				case "Date ▲":
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.ASCENDING);
-					allDate.setText("Date ▲");
-					break;
-				case "Date ▼":
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.DESCENDING);
-					allDate.setText("Date ▼");
-					break;
-				case "Size ▲":
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.ASCENDING);
-					allSize.setText("Size ▲");
-					break;
-				case "Size ▼":
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.DESCENDING);
-					allSize.setText("Size ▼");
-					break;
-				case "Type ▲":
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.ASCENDING);
-					allType.setText("Type ▲");
-					break;
-				case "Type ▼":
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.DESCENDING);
-					allType.setText("Type ▼");
-					break;
-				default:
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.ASCENDING);
-					allName.setText("Name ▲");
-					break;
-			}
-
-			//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
-			if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
-				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
-				multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-				currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
-
-				allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
-				setRecyclerViewLayoutManager();
-				//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
-				if (type == Frag.TYPE.EXPLORER) {//} && !fake) {// && !activity.configurationChanged
-					//updateDir(currentPathTitle, ContentFragment.this);
-					setDirectoryButtons();
-				}
-				final int index  = savedInstanceState.getInt("index");
-				final int top  = savedInstanceState.getInt("top");
-				//Log.d(TAG, "index = " + index + ", " + top);
-				gridLayoutManager.scrollToPositionWithOffset(index, top);
-			} else {
-				//srcAdapter = new ArrAdapter(dataSourceL1);
-				//listView1.setAdapter(srcAdapter);
-				setRecyclerViewLayoutManager();
-				if (type == Frag.TYPE.EXPLORER && !fake) {
-					if (currentPathTitle != null) {
-						changeDir(currentPathTitle, false);
-					} else if (searchMode) {
-						searchMode = !searchMode;
-						manageSearchUI(searchMode);
-						changeDir(currentPathTitle, false);
-					}
-				}
-			}
-			updateColor(view);
 		}
+		view.findViewById(R.id.book).setOnClickListener(this);
+		view.findViewById(R.id.hiddenfiles).setOnClickListener(this);
+		//view.findViewById(R.id.encrypts).setOnClickListener(this);
+		view.findViewById(R.id.infos).setOnClickListener(this);
+		view.findViewById(R.id.shortcuts).setOnClickListener(this);
+		view.findViewById(R.id.compresss).setOnClickListener(this);
+		if (selectedInList1.size() == 0 && activity.COPY_PATH == null && activity.MOVE_PATH == null) {
+			if (commands.getVisibility() == View.VISIBLE) {
+				horizontalDivider6.setVisibility(View.GONE);
+				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
+				commands.setVisibility(View.GONE);
+			}
+		} else if (commands.getVisibility() == View.GONE) {
+			commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+			commands.setVisibility(View.VISIBLE);
+			horizontalDivider6.setVisibility(View.VISIBLE);
+		}
+
+		if (type == Frag.TYPE.SELECTION) {
+			removeBtn = (ImageButton) view.findViewById(R.id.remove);
+			removeAllBtn = (ImageButton) view.findViewById(R.id.removeAll);
+			addBtn = (ImageButton) view.findViewById(R.id.add);
+			addAllBtn = (ImageButton) view.findViewById(R.id.addAll);
+			selectionCommandsLayout = (LinearLayout) view.findViewById(R.id.selectionCommandsLayout);
+			topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommandsLayout));
+			dirMore.setVisibility(View.GONE);
+			if (dataSourceL1.size() == 0) {
+				searchButton.setEnabled(false);
+				nofilelayout.setVisibility(View.VISIBLE);
+				mSwipeRefreshLayout.setVisibility(View.GONE);
+			} else {
+				searchButton.setEnabled(true);
+				nofilelayout.setVisibility(View.GONE);
+				mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+			}
+			removeBtn.setOnClickListener(this);
+			removeAllBtn.setOnClickListener(this);
+			addBtn.setOnClickListener(this);
+			addAllBtn.setOnClickListener(this);
+		} else {
+			dirMore.setOnClickListener(this);
+			topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
+		}
+
+
+		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+					//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
+					if (System.currentTimeMillis() - lastScroll > 50) {//!mScaling && 
+						if (dy > activity.density << 4 && selStatusLayout.getVisibility() == View.VISIBLE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							selStatusLayout.setVisibility(View.GONE);
+							horizontalDivider0.setVisibility(View.GONE);
+							horizontalDivider12.setVisibility(View.GONE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_bottom));
+							sortBarLayout.setVisibility(View.GONE);
+						} else if (dy < -activity.density << 4 && selStatusLayout.getVisibility() == View.GONE) {
+							selStatusLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							selStatusLayout.setVisibility(View.VISIBLE);
+							horizontalDivider0.setVisibility(View.VISIBLE);
+							horizontalDivider12.setVisibility(View.VISIBLE);
+							sortBarLayout.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_top));
+							sortBarLayout.setVisibility(View.VISIBLE);
+						}
+						lastScroll = System.currentTimeMillis();
+					}
+				}
+			});
+
+		DefaultItemAnimator animator = new DefaultItemAnimator();
+		animator.setAddDuration(500);
+		listView.setItemAnimator(animator);
+
+		clearButton.setOnClickListener(this);
+		searchButton.setOnClickListener(this);
+
+		searchET.addTextChangedListener(textSearch);
+		mSwipeRefreshLayout.setOnRefreshListener(this);
+		mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+				@Override
+				public boolean onScale(ScaleGestureDetector detector) {
+					Log.d(TAG, "onScale getCurrentSpan " + detector.getCurrentSpan() + ", getPreviousSpan " + detector.getPreviousSpan() + ", getTimeDelta " + detector.getTimeDelta());
+					//if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 50) {
+					//Log.d(TAG, "onScale " + (detector.getCurrentSpan() - detector.getPreviousSpan()) + ", getTimeDelta " + detector.getTimeDelta());
+					//mScaling = true;
+					mSwipeRefreshLayout.setEnabled(false);
+					if (detector.getCurrentSpan() - detector.getPreviousSpan() < -80 * activity.density) {
+						if (spanCount == 1) {
+							spanCount = 2;
+							setRecyclerViewLayoutManager();
+							mSwipeRefreshLayout.setEnabled(true);
+							return true;
+						} else if (spanCount == 2 && slidingTabsFragment.width >= 0) {
+							if (activity.right.getVisibility() == View.GONE || activity.left.getVisibility() == View.GONE) {
+								spanCount = 8;
+							} else {
+								spanCount = 4;
+							}
+							setRecyclerViewLayoutManager();
+							mSwipeRefreshLayout.setEnabled(true);
+							return true;
+						}
+					} else if (detector.getCurrentSpan() - detector.getPreviousSpan() > 80 * activity.density) {
+						if ((spanCount == 4 || spanCount == 8)) {
+							spanCount = 2;
+							setRecyclerViewLayoutManager();
+							mSwipeRefreshLayout.setEnabled(true);
+							return true;
+						} else if (spanCount == 2) {
+							spanCount = 1;
+							setRecyclerViewLayoutManager();
+							mSwipeRefreshLayout.setEnabled(true);
+							return true;
+						} 
+					}
+					//}
+					//mScaling = false;
+					mSwipeRefreshLayout.setEnabled(true);
+					return false;
+				}
+			});
+
+		listView.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					//Log.d(TAG, "onTouch " + event);
+					select(true);
+					mScaleGestureDetector.onTouchEvent(event);
+					return false;
+				}
+			});
+
+		if (args != null) {
+			if (currentPathTitle.length() == 0) {//"".equals(currentPathTitle) || 
+				currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH);
+			} else {
+				args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+			}
+			//Log.d(TAG, "onViewCreated.dir " + dir);
+			suffix = args.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*").trim().toLowerCase();
+
+			mimes = args.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
+			//Log.d(TAG, "onViewCreated.suffix " + suffix);
+			multiFiles = args.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT);
+			//Log.d(TAG, "onViewCreated.multiFiles " + multiFiles);
+			if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
+				savedInstanceState = args;
+			}
+		}
+
+		String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
+		suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
+		suffixSpliter = ".*?(" + suffixSpliter + ")";
+		suffixPattern = Pattern.compile(suffixSpliter);
+		if (!multiFiles) {
+			allCbx.setVisibility(View.GONE);
+		}
+		mimes = mimes == null ? "*/*" : mimes.toLowerCase();
+
+		allName.setText("Name");
+		allSize.setText("Size");
+		allDate.setText("Date");
+		allType.setText("Type");
+		switch (order) {
+			case "Name ▼":
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.DESCENDING);
+				allName.setText("Name ▼");
+				break;
+			case "Date ▲":
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.ASCENDING);
+				allDate.setText("Date ▲");
+				break;
+			case "Date ▼":
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.DESCENDING);
+				allDate.setText("Date ▼");
+				break;
+			case "Size ▲":
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.ASCENDING);
+				allSize.setText("Size ▲");
+				break;
+			case "Size ▼":
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.DESCENDING);
+				allSize.setText("Size ▼");
+				break;
+			case "Type ▲":
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.ASCENDING);
+				allType.setText("Type ▲");
+				break;
+			case "Type ▼":
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.DESCENDING);
+				allType.setText("Type ▼");
+				break;
+			default:
+				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.ASCENDING);
+				allName.setText("Name ▲");
+				break;
+		}
+
+		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
+		if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
+			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+			suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+			mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
+			multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+			//currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
+
+			allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
+			setRecyclerViewLayoutManager();
+			//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
+			if (type == Frag.TYPE.EXPLORER) {//} && !fake) {// && !activity.configurationChanged
+				//updateDir(currentPathTitle, ContentFragment.this);
+				setDirectoryButtons();
+			}
+			final int index  = savedInstanceState.getInt("index");
+			final int top  = savedInstanceState.getInt("top");
+			//Log.d(TAG, "index = " + index + ", " + top);
+			gridLayoutManager.scrollToPositionWithOffset(index, top);
+		} else {
+			//srcAdapter = new ArrAdapter(dataSourceL1);
+			//listView1.setAdapter(srcAdapter);
+			setRecyclerViewLayoutManager();
+			if (type == Frag.TYPE.EXPLORER && !fake) {
+				if (currentPathTitle != null) {
+					changeDir(currentPathTitle, false);
+				} else if (searchMode) {
+					searchMode = !searchMode;
+					manageSearchUI(searchMode);
+					changeDir(currentPathTitle, false);
+				}
+			}
+		}
+		updateColor(view);
 	}
 
 	void notifyDataSetChanged() {
@@ -675,7 +678,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //		outState.putString("searchVal", quicksearch.getText().toString());
 //		outState.putString("currentPathTitle", currentPathTitle);
 		outState.putBoolean("allCbx.isEnabled", allCbx.isEnabled());
-		outState.putString("currentPathTitle", currentPathTitle);
 		
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
@@ -704,7 +706,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		
 		outState.put("searchMode", searchMode);
 		outState.put("searchVal", searchET.getText().toString());
-		outState.put("currentPathTitle", currentPathTitle);
+		//outState.put("currentPathTitle", currentPathTitle);
 		outState.put("allCbx.isEnabled", allCbx.isEnabled());
 
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
@@ -733,7 +735,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 		searchMode = savedInstanceState.get("searchMode");
 		searchVal = (String) savedInstanceState.get("searchVal");
-		currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
+		//currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
 		
 		allCbx.setEnabled(savedInstanceState.get("allCbx.isEnabled"));
 		srcAdapter.notifyDataSetChanged();
@@ -1008,7 +1010,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume index " + activity.slideFrag.indexOfMTabs(this) + ", " + /*activity.slideFrag2.indexOfMTabs(this) + ", " +  slidingTabsFragment.side + */", " + type + ", fake=" + fake + ", " + currentPathTitle + ", currentPathTitle=" + currentPathTitle);
+        Log.d(TAG, "onResume index " + slidingTabsFragment /*slidingTabsFragment.indexOfMTabs(this) + ", " + slidingTabsFragment.side*/ + ", " + type + ", fake=" + fake + ", currentPathTitle=" + currentPathTitle);
 		super.onResume();
 		fragActivity.registerReceiver(receiver2, new IntentFilter("loadlist"));
 
@@ -1023,16 +1025,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			mFileObserver = createFileObserver(currentPathTitle);
 			mFileObserver.startWatching();
 			
-			activity = (ExplorerActivity)getActivity();
-
 			selectionStatusTV.setText(selectedInList1.size() 
 									 + "/" + dataSourceL1.size());
 
 			final File curDir = new File(currentPathTitle);//currentPathTitle == null ? currentPathTitle : currentPathTitle);
 			rightStatus.setText(
-				"Free " + Util.nf.format(curDir.getFreeSpace() / (1 << 20))
-				+ " MiB. Used " + Util.nf.format((curDir.getTotalSpace() - curDir.getFreeSpace()) / (1 << 20))
-				+ " MiB. Total " + Util.nf.format(curDir.getTotalSpace() / (1 << 20)) + " MiB");
+				"Free " + Formatter.formatFileSize(activity, curDir.getFreeSpace())
+				+ ". Used " + Formatter.formatFileSize(activity, curDir.getTotalSpace() - curDir.getFreeSpace())
+				+ ". Total " + Formatter.formatFileSize(activity, curDir.getTotalSpace()));
 		} else {
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
 				activity.curContentFrag.dataSourceL2 = dataSourceL1;
@@ -2834,9 +2834,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 									 + "/" + dataSourceL1.size());
 			File file = new File(currentPathTitle);
 			rightStatus.setText(
-				"Free " + Util.nf.format(file.getFreeSpace() / (1 << 20))
-				+ " MiB. Used " + Util.nf.format((file.getTotalSpace() - file.getFreeSpace()) / (1 << 20))
-				+ " MiB. Total " + Util.nf.format(file.getTotalSpace() / (1 << 20)) + " MiB");
+				"Free " + Formatter.formatFileSize(activity, file.getFreeSpace())
+				+ ". Used " + Formatter.formatFileSize(activity, file.getTotalSpace() - file.getFreeSpace())
+				+ ". Total " + Formatter.formatFileSize(activity, file.getTotalSpace()));
 			if (dataSourceL1.size() == 0) {
 				nofilelayout.setVisibility(View.VISIBLE);
 				mSwipeRefreshLayout.setVisibility(View.GONE);
@@ -2978,6 +2978,13 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	void updateStatus() {
 		selectionStatusTV.setText(selectedInList1.size()  + "/" + dataSourceL1.size());
+		if (selectedInList1.size() == 0 && commands.getVisibility() == View.VISIBLE
+			&& activity.COPY_PATH == null && activity.MOVE_PATH == null
+			&& activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null) {
+			commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+			commands.setVisibility(View.GONE);
+			horizontalDivider6.setVisibility(View.GONE);
+		}
 	}
 
 	void rangeSelection() {

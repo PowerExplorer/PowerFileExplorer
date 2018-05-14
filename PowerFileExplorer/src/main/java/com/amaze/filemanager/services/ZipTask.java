@@ -54,6 +54,8 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import net.gnu.explorer.ExplorerActivity;
+import android.util.Log;
+import java.util.Random;
 
 public class ZipTask extends Service {
 
@@ -104,7 +106,9 @@ public class ZipTask extends Service {
         mBuilder = new NotificationCompat.Builder(this);
         Intent notificationIntent = new Intent(this, ExplorerActivity.class);
         notificationIntent.putExtra(ExplorerActivity.KEY_INTENT_PROCESS_VIEWER, true);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        notificationIntent.putExtra("from", "ZipTask");
+        Log.i("ZipTask", "notificationIntent " + notificationIntent + ", " + notificationIntent.getExtras());
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, new Random().nextInt(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setContentTitle(getResources().getString(R.string.compressing))
 			.setSmallIcon(R.drawable.ic_zip_box_white_36dp);

@@ -16,10 +16,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import net.gnu.zpaq.Zpaq;
 import net.gnu.androidutil.ForegroundService;
+import net.gnu.androidutil.AndroidUtils;
+import net.gnu.explorer.ExplorerActivity;
+import android.graphics.drawable.BitmapDrawable;
+import net.gnu.explorer.R;
+import java.util.Random;
 
 public class DecompressTask extends AsyncTask<String, String, String> implements UpdateProgress {
 
-	private Activity activity = null;
+	private ExplorerActivity activity = null;
 	DecompressFragment decompFrag;
 	private String fList = null;
 
@@ -39,10 +44,14 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 	private Zpaq zpaq;
 	Runnable run;
 	private static final String TAG = "DecompressTask";
-	
-	public DecompressTask(DecompressFragment decompFrag) {
+	private Notification.Builder mBuilder;
+    private NotificationManager mNotifyMgr;
+    private Notification notification;
+	private final int mNotificationId = TAG.hashCode();
+
+	public DecompressTask(final DecompressFragment decompFrag) {
 		this.decompFrag = decompFrag;
-		this.activity = decompFrag.getActivity();
+		this.activity = (ExplorerActivity) decompFrag.getActivity();
 		andro7za = new Andro7za(activity);
 		zpaq = new Zpaq(activity);
 		this.fList = decompFrag.files;//.getText().toString();
@@ -57,17 +66,17 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		command = decompFrag.command;//extractWithFullPathsCB.isChecked() ? "x" : "e";
 	}
 
-	public DecompressTask(Activity activity, 
-						  String files, 
-						  String saveTo, 
-						  String include, 
-						  String exclude, 
-						  String password, 
-						  String otherArgs, 
-						  int overwriteModeSpinner, 
-						  String command, 
-						  Runnable run) {
-		this.activity = activity;
+	public DecompressTask(final Activity activity, 
+						  final String files, 
+						  final String saveTo, 
+						  final String include, 
+						  final String exclude, 
+						  final String password, 
+						  final String otherArgs, 
+						  final int overwriteModeSpinner, 
+						  final String command, 
+						  final Runnable run) {
+		this.activity = (ExplorerActivity) activity;
 		andro7za = new Andro7za(activity);
 		zpaq = new Zpaq(activity);
 		this.fList = files;
@@ -83,17 +92,17 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		this.run = run;
 	}
 
-	public DecompressTask(Activity activity, 
-						  String files, 
-						  String saveTo, 
-						  String include, 
-						  String exclude, 
-						  String password, 
-						  List<String> otherArgs, 
-						  int overwriteModeSpinner, 
-						  String command, 
-						  Runnable run) {
-		this.activity = activity;
+	public DecompressTask(final Activity activity, 
+						  final String files, 
+						  final String saveTo, 
+						  final String include, 
+						  final String exclude, 
+						  final String password, 
+						  final List<String> otherArgs, 
+						  final int overwriteModeSpinner, 
+						  final String command, 
+						  final Runnable run) {
+		this.activity = (ExplorerActivity) activity;
 		andro7za = new Andro7za(activity);
 		zpaq = new Zpaq(activity);
 		this.fList = files;
@@ -106,6 +115,34 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		zpaqmode = zpaqmodes[overwriteModeSpinner];
 		this.command = command;
 		this.run = run;
+	}
+
+	@Override
+	protected void onPreExecute() {
+		mNotifyMgr = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		Intent contentIntent = new Intent(activity, ExplorerActivity.class);
+		contentIntent.setAction(Intent.ACTION_MAIN);
+		contentIntent.putExtra(ExplorerActivity.KEY_INTENT_DECOMPRESS, true);
+        //contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(activity, new Random().nextInt(),
+																	  contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder = new Notification.Builder(activity)
+			.setSmallIcon(R.drawable.notification_template_icon_bg)
+			.setContentTitle("Decompressing")
+			.setContentText(saveTo)
+			.setOngoing(true)
+			//.setSmallIcon(R.drawable.ic_action_compress)
+			.setLargeIcon(((BitmapDrawable)activity.getDrawable(R.drawable.ic_action_compress)).getBitmap())
+			.setTicker("Compress");
+
+		mBuilder.setPriority(Notification.PRIORITY_DEFAULT);
+		mBuilder.setContentIntent(resultPendingIntent);
+		mNotifyMgr.notify(mNotificationId, mBuilder.build());//mBuilder.setStyle(big)
+
+		decompFrag.adapter.clear();
+		decompFrag.adapter.notifyDataSetChanged();
+		
 	}
 
 	protected String doInBackground(String... urls) {
@@ -124,7 +161,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 					f.mkdirs();
 				}
 			}
-			
+
 			int ret = 0;
 			List<String> args = new ArrayList<>();
 			for (String archiveName : fiList) {
@@ -132,7 +169,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 				if (new File(archiveName).exists()) {
 					args.clear();
 					args.addAll(otherArgs);
-					sb = new StringBuilder();
+					//sb = new StringBuilder();
 					rowNum = 0;
 					if (archiveName.toLowerCase().endsWith(".zpaq")) {
 						ret = zpaq.decompress(archiveName, password, saveTo, zpaqmode, include, exclude, args, this);
@@ -165,19 +202,23 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 			String message = "Decompression is not successful" + e.getMessage();
 			return message;
 		} finally {
-			wl.release();
-			activity.stopService(new Intent(activity, ForegroundService.class));
+			if (wl != null && wl.isHeld()) {
+				wl.release();
+			}
+			decompFrag.stopService();
 		}
 	}
 
 	@Override
 	protected void onCancelled(String result) {
 		Log.i(TAG, "onCancelled");
+		mNotifyMgr.cancel(mNotificationId);
+		andro7za.command.stopAll();
+		zpaq.command.stopAll();
 		if (wl != null && wl.isHeld()) {
-			andro7za.command.stopAll();
 			wl.release();
-			activity.stopService(new Intent(activity, ForegroundService.class));
 		}
+		decompFrag.stopService();
 	}
 
 	@Override
@@ -186,39 +227,46 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 	}
 
 	@Override
-	protected void onPostExecute(String result) {
-		Toast.makeText(activity, result, Toast.LENGTH_LONG).show();
-		//Toast.makeText(activity, "Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds", Toast.LENGTH_LONG).show();
-		sb.append(result);
+	protected void onPostExecute(final String result) {
+		mNotifyMgr.cancel(mNotificationId);
+		//sb.append(result);
 		if (wl != null && wl.isHeld()) {
 			wl.release();
-			activity.stopService(new Intent(activity, ForegroundService.class));
 		}
+		//if (decompFrag.activity != null) {
+		final String elapseTime = Util.nf.format(System.currentTimeMillis() - start);
+		Toast.makeText(activity, result + "Operation took " + elapseTime + " milliseconds", Toast.LENGTH_LONG).show();
+		//}
+		//Toast.makeText(activity, "Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds", Toast.LENGTH_LONG).show();
 		if (decompFrag != null) {
+			decompFrag.stopService();
 			decompFrag.mBtnOK.setText("Decompress");
-			decompFrag.statusTV.setText(sb.toString().trim() + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
+			decompFrag.adapter.add(result);
+			decompFrag.adapter.add("Operation took " + elapseTime + " milliseconds");
+			decompFrag.adapter.notifyDataSetChanged();
 		}
 		Log.d(TAG, result);
-		if (run != null) {
-			run.run();
+		if (run != null && activity != null && activity.isResumed()) {
+			activity.act(run);
 		}
 	}
 
 	private int rowNum = 0;
-	private StringBuilder sb = new StringBuilder();
+	//private StringBuilder sb = new StringBuilder();
+	@Override
 	protected void onProgressUpdate(String... progress) {
-		if (decompFrag != null && progress != null && progress.length > 0 && progress[0] != null && progress[0].trim().length() > 0) {
-
-//			if (progress[0].indexOf("\n") >= 0) {
-//				++rowNum;
-//			}
-			if (++rowNum > 24) {
-				sb = new StringBuilder(sb.substring(sb.indexOf("\n") + 1));
-				//decompFrag.statusTV.setText("");
-			} 
-			sb.append(progress[0]).append("\n");
-			decompFrag.statusTV.setText(sb);
-			Log.d(TAG, progress[0]);
+		//Log.d(TAG, "decompFrag " + decompFrag + ", " + progress[0]);
+		if (decompFrag != null && progress != null && progress.length > 0 
+			&& progress[0] != null) {//} && progress[0].trim().length() > 0) {
+			
+//			if (++rowNum > 24) {
+//				sb = new StringBuilder(sb.substring(sb.indexOf("\n") + 1));
+//				//decompFrag.statusTV.setText("");
+//			} 
+			//sb.append(progress[0]).append("\n");
+			decompFrag.adapter.add(progress[0]);
+			decompFrag.adapter.notifyDataSetChanged();
+			//Log.d(TAG, progress[0]);
 		}
 	}
 }

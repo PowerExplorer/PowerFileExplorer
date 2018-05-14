@@ -637,6 +637,10 @@
             android:exported="false"
 			android:process=":net"/>
 
+		<service android:name="net.gnu.androidutil.ForegroundService"
+			android:label="ForegroundService"
+		/>
+			
 		<!--<service
             android:name = "net.gnu.explorer.ZipTaskService"
             android:label = "Compressing"

@@ -3,8 +3,12 @@ package net.gnu.p7zip;
 import android.widget.*;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -23,18 +28,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import net.gnu.explorer.ExplorerActivity;
+import net.gnu.explorer.ExplorerApplication;
 import net.gnu.explorer.R;
 import net.gnu.util.FileUtil;
-import com.afollestad.materialdialogs.MaterialDialog;
-import java.util.ArrayList;
-import android.support.v7.app.AlertDialog;
-import android.content.DialogInterface;
-import net.gnu.androidutil.AndroidUtils;
-import net.gnu.explorer.ExplorerActivity;
+import android.content.Intent;
 import net.gnu.androidutil.ForegroundService;
-import android.graphics.PorterDuff;
-import net.gnu.explorer.ExplorerApplication;
-import android.support.v4.app.DialogFragment;
+import java.util.List;
+import java.util.LinkedList;
 
 public class CompressFragment extends DialogFragment implements Serializable, OnItemSelectedListener, OnCheckedChangeListener, TextWatcher, OnClickListener, android.widget.RadioGroup.OnCheckedChangeListener {
 
@@ -63,8 +65,8 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 	transient Button mBtnOK;
 	private transient Button mBtnCancel;
-	private transient View filesBtn;
-	private transient View saveToBtn;
+	private transient ImageButton filesBtn;
+	private transient ImageButton saveToBtn;
 	private transient ImageButton historyBtn;
 	private transient ImageButton historySaveBtn;
 	transient EditText fileET;
@@ -100,7 +102,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 	String archiveNameMask;
 	//String workingDirectory;
 
-	transient TextView statusTV;
+	transient ListView statusLV;
 
 	String deleteFilesAfterArchiving = "";
 	boolean update = false;
@@ -109,7 +111,37 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 	private transient Toast mToast;
 	private transient Activity activity;
+	private transient View config;
+	private transient View status;
 
+	private boolean needStopService = false;
+
+	ArrayAdapter<String> adapter;
+	private LinkedList<String> outputList = new LinkedList<>();
+
+	public void stopService() {
+		if (activity != null) {
+			activity.stopService(new Intent(activity, ForegroundService.class));
+			needStopService = false;
+		} else {
+			needStopService = true;
+		}
+	}
+
+	@Override
+	public void onAttach(final Activity activity) {
+		//Log.d(TAG, "onAttach");
+		super.onAttach(activity);
+		this.activity = activity;
+	}
+
+	@Override
+	public void onDetach() {
+		//Log.d(TAG, "onDetach");
+		super.onDetach();
+		this.activity = null;
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, "onCreate " + savedInstanceState);
@@ -136,8 +168,13 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		Log.d(TAG, "onViewCreated " + savedInstanceState);
 		super.onViewCreated(view, savedInstanceState);
-
+		setRetainInstance(true);
+		
 		activity = getActivity();
+		if (needStopService) {
+			activity.stopService(new Intent(activity, ForegroundService.class));
+			needStopService = false;
+		}
 
 		mBtnOK = (Button) view.findViewById(R.id.okDir);
 		mBtnCancel = (Button) view.findViewById(R.id.cancelDir);
@@ -157,14 +194,21 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		compressLevelSpinner = (Spinner) view.findViewById(R.id.level);
 		typeRadioGroup = (RadioGroup) view.findViewById(R.id.type);
 		volUnitRadioGroup = (RadioGroup) view.findViewById(R.id.volumeUnit);
-		filesBtn = view.findViewById(R.id.filesBtn);
-		saveToBtn = view.findViewById(R.id.saveToBtn);
-		statusTV = (TextView) view.findViewById(R.id.status);
+		filesBtn = (ImageButton) view.findViewById(R.id.filesBtn);
+		saveToBtn = (ImageButton) view.findViewById(R.id.saveToBtn);
+		statusLV = (ListView) view.findViewById(R.id.status);
 		historyBtn = (ImageButton) view.findViewById(R.id.historyBtn);
 		historySaveBtn = (ImageButton) view.findViewById(R.id.historySaveBtn);
+		
+		filesBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		saveToBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		
 		historyBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 		historySaveBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-
+		
+		adapter = new ArrayAdapter<String>(activity, R.layout.textview_item, R.id.outputTV, outputList);
+		statusLV.setAdapter(adapter);
+		
 		deleteFilesAfterArchivingCB = (CheckBox)view.findViewById(R.id.deleteFilesAfterArchivingCB);
 		encryptFileNamesCB = (CheckBox)view.findViewById(R.id.encryptFileNamesCB);
 		updateCB = (CheckBox)view.findViewById(R.id.updateCB);
@@ -174,10 +218,10 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		archiveNameMaskCB = (CheckBox)view.findViewById(R.id.archiveNameMaskCB);
 		//workingDirectoryCB = (CheckBox)view.findViewById(R.id.workingDirectoryCB);
 		//workingDirectoryBtn = (Button)view.findViewById(R.id.workingDirectoryBtn);
-		
-		getView().findViewById(R.id.config).setVisibility(View.VISIBLE);
-		getView().findViewById(R.id.status).setVisibility(View.GONE);
-		
+		config = view.findViewById(R.id.config);
+		status = view.findViewById(R.id.status);
+
+
 		typeRadioGroup.setOnCheckedChangeListener(this);
 		deleteFilesAfterArchivingCB.setOnCheckedChangeListener(this);
 
@@ -195,8 +239,12 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 		//workingDirectoryCB.setOnCheckedChangeListener(this);
 		if (compressTask == null || compressTask.isCancelled() || compressTask.getStatus() == AsyncTask.Status.FINISHED) {
+			config.setVisibility(View.VISIBLE);
+			status.setVisibility(View.GONE);
 			mBtnOK.setText("Compress");
 		} else {
+			config.setVisibility(View.GONE);
+			status.setVisibility(View.VISIBLE);
 			mBtnOK.setText("Cancel");
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -269,6 +317,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		super.onSaveInstanceState(outState);
 		if (outState != null) {
 			outState.putString("password", passwordET.getText().toString());
+			outState.putStringArrayList("outputList", new ArrayList<String>(outputList));
 		}
 	}
 
@@ -277,6 +326,9 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		super.onViewStateRestored(savedInstanceState);
 		if (savedInstanceState != null) {
 			passwordET.setText(savedInstanceState.getString("password"));
+			outputList.clear();
+			outputList.addAll(savedInstanceState.getStringArrayList("outputList"));
+			adapter.notifyDataSetChanged();
 		}
 		restore();
 	}
@@ -288,17 +340,18 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 	}
 
 	private void compress() {
-		ForegroundService.ticker = "Compressing";
-		ForegroundService.title = "Touch to Open";
-		ForegroundService.text = "Compressing";
-		AndroidUtils.startService(activity, ForegroundService.class, ForegroundService.ACTION_FOREGROUND, TAG);
+//		ForegroundService.ticker = "Compressing";
+//		ForegroundService.title = "Touch to Open";
+//		ForegroundService.text = "Compressing";
+//		AndroidUtils.startService(activity, ForegroundService.class, ForegroundService.ACTION_FOREGROUND, TAG);
+		
 		compressTask = new CompressTask(this);
 		compressTask.execute();
 		mBtnOK.setText("Cancel");
-		getView().findViewById(R.id.config).setVisibility(View.GONE);
-		getView().findViewById(R.id.status).setVisibility(View.VISIBLE);
+		config.setVisibility(View.GONE);
+		status.setVisibility(View.VISIBLE);
 	}
-	
+
 	public void onItemSelected(
 		AdapterView<?> parent, View view, int position, long id) {
 		//Log.d(TAG, view + ", " + parent);
@@ -414,8 +467,8 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 				} else {
 					compressTask.cancel(true);
 					mBtnOK.setText("Compress");
-					getView().findViewById(R.id.config).setVisibility(View.VISIBLE);
-					getView().findViewById(R.id.status).setVisibility(View.GONE);
+					config.setVisibility(View.VISIBLE);
+					status.setVisibility(View.GONE);
 				}
 				break;
 		}
@@ -543,7 +596,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 //				}
 		}
 	}
-	
+
 	private void showToast(String message) {
         if (mToast != null) {
             mToast.cancel();
@@ -581,7 +634,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 				oos.writeObject(this);
 				FileUtil.flushClose(bos, fos);
 			} catch (IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	}
@@ -648,22 +701,5 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		return "files " + files + ", fileET " + (fileET == null ?null: fileET.getText()) + ", saveTo " + saveTo + ", saveToET " + (saveToET == null ?null: saveToET.getText());
 	}
 
-//	@Override
-//	public void onAttach(Activity activity) {
-//		Log.d(TAG, "onAttach " + activity);
-//		super.onAttach(activity);
-//		try {
-//			mListener = (OnFragmentInteractionListener) activity;
-//		} catch (ClassCastException e) {
-//			throw new ClassCastException(activity
-//										 + " must implement OnFragmentInteractionListener");
-//		}
-//	}
 
-//	@Override
-//	public void onDetach() {
-//		Log.d(TAG, "onDetach");
-//		super.onDetach();
-//		mListener = null;
-//	}
 }

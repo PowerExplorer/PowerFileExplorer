@@ -27,6 +27,7 @@ import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
 import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
 import android.util.Log;
+import java.util.Random;
 
 /**
  * Created by vishal on 8/4/17.
@@ -85,7 +86,9 @@ public class EncryptService extends Service {
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         notificationIntent.putExtra(ExplorerActivity.KEY_INTENT_PROCESS_VIEWER, true);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        notificationIntent.putExtra("from", "EncryptService");
+        Log.i("EncryptService", "notificationIntent " + notificationIntent + ", " + notificationIntent.getExtras());
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, new Random().nextInt(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setContentIntent(pendingIntent);
 

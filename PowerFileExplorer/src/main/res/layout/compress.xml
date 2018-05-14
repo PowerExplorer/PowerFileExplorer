@@ -12,11 +12,12 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal" 
+		android:layout_weight="1"
 		android:paddingLeft="12dp"
 		android:paddingRight="12dp"
 		android:layout_gravity="center"
-		android:paddingTop="4dp"
-		android:paddingBottom="4dp"
+		android:paddingTop="2dp"
+		android:paddingBottom="2dp"
 		android:gravity="center"
 	>
 
@@ -25,8 +26,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="100"
-			android:paddingTop="4dp"
-			android:paddingBottom="4dp"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
 			android:text="Compression"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textSize="20sp" />
@@ -44,6 +45,12 @@
 		android:textSize="14sp" />-->
 	</LinearLayout>
 
+	<View
+		android:id="@+id/horizontalDivider0"
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:background="#ff0000ff" />
+
 	<ScrollView 
 		android:id="@+id/config"
 		android:layout_width="wrap_content"
@@ -56,18 +63,12 @@
 			android:layout_height="match_parent"
 			android:orientation="vertical" >
 
-			<View
-				android:id="@+id/horizontalDivider0"
-				android:layout_width="match_parent"
-				android:layout_height="2dp"
-				android:background="#ff0000ff" />
-
 			<LinearLayout
 				android:id="@+id/basicLayout"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="vertical"
-				android:paddingTop="4dp"
+				android:paddingTop="2dp"
 				android:paddingBottom="0dp"
 				android:paddingLeft="6dp"
 				android:paddingRight="12dp"
@@ -635,23 +636,23 @@
 
 	</ScrollView>
 
-	<TextView
+	<ListView
 		android:id="@+id/status"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_weight="100"
 		android:visibility="gone"
-		android:ellipsize="middle"
+		android:paddingTop="12dp"
 		android:paddingLeft="12dp"
 		android:paddingRight="12dp"
-		android:text=""
-		android:maxLines="24"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:textSize="14sp" />
+		android:divider="@null"
+		/>
 
 	<LinearLayout
 		android:id="@+id/buttons"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_weight="1"
 		android:orientation="horizontal" >
 
 		<Button

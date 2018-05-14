@@ -42,6 +42,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter implement
 		ImageFragment fragment = null;
         final int size = mListOfMedia.size();
 		int position = positionOri;
+		Log.d(TAG, "getItem positionOri " + positionOri + ", size " + size + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem() + ", " + fragMap.get(viewPager.getCurrentItem()));
 		if (position == 0) {
 			position = size - 1;
 		} else if (position == size + 1) {

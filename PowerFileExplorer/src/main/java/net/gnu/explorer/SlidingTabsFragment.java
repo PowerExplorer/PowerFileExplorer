@@ -48,6 +48,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	int width;
 
 	@Override
+	public String toString() {
+		return "side=" + side + ", pageSelected=" + pageSelected + ", width=" + width;// + ", mTabs=" + mTabs;
+	}
+
+	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
 							 final Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -59,7 +64,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	public void onViewCreated(final View view, final Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		final Bundle args = getArguments();
-		Log.d(TAG, "onViewCreated args " + args + ", savedInstanceState " + savedInstanceState + ", " + side);
+		Log.d(TAG, "onViewCreated side " + side + ", args " + args + ", savedInstanceState " + savedInstanceState);
 		setRetainInstance(true);
 		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
 		if (childFragmentManager == null) {
@@ -112,8 +117,10 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			}
 			if (firstTag != null) {
 				mTabs.get(0).fakeFrag = (Frag) childFragmentManager.findFragmentByTag(firstTag);
-				int tabSize = mTabs.size();
-				mTabs.get(tabSize - 1).fakeFrag = (Frag) childFragmentManager.findFragmentByTag(lastTag);
+				mTabs.get(0).fakeFrag.slidingTabsFragment = this;
+				final SlidingTabsFragment.PagerItem last = mTabs.get((mTabs.size() - 1));
+				last.fakeFrag = (Frag) childFragmentManager.findFragmentByTag(lastTag);
+				last.fakeFrag.slidingTabsFragment = this;
 			}
 
 			//Log.d(TAG, "mTabs=" + mTabs);

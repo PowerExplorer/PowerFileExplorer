@@ -25,7 +25,7 @@ public class ThemedTextView extends TextView {
 		
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         AppThemeManager appThemeManager = new AppThemeManager(sharedPreferences);
-		Log.d("ThemedTextView", appThemeManager.getAppTheme() + ".");
+		//Log.d("ThemedTextView", appThemeManager.getAppTheme() + ".");
         if (appThemeManager.getAppTheme().equals(AppTheme.LIGHT)) {
             setTextColor(Utils.getColor(context, android.R.color.black));
         } else if (appThemeManager.equals(AppTheme.DARK)) {

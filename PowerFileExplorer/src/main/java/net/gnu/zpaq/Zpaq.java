@@ -79,6 +79,12 @@ public class Zpaq {
 		}
 	}
 
+	public void cancel() {
+		if (command != null) {
+			command.stopAll();
+		}
+	}
+
 	public void initStream() throws IOException {
 		resetFile(mOutfile);
 		resetFile(mInfile);
@@ -177,7 +183,7 @@ public class Zpaq {
 		String path;
 		while (m.find()) {
 			line = m.group();
-			Log.d(TAG, line);
+			//Log.d(TAG, line);
 			final Matcher matcher = zipEntryInfoPattern.matcher(line);
 			if (matcher.matches()) {
 				final String group2 = matcher.group(2).trim();

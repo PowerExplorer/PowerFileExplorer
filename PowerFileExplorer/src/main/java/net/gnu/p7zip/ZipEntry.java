@@ -74,7 +74,7 @@ public class ZipEntry implements Comparable<ZipEntry>, Parcelable {
 
     @Override
     public String toString() {
-        return parentPath + ", dir " + isDirectory;
+        return path + ", " + parentPath + ", dir " + isDirectory;
     }
 
 	@Override

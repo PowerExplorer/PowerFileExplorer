@@ -112,10 +112,6 @@ public class ThemedActivity extends BasicActivity {
         } 
 	}
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
     public boolean checkStoragePermission() {
 
         // Verify that all required contact permissions have been granted.

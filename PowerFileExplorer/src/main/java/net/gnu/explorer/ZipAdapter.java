@@ -359,7 +359,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 										@Override
 										public void run() {
 											ArrayList<File> arrayList = new ArrayList<>(1);
-											arrayList.add(new File(ExplorerApplication.PRIVATE_PATH + "/" + rowItem.path));
+											arrayList.add(new File(ExplorerApplication.PRIVATE_PATH + (path.startsWith("/") ? "" : "/") + path));
 											Futils.shareFiles(arrayList, activity, activity.getAppTheme(), zipFrag.accentColor);
 										}
 									};
@@ -389,7 +389,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 									r = new Runnable() {
 										@Override
 										public void run() {
-											Futils.openunknown(new File(ExplorerApplication.PRIVATE_PATH + "/" + rowItem.path), activity, true);
+											Futils.openunknown(new File(ExplorerApplication.PRIVATE_PATH + (path.startsWith("/") ? "" : "/") + path), activity, true);
 										}
 									};
 									extractZe(rowItem, r);
@@ -410,10 +410,11 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 				zipFrag.tempPreviewL2 = rowItem;
 				notifyDataSetChanged();
 				if (!rowItem.isDirectory) {
-					Runnable r = new Runnable() {
+					final Runnable r = new Runnable() {
 						@Override
 						public void run() {
-							load(new File(rowItem.path), ExplorerApplication.PRIVATE_PATH + "/" + path, pos);
+							final String path2 = ExplorerApplication.PRIVATE_PATH + (path.startsWith("/") ? "" : "/") + path;
+							load(path2, pos);
 						}
 					};
 					extractZe(rowItem, r);
@@ -497,7 +498,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 					Runnable r = new Runnable() {
 						@Override
 						public void run() {
-							zipFrag.activity.getFutils().openFile(new File(ExplorerApplication.PRIVATE_PATH + "/" + rowItem.path), zipFrag.activity);
+							zipFrag.activity.getFutils().openFile(new File(ExplorerApplication.PRIVATE_PATH + (path.startsWith("/") ? "" : "/") + path), zipFrag.activity);
 						}
 					};
 					extractZe(rowItem, r);
@@ -541,12 +542,13 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 		}
 	}
 
-	private void load(final File f, final String fPath, final int pos) throws IllegalStateException {
+	private void load(final String fPath, final int pos) throws IllegalStateException {
 		Log.d(TAG, "load " + fPath);
 		if (zipFrag.activity.slideFrag2 == null) {
 			Log.d(TAG, "Single panel only");
 			return;
 		}
+		final File f = new File(fPath);
 		final String mime = MimeTypes.getMimeType(f);
 		Log.d(TAG, fPath + "=" + mime);
 		//int i = 0;
@@ -748,12 +750,13 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 		} else if (mime.startsWith("image")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).open(pos, mDataset);
 			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(zipFrag, Frag.TYPE.PHOTO);
-			final String[] arr = new String[mDataset.size()];
-			int i = 0;
+			final String[] arr = new String[1];//mDataset.size()];
+			arr[0] = fPath;
+			//int i = 0;
 			//TODO extract
-			for (ZipEntry ze : mDataset) {
-				arr[i++] = ze.path;
-			}
+//			for (ZipEntry ze : mDataset) {
+//				arr[i++] = ze.path;
+//			}
 			if (tabIndex2 >= 0) {
 				((PhotoFragment)pagerAdapter.getItem(tabIndex2)).open(pos, arr);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);

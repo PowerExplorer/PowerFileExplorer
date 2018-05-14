@@ -168,7 +168,8 @@ public class DataTrackerService extends Service {
             updateHandler.cancel(true);
 			//mNotifyMgr.cancel(mNotificationId);
         } catch (NullPointerException e) {
-            //The only way there will be a null pointer, is if the disabled preference is checked.  Because if it is, onDestory() is called right away, without creating the updateHandler
+            //The only way there will be a null pointer, is if the disabled preference is checked.  
+			//Because if it is, onDestory() is called right away, without creating the updateHandler
         }
         super.onDestroy();
     }

@@ -107,6 +107,12 @@ public final class Andro7za {
 		}
 	}
 
+	public void cancel() {
+		if (command != null) {
+			command.stopAll();
+		}
+	}
+
 	public void initStream() throws IOException {
 		resetFile(mOutfile);
 		resetFile(mInfile);
@@ -620,7 +626,7 @@ public final class Andro7za {
 		String path;
 		while (m.find() && count < 3) {
 			line = m.group();
-			Log.d(TAG, line);
+			//Log.d(TAG, line);
 			if ("------------------- ----- ------------ ------------  ------------------------".equals(line)) {
 				count++;
 				//Log.d(TAG, "count " + count);

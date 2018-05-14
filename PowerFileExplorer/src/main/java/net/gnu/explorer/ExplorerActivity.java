@@ -120,6 +120,8 @@ import static com.amaze.filemanager.fragments.preference_fragments.Preffrag.PREF
 import android.support.v4.app.Fragment;
 import net.gnu.p7zip.DecompressTask;
 import net.gnu.p7zip.ZipEntry;
+import java.util.Queue;
+import java.util.ArrayDeque;
 
 
 public class ExplorerActivity extends ThemedActivity implements OnRequestPermissionsResultCallback,
@@ -134,6 +136,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	private DecompressFragment decompressFrag;
 
 	private String currentDialog = "";
+
+	public static final String KEY_INTENT_COMPRESS = "showCompressFrag";
+	public static final String KEY_INTENT_DECOMPRESS = "showDecompressFrag";
 	
 	public void compress(final String filePaths, final String archiveFilePath) {
 		currentDialog = COMPRESS;
@@ -144,7 +149,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		compressFrag.files = filePaths;
 		compressFrag.saveTo = archiveFilePath;
 
-		compressFrag.show(getSupportFragmentManager(), COMPRESS);
+		if (!compressFrag.isAdded()) {
+			compressFrag.show(getSupportFragmentManager(), COMPRESS);
+		}
 	}
 
 	public void decompress(final String filePaths, final String extractToPath, String includes, boolean showDialog) {
@@ -155,7 +162,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		decompressFrag.files = filePaths;
 		decompressFrag.saveTo = extractToPath;
 		decompressFrag.include = includes;
-		if (showDialog) {
+		if (showDialog && !decompressFrag.isAdded()) {
 			decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
 		}
 	}
@@ -355,6 +362,41 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	private Toast toast = null;
     Window window;
 	ProcessViewer processViewer;
+	private Runnable mOnActivityResultTask;
+	
+	private static Queue<DeferredFragmentTransaction> deferredFragmentTransactions = new ArrayDeque<>();
+	private static Queue<Runnable> deferredActions = new ArrayDeque<>();
+	
+	public void replaceFragment(int contentFrameId, Fragment replacingFragment) {
+		if (!isResumed()) {
+			DeferredFragmentTransaction deferredFragmentTransaction = new DeferredFragmentTransaction() {
+				@Override
+				public void commit() {
+					replaceFragmentInternal(getContentFrameId(), getReplacingFragment());
+				}
+			};
+			deferredFragmentTransaction.setContentFrameId(contentFrameId);
+			deferredFragmentTransaction.setReplacingFragment(replacingFragment);
+			deferredFragmentTransactions.add(deferredFragmentTransaction);
+		} else {
+			replaceFragmentInternal(contentFrameId, replacingFragment);
+		}
+	}
+	
+	private void replaceFragmentInternal(int contentFrameId, Fragment replacingFragment) {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		fragmentManager.beginTransaction()
+            .replace(contentFrameId, replacingFragment)
+            .commit();
+	}
+ 
+	public void act(Runnable run) {
+		if (!isResumed()) {
+			deferredActions.add(run);
+		} else {
+			run.run();
+		}
+	}
 	
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -386,6 +428,13 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		}
 		
 		final FragmentManager supportFragmentManager = getSupportFragmentManager();
+		
+//		if (intent.getBooleanExtra(KEY_INTENT_DECOMPRESS, false)) {
+//			decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+//		}
+//		if (intent.getBooleanExtra(KEY_INTENT_COMPRESS, false)) {
+//			compressFrag.show(getSupportFragmentManager(), COMPRESS);
+//		}
 		
 		openProcesses = intent.getBooleanExtra(KEY_INTENT_PROCESS_VIEWER, false);
         if (openProcesses) {
@@ -455,7 +504,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			}
 		}
 		
-		if (savedInstanceState == null) {
+		if (savedInstanceState == null || supportFragmentManager.findFragmentByTag("slideFrag") == null) {
 			density = (int)(resources.getDisplayMetrics().density);
 			
 			final String extraTitle = intent.getStringExtra(EXTRA_TITLE);
@@ -550,7 +599,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		}
 		
 		balance = AndroidUtils.getSharedPreference(this, "biggerequalpanel", balance);
-		Log.i(TAG, "intent " + action + ", suffix " + suffix + ", mime " + mimes + ", multiFiles " + multiFiles + ", balance=" + balance + ", dir " + dir + ", Category " + intent.getCategories() + ", DataString " + intent.getDataString() + ", Type " + intent.getType() + ", Package " + intent.getPackage() + ", Scheme " + intent.getScheme() + ", Extras " + intent.getExtras() + ", Component " + intent.getComponent() + ", Flags " + intent.getFlags());
+		Log.i(TAG, "intent " + action + ", suffix " + suffix + ", mime " + mimes + ", multiFiles " + multiFiles + ", balance=" + balance + ", dir " + dir + ", Category " + intent.getCategories() + ", DataString " + intent.getDataString() + ", Type " + intent.getType() + ", Package " + intent.getPackage() + ", Scheme " + intent.getScheme() + ", Extras " + intent.getExtras() + ", Component " + intent.getComponent() + ", Flags " + intent.getFlags() + ", slideFrag " + slideFrag);
 		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)left.getLayoutParams();
 		if (balance > 0) {
 			params.weight = 1.0f;
@@ -577,7 +626,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		transaction.replace(R.id.content_fragment, slideFrag, "slideFrag");
 		if (multiFiles) {
 			horizontalDivider5.setBackgroundColor(DIVIDER_COLOR);
-			if (savedInstanceState == null) {
+			if (savedInstanceState == null || supportFragmentManager.findFragmentByTag("slideFrag2") == null) {
 				slideFrag2 = new SlidingTabsFragment();
 				slideFrag2.side = SlidingTabsFragment.Side.RIGHT;
 				if (intent.getStringExtra(EXTRA_ABSOLUTE_PATH) != null ||
@@ -1020,13 +1069,24 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 //		super.onStart();
 //	}
 
-    @Override
-    public void onResume() {
-        Log.d(TAG, "onResume");
-		super.onResume();
+//    @Override
+//    public void onResume() {
+//        Log.d(TAG, "onResume");
+//		super.onResume();
+//    }
+
+	@Override
+	protected void onPostResume() {
+		Log.d(TAG, "onPostResume");
+		super.onPostResume();
 		curContentFrag = (ContentFragment) slideFrag.getFragmentIndex(curContentFragIndex);
 		curSelectionFrag = (ContentFragment) slideFrag.getFrag(Frag.TYPE.SELECTION);
-		
+		while (!deferredFragmentTransactions.isEmpty()) {
+			deferredFragmentTransactions.remove().commit();
+		}
+		while (!deferredActions.isEmpty()) {
+			deferredActions.remove().run();
+		}
 		//Log.d(TAG, "onResume curContentFrag " + curContentFrag);
 		if (slideFrag2 != null) {
 			curExplorerFrag = (ContentFragment) slideFrag2.getFragmentIndex(curExplorerFragIndex);
@@ -1035,7 +1095,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		}
 
 		scheduleHandler.postDelayed(runSchedule, 5000);
-        
+
         final IntentFilter newFilter = new IntentFilter();
         newFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
         newFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
@@ -1050,6 +1110,205 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
             otgFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
             registerReceiver(mOtgReceiver, otgFilter);
         }
+		if (mOnActivityResultTask != null) {
+			mOnActivityResultTask.run();
+			mOnActivityResultTask = null;
+		}
+		if (onNewIntent != null) {
+			onNewIntent.run();
+			onNewIntent = null;
+		}
+	}
+
+	@Override
+    protected void onActivityResult(final int requestCode, final int responseCode, final Intent intent) {
+		Log.d(TAG, "onActivityResult: " + requestCode + ", " + intent);
+		mOnActivityResultTask = new Runnable() {
+			@Override
+			public void run() {
+				if (requestCode == FILES_REQUEST_CODE) {
+					if (responseCode == Activity.RESULT_OK) {
+						List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
+						if (COMPRESS.equals(currentDialog)) {
+							compressFrag.files = Util.collectionToString(stringExtra, false, "| ");
+							if (!compressFrag.isAdded()) {
+								compressFrag.show(getSupportFragmentManager(), COMPRESS);
+							}
+							Log.d(TAG, "onActivityResult FILES_REQUEST_CODE Compress " + compressFrag);
+						} else if (DECOMPRESS.equals(currentDialog)) {
+							decompressFrag.files = Util.collectionToString(stringExtra, false, "| ");
+							if (!decompressFrag.isAdded()) {
+								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+							}
+							Log.d(TAG, "decompressFrag " + decompressFrag);
+						} 
+					} else { // RESULT_CANCEL
+						showToast("No file selected");
+						if (COMPRESS.equals(currentDialog)) {
+							if (!compressFrag.isAdded()) {
+								compressFrag.show(getSupportFragmentManager(), COMPRESS);
+							}
+						} else if (DECOMPRESS.equals(currentDialog)) {
+							if (!decompressFrag.isAdded()) {
+								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+							}
+						} 
+					}
+				} else if (requestCode == SAVETO_REQUEST_CODE) {
+					if (responseCode == Activity.RESULT_OK) {
+						List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
+						if (COMPRESS.equals(currentDialog)) {
+							compressFrag.saveTo = stringExtra.get(0);
+							if (!compressFrag.isAdded()) {
+								compressFrag.show(getSupportFragmentManager(), COMPRESS);
+							}
+							Log.d(TAG, "Compress " + compressFrag);
+						} else if (DECOMPRESS.equals(currentDialog)) {
+							decompressFrag.saveTo = stringExtra.get(0);
+							if (!decompressFrag.isAdded()) {
+								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+							}
+							Log.d(TAG, "decompressFrag " + decompressFrag);
+						} 
+					} else { // RESULT_CANCEL
+						showToast("No folder selected");
+						if (COMPRESS.equals(currentDialog)) {
+							if (!compressFrag.isAdded()) {
+								compressFrag.show(getSupportFragmentManager(), COMPRESS);
+							}
+						} else if (DECOMPRESS.equals(currentDialog)) {
+							if (!decompressFrag.isAdded()) {
+								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+							}
+						} 
+					}
+				} else if (requestCode == image_selector_request_code) {
+					if (sharedPref != null && intent != null && intent.getData() != null) {
+						if (SDK_INT >= 19)
+							getContentResolver().takePersistableUriPermission(intent.getData(),
+																			  Intent.FLAG_GRANT_READ_URI_PERMISSION);
+						sharedPref.edit().putString("drawer_header_path", intent.getData().toString()).commit();
+						//setDrawerHeaderBackground();
+					}
+				} else if (requestCode == FROM_PREVIOUS_IO_ACTION) {
+					Uri treeUri;
+					if (responseCode == Activity.RESULT_OK) {
+						// Get Uri from Storage Access Framework.
+						treeUri = intent.getData();
+						// Persist URI - this is required for verification of writability.
+						if (treeUri != null) sharedPref.edit().putString("URI", treeUri.toString()).commit();
+					} else {
+						// If not confirmed SAF, or if still not writable, then revert settings.
+						/* DialogUtil.displayError(getActivity(), R.string.message_dialog_cannot_write_to_folder_saf, false, currentFolder);
+						 ||!FileUtil.isWritableNormalOrSaf(currentFolder)*/
+						return;
+					}
+
+					// After confirmation, update stored value of folder.
+					// Persist access permissions.
+
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						getContentResolver().takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+																		  | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+					}
+					switch (operation) {
+						case DataUtils.DELETE://deletion
+							new DeleteTask(ExplorerActivity.this, null).execute((originPaths_oparrayList));
+							break;
+						case DataUtils.DELETE_IN_ZIP:
+							Runnable r = new Runnable() {
+								@Override
+								public void run() {
+									Toast.makeText(ExplorerActivity.this, "Deletion finished", Toast.LENGTH_SHORT).show();
+								}
+							};
+							final StringBuilder sb = new StringBuilder();
+							for (ZipEntry ze : filesInZip) {
+								sb.append(ze.path).append("\n");
+							}
+							new DecompressTask(ExplorerActivity.this,
+											   zip.file.getAbsolutePath(),
+											   ExplorerApplication.PRIVATE_PATH,
+											   sb.toString(),
+											   "",
+											   "",
+											   "",
+											   0,
+											   "d",
+											   r).execute();
+							break;
+						case DataUtils.ADD_TO_ZIP:
+							new DeleteTask(ExplorerActivity.this, null).execute((originPaths_oparrayList));
+							break;
+						case DataUtils.UPDATE_ZIP:
+							new DeleteTask(ExplorerActivity.this, null).execute((originPaths_oparrayList));
+							break;
+						case DataUtils.COPY://copying
+							//legacy compatibility
+							if (originPaths_oparrayList != null && originPaths_oparrayList.size() != 0) {
+								oparrayListList = new ArrayList<>();
+								oparrayListList.add(originPaths_oparrayList);
+								originPaths_oparrayList = null;
+								originPaths_oppatheList = new ArrayList<>();
+								originPaths_oppatheList.add(originPath_oppathe);
+								originPath_oppathe = "";
+							}
+							for (int i = 0; i < oparrayListList.size(); i++) {
+								Intent intent1 = new Intent(ExplorerActivity.this, CopyService.class);
+								intent1.putExtra(CopyService.TAG_COPY_SOURCES, oparrayListList.get(i));
+								intent1.putExtra(CopyService.TAG_COPY_TARGET, originPaths_oppatheList.get(i));
+								ServiceWatcherUtil.runService(ExplorerActivity.this, intent1);
+							}
+							break;
+						case DataUtils.MOVE://moving
+							//legacy compatibility
+							if (originPaths_oparrayList != null && originPaths_oparrayList.size() != 0) {
+								oparrayListList = new ArrayList<>();
+								oparrayListList.add(originPaths_oparrayList);
+								originPaths_oparrayList = null;
+								originPaths_oppatheList = new ArrayList<>();
+								originPaths_oppatheList.add(originPath_oppathe);
+								originPath_oppathe = "";
+							}
+							new MoveFiles(oparrayListList, slideFrag1Selected ? curContentFrag : curExplorerFrag,
+										  ExplorerActivity.this, OpenMode.FILE, null)
+								.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, originPaths_oppatheList);
+							break;
+						case DataUtils.NEW_FOLDER://mkdir
+							mainActivityHelper.mkDir(RootHelper.generateBaseFile(new File(originPath_oppathe), true),
+													 slideFrag1Selected ? curContentFrag : curExplorerFrag);
+							break;
+						case DataUtils.RENAME:
+							ContentFragment ma = slideFrag1Selected ? curContentFrag : curExplorerFrag;
+							mainActivityHelper.rename(ma.openMode, (originPath_oppathe),
+													  (newPath_oppathe1), ExplorerActivity.this, ThemedActivity.rootMode);
+							ma.updateList();
+							break;
+						case DataUtils.NEW_FILE:
+							mainActivityHelper.mkFile(new HFile(OpenMode.FILE, originPath_oppathe), slideFrag1Selected ? curContentFrag : curExplorerFrag);
+							break;
+//                case DataUtils.EXTRACT:
+//                    mainActivityHelper.extractFile(new File(oppathe));
+//                    break;
+						case DataUtils.COMPRESS:
+							mainActivityHelper.compressFiles(new File(originPath_oppathe), originPaths_oparrayList);
+					}
+					operation = -1;
+				} else if (requestCode == REQUEST_CODE_SAF && responseCode == Activity.RESULT_OK) {
+					// otg access
+					sharedPref.edit().putString(KEY_PREF_OTG, intent.getData().toString()).apply();
+
+					if (!isDrawerLocked) 
+						mDrawerLayout.closeDrawer(mDrawerList);
+					else 
+						onDrawerClosed();
+				} else if (requestCode == REQUEST_CODE_SAF && responseCode != Activity.RESULT_OK) {
+					// otg access not provided
+					pendingPath = null;
+				}
+			}
+		};
+
     }
 
 	/**
@@ -1074,7 +1333,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        Log.d(TAG, "onDestroy finish " + isFinishing());
+		super.onDestroy();
         // TODO: 6/5/2017 Android may choose to not call this method before destruction
         // TODO: https://developer.android.com/reference/android/app/Activity.html#onDestroy%28%29
         closeInteractiveShell();
@@ -1085,6 +1345,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
         final CryptHandler cryptHandler = new CryptHandler(this);
         cryptHandler.close();
+		if (isFinishing()) {
+			deferredFragmentTransactions.clear();
+			deferredActions.clear();
+		}
     }
 
     /**
@@ -1277,187 +1541,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	ContentFragment getCurrentContentFragment() {
 		return slideFrag1Selected ? curContentFrag : curExplorerFrag;
 	}
-
-	@Override
-    protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-		Log.d(TAG, "onActivityResult: " + requestCode + ", " + intent);
-		
-		if (requestCode == FILES_REQUEST_CODE) {
-
-			if (responseCode == Activity.RESULT_OK) {
-				List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
-				if (COMPRESS.equals(currentDialog)) {
-
-					compressFrag.files = Util.collectionToString(stringExtra, false, "| ");
-
-					compressFrag.show(getSupportFragmentManager(), COMPRESS);
-					Log.d(TAG, "onActivityResult FILES_REQUEST_CODE Compress " + compressFrag);
-				} else if (DECOMPRESS.equals(currentDialog)) {
-
-					decompressFrag.files = Util.collectionToString(stringExtra, false, "| ");
-
-					decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
-					Log.d(TAG, "decompressFrag " + decompressFrag);
-				} 
-			} else { // RESULT_CANCEL
-				showToast("No file selected");
-				if (COMPRESS.equals(currentDialog)) {
-					compressFrag.show(getSupportFragmentManager(), COMPRESS);
-				} else if (DECOMPRESS.equals(currentDialog)) {
-					decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
-				} 
-			}
-
-		} else if (requestCode == SAVETO_REQUEST_CODE) {
-
-			if (responseCode == Activity.RESULT_OK) {
-				List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
-				if (COMPRESS.equals(currentDialog)) {
-
-					compressFrag.saveTo = stringExtra.get(0);
-
-					compressFrag.show(getSupportFragmentManager(), COMPRESS);
-					Log.d(TAG, "Compress " + compressFrag);
-				} else if (DECOMPRESS.equals(currentDialog)) {
-
-					decompressFrag.saveTo = stringExtra.get(0);
-
-					decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
-					Log.d(TAG, "decompressFrag " + decompressFrag);
-				} 
-			} else { // RESULT_CANCEL
-				showToast("No folder selected");
-				if (COMPRESS.equals(currentDialog)) {
-					compressFrag.show(getSupportFragmentManager(), COMPRESS);
-				} else if (DECOMPRESS.equals(currentDialog)) {
-					decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
-				} 
-			}
-		} else if (requestCode == image_selector_request_code) {
-            if (sharedPref != null && intent != null && intent.getData() != null) {
-                if (SDK_INT >= 19)
-                    getContentResolver().takePersistableUriPermission(intent.getData(),
-																	  Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                sharedPref.edit().putString("drawer_header_path", intent.getData().toString()).commit();
-                //setDrawerHeaderBackground();
-            }
-        } else if (requestCode == FROM_PREVIOUS_IO_ACTION) {
-            Uri treeUri;
-            if (responseCode == Activity.RESULT_OK) {
-                // Get Uri from Storage Access Framework.
-                treeUri = intent.getData();
-                // Persist URI - this is required for verification of writability.
-                if (treeUri != null) sharedPref.edit().putString("URI", treeUri.toString()).commit();
-            } else {
-                // If not confirmed SAF, or if still not writable, then revert settings.
-                /* DialogUtil.displayError(getActivity(), R.string.message_dialog_cannot_write_to_folder_saf, false, currentFolder);
-				 ||!FileUtil.isWritableNormalOrSaf(currentFolder)*/
-                return;
-            }
-
-            // After confirmation, update stored value of folder.
-            // Persist access permissions.
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                getContentResolver().takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION
-																  | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            }
-            switch (operation) {
-                case DataUtils.DELETE://deletion
-                    new DeleteTask(this, null).execute((originPaths_oparrayList));
-                    break;
-                case DataUtils.DELETE_IN_ZIP:
-                    Runnable r = new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(ExplorerActivity.this, "Deletion finished", Toast.LENGTH_SHORT).show();
-						}
-					};
-					final StringBuilder sb = new StringBuilder();
-					for (ZipEntry ze : filesInZip) {
-						sb.append(ze.path).append("\n");
-					}
-					new DecompressTask(this,
-									   zip.file.getAbsolutePath(),
-									   ExplorerApplication.PRIVATE_PATH,
-									   sb.toString(),
-									   "",
-									   "",
-									   "",
-									   0,
-									   "d",
-									   r).execute();
-                    break;
-                case DataUtils.ADD_TO_ZIP:
-                    new DeleteTask(this, null).execute((originPaths_oparrayList));
-                    break;
-                case DataUtils.UPDATE_ZIP:
-                    new DeleteTask(this, null).execute((originPaths_oparrayList));
-                    break;
-                case DataUtils.COPY://copying
-                    //legacy compatibility
-                    if(originPaths_oparrayList != null && originPaths_oparrayList.size() != 0) {
-                        oparrayListList = new ArrayList<>();
-                        oparrayListList.add(originPaths_oparrayList);
-                        originPaths_oparrayList = null;
-                        originPaths_oppatheList = new ArrayList<>();
-                        originPaths_oppatheList.add(originPath_oppathe);
-                        originPath_oppathe = "";
-                    }
-                    for (int i = 0; i < oparrayListList.size(); i++) {
-                        Intent intent1 = new Intent(this, CopyService.class);
-                        intent1.putExtra(CopyService.TAG_COPY_SOURCES, oparrayListList.get(i));
-                        intent1.putExtra(CopyService.TAG_COPY_TARGET, originPaths_oppatheList.get(i));
-                        ServiceWatcherUtil.runService(this, intent1);
-                    }
-                    break;
-                case DataUtils.MOVE://moving
-                    //legacy compatibility
-                    if(originPaths_oparrayList != null && originPaths_oparrayList.size() != 0) {
-                        oparrayListList = new ArrayList<>();
-                        oparrayListList.add(originPaths_oparrayList);
-                        originPaths_oparrayList = null;
-                        originPaths_oppatheList = new ArrayList<>();
-                        originPaths_oppatheList.add(originPath_oppathe);
-                        originPath_oppathe = "";
-                    }
-                    new MoveFiles(oparrayListList, slideFrag1Selected ? curContentFrag : curExplorerFrag,
-								  this, OpenMode.FILE, null)
-						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, originPaths_oppatheList);
-                    break;
-                case DataUtils.NEW_FOLDER://mkdir
-                    mainActivityHelper.mkDir(RootHelper.generateBaseFile(new File(originPath_oppathe), true),
-											 slideFrag1Selected ? curContentFrag : curExplorerFrag);
-                    break;
-                case DataUtils.RENAME:
-                    ContentFragment ma = slideFrag1Selected ? curContentFrag : curExplorerFrag;
-                    mainActivityHelper.rename(ma.openMode, (originPath_oppathe),
-											  (newPath_oppathe1), this, ThemedActivity.rootMode);
-                    ma.updateList();
-                    break;
-                case DataUtils.NEW_FILE:
-                    mainActivityHelper.mkFile(new HFile(OpenMode.FILE, originPath_oppathe), slideFrag1Selected ? curContentFrag : curExplorerFrag);
-                    break;
-//                case DataUtils.EXTRACT:
-//                    mainActivityHelper.extractFile(new File(oppathe));
-//                    break;
-                case DataUtils.COMPRESS:
-                    mainActivityHelper.compressFiles(new File(originPath_oppathe), originPaths_oparrayList);
-            }
-            operation = -1;
-        } else if (requestCode == REQUEST_CODE_SAF && responseCode == Activity.RESULT_OK) {
-            // otg access
-            sharedPref.edit().putString(KEY_PREF_OTG, intent.getData().toString()).apply();
-
-            if (!isDrawerLocked) 
-				mDrawerLayout.closeDrawer(mDrawerList);
-            else 
-				onDrawerClosed();
-        } else if (requestCode == REQUEST_CODE_SAF && responseCode != Activity.RESULT_OK) {
-            // otg access not provided
-            pendingPath = null;
-        }
-    }
 
     void initialisePreferences() {
         hidemode = sharedPref.getInt("hidemode", 0);
@@ -2326,89 +2409,104 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			}).start();
 	}
 
+	private Runnable onNewIntent;
 	@Override
-    public void onNewIntent(final Intent intent) {
-        this.intent = intent;
-        final Uri data = intent.getData();
-		final String path = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : intent.getStringExtra(EXTRA_ABSOLUTE_PATH);
-        final String action = intent.getAction();
-		Log.d(TAG, "onNewIntent " + path);
-		if (path != null) {
-			final File file = new File(path);
-			if (file.isDirectory()) {
-				dir = path;
-				curContentFrag.suffix = intent.getStringExtra(EXTRA_FILTER_FILETYPE);
-				curContentFrag.suffix = (curContentFrag.suffix == null) ? "*" : curContentFrag.suffix;
-				curContentFrag.multiFiles = intent.getBooleanExtra(EXTRA_MULTI_SELECT, true);
+    public void onNewIntent(final Intent newIntent) {
+        Log.i(TAG, "onNewIntent 1 " + newIntent + ", " + newIntent.getBooleanExtra(KEY_INTENT_COMPRESS, false) + ", " + newIntent.getExtras());
+		this.intent = newIntent;
+		onNewIntent = new Runnable() {
+			@Override
+			public void run() {
+				final Uri data = newIntent.getData();
+				final String path = newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH);
+				final String action = newIntent.getAction();
+				Log.i(TAG, "onNewIntent 2 " + path + ", " + newIntent + ", " + newIntent.getExtras());
+				if (path != null) {
+					final File file = new File(path);
+					if (file.isDirectory()) {
+						dir = path;
+						curContentFrag.suffix = newIntent.getStringExtra(EXTRA_FILTER_FILETYPE);
+						curContentFrag.suffix = (curContentFrag.suffix == null) ? "*" : curContentFrag.suffix;
+						curContentFrag.multiFiles = newIntent.getBooleanExtra(EXTRA_MULTI_SELECT, true);
 
-				curContentFrag.mimes = intent.getStringExtra(EXTRA_FILTER_MIMETYPE);
-				curContentFrag.mimes = curContentFrag.mimes == null ? "*/*" : curContentFrag.mimes.toLowerCase();
-				
-				curContentFrag.mWriteableOnly = intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false);
-				curContentFrag.previousSelectedStr = intent.getStringArrayExtra(PREVIOUS_SELECTED_FILES);
+						curContentFrag.mimes = newIntent.getStringExtra(EXTRA_FILTER_MIMETYPE);
+						curContentFrag.mimes = curContentFrag.mimes == null ? "*/*" : curContentFrag.mimes.toLowerCase();
 
-				curContentFrag.changeDir(path, true);
+						curContentFrag.mWriteableOnly = newIntent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false);
+						curContentFrag.previousSelectedStr = newIntent.getStringArrayExtra(PREVIOUS_SELECTED_FILES);
+
+						curContentFrag.changeDir(path, true);
 //				slideFrag.addNewTab(path, i.getStringExtra(ExplorerActivity.EXTRA_SUFFIX), i.getBooleanExtra(ExplorerActivity.EXTRA_MULTI_SELECT, true), true);
 //				slideFrag.setCurrentItem(slideFrag.getCount() - 1);
-            } else {
-				if (FileUtil.extractiblePattern.matcher(new File(path).getName()).matches()) {
-					final SlidingTabsFragment.PagerAdapter pagerAdapter = slideFrag.pagerAdapter;
-					final int tabIndex2 = slideFrag.getFragIndex(Frag.TYPE.ZIP);
-						if (tabIndex2 >= 0) {
-							final ZipFragment zFrag = (ZipFragment) pagerAdapter.getItem(tabIndex2);
-							zFrag.load(path, null);
-							slideFrag.setCurrentItem(tabIndex2, true);
+					} else {
+						if (FileUtil.extractiblePattern.matcher(new File(path).getName()).matches()) {
+							final SlidingTabsFragment.PagerAdapter pagerAdapter = slideFrag.pagerAdapter;
+							final int tabIndex2 = slideFrag.getFragIndex(Frag.TYPE.ZIP);
+							if (tabIndex2 >= 0) {
+								final ZipFragment zFrag = (ZipFragment) pagerAdapter.getItem(tabIndex2);
+								zFrag.load(path, null);
+								slideFrag.setCurrentItem(tabIndex2, true);
+							} else {
+								horizontalDivider5.postDelayed(new Runnable() {
+										@Override
+										public void run() {
+											slideFrag.addTab(Frag.TYPE.ZIP, path);
+										}
+									}, 200);
+							}
 						} else {
-							horizontalDivider5.postDelayed(new Runnable() {
-									@Override
-									public void run() {
-										slideFrag.addTab(Frag.TYPE.ZIP, path);
-									}
-							}, 200);
+							getFutils().openFile(file, ExplorerActivity.this);
 						}
-				} else {
-					getFutils().openFile(file, this);
-				}
-			}
-        } else if (intent.getStringArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS) != null) {
-            ArrayList<BaseFile> failedOps = intent.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
-            if (failedOps != null) {
-                mainActivityHelper.showFailedOperationDialog(failedOps, intent.getBooleanExtra("move", false), this);
-            }
-        } else if (intent.getCategories() != null && intent.getCategories().contains(CLOUD_AUTHENTICATOR_GDRIVE)) {
-            // we used an external authenticator instead of APIs. Probably for Google Drive
-            CloudRail.setAuthenticationResponse(intent);
-        } else if ((openProcesses = intent.getBooleanExtra(KEY_INTENT_PROCESS_VIEWER, false))) {
-			Fragment findFragmentByTag;
-			FragmentManager supportFragmentManager = getSupportFragmentManager();
-			if ((findFragmentByTag = supportFragmentManager.findFragmentByTag(KEY_INTENT_PROCESS_VIEWER)) != null) {
-				processViewer = (ProcessViewer)findFragmentByTag;
-			} else {
-				processViewer = new ProcessViewer();
-			}
-			processViewer.show(supportFragmentManager, KEY_INTENT_PROCESS_VIEWER);
+					}
+				} else if (newIntent.getStringArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS) != null) {
+					ArrayList<BaseFile> failedOps = newIntent.getParcelableArrayListExtra(TAG_INTENT_FILTER_FAILED_OPS);
+					if (failedOps != null) {
+						mainActivityHelper.showFailedOperationDialog(failedOps, newIntent.getBooleanExtra("move", false), ExplorerActivity.this);
+					}
+				} else if (newIntent.getCategories() != null && newIntent.getCategories().contains(CLOUD_AUTHENTICATOR_GDRIVE)) {
+					// we used an external authenticator instead of APIs. Probably for Google Drive
+					CloudRail.setAuthenticationResponse(newIntent);
+				} else if (decompressFrag != null && newIntent.getBooleanExtra(KEY_INTENT_DECOMPRESS, false)) {
+					if (!decompressFrag.isAdded()) {
+						decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+					}
+				} else if (compressFrag != null && newIntent.getBooleanExtra(KEY_INTENT_COMPRESS, false)) {
+					if (!compressFrag.isAdded()) {
+						compressFrag.show(getSupportFragmentManager(), COMPRESS);
+					}
+				} else if ((openProcesses = newIntent.getBooleanExtra(KEY_INTENT_PROCESS_VIEWER, false))) {
+					Fragment findFragmentByTag;
+					FragmentManager supportFragmentManager = getSupportFragmentManager();
+					if ((findFragmentByTag = supportFragmentManager.findFragmentByTag(KEY_INTENT_PROCESS_VIEWER)) != null) {
+						processViewer = (ProcessViewer)findFragmentByTag;
+					} else {
+						processViewer = new ProcessViewer();
+					}
+					processViewer.show(supportFragmentManager, KEY_INTENT_PROCESS_VIEWER);
 //            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //            transaction.replace(R.id.content_frame, new ProcessViewer(), KEY_INTENT_PROCESS_VIEWER);
 //            //   transaction.addToBackStack(null);
-            selectedStorage = SELECT_102;
-            openProcesses = false;
+					selectedStorage = SELECT_102;
+					openProcesses = false;
 //            //title.setText(utils.getString(con, R.string.process_viewer));
 //            //Commit the transaction
 //            transaction.commitAllowingStateLoss();
 //            supportInvalidateOptionsMenu();
-        } else {
-            if (SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (action.equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
-                    if (sharedPref.getString(KEY_PREF_OTG, null) == null) {
-                        sharedPref.edit().putString(KEY_PREF_OTG, VALUE_PREF_OTG_NULL).apply();
-                        refreshDrawer();
-                    }
-                } else if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
-                    sharedPref.edit().putString(KEY_PREF_OTG, null).apply();
-                    refreshDrawer();
-                }
-            }
-        }
+				} else {
+					if (SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						if (action.equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+							if (sharedPref.getString(KEY_PREF_OTG, null) == null) {
+								sharedPref.edit().putString(KEY_PREF_OTG, VALUE_PREF_OTG_NULL).apply();
+								refreshDrawer();
+							}
+						} else if (action.equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
+							sharedPref.edit().putString(KEY_PREF_OTG, null).apply();
+							refreshDrawer();
+						}
+					}
+				}
+			}
+		};
     }
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

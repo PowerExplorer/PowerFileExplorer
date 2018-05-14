@@ -432,7 +432,7 @@ public class CHMActivity extends AppCompatActivity {
             add = (Button) findViewById(R.id.btn_addbookmark);
             add.setOnClickListener(this);
             listView = (ListView) findViewById(R.id.listView);
-            adapter = new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, listBookmark);
+            adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, listBookmark);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					@Override
@@ -490,7 +490,7 @@ public class CHMActivity extends AppCompatActivity {
             searchProgress = (ProgressBar) findViewById(R.id.progressBar);
             searchProgress.setMax(listSite.size() - 1);
             searchResult = new ArrayList<>();
-            adapter = new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, searchResult);
+            adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, searchResult);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 					@Override

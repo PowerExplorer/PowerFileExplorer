@@ -57,6 +57,7 @@ import com.amaze.filemanager.utils.ServiceWatcherUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
+import java.util.Random;
 
 public class CopyService extends Service {
 
@@ -104,7 +105,9 @@ public class CopyService extends Service {
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         notificationIntent.putExtra(ExplorerActivity.KEY_INTENT_PROCESS_VIEWER, true);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        notificationIntent.putExtra("from", "CopyService");
+        Log.i("CopyService", "notificationIntent " + notificationIntent + ", " + notificationIntent.getExtras());
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, new Random().nextInt(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder = new NotificationCompat.Builder(c);
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setContentTitle(getResources().getString(R.string.copying))

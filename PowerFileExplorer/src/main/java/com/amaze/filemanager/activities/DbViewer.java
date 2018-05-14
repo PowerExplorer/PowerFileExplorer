@@ -169,7 +169,7 @@ public class DbViewer extends ThemedActivity {
                     c = sqLiteDatabase.rawQuery(
                             "SELECT name FROM sqlite_master WHERE type='table'", null);
                     arrayList = getDbTableNames(c);
-                    arrayAdapter = new ArrayAdapter(DbViewer.this, android.R.layout.simple_list_item_1, arrayList);
+                    arrayAdapter = new ArrayAdapter<String>(DbViewer.this, android.R.layout.simple_list_item_1, arrayList);
                 } catch (Exception e) {
                     e.printStackTrace();
                     finish();

@@ -1,26 +1,32 @@
 package net.gnu.p7zip;
 
-import java.io.File;
-import java.util.List;
-
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import android.app.*;
 import android.widget.RadioButton;
-import net.gnu.util.FileUtil;
-import org.magiclen.magiccommand.Command;
-import net.gnu.util.Util;
-import java.util.Arrays;
-import java.util.ArrayList;
-import net.gnu.zpaq.Zpaq;
-import net.gnu.androidutil.ForegroundService;
+import android.widget.Toast;
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
+import net.gnu.androidutil.ForegroundService;
+import net.gnu.explorer.ExplorerActivity;
+import net.gnu.explorer.R;
+import net.gnu.util.FileUtil;
+import net.gnu.util.Util;
+import net.gnu.zpaq.Zpaq;
+import java.util.Random;
+import android.widget.ArrayAdapter;
+import java.util.LinkedList;
 
 public class CompressTask extends AsyncTask<String, String, String> implements UpdateProgress {
 
@@ -56,7 +62,12 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 	private boolean createSeparateArchives = false;
 	private String archiveNameMask = "";
 	private String cmd = "";
-	
+
+	private Notification.Builder mBuilder;
+    private NotificationManager mNotifyMgr;
+    private Notification notification;
+	private final int mNotificationId = TAG.hashCode();
+
 	public CompressTask(CompressFragment compressFrag) {
 
 		this.compressFrag = compressFrag;
@@ -112,10 +123,40 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		publishProgress(values);
 	}
 
+	@Override
+	protected void onPreExecute() {
+		mNotifyMgr = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		Intent contentIntent = new Intent(activity, ExplorerActivity.class);
+		contentIntent.setAction(Intent.ACTION_MAIN);
+		contentIntent.putExtra(ExplorerActivity.KEY_INTENT_COMPRESS, true);
+        contentIntent.putExtra("from", TAG);
+        //contentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(activity, new Random().nextInt(),
+																	  contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder = new Notification.Builder(activity)
+			.setSmallIcon(R.drawable.notification_template_icon_bg)
+			.setContentTitle("Compressing")
+			.setContentText(archive)
+			.setOngoing(true)
+			//.setSmallIcon(R.drawable.ic_action_compress)
+			.setLargeIcon(((BitmapDrawable)activity.getDrawable(R.drawable.ic_action_compress)).getBitmap())
+			.setTicker("Compress");
+
+		mBuilder.setPriority(Notification.PRIORITY_DEFAULT);
+		mBuilder.setContentIntent(resultPendingIntent);
+		mNotifyMgr.notify(mNotificationId, mBuilder.build());//mBuilder.setStyle(big)
+
+		compressFrag.adapter.clear();
+		compressFrag.adapter.notifyDataSetChanged();
+	}
+
+	@Override
 	protected String doInBackground(String... urls) {
 		start = System.currentTimeMillis();
 		PowerManager pm = (PowerManager)activity.getSystemService(Context.POWER_SERVICE);
 		wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+
 		try {
 			wl.acquire();
 			//JarUtil.createJAR("/sdcard/lib.jar", "/storage/emulated/0/AppProjects/Searcher/bin/classesdebug/");
@@ -123,7 +164,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 			if (!f.exists()) {
 				f.mkdirs();
 			}
-			sb = new StringBuilder();
+			//sb = new StringBuilder();
 			rowNum = 0;
 			publishProgress("Compressing " + archive);
 			final List<String> fList = Arrays.asList(lf.split("\\|+\\s*"));
@@ -265,52 +306,61 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 			return message;
 		} finally {
 			Log.i(TAG, "finally doBackground");
-			wl.release();
-			activity.stopService(new Intent(activity, ForegroundService.class));
+			if (wl != null && wl.isHeld()) {
+				wl.release();
+			}
+			compressFrag.stopService();
 		}
 	}
 
 	@Override
 	protected void onCancelled(String result) {
 		Log.i(TAG, "onCancelled");
+		mNotifyMgr.cancel(mNotificationId);
+		zpaq.command.stopAll();
+		andro7za.command.stopAll();
 		if (wl != null && wl.isHeld()) {
-			zpaq.command.stopAll();
-			andro7za.command.stopAll();
 			wl.release();
-			activity.stopService(new Intent(activity, ForegroundService.class));
 		}
+		compressFrag.stopService();
 	}
 
 	@Override
 	protected void onPostExecute(String result) {
-		Log.i(TAG, "onPostExecute");
-		//Toast.makeText(activity, "Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds", Toast.LENGTH_LONG).show();
+		Log.i(TAG, "onPostExecute " + result);
+		final String elapseTime = Util.nf.format(System.currentTimeMillis() - start);
+		mNotifyMgr.cancel(mNotificationId);
 		compressFrag.mBtnOK.setText("Compress");
 		if (result.length() > 0) {
-			compressFrag.statusTV.setText(compressFrag.statusTV.getText().toString().trim() + ". " + result + ". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
-			Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(activity, "Compression finished", Toast.LENGTH_SHORT).show();
-			//compressFrag.statusTV.setText(". Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds");
-		}
+			compressFrag.adapter.add(result);
+			compressFrag.adapter.add("Operation took " + elapseTime + " milliseconds");
+			compressFrag.adapter.notifyDataSetChanged();
+			//Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
+		} 
+		//if (activity != null) {
+		Toast.makeText(activity, "Compression finished. Operation took " + elapseTime + " milliseconds", Toast.LENGTH_SHORT).show();
+		//}
+
 		if (wl != null && wl.isHeld()) {
 			wl.release();
-			activity.stopService(new Intent(activity, ForegroundService.class));
 		}
+		compressFrag.stopService();
 		Log.d(TAG, result);
 	}
 
 	private int rowNum = 0;
-	private StringBuilder sb;
+	//private StringBuilder sb;
+	@Override
 	protected void onProgressUpdate(String... progress) {
 		if (progress != null && progress.length > 0 
-			&& progress[0] != null && progress[0].trim().length() > 0) {
+			&& progress[0] != null) {//} && progress[0].trim().length() > 0) {
 //			Toast.makeText(activity, progress[0], Toast.LENGTH_LONG).show();
-			if (++rowNum > 24) {
-				sb = new StringBuilder(sb.substring(sb.indexOf("\n") + 1));
-			} 
-			sb.append(progress[0]).append("\n");
-			compressFrag.statusTV.setText(sb);
+//			if (++rowNum > 24) {
+//				sb = new StringBuilder(sb.substring(sb.indexOf("\n") + 1));
+//			} 
+			//sb.append(progress[0]).append("\n");
+			compressFrag.adapter.add(progress[0]);
+			compressFrag.adapter.notifyDataSetChanged();
 			Log.d(TAG, progress[0]);
 		}
 	}
