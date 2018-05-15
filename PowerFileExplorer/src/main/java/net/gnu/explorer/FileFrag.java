@@ -239,6 +239,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		topflipper = (ViewFlipper) v.findViewById(R.id.flipper_top);
 		quickLayout = (LinearLayout) v.findViewById(R.id.quicksearch);
 
+		listView.setHasFixedSize(true);
 		icons.setOnClickListener(this);
 		allCbx.setOnClickListener(this);
 		allName.setOnClickListener(this);
@@ -267,21 +268,20 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 				((ImageView)childAt).setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 			}
 		}
+		imageLoader = new ImageThreadLoader(activity);
 	}
 
-	@Override
-    public void onResume() {
-        //Log.d(TAG, "onResume " + currentPathTitle);
-		imageLoader = new ImageThreadLoader(activity);
-		super.onResume();
-	}
+//	@Override
+//    public void onResume() {
+//        //Log.d(TAG, "onResume " + currentPathTitle);
+//		super.onResume();
+//	}
 
-	@Override
-	public void onStart() {
-		//Log.d(TAG, "onStart " + currentPathTitle);
-		imageLoader = new ImageThreadLoader(activity);
-		super.onStart();
-	}
+//	@Override
+//	public void onStart() {
+//		//Log.d(TAG, "onStart " + currentPathTitle);
+//		super.onStart();
+//	}
 
 	public void clone(final Frag frag, final boolean fake) {
 		super.clone(frag, fake);
@@ -517,7 +517,6 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		}
 		activity.slideFrag.updateSpan();
 		activity.slideFrag2.updateSpan();
-		AndroidUtils.setSharedPreference(activity, "biggerequalpanel", activity.balance);
 	}
 
 	void moreInPanel(final View v) {

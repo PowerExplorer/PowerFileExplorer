@@ -469,19 +469,52 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		}
 
 		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
-		if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
-			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-			//currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
-			curPath = (String) savedInstanceState.get("curPath");
-			allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
-			setRecyclerViewLayoutManager();
-			//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
-			setDirectoryButtons();
+		if (savedInstanceState != null) {//EXTRA_DIR_PATH
+			if (dataSourceL1.size() == 0) {
 
-			final int index  = savedInstanceState.getInt("index");
-			final int top  = savedInstanceState.getInt("top");
-			//Log.d(TAG, "index = " + index + ", " + top);
-			gridLayoutManager.scrollToPositionWithOffset(index, top);
+				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+				curPath = (String) savedInstanceState.get("curPath");
+				
+				fake = savedInstanceState.getBoolean("fake", false);
+
+				searchMode = savedInstanceState.getBoolean("searchMode", false);
+
+				allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
+				allCbx.setSelected(savedInstanceState.getBoolean("allCbx.isSelected"));
+				allCbx.setImageResource(savedInstanceState.getInt("allCbx.imageResource", R.drawable.dot));
+
+				tempPreviewL2 = savedInstanceState.getParcelable("tempPreviewL2");
+
+				selectedInList1.clear();
+				selectedInList1.addAll(savedInstanceState.getParcelableArrayList("selectedInList1"));
+				tempSelectedInList1.clear();
+				tempSelectedInList1.addAll(savedInstanceState.getParcelableArrayList("tempSelectedInList1"));
+				tempOriDataSourceL1.clear();
+				tempOriDataSourceL1.addAll(savedInstanceState.getParcelableArrayList("tempOriDataSourceL1"));
+				if (searchMode) {
+					searchET.removeTextChangedListener(textSearch);
+					manageSearchUI(searchMode);
+					searchET.setText(savedInstanceState.getString("searchVal", ""));
+					searchET.addTextChangedListener(textSearch);
+					dataSourceL1.clear();
+					dataSourceL1.addAll((List<ZipEntry>)savedInstanceState.getParcelableArrayList("dataSourceL1"));
+					setRecyclerViewLayoutManager();
+				} else {
+					setRecyclerViewLayoutManager();
+					final Runnable r = new Runnable() {
+						@Override
+						public void run() {
+							changeDir(curPath, false, true, null);
+						}
+					};
+					load(currentPathTitle, r);
+				}
+				setDirectoryButtons();
+				final int index  = savedInstanceState.getInt("index");
+				final int top  = savedInstanceState.getInt("top");
+				//Log.d(TAG, "index = " + index + ", " + top);
+				gridLayoutManager.scrollToPositionWithOffset(index, top);
+			}
 		} else {
 			setRecyclerViewLayoutManager();
 			if (!fake) {
@@ -505,36 +538,45 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		//Log.d(TAG, "onSaveInstanceState " + indexOf + ", fake=" + fake + ", " + currentPathTitle + ", " + outState);
-		if (fake) {
-			return;
-		}
 		if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
 			AndroidUtils.setSharedPreference(activity, "ZipFrag.SPAN_COUNTR", spanCount);
 		} else {
 			AndroidUtils.setSharedPreference(activity, "ZipFrag.SPAN_COUNTL", spanCount);
 		}
+		outState.putParcelableArrayList("dataSourceL1", new ArrayList<ZipEntry>(dataSourceL1));
+
+		outState.putParcelableArrayList("selectedInList1", new ArrayList<ZipEntry>(selectedInList1));
+		outState.putParcelableArrayList("tempOriDataSourceL1", new ArrayList<ZipEntry>(tempOriDataSourceL1));
+		outState.putParcelableArrayList("tempSelectedInList1", new ArrayList<ZipEntry>(tempSelectedInList1));
 		
-		//Log.d(TAG, "SPAN_COUNT.ContentFrag" + activity.slideFrag.indexOf(this));
-		
-//		if (tempPreviewL2 != null) {
-//			outState.putString("tempPreviewL2", tempPreviewL2.path);
-//		}
+		outState.putParcelable("tempPreviewL2", tempPreviewL2);
+
 		outState.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
 		
-//		outState.putStringArrayList("selectedInList1", Util.collectionFile2StringArrayList(selectedInList1));
-//		outState.putStringArrayList("dataSourceL1", Util.collectionFile2StringArrayList(dataSourceL1));
-//		outState.putBoolean("searchMode", searchMode);
-//		outState.putString("searchVal", quicksearch.getText().toString());
-//		outState.putString("currentPathTitle", currentPathTitle);
+		outState.putBoolean("searchMode", searchMode);
+		outState.putString("searchVal", searchET.getText().toString());
+		outState.putBoolean("fake", fake);
+
 		outState.putBoolean("allCbx.isEnabled", allCbx.isEnabled());
+		outState.putBoolean("allCbx.isSelected", allCbx.isSelected());
+		final int size = selectedInList1.size();
+		if (size > 0) {
+			if (size == dataSourceL1.size()) {
+				outState.putInt("allCbx.imageResource", R.drawable.ic_accept);
+			} else {
+				outState.putInt("allCbx.imageResource", R.drawable.ready);
+			}
+		} else {
+			outState.putInt("allCbx.imageResource", R.drawable.dot);
+		}
 		outState.putString("curPath", curPath);
-		
+
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
         final int top = (vi == null) ? 0 : vi.getTop();
 		outState.putInt("index", index);
 		outState.putInt("top", top);
-		
+
 		super.onSaveInstanceState(outState);
 	}
 
@@ -1299,6 +1341,9 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			top = (vi == null) ? 0 : vi.getTop();
 		}
 		
+		gridLayoutManager = new GridLayoutManager(fragActivity, spanCount);
+		listView.setLayoutManager(gridLayoutManager);
+
 		listView.removeItemDecoration(dividerItemDecoration);
 		listView.invalidateItemDecorations();
 		if (spanCount == 1 || spanCount == 2 && slidingTabsFragment.width >= 0) {
@@ -1316,12 +1361,9 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			}
 		}
 		
-		gridLayoutManager = new GridLayoutManager(fragActivity, spanCount);
-		
 		srcAdapter = new ZipAdapter(this, dataSourceL1);
 		listView.setAdapter(srcAdapter);
 
-		listView.setLayoutManager(gridLayoutManager);
 		gridLayoutManager.scrollToPositionWithOffset(scrollPosition, top);
 	}
 

@@ -991,9 +991,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-		Log.d(TAG, "configurationChanged " + configurationChanged);
-        super.onConfigurationChanged(newConfig);
+		super.onConfigurationChanged(newConfig);
 		configurationChanged = true;
+        Log.d(TAG, "configurationChanged " + configurationChanged);
         // Pass any configuration change to the drawer toggls
         if (mDrawerToggle != null) 
 			mDrawerToggle.onConfigurationChanged(newConfig);
@@ -1009,6 +1009,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		outState.putString(EXTRA_FILTER_MIMETYPE, mimes);
 		outState.putBoolean(EXTRA_MULTI_SELECT, multiFiles);
 		outState.putStringArray(PREVIOUS_SELECTED_FILES, previousSelectedStr);
+		AndroidUtils.setSharedPreference(this, "biggerequalpanel", balance);
 		
 		outState.putBoolean("slideFrag1Selected", slideFrag1Selected);
 		outState.putInt("curContentFragIndex", (curContentFragIndex=slideFrag.realFragCount() == 1 ? 0 : slideFrag.indexOfMTabs(curContentFrag)+1));
@@ -1069,18 +1070,23 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 //		super.onStart();
 //	}
 
-//    @Override
-//    public void onResume() {
-//        Log.d(TAG, "onResume");
-//		super.onResume();
-//    }
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume");
+		super.onResume();
+		curContentFrag = (ContentFragment) slideFrag.getFragmentIndex(curContentFragIndex);
+		curSelectionFrag = (ContentFragment) slideFrag.getFrag(Frag.TYPE.SELECTION);
+		if (slideFrag2 != null) {
+			curExplorerFrag = (ContentFragment) slideFrag2.getFragmentIndex(curExplorerFragIndex);
+			curSelectionFrag2 = (ContentFragment) slideFrag2.getFrag(Frag.TYPE.SELECTION);
+			Log.d(TAG, "onResume curContentFrag2 " + curSelectionFrag2);
+		}
+	}
 
 	@Override
 	protected void onPostResume() {
 		Log.d(TAG, "onPostResume");
 		super.onPostResume();
-		curContentFrag = (ContentFragment) slideFrag.getFragmentIndex(curContentFragIndex);
-		curSelectionFrag = (ContentFragment) slideFrag.getFrag(Frag.TYPE.SELECTION);
 		while (!deferredFragmentTransactions.isEmpty()) {
 			deferredFragmentTransactions.remove().commit();
 		}
@@ -1088,12 +1094,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			deferredActions.remove().run();
 		}
 		//Log.d(TAG, "onResume curContentFrag " + curContentFrag);
-		if (slideFrag2 != null) {
-			curExplorerFrag = (ContentFragment) slideFrag2.getFragmentIndex(curExplorerFragIndex);
-			curSelectionFrag2 = (ContentFragment) slideFrag2.getFrag(Frag.TYPE.SELECTION);
-			Log.d(TAG, "onResume curContentFrag2 " + curSelectionFrag2);
-		}
-
 		scheduleHandler.postDelayed(runSchedule, 5000);
 
         final IntentFilter newFilter = new IntentFilter();
@@ -2420,7 +2420,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				final Uri data = newIntent.getData();
 				final String path = newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH);
 				final String action = newIntent.getAction();
-				Log.i(TAG, "onNewIntent 2 " + path + ", " + newIntent + ", " + newIntent.getExtras());
+				Log.i(TAG, "onNewIntent 2 path " + path + ", " + newIntent + ", " + newIntent.getExtras());
 				if (path != null) {
 					final File file = new File(path);
 					if (file.isDirectory()) {

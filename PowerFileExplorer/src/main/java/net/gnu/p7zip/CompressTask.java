@@ -148,8 +148,8 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		mNotifyMgr.notify(mNotificationId, mBuilder.build());//mBuilder.setStyle(big)
 
 		if (compressFrag.adapter != null) {
-		compressFrag.adapter.clear();
-		compressFrag.adapter.notifyDataSetChanged();
+			compressFrag.adapter.clear();
+			compressFrag.adapter.notifyDataSetChanged();
 		}
 	}
 

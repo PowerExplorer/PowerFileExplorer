@@ -138,8 +138,7 @@ public class LayoutElement implements Parcelable {
         path = im.readString();
         permissions = im.readString();
         symlink = im.readString();
-        int j = im.readInt();
-        isDirectory = j != 0;
+        isDirectory = im.readInt() != 0;
         lastModified = im.readLong();
         //int i = im.readInt();
         //header = i != 0;

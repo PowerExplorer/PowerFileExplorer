@@ -149,7 +149,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	
 	@Override
 	public String toString() {
-		return "type " + type + ", " + slidingTabsFragment + ", fake=" + fake + ", suffix=" + suffix + ", mimes=" + mimes + ", multi=" + multiFiles + ", currentPathTitle " + currentPathTitle + ", " + super.toString();
+		return type + ", " + slidingTabsFragment + ", fake=" + fake + ", currentPathTitle " + currentPathTitle + ", suffix=" + suffix + ", mimes=" + mimes + ", multi=" + multiFiles;
 	}
 
 	public static ContentFragment newInstance(final SlidingTabsFragment sliding, final String dir, final String suffix, final String mimes, final boolean multiFiles, Bundle bundle) {//, int se) {//FragmentActivity ctx, 
@@ -293,7 +293,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	@Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
 							 final Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView fake=" + fake + ", " + savedInstanceState + ", currentPathTitle " + currentPathTitle);
+        //Log.d(TAG, "onCreateView fake=" + fake + ", " + savedInstanceState + ", currentPathTitle " + currentPathTitle);
 		super.onCreateView(inflater, container, savedInstanceState);
 		return inflater.inflate(R.layout.pager_item, container, false);
     }
@@ -301,7 +301,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	@Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         final Bundle args = getArguments();
-		Log.d(TAG, "onViewCreated " + toString() + ", savedInstanceState=" + savedInstanceState + ", args " + args);
+		//Log.d(TAG, "onViewCreated " + toString() + ", savedInstanceState=" + savedInstanceState + ", args " + args);
 		super.onViewCreated(view, savedInstanceState);
 
 		final int fragIndex;
@@ -326,7 +326,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTL", 1);
 			}
 		}
-		Log.d(TAG, "onViewCreated index " + fragIndex + ", " + toString() + ", " + "args=" + args);
+		Log.d(TAG, "onViewCreated index " + fragIndex + ", dataSourceL1 " + dataSourceL1.size() + ", " + toString() + ", " + ", savedInstanceState=" + savedInstanceState + "args=" + args);
 		//Log.d(TAG, "sharedPreference " + fragIndex + ", " + order);
 
 		SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
@@ -390,33 +390,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			commands.setVisibility(View.VISIBLE);
 			horizontalDivider6.setVisibility(View.VISIBLE);
 		}
-
-		if (type == Frag.TYPE.SELECTION) {
-			removeBtn = (ImageButton) view.findViewById(R.id.remove);
-			removeAllBtn = (ImageButton) view.findViewById(R.id.removeAll);
-			addBtn = (ImageButton) view.findViewById(R.id.add);
-			addAllBtn = (ImageButton) view.findViewById(R.id.addAll);
-			selectionCommandsLayout = (LinearLayout) view.findViewById(R.id.selectionCommandsLayout);
-			topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommandsLayout));
-			dirMore.setVisibility(View.GONE);
-			if (dataSourceL1.size() == 0) {
-				searchButton.setEnabled(false);
-				nofilelayout.setVisibility(View.VISIBLE);
-				mSwipeRefreshLayout.setVisibility(View.GONE);
-			} else {
-				searchButton.setEnabled(true);
-				nofilelayout.setVisibility(View.GONE);
-				mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-			}
-			removeBtn.setOnClickListener(this);
-			removeAllBtn.setOnClickListener(this);
-			addBtn.setOnClickListener(this);
-			addAllBtn.setOnClickListener(this);
-		} else {
-			dirMore.setOnClickListener(this);
-			topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
-		}
-
 
 		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -524,15 +497,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 		}
 
-		String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
-		suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
-		suffixSpliter = ".*?(" + suffixSpliter + ")";
-		suffixPattern = Pattern.compile(suffixSpliter);
-		if (!multiFiles) {
-			allCbx.setVisibility(View.GONE);
-		}
-		mimes = mimes == null ? "*/*" : mimes.toLowerCase();
-
 		allName.setText("Name");
 		allSize.setText("Size");
 		allDate.setText("Date");
@@ -571,39 +535,106 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				allName.setText("Name ▲");
 				break;
 		}
+		setRecyclerViewLayoutManager();
+		if (savedInstanceState != null) {//EXTRA_DIR_PATH
+		
+			if (dataSourceL1.size() == 0) {
 
-		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
-		if (savedInstanceState != null && savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {//EXTRA_DIR_PATH
-			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-			suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-			mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
-			multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-			//currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
+				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
+				multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+				type = savedInstanceState.getInt("type") == TYPE.EXPLORER.ordinal() ? TYPE.EXPLORER : TYPE.SELECTION;
+				fake = savedInstanceState.getBoolean("fake", false);
 
-			allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
-			setRecyclerViewLayoutManager();
-			//Log.d(TAG, "configurationChanged " + activity.configurationChanged);
-			if (type == Frag.TYPE.EXPLORER) {//} && !fake) {// && !activity.configurationChanged
-				//updateDir(currentPathTitle, ContentFragment.this);
-				setDirectoryButtons();
-			}
-			final int index  = savedInstanceState.getInt("index");
-			final int top  = savedInstanceState.getInt("top");
-			//Log.d(TAG, "index = " + index + ", " + top);
-			gridLayoutManager.scrollToPositionWithOffset(index, top);
-		} else {
-			//srcAdapter = new ArrAdapter(dataSourceL1);
-			//listView1.setAdapter(srcAdapter);
-			setRecyclerViewLayoutManager();
-			if (type == Frag.TYPE.EXPLORER && !fake) {
-				if (currentPathTitle != null) {
-					changeDir(currentPathTitle, false);
-				} else if (searchMode) {
-					searchMode = !searchMode;
+				searchMode = savedInstanceState.getBoolean("searchMode", false);
+
+				allCbx.setEnabled(savedInstanceState.getBoolean("allCbx.isEnabled"));
+				allCbx.setSelected(savedInstanceState.getBoolean("allCbx.isSelected"));
+				allCbx.setImageResource(savedInstanceState.getInt("allCbx.imageResource", R.drawable.dot));
+
+				tempPreviewL2 = savedInstanceState.getParcelable("tempPreviewL2");
+				
+				selectedInList1.clear();
+				selectedInList1.addAll(savedInstanceState.getParcelableArrayList("selectedInList1"));
+				tempSelectedInList1.clear();
+				tempSelectedInList1.addAll(savedInstanceState.getParcelableArrayList("tempSelectedInList1"));
+				tempOriDataSourceL1.clear();
+				tempOriDataSourceL1.addAll(savedInstanceState.getParcelableArrayList("tempOriDataSourceL1"));
+				if (type == Frag.TYPE.EXPLORER) {//} && !fake) {// && !activity.configurationChanged
+					//updateDir(currentPathTitle, ContentFragment.this);
+					setDirectoryButtons();
+					dataSourceL2 = savedInstanceState.getParcelableArrayList("dataSourceL2");
+				}
+				if (searchMode) {
+					searchET.removeTextChangedListener(textSearch);
 					manageSearchUI(searchMode);
+					searchET.setText(savedInstanceState.getString("searchVal", ""));
+					searchET.addTextChangedListener(textSearch);
+					dataSourceL1.clear();
+					dataSourceL1.addAll((List<LayoutElement>)savedInstanceState.getParcelableArrayList("dataSourceL1"));
+					//setRecyclerViewLayoutManager();
+				} else if (type == Frag.TYPE.SELECTION) {
+					dataSourceL1.clear();
+					dataSourceL1.addAll((List<LayoutElement>)savedInstanceState.getParcelableArrayList("dataSourceL1"));
+					//setRecyclerViewLayoutManager();
+				} else {
+					//setRecyclerViewLayoutManager();
 					changeDir(currentPathTitle, false);
 				}
+				final int index  = savedInstanceState.getInt("index");
+				final int top  = savedInstanceState.getInt("top");
+				//Log.d(TAG, "index = " + index + ", " + top);
+				gridLayoutManager.scrollToPositionWithOffset(index, top);
 			}
+		} else {// when new tab EXPLORER or SELECTION
+			//setRecyclerViewLayoutManager();
+			if (type == Frag.TYPE.EXPLORER && !fake) {
+				if (searchMode) {
+					searchMode = !searchMode;
+					manageSearchUI(searchMode);
+				}
+				changeDir(currentPathTitle, false);
+			}
+		}
+
+		if ("*".equals(suffix)) {
+			suffixPattern = Pattern.compile(".+");
+		} else {
+			String suffixSpliter = suffix.replaceAll("[;\\s\\*\\.\\\\b]+", "|");
+			suffixSpliter = suffixSpliter.startsWith("|") ? suffixSpliter.substring(1) : suffixSpliter;
+			suffixSpliter = ".*?(" + suffixSpliter + ")";
+			suffixPattern = Pattern.compile(suffixSpliter);
+		}
+		Log.d(TAG, "onViewCreated suffixSpliter " + suffixPattern + ", " + toString() + ", " + ", savedInstanceState=" + savedInstanceState + "args=" + args);
+		if (!multiFiles) {
+			allCbx.setVisibility(View.GONE);
+		}
+		mimes = mimes == null ? "*/*" : mimes.toLowerCase();
+		if (type == Frag.TYPE.SELECTION) {
+			removeBtn = (ImageButton) view.findViewById(R.id.remove);
+			removeAllBtn = (ImageButton) view.findViewById(R.id.removeAll);
+			addBtn = (ImageButton) view.findViewById(R.id.add);
+			addAllBtn = (ImageButton) view.findViewById(R.id.addAll);
+			selectionCommandsLayout = (LinearLayout) view.findViewById(R.id.selectionCommandsLayout);
+			topflipper.setDisplayedChild(topflipper.indexOfChild(selectionCommandsLayout));
+			dirMore.setVisibility(View.GONE);
+			if (dataSourceL1.size() == 0) {
+				searchButton.setEnabled(false);
+				nofilelayout.setVisibility(View.VISIBLE);
+				mSwipeRefreshLayout.setVisibility(View.GONE);
+			} else {
+				searchButton.setEnabled(true);
+				nofilelayout.setVisibility(View.GONE);
+				mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+			}
+			removeBtn.setOnClickListener(this);
+			removeAllBtn.setOnClickListener(this);
+			addBtn.setOnClickListener(this);
+			addAllBtn.setOnClickListener(this);
+		} else {
+			dirMore.setOnClickListener(this);
+			topflipper.setDisplayedChild(topflipper.indexOfChild(scrolltext));
 		}
 		updateColor(view);
 	}
@@ -646,15 +677,25 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		//Log.d(TAG, "onSaveInstanceState " + indexOf + ", fake=" + fake + ", " + currentPathTitle + ", " + outState);
-		if (fake) {
-			return;
+		outState.putInt("type", type.ordinal());
+		if (searchMode || type == Frag.TYPE.SELECTION) {
+			outState.putParcelableArrayList("dataSourceL1", new ArrayList<LayoutElement>(dataSourceL1));
 		}
+		outState.putParcelableArrayList("selectedInList1", new ArrayList<LayoutElement>(selectedInList1));
+		outState.putParcelableArrayList("tempOriDataSourceL1", new ArrayList<LayoutElement>(tempOriDataSourceL1));
+		outState.putParcelableArrayList("tempSelectedInList1", new ArrayList<LayoutElement>(tempSelectedInList1));
 		if (type == Frag.TYPE.EXPLORER) {
 			final int fragIndex = slidingTabsFragment.indexOfMTabs(this);
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
 				AndroidUtils.setSharedPreference(activity, "ContentFrag.SPAN_COUNT" + fragIndex, spanCount);
+				if (activity.curSelectionFrag2 != null) {
+					outState.putParcelableArrayList("dataSourceL2", new ArrayList<LayoutElement>(activity.curSelectionFrag2.dataSourceL1));
+				}
 			} else {
 				AndroidUtils.setSharedPreference(activity, "ExplorerFrag.SPAN_COUNT" + fragIndex, spanCount);
+				if (activity.curSelectionFrag != null) {
+					outState.putParcelableArrayList("dataSourceL2", new ArrayList<LayoutElement>(activity.curSelectionFrag.dataSourceL1));
+				}
 			} 
 		} else {
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT) {
@@ -663,22 +704,28 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				AndroidUtils.setSharedPreference(activity, "ContentFrag2.SPAN_COUNTL", spanCount);
 			}
 		}
-		//Log.d(TAG, "SPAN_COUNT.ContentFrag" + activity.slideFrag.indexOf(this));
+		outState.putParcelable("tempPreviewL2", tempPreviewL2);
 		
-//		if (tempPreviewL2 != null) {
-//			outState.putString("tempPreviewL2", tempPreviewL2.path);
-//		}
 		outState.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
 		outState.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, suffix);
 		outState.putString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, mimes);
 		outState.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, multiFiles);
-//		outState.putStringArrayList("selectedInList1", Util.collectionFile2StringArrayList(selectedInList1));
-//		outState.putStringArrayList("dataSourceL1", Util.collectionFile2StringArrayList(dataSourceL1));
-//		outState.putBoolean("searchMode", searchMode);
-//		outState.putString("searchVal", quicksearch.getText().toString());
-//		outState.putString("currentPathTitle", currentPathTitle);
-		outState.putBoolean("allCbx.isEnabled", allCbx.isEnabled());
+		outState.putBoolean("searchMode", searchMode);
+		outState.putString("searchVal", searchET.getText().toString());
+		outState.putBoolean("fake", fake);
 		
+		outState.putBoolean("allCbx.isEnabled", allCbx.isEnabled());
+		outState.putBoolean("allCbx.isSelected", allCbx.isSelected());
+		final int size = selectedInList1.size();
+		if (size > 0) {
+			if (size == dataSourceL1.size()) {
+				outState.putInt("allCbx.imageResource", R.drawable.ic_accept);
+			} else {
+				outState.putInt("allCbx.imageResource", R.drawable.ready);
+			}
+		} else {
+			outState.putInt("allCbx.imageResource", R.drawable.dot);
+		}
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
         final int top = (vi == null) ? 0 : vi.getTop();
@@ -2080,7 +2127,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			final View vi = listView.getChildAt(0); 
 			top = (vi == null) ? 0 : vi.getTop();
 		}
-		//final Context context = getContext();
+		
+		gridLayoutManager = new GridLayoutManager(fragActivity, spanCount);
+		listView.setLayoutManager(gridLayoutManager);
+
 		listView.removeItemDecoration(dividerItemDecoration);
 		listView.invalidateItemDecorations();
 		if (spanCount == 1 || spanCount == 2 && slidingTabsFragment.width >= 0) {
@@ -2098,12 +2148,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 		}
 		
-		gridLayoutManager = new GridLayoutManager(fragActivity, spanCount);
-		
 		srcAdapter = new ArrAdapter(this, dataSourceL1);
 		listView.setAdapter(srcAdapter);
 
-		listView.setLayoutManager(gridLayoutManager);
 		gridLayoutManager.scrollToPositionWithOffset(scrollPosition, top);
 	}
 
@@ -2257,7 +2304,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			if (currentPathTitle == null) {
 				return dataSourceL1a;
 			}
-			Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + openMode + ", " + ContentFragment.this);
+			Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + "suffix=" + suffix + ", suffixPattern=" + suffixPattern + ", " + openMode + ", " + ContentFragment.this);
 			folder_count = 0;
 			file_count = 0;
 
@@ -2432,6 +2479,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						String fName;
 						boolean isDirectory;
 						final ArrayList<String> hiddenfiles = dataUtils.getHiddenfiles();
+						//Log.d(TAG, "suffix=" + suffix + ", suffixPattern=" + suffixPattern);
 						for (BaseFile f : files) {
 							fName = f.getName();
 							isDirectory = f.isDirectory();
@@ -2446,7 +2494,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 								continue;
 							}
 							if (!hiddenfiles.contains(f.getPath())) {
-
 								//Log.d(TAG, "f.f=" + f.f + ", mimes=" + mimes + ", suffix=" + suffix + ", getMimeType=" + MimeTypes.getMimeType(f.f) + ", " + ((mimes + "").indexOf(MimeTypes.getMimeType(f.f) + "") >= 0));
 								if (isDirectory) {
 									folder_count++;
@@ -2556,7 +2603,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				selectionStatusTV.setText(selectedInList1.size() 
 										 + "/" + dataSourceL1.size());
 			}
-			Log.d(TAG, "LoadFiles.onPostExecute " + currentPathTitle);
+			Log.d(TAG, "LoadFiles.onPostExecute " + currentPathTitle + ", " + slidingTabsFragment.side + ", dataSourceL1=" + dataSourceL1.size() + ", srcAdapter=" + srcAdapter.getItemCount() + ", same Adapter " + (listView.getAdapter() == srcAdapter) + ", LayoutManager " + listView.getLayoutManager().getItemCount() + ", Visibility " + listView.getVisibility());
 
 			updateDir(currentPathTitle);
 			mSwipeRefreshLayout.setRefreshing(false);

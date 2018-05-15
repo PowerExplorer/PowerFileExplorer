@@ -78,6 +78,7 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
 	
 	public FTPServerFragment() {
 		type = Frag.TYPE.FTP;
+		title = "FTP Server";
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 	@Override
 	public String toString() {
-		return "side=" + side + ", pageSelected=" + pageSelected + ", width=" + width;// + ", mTabs=" + mTabs;
+		return side + ", pageSelected=" + pageSelected + ", width=" + width;
 	}
 
 	@Override
@@ -98,6 +98,9 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				mViewPager.setCurrentItem(pageSelected);
 			}
 		} else {
+			final int s  = savedInstanceState.getInt("side", 0);
+			side = (s == 0) ? Side.LEFT : ((s == 1) ? Side.RIGHT : Side.MONO);
+			width = savedInstanceState.getInt("width", 0);
 			mTabs.clear();
 			final List<Fragment> fragments = childFragmentManager.getFragments();
 			final String firstTag = savedInstanceState.getString("fake0");
@@ -788,6 +791,8 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					outState.putString("fakeEnd", mTabs.get(mTabs.size() - 1).fakeFrag.getTag());
 				}
 			}
+			outState.putInt("width", width);
+			outState.putInt("side", side.ordinal());
 			outState.putInt("pos", mViewPager.getCurrentItem());
 		} catch (Exception e) {
 			// Logger.log(e,"puttingtosavedinstance",getActivity());
