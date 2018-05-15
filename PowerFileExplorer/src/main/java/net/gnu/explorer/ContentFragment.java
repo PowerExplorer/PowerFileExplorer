@@ -535,11 +535,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				allName.setText("Name ▲");
 				break;
 		}
+		
 		setRecyclerViewLayoutManager();
 		if (savedInstanceState != null) {//EXTRA_DIR_PATH
-		
 			if (dataSourceL1.size() == 0) {
-
 				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
 				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
@@ -2305,9 +2304,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				return dataSourceL1a;
 			}
 			Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + "suffix=" + suffix + ", suffixPattern=" + suffixPattern + ", " + openMode + ", " + ContentFragment.this);
+			
 			folder_count = 0;
 			file_count = 0;
-
 			if (openMode == OpenMode.UNKNOWN) {
 				HFile hFile = new HFile(OpenMode.UNKNOWN, path);
 				hFile.generateMode(activity);
@@ -2527,8 +2526,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					}
 					break;
 			}
-			if (dataSourceL1a != null) //} && !(openMode == OpenMode.CUSTOM && ((currentPathTitle).equals("5") || (currentPathTitle).equals("6"))))
-				Collections.sort(dataSourceL1a, fileListSorter);
+			//if (dataSourceL1a != null) //} && !(openMode == OpenMode.CUSTOM && ((currentPathTitle).equals("5") || (currentPathTitle).equals("6"))))
+			Collections.sort(dataSourceL1a, fileListSorter);
 			
 //			if (openMode != OpenMode.CUSTOM)
 //				DataUtils.addHistoryFile(currentPathTitle);

@@ -99,7 +99,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			}
 		} else {
 			final int s  = savedInstanceState.getInt("side", 0);
-			side = (s == 0) ? Side.LEFT : ((s == 1) ? Side.RIGHT : Side.MONO);
 			width = savedInstanceState.getInt("width", 0);
 			mTabs.clear();
 			final List<Fragment> fragments = childFragmentManager.getFragments();
@@ -109,6 +108,10 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			PagerItem pagerItem;
 			Frag frag;
 			final int size = fragments.size();
+			FragmentTransaction ft = null;
+			if (side == null) {
+				ft = childFragmentManager.beginTransaction();
+			}
 			for (int i = 0; i < size; i++) {
 				tag = savedInstanceState.getString(i + "");
 				frag = (Frag) childFragmentManager.findFragmentByTag(tag);
@@ -116,16 +119,28 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					pagerItem = new PagerItem(frag);
 					//Log.d(TAG, "onViewCreated frag " + i + ", " + tag + ", " + frag.getTag() + ", " + pagerItem.dir + ", " + frag);
 					mTabs.add(pagerItem);
+					if (side == null) {
+						ft.remove(frag);
+					}
 				}
 			}
 			if (firstTag != null) {
-				mTabs.get(0).fakeFrag = (Frag) childFragmentManager.findFragmentByTag(firstTag);
-				mTabs.get(0).fakeFrag.slidingTabsFragment = this;
+				final SlidingTabsFragment.PagerItem get0 = mTabs.get(0);
+				get0.fakeFrag = (Frag) childFragmentManager.findFragmentByTag(firstTag);
+				get0.fakeFrag.slidingTabsFragment = this;
 				final SlidingTabsFragment.PagerItem last = mTabs.get((mTabs.size() - 1));
 				last.fakeFrag = (Frag) childFragmentManager.findFragmentByTag(lastTag);
 				last.fakeFrag.slidingTabsFragment = this;
+				if (side == null) {
+					ft.remove(get0.fakeFrag);
+					ft.remove(last.fakeFrag);
+				}
 			}
-
+			if (side == null) {
+				ft.commitNow();
+			}
+			side = (s == 0) ? Side.LEFT : ((s == 1) ? Side.RIGHT : Side.MONO);
+			
 			//Log.d(TAG, "mTabs=" + mTabs);
 			//Log.d(TAG, "fragments=" + fragments);
 			pagerAdapter = new PagerAdapter(childFragmentManager);
