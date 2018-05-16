@@ -67,9 +67,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		Log.d(TAG, "onViewCreated side " + side + ", args " + args + ", savedInstanceState " + savedInstanceState);
 		setRetainInstance(true);
 		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-		if (childFragmentManager == null) {
-			childFragmentManager = getChildFragmentManager();
-		}
+		childFragmentManager = getChildFragmentManager();
 
 		if (savedInstanceState == null) {
 			if (args == null) {
@@ -98,8 +96,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				mViewPager.setCurrentItem(pageSelected);
 			}
 		} else {
-			final int s  = savedInstanceState.getInt("side", 0);
-			width = savedInstanceState.getInt("width", 0);
 			mTabs.clear();
 			final List<Fragment> fragments = childFragmentManager.getFragments();
 			final String firstTag = savedInstanceState.getString("fake0");
@@ -137,9 +133,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				}
 			}
 			if (side == null) {
-				ft.commitNow();
+				ft.commitNowAllowingStateLoss();
+				final int s  = savedInstanceState.getInt("side", 0);
+				width = savedInstanceState.getInt("width", 0);
+				side = (s == Side.LEFT.ordinal()) ? Side.LEFT : ((s == Side.RIGHT.ordinal()) ? Side.RIGHT : Side.MONO);
 			}
-			side = (s == 0) ? Side.LEFT : ((s == 1) ? Side.RIGHT : Side.MONO);
 			
 			//Log.d(TAG, "mTabs=" + mTabs);
 			//Log.d(TAG, "fragments=" + fragments);

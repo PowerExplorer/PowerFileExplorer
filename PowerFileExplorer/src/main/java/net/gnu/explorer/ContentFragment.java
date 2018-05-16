@@ -536,9 +536,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				break;
 		}
 		
-		setRecyclerViewLayoutManager();
 		if (savedInstanceState != null) {//EXTRA_DIR_PATH
-			if (dataSourceL1.size() == 0) {
+			if (currentPathTitle.length() == 0) {
 				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
 				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
@@ -572,22 +571,24 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					searchET.addTextChangedListener(textSearch);
 					dataSourceL1.clear();
 					dataSourceL1.addAll((List<LayoutElement>)savedInstanceState.getParcelableArrayList("dataSourceL1"));
-					//setRecyclerViewLayoutManager();
+					setRecyclerViewLayoutManager();
 				} else if (type == Frag.TYPE.SELECTION) {
 					dataSourceL1.clear();
 					dataSourceL1.addAll((List<LayoutElement>)savedInstanceState.getParcelableArrayList("dataSourceL1"));
-					//setRecyclerViewLayoutManager();
+					setRecyclerViewLayoutManager();
 				} else {
-					//setRecyclerViewLayoutManager();
+					setRecyclerViewLayoutManager();
 					changeDir(currentPathTitle, false);
 				}
 				final int index  = savedInstanceState.getInt("index");
 				final int top  = savedInstanceState.getInt("top");
 				//Log.d(TAG, "index = " + index + ", " + top);
 				gridLayoutManager.scrollToPositionWithOffset(index, top);
+			} else {
+				setRecyclerViewLayoutManager();
 			}
 		} else {// when new tab EXPLORER or SELECTION
-			//setRecyclerViewLayoutManager();
+			setRecyclerViewLayoutManager();
 			if (type == Frag.TYPE.EXPLORER && !fake) {
 				if (searchMode) {
 					searchMode = !searchMode;
@@ -1056,7 +1057,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume index " + slidingTabsFragment /*slidingTabsFragment.indexOfMTabs(this) + ", " + slidingTabsFragment.side*/ + ", " + type + ", fake=" + fake + ", currentPathTitle=" + currentPathTitle);
+        Log.d(TAG, "onResume " + type + ", fake=" + fake + ", " + slidingTabsFragment /*slidingTabsFragment.indexOfMTabs(this) + ", " + slidingTabsFragment.side*/ + ", currentPathTitle=" + currentPathTitle);
 		super.onResume();
 		fragActivity.registerReceiver(receiver2, new IntentFilter("loadlist"));
 

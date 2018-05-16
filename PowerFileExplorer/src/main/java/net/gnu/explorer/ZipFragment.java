@@ -470,7 +470,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
 		if (savedInstanceState != null) {//EXTRA_DIR_PATH
-			if (dataSourceL1.size() == 0) {
+			if (currentPathTitle.length() == 0) {
 
 				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 				curPath = (String) savedInstanceState.get("curPath");
