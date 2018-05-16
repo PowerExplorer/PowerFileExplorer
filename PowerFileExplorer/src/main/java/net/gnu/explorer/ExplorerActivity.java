@@ -543,8 +543,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			previousSelectedStr = intent.getStringArrayExtra(PREVIOUS_SELECTED_FILES);
 			Log.d(TAG, "previousSelectedStr " + Util.arrayToString(previousSelectedStr, true, "\n"));
 			
-			slideFrag = new SlidingTabsFragment();
-			slideFrag.side = SlidingTabsFragment.Side.LEFT;
+			slideFrag = SlidingTabsFragment.newInstance(SlidingTabsFragment.Side.LEFT);
+			
 			final Uri data = intent.getData();
 			dir = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : intent.getStringExtra(EXTRA_ABSOLUTE_PATH) ;
 			if (dir != null) {
@@ -627,8 +627,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		if (multiFiles) {
 			horizontalDivider5.setBackgroundColor(DIVIDER_COLOR);
 			if (savedInstanceState == null || supportFragmentManager.findFragmentByTag("slideFrag2") == null) {
-				slideFrag2 = new SlidingTabsFragment();
-				slideFrag2.side = SlidingTabsFragment.Side.RIGHT;
+				slideFrag2 = SlidingTabsFragment.newInstance(SlidingTabsFragment.Side.RIGHT);
 				if (intent.getStringExtra(EXTRA_ABSOLUTE_PATH) != null ||
 					!"*".equals(suffix) || mimes != null || previousSelectedStr != null) {
 					Log.d(TAG, "slideFrag2.addTab(previousSelectedStr) " + dir + ", " + suffix + ", " + mimes + ", " + multiFiles);

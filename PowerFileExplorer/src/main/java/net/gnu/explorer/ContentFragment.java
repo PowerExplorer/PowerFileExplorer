@@ -537,7 +537,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 		
 		if (savedInstanceState != null) {//EXTRA_DIR_PATH
-			if (currentPathTitle.length() == 0) {
+			if (dataSourceL1.size() == 0) {//cannot use currentPathTitle for checking
 				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
 				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
@@ -560,7 +560,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				tempOriDataSourceL1.clear();
 				tempOriDataSourceL1.addAll(savedInstanceState.getParcelableArrayList("tempOriDataSourceL1"));
 				if (type == Frag.TYPE.EXPLORER) {//} && !fake) {// && !activity.configurationChanged
-					//updateDir(currentPathTitle, ContentFragment.this);
 					setDirectoryButtons();
 					dataSourceL2 = savedInstanceState.getParcelableArrayList("dataSourceL2");
 				}
@@ -585,6 +584,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				//Log.d(TAG, "index = " + index + ", " + top);
 				gridLayoutManager.scrollToPositionWithOffset(index, top);
 			} else {
+				if (type == Frag.TYPE.EXPLORER) {
+					setDirectoryButtons();
+				}
 				setRecyclerViewLayoutManager();
 			}
 		} else {// when new tab EXPLORER or SELECTION

@@ -470,7 +470,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 		//Log.d(TAG, "onViewCreated " + this + ", ctx=" + getContext());
 		if (savedInstanceState != null) {//EXTRA_DIR_PATH
-			if (currentPathTitle.length() == 0) {
+			setDirectoryButtons();
+			if (dataSourceL1.size() == 0) {//cannot use currentPathTitle for checking
 
 				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 				curPath = (String) savedInstanceState.get("curPath");
@@ -509,11 +510,12 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 					};
 					load(currentPathTitle, r);
 				}
-				setDirectoryButtons();
 				final int index  = savedInstanceState.getInt("index");
 				final int top  = savedInstanceState.getInt("top");
 				//Log.d(TAG, "index = " + index + ", " + top);
 				gridLayoutManager.scrollToPositionWithOffset(index, top);
+			} else {
+				setRecyclerViewLayoutManager();
 			}
 		} else {
 			setRecyclerViewLayoutManager();

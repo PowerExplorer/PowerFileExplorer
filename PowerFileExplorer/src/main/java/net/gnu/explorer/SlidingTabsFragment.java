@@ -44,8 +44,14 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 	private ArrayList<PagerItem> mTabs = new ArrayList<PagerItem>();
 	static final enum Side {LEFT, RIGHT, MONO};
-	Side side = Side.LEFT;
+	Side side;// = Side.LEFT;
 	int width;
+	
+	public static SlidingTabsFragment newInstance(Side side) {
+		final SlidingTabsFragment s = new SlidingTabsFragment();
+		s.side = side;
+		return s;
+	}
 
 	@Override
 	public String toString() {
@@ -133,10 +139,10 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				}
 			}
 			if (side == null) {
-				ft.commitNowAllowingStateLoss();
+				ft.commitNow();
 				final int s  = savedInstanceState.getInt("side", 0);
-				width = savedInstanceState.getInt("width", 0);
 				side = (s == Side.LEFT.ordinal()) ? Side.LEFT : ((s == Side.RIGHT.ordinal()) ? Side.RIGHT : Side.MONO);
+				width = savedInstanceState.getInt("width", 0);
 			}
 			
 			//Log.d(TAG, "mTabs=" + mTabs);
@@ -767,21 +773,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		}
 	}
 
-//	Bundle saveStates() {
-//		final Bundle b = new Bundle();
-//		final int size = mTabs.size();
-//		b.putInt("no", size);
-//		for (int i = 0; i < size; i++) {
-//			Frag createFragment = mTabs.get(i).createFragment(this);
-//			b.putString(ExplorerActivity.EXTRA_DIR_PATH + i, createFragment.currentPathTitle);
-//			b.putString(ExplorerActivity.EXTRA_SUFFIX + i, createFragment.suffix);
-//			b.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT + i, createFragment.multiFiles);
-//			Bundle bfrag = new Bundle();
-//			createFragment.onSaveInstanceState(bfrag);
-//			b.putBundle("frag" + i, bfrag);
-//		}
-//		b.putInt("pos", mViewPager.getCurrentItem());
-//		return b;
+//	@Override
+//	public void onResume() {
+//		Log.d(TAG, "onResume");
+//		super.onResume();
+//		notifyTitleChange();
 //	}
 
 	@Override
@@ -814,7 +810,12 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		//Log.d(TAG, "onSaveInstanceState2 " + outState + ", " + childFragmentManager);
 	}
 
-
+//	@Override 
+//	public void onDestroyView() {
+//		//mViewPager.setAdapter(null);
+//		super.onDestroyView();
+//	}
+	
 	public void notifyTitleChange() {
 		mSlidingHorizontalScroll.setViewPager(mViewPager);
 	}
