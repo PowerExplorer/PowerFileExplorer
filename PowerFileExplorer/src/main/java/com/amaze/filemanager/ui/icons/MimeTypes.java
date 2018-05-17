@@ -75,7 +75,13 @@ public final class MimeTypes {
 
         MIME_TYPES.put("epub", "application/epub+zip");
         MIME_TYPES.put("ibooks", "application/x-ibooks+zip");
-
+		MIME_TYPES.put("pdf", "application/pdf");
+		MIME_TYPES.put("xps", "application/vnd.ms-xpsdocument");
+		MIME_TYPES.put("oxps", "application/oxps");
+		MIME_TYPES.put("cbz", "application/x-cbz");
+		MIME_TYPES.put("fb2", "application/fb2");
+		
+		
         MIME_TYPES.put("ifb", "text/calendar");
         MIME_TYPES.put("eml", "message/rfc822");
         MIME_TYPES.put("msg", "application/vnd.ms-outlook");

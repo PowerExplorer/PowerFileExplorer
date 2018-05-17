@@ -18,7 +18,8 @@ import android.util.Log;
 import net.gnu.androidutil.*;
 import com.amaze.filemanager.utils.AppConfig;
 import net.gnu.texteditor.TextEditorActivity;
-import com.tekinarslan.sample.SampleActivity;
+import net.gnu.mupdf.viewer.DocumentActivity;
+import net.gnu.mupdf.viewer.app.LibraryActivity;
 
 public class ExplorerApplication extends JotaTextEditor {
 	
@@ -114,7 +115,7 @@ public class ExplorerApplication extends JotaTextEditor {
 			AndroidUtils.createShortCut(getApplicationContext(), TextEditorActivity.class, "Text Editor", R.drawable.textpng);
 			AndroidUtils.createShortCut(getApplicationContext(), MediaPlayerActivity.class, "Media Player", R.drawable.exo_banner);
 			AndroidUtils.createShortCut(getApplicationContext(), WebActivity.class, "WebView", R.drawable.html);
-			AndroidUtils.createShortCut(getApplicationContext(), SampleActivity.class, "PDF Viewer", R.drawable.pdf_icon);
+			AndroidUtils.createShortCut(getApplicationContext(), LibraryActivity.class, "PDF Viewer", R.drawable.pdf_icon);
 			AndroidUtils.setSharedPreference(this, "install_shortcut", true);
 		}
 //		AndroidUtils.copyAssetToDir(this, PRIVATE_PATH, "run_prettify.js");

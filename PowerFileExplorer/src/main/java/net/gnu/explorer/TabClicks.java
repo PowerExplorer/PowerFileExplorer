@@ -52,13 +52,6 @@ public class TabClicks {
 								Toast.makeText(ctx, "Maximum " + count + " tabs only", Toast.LENGTH_SHORT).show();
 							}
 						} 
-						if (fra.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-							fra.activity.curContentFragIndex = fra.activity.slideFrag.realFragCount() == 1 ? 0 : fra.activity.slideFrag.indexOfMTabs(fra.activity.curContentFrag) + 1;
-							//fra.activity.curSelectionFragIndex = fra.activity.slideFrag.getFragIndex(Frag.TYPE.SELECTION);
-						} else {
-							fra.activity.curExplorerFragIndex = fra.activity.slideFrag2.realFragCount() == 1 ? 0 : fra.activity.slideFrag2.indexOfMTabs(fra.activity.curExplorerFrag) + 1;
-							//fra.activity.curSelectionFragIndex2 = fra.activity.slideFrag2.getFragIndex(Frag.TYPE.SELECTION);
-						}
 						return true;
 					}
 				});

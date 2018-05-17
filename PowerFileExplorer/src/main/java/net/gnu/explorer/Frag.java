@@ -36,7 +36,6 @@ import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
 import com.amaze.filemanager.utils.files.Futils;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.demo.MediaPlayerFragment;
-import com.tekinarslan.sample.PdfFragment;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -93,7 +92,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		} else if (t == TYPE.TEXT) {
 			frag = TextFrag.newInstance(null, "Text", path);
 		} else if (t == TYPE.PDF) {
-			frag = new PdfFragment();
+			frag = new PDFFragment();
 		} else if (t == TYPE.WEB) {
 			frag = new WebFragment();
 //		} else if (t == TYPE.FBReader) {
@@ -301,7 +300,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		//Log.d(TAG, "onDetach " + title);
 		super.onDetach();
 		this.fragActivity = null;
-		this.activity = null;
+		//this.activity = null;
 	}
 
 	

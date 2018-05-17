@@ -190,7 +190,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public static final int FILES_REQUEST_CODE = 13;
 	public static final int SAVETO_REQUEST_CODE = 14;
 	public static final boolean MULTI_FILES = true;
-
+	public static final int OUTLINE_REQUEST_CODE = 15;
+	
 	/**
 	 * Select multi files and folders
 	*/
@@ -1121,11 +1122,18 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
 	@Override
     protected void onActivityResult(final int requestCode, final int responseCode, final Intent intent) {
-		Log.d(TAG, "onActivityResult: " + requestCode + ", " + intent);
+		Log.d(TAG, "onActivityResult: " + requestCode + ", " + responseCode + ", " + intent);
+		super.onActivityResult(requestCode, responseCode, intent);
 		mOnActivityResultTask = new Runnable() {
 			@Override
 			public void run() {
-				if (requestCode == FILES_REQUEST_CODE) {
+				if (requestCode == ExplorerActivity.OUTLINE_REQUEST_CODE) {
+					if (slideFrag1Selected) {
+						slideFrag.getCurrentFragment().onActivityResult(requestCode, responseCode, intent);
+					} else {
+						slideFrag2.getCurrentFragment().onActivityResult(requestCode, responseCode, intent);
+					}
+				} else if (requestCode == FILES_REQUEST_CODE) {
 					if (responseCode == Activity.RESULT_OK) {
 						List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
 						if (COMPRESS.equals(currentDialog)) {

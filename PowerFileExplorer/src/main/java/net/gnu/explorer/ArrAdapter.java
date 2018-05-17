@@ -807,8 +807,9 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			Log.d(TAG, "Single panel only");
 			return;
 		}
+		
 		final String mime = MimeTypes.getMimeType(f);
-		Log.d(TAG, fPath + "=" + mime);
+		Log.d(TAG, fPath + "=" + mime + ", " + ele.name + ",  pdf " + FileUtil.muPdfPattern.matcher(ele.name).matches());
 		//int i = 0;
 		int tabIndex1 = 0;
 		int tabIndex2 = 0;
@@ -909,21 +910,29 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 						}
 					}, 100);
 			}
-		} else if (mime.startsWith("application/pdf")) {
-			//pagerAdapter.getItem(i = Frag.TYPE.PDF.ordinal()).load(fPath);
+		} else if (FileUtil.muPdfPattern.matcher(ele.name).matches()) {
 			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.PDF);
 			if (tabIndex2 >= 0) {
 				pagerAdapter.getItem(tabIndex2).load(fPath);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.PDF, fPath);
-				contentFrag.listView.postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
-						}
-					}, 100);
 			}
+//		} else if (mime.startsWith("application/pdf")) {
+//			//pagerAdapter.getItem(i = Frag.TYPE.PDF.ordinal()).load(fPath);
+//			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.PDF);
+//			if (tabIndex2 >= 0) {
+//				pagerAdapter.getItem(tabIndex2).load(fPath);
+//				slidingTabsFragment.setCurrentItem(tabIndex2, true);
+//			} else {
+//				slidingTabsFragment.addTab(Frag.TYPE.PDF, fPath);
+//				contentFrag.listView.postDelayed(new Runnable() {
+//						@Override
+//						public void run() {
+//							pagerAdapter.getItem(slidingTabsFragment.pageSelected).load(fPath);
+//						}
+//					}, 100);
+//			}
 		} else if (mime.startsWith("image/svg+xml")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.TEXT.ordinal()).load(fPath);
 			//pagerAdapter.getItem(i = Frag.TYPE.PHOTO.ordinal()).load(fPath);

@@ -1759,50 +1759,54 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				optionsMenu.show();
 				break;
 			case R.id.copys:
-				activity.MOVE_PATH = null;
-				ArrayList<BaseFile> copies = new ArrayList<>();
-				for (LayoutElement le : selectedInList1) {//int i2 = 0; i2 < plist.size(); i2++
-					copies.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i2))
-				}
-				activity.COPY_PATH = copies;
-				activity.callback = null;
-				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {//type == -1
-					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
-					activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-					activity.curExplorerFrag.updateDelPaste();
-				} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {//type != -1
-					activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-					activity.curContentFrag.commands.setVisibility(View.VISIBLE);
-					activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-					activity.curContentFrag.updateDelPaste();
+				if (selectedInList1.size() > 0) {
+					activity.MOVE_PATH = null;
+					ArrayList<BaseFile> copies = new ArrayList<>();
+					for (LayoutElement le : selectedInList1) {//int i2 = 0; i2 < plist.size(); i2++
+						copies.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i2))
+					}
+					activity.COPY_PATH = copies;
+					activity.callback = null;
+					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {//type == -1
+						activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+						activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
+						activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+						activity.curExplorerFrag.updateDelPaste();
+					} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {//type != -1
+						activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+						activity.curContentFrag.commands.setVisibility(View.VISIBLE);
+						activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+						activity.curContentFrag.updateDelPaste();
+					}
 				}
 				break;
 			case R.id.cuts:
-				activity.COPY_PATH = null;
-				ArrayList<BaseFile> copie = new ArrayList<>();
-				for (LayoutElement le : selectedInList1) {//int i3 = 0; i3 < plist.size(); i3++
-					copie.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i3))
-				}
-				activity.MOVE_PATH = copie;
-				activity.callback = new Runnable() {
-					@Override
-					public void run() {
-						dataSourceL1.removeAll(selectedInList1);
-						selectedInList1.clear();
-						srcAdapter.notifyDataSetChanged();
+				if (selectedInList1.size() > 0) {
+					activity.COPY_PATH = null;
+					ArrayList<BaseFile> copie = new ArrayList<>();
+					for (LayoutElement le : selectedInList1) {//int i3 = 0; i3 < plist.size(); i3++
+						copie.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i3))
 					}
-				};
-				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
-					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
-					activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-					activity.curExplorerFrag.updateDelPaste();
-				} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {
-					activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-					activity.curContentFrag.commands.setVisibility(View.VISIBLE);
-					activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
-					activity.curContentFrag.updateDelPaste();
+					activity.MOVE_PATH = copie;
+					activity.callback = new Runnable() {
+						@Override
+						public void run() {
+							dataSourceL1.removeAll(selectedInList1);
+							selectedInList1.clear();
+							srcAdapter.notifyDataSetChanged();
+						}
+					};
+					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
+						activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+						activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
+						activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+						activity.curExplorerFrag.updateDelPaste();
+					} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {
+						activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+						activity.curContentFrag.commands.setVisibility(View.VISIBLE);
+						activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
+						activity.curContentFrag.updateDelPaste();
+					}
 				}
 				break;
 			case R.id.deletes_pastes:
@@ -1878,15 +1882,19 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //                activity.mainActivityHelper.extractFile(selectedInList1);
 //                break;
             case R.id.renames:
-				final BaseFile f = ((LayoutElement)selectedInList1.get(0)).generateBaseFile();
-				rename(f);
+				if (selectedInList1.size() > 0) {
+					final BaseFile f = ((LayoutElement)selectedInList1.get(0)).generateBaseFile();
+					rename(f);
+				}
 				break;
 			case R.id.compresss:
-				StringBuilder sb = new StringBuilder();
-				for (LayoutElement le : selectedInList1) {
-					sb.append(le.path).append("| ");
+				if (selectedInList1.size() > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (LayoutElement le : selectedInList1) {
+						sb.append(le.path).append("| ");
+					}
+					activity.compress(sb.toString(), activity.dir + "/" + new File(activity.dir).getName());
 				}
-				activity.compress(sb.toString(), activity.dir + "/" + new File(activity.dir).getName());
 				break;
 			case R.id.shares:
 				if (selectedInList1.size() > 0) {
@@ -1991,12 +1999,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				}
 				break;
 			case R.id.book:
-				DataUtils dataUtils = DataUtils.getInstance();
-				for (LayoutElement le : selectedInList1) {
-					dataUtils.addBook(new String[]{le.name, le.path}, true);
+				if (selectedInList1.size() > 0) {
+					DataUtils dataUtils = DataUtils.getInstance();
+					for (LayoutElement le : selectedInList1) {
+						dataUtils.addBook(new String[]{le.name, le.path}, true);
+					}
+					activity.refreshDrawer();
+					Toast.makeText(activity, activity.getResources().getString(R.string.bookmarksadded), Toast.LENGTH_LONG).show();
 				}
-				activity.refreshDrawer();
-				Toast.makeText(activity, activity.getResources().getString(R.string.bookmarksadded), Toast.LENGTH_LONG).show();
 				break;
 //			case R.id.encrypts:
 //				Log.d(TAG, "encrypts " + selectedInList1);
@@ -2025,10 +2035,12 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				updateList();
 				break;
 			case R.id.infos:
-				LayoutElement le = (LayoutElement) selectedInList1.get(0);
-				GeneralDialogCreation.showPropertiesDialogWithPermissions(le.generateBaseFile(),
-																		  le.permissions, activity, ThemedActivity.rootMode,
-																		  activity.getAppTheme());
+				if (selectedInList1.size() > 0) {
+					LayoutElement le = (LayoutElement) selectedInList1.get(0);
+					GeneralDialogCreation.showPropertiesDialogWithPermissions(le.generateBaseFile(),
+																			  le.permissions, activity, ThemedActivity.rootMode,
+																			  activity.getAppTheme());
+				}
 				break;
 		}
 	}
@@ -2286,9 +2298,16 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		loadList = new LoadFiles();
 		loadList.execute(curDir, doScroll);
 	}
+	
 	private class LoadFiles extends AsyncTask<Object, String, List<LayoutElement>> {
 
 		private Boolean doScroll;
+
+		@Override
+		protected void onCancelled() {
+			mSwipeRefreshLayout.setRefreshing(false);
+			super.onCancelled();
+		}
 		
 		@Override
 		protected void onPreExecute() {

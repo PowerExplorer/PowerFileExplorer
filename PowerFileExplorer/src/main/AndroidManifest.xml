@@ -70,6 +70,8 @@
 		android:theme="@style/appCompatLight"
       	android:hardwareAccelerated="true"
 		android:largeHeap="true"
+		android:testOnly="false" 
+		android:debuggable="true" 
 		android:configChanges="keyboardHidden|orientation|screenSize"
 	>
 
@@ -291,6 +293,48 @@
             </intent-filter>
 
         </activity>
+		
+		<activity
+			android:name="net.gnu.mupdf.viewer.DocumentActivity"
+			android:label="PDF Reader"
+		>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:mimeType="application/pdf" />
+				<data android:mimeType="application/vnd.ms-xpsdocument" />
+				<data android:mimeType="application/oxps" />
+				<data android:mimeType="application/x-cbz" />
+				<data android:mimeType="application/epub+zip" />
+				<data android:mimeType="text/xml" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:pathPattern=".*\\.pdf" />
+				<data android:pathPattern=".*\\.xps" />
+				<data android:pathPattern=".*\\.oxps" />
+				<data android:pathPattern=".*\\.cbz" />
+				<data android:pathPattern=".*\\.epub" />
+				<data android:pathPattern=".*\\.fb2" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="net.gnu.mupdf.viewer.OutlineActivity"
+			android:configChanges="orientation|screenSize|keyboardHidden"
+		>
+		</activity>
+		<activity
+			android:name="net.gnu.mupdf.viewer.app.LibraryActivity"
+			android:configChanges="orientation|screenSize|keyboardHidden"
+			>
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 
 		<!--<receiver android:name="com.commonsware.android.sysevents.boot.OnBootReceiver">
 		<intent-filter>
@@ -326,28 +370,6 @@
                 <data android:mimeType="application/x-chm"/>
 				<!--<data android:pathPattern=".*\.[cC][hH][mM]"/>-->
             </intent-filter>
-        </activity>
-		<activity
-            android:name="com.tekinarslan.sample.SampleActivity"
-			android:label="PDF Viewer"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="adjustResize">
-
-			<intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-				<action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.OPENABLE"/>
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<data android:scheme="http"/>
-				<data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="application/pdf"/>
-				<data android:pathPattern=".*\\.pdf"/>
-				<data android:pathPattern=".*\\.PDF"/>
-				<data android:pathPattern=".*\\.Pdf"/>
-            </intent-filter>
-
         </activity>
 
 		<!--activity android:name="net.gnu.explorer.ItemListActivity"

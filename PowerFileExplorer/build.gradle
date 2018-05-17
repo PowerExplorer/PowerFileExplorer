@@ -22,6 +22,7 @@ repositories {
 		url 'http://search.maven.org/'
 		url 'https://mvnrepository.com'
 		url 'https://dl.google.com/dl/android/maven2/'
+		//url 'http://maven.ghostscript.com'
 		
 		//url 'https://maven.google.com'
 		//https://dl-ssl.google.com/android/repository/repository-12.xml
@@ -49,9 +50,11 @@ repositories {
         dirs 'libs'
     }
 }
-	
+	//search method 	\n\s*[^\s\*/\{\}\(\);]*\s*[^\s\{\}\(\);/]*\s*[^\s\{\}\(\);/]*\s*[^\s;/\{\}\(\)]+\s+[^\s\.;,/\(\)\{\}]+\s*\([^=!\|\(\)\{\};/]*\)\s*\{
 dependencies{
     compile fileTree(dir: 'libs', include: ['*.jar'])
+	
+	//compile project(':mupdf-android-viewer-1.13.0/lib')
 	//compile project(':fbreader')
 	
 	//compile project(':api')
@@ -122,6 +125,13 @@ dependencies{
 	//compile 'com.android.support:support-dynamic-animation:27.1.1'
 	
 	
+	
+	
+	
+	//compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+	//compile 'com.daimajia.swipelayout:library:1.2.0+'
+	//compile 'com.artifex.mupdf:fitz:1.19.+'
+	//compile 'com.artifex.mupdf:viewer-old:1.19.+'
 	//compile 'com.github.BaselHorany:ProgressStatusBar:1.1.4+'
 	//compile 'com.github.alfredayibonte:QuestionnaireView:0.1.1+'
 	//compile 'com.xw.repo:xedittext:+'
