@@ -43,7 +43,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	int pageSelected = 1;
 
 	private ArrayList<PagerItem> mTabs = new ArrayList<PagerItem>();
-	static final enum Side {LEFT, RIGHT, MONO};
+	public static final enum Side {LEFT, RIGHT, MONO};
 	Side side;// = Side.LEFT;
 	int width;
 	

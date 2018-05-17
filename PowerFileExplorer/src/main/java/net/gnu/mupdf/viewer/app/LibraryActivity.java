@@ -25,6 +25,7 @@ import java.util.TimerTask;
 import com.artifex.mupdf.fitz.Document; /* for file name recognition */
 import net.gnu.mupdf.viewer.DocumentActivity;
 import net.gnu.explorer.R;
+import android.app.ActionBar;
 
 public class LibraryActivity extends ListActivity {
 	protected final int UPDATE_DELAY = 5000;
@@ -65,8 +66,11 @@ public class LibraryActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		/* Hide 'home' icon on old themes */
-		getActionBar().setDisplayShowHomeEnabled(false);
-
+		ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayShowHomeEnabled(false);
+		}
+		
 		prefs = getPreferences(Context.MODE_PRIVATE);
 
 		topDirectory = Environment.getExternalStorageDirectory();

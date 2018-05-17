@@ -1,23 +1,14 @@
 package net.gnu.texteditor;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ViewAnimator;
-
 import net.gnu.common.activities.SampleActivityBase;
-//import com.free.common.logger.Log;
-import net.gnu.common.logger.LogFragment;
-import net.gnu.common.logger.LogWrapper;
-import net.gnu.common.logger.MessageOnlyLogFilter;
 import net.gnu.explorer.R;
-
-import android.content.*;
-import android.view.*;
-import java.io.*;
-import android.util.*;
-import android.support.v4.app.*;
 import net.gnu.explorer.SlidingTabsFragment;
 
 /**
@@ -44,7 +35,7 @@ public class TextEditorActivity extends SampleActivityBase {//
 
 		supportFragmentManager = getSupportFragmentManager();
 		if (savedInstanceState == null) {
-            slideFrag = new SlidingTabsFragment();
+            slideFrag = SlidingTabsFragment.newInstance(SlidingTabsFragment.Side.LEFT);
         } else {
 			slideFrag = (SlidingTabsFragment) supportFragmentManager.findFragmentByTag("slideFrag");
 		}
