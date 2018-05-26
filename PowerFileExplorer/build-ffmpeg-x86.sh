@@ -27,25 +27,26 @@
 #  --enable-optimizations \
 #  --enable-lto \
 #  --enable-protocols \
+#  --pkg-config=/usr/local/bin/pkg-config
 #cd $FFMPEG_EXT_PATH/jni/ffmpeg
+#HOST_PLATFORM="linux-x86_64"
 pwd
-ls -l ${NDK_PATH}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86/bin/
+ls -l ${NDK_PATH}/toolchains/x86-4.9/prebuilt/linux-x86/bin/
 chmod 777 ./configure
 ls -l .
 ./configure \
-    --libdir=android-libs/armeabi-v7a \
-    --arch=arm \
-    --cpu=armv7-a \
-    --cross-prefix="${NDK_PATH}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86/bin/arm-linux-androideabi-" \
+    --libdir=android-libs/x86 \
+    --arch=x86 \
+    --cpu=i686 \
+    --cross-prefix="${NDK_PATH}/toolchains/x86-4.9/prebuilt/linux-x86/bin/i686-linux-android-" \
     --target-os=android \
-    --sysroot="${NDK_PATH}/platforms/android-9/arch-arm/" \
-    --extra-cflags="-march=armv7-a -mfloat-abi=softfp" \
-    --extra-ldflags="-Wl,--fix-cortex-a8" \
+    --sysroot="${NDK_PATH}/platforms/android-9/arch-x86/" \
     --extra-ldexeflags=-pie \
     --disable-static \
     --enable-shared \
-  --enable-asm \
+  --disable-asm \
   --enable-optimizations \
+  --enable-everything \
   --enable-decoders \
   --enable-encoders \
   --enable-hwaccels \
@@ -58,6 +59,7 @@ ls -l .
   --enable-outdevs \
   --enable-filters \
     --disable-doc \
+    --enable-htmlpages \
   --disable-debug \
   --enable-gpl \
   --enable-version3 \
@@ -69,11 +71,13 @@ ls -l .
   --enable-pixelutils \
   --enable-pthreads \
   --enable-hardcoded-tables \
-    --enable-symver \
+  --enable-jni \
+    --disable-symver \
     --enable-avdevice \
     --enable-avfilter \
     --enable-avformat \
     --enable-avcodec \
+    --enable-swresample \
     --enable-avresample \
     --enable-postproc \
     --enable-swscale \
@@ -84,6 +88,6 @@ ls -l .
     --enable-decoder=alac \
     && \
 make -j4 && \
-make install-libs
-
+make install-libs && \
+make clean
 

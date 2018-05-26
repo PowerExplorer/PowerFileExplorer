@@ -26,8 +26,10 @@
 #  --enable-hardcoded-tables \
 #  --enable-optimizations \
 #  --enable-lto \
-#  --enable-protocols \
+#  --enable-protocols \ 
+#  --pkg-config=/usr/local/bin/pkg-config
 #cd $FFMPEG_EXT_PATH/jni/ffmpeg
+#HOST_PLATFORM="linux-x86_64"
 pwd
 ls -l ${NDK_PATH}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86/bin/
 chmod 777 ./configure
@@ -44,8 +46,9 @@ ls -l .
     --extra-ldexeflags=-pie \
     --disable-static \
     --enable-shared \
-  --enable-asm \
+  --disable-asm \
   --enable-optimizations \
+  --enable-everything \
   --enable-decoders \
   --enable-encoders \
   --enable-hwaccels \
@@ -58,6 +61,7 @@ ls -l .
   --enable-outdevs \
   --enable-filters \
     --disable-doc \
+    --enable-htmlpages \
   --disable-debug \
   --enable-gpl \
   --enable-version3 \
@@ -69,11 +73,13 @@ ls -l .
   --enable-pixelutils \
   --enable-pthreads \
   --enable-hardcoded-tables \
-    --enable-symver \
+  --enable-jni \
+    --disable-symver \
     --enable-avdevice \
     --enable-avfilter \
     --enable-avformat \
     --enable-avcodec \
+    --enable-swresample \
     --enable-avresample \
     --enable-postproc \
     --enable-swscale \
@@ -84,6 +90,6 @@ ls -l .
     --enable-decoder=alac \
     && \
 make -j4 && \
-make install-libs
-
+make install-libs && \
+make clean
 
