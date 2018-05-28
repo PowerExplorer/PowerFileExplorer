@@ -661,7 +661,7 @@ public class HtmlUtil {
 
 	public static final List<String> NOT_UTF8_CHARS = new LinkedList<String>();
 
-	public static final List<KeyArrayEntry> UNIQUE_CHARS_PROP = new LinkedList<KeyArrayEntry>();
+	public static final List<ComparableEntry<String, String[]>> UNIQUE_CHARS_PROP = new LinkedList<>();
 
 	static {
 		FONT_NAMES_PROP.put(VU_TIMES, VU_Times);
@@ -676,20 +676,20 @@ public class HtmlUtil {
 		FONT_NAMES_PROP.put(UNKNOWN1, Unknown1);
 		//FONT_NAMES_PROP.put(UNKNOWN2, Unknown2);
 
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(VU_TIMES, VUTimesUniqueChars));
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(TIMES_CSX_1,
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(VU_TIMES, VUTimesUniqueChars));
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(TIMES_CSX_1,
 												Times_CSXPlu1UniqueChars));
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(TIMES_CSX,
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(TIMES_CSX,
 												Times_CSXPlusUniqueChars));
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(VRI_ROMAN_PALI,
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(VRI_ROMAN_PALI,
 				VriRomanPaliUniqueChars));
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(VZ_TIME, VZTimeUniqueChars));
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(LEEDS_BIT_PALI_TRANSLIT,
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(VZ_TIME, VZTimeUniqueChars));
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(LEEDS_BIT_PALI_TRANSLIT,
 				LeedsBitPaliTranslitUniqueChars));
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(NORMAN, NormanUniqueChars));
-		UNIQUE_CHARS_PROP.add(new KeyArrayEntry(UNKNOWN1,
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(NORMAN, NormanUniqueChars));
+		UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(UNKNOWN1,
 												Unknown1UniqueChars));
-		//UNIQUE_CHARS_PROP.add(new KeyArrayEntry(UNKNOWN2,
+		//UNIQUE_CHARS_PROP.add(new ComparableEntry<String, String[]>(UNKNOWN2,
 		//										Unknown2UniqueChars));
 		
 		NOT_UTF8_CHARS.addAll(Arrays.asList(VriRomanPaliUniqueChars));
@@ -704,7 +704,7 @@ public class HtmlUtil {
 
 	public static final String guessFontName(String content) {
 		// LOGGER.info("Before Guess Content: " + content);
-		for (KeyArrayEntry entry : UNIQUE_CHARS_PROP) {
+		for (ComparableEntry<String, String[]> entry : UNIQUE_CHARS_PROP) {
 			String key = entry.getKey();
 			String[] value = entry.getValue();
 			for (int i = 0; i < value.length; i++) {

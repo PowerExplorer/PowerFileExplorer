@@ -56,7 +56,16 @@ public class ZipEntrySorter implements Comparator<ZipEntry> {
             if (file1.isDirectory) {
 				res = (asc > 0) ? (file1.list.size() - file2.list.size()) : (file2.list.size() - file1.list.size());
             } else {
-				res = (asc > 0) ? Long.valueOf(file1.length).compareTo(file2.length) : Long.valueOf(file2.length).compareTo(file1.length);
+				final long length1 = file1.length;
+				final long length2 = file2.length;
+				if (length1 < length2) {
+					res = (asc > 0) ? -1 : 1;
+				} else if (length1 > length2) {
+					res = (asc > 0) ? 1 : -1;
+				} else {
+					res = 0;
+				}
+				//res = (asc > 0) ? Long.valueOf(file1.length).compareTo(file2.length) : Long.valueOf(file2.length).compareTo(file1.length);
             }
         } else {
 			final String ext_a = FileUtil.getExtension(file1.name);

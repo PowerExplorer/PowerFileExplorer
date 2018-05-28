@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2014 Arpit Khurana <arpitkh96@gmail.com>, Vishal Nehra <vishalmeham2@gmail.com>
- *
- * This file is part of Amaze File Manager.
- *
- * Amaze File Manager is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package net.gnu.explorer;
 
 import com.amaze.filemanager.ui.LayoutElement;
@@ -96,9 +77,23 @@ public class LayoutElementSorter implements Comparator<LayoutElement> {
             res = (asc > 0) ? Long.valueOf(file1.lastModified).compareTo(file2.lastModified) : Long.valueOf(file2.lastModified).compareTo(file1.lastModified);
         } else if (sort == SIZE) {
             if (file1.isDirectory) {
-				res = (asc > 0) ? (file1.bf.f.list().length - file2.bf.f.list().length) : (file2.bf.f.list().length - file1.bf.f.list().length);
+				final String[] list1 = file1.bf.f.list();
+				final int length1 = ((list1 == null) ? 0 : list1.length);
+				final String[] list2 = file2.bf.f.list();
+				final int length2 = ((list2 == null) ? 0 : list2.length);
+				res = (asc > 0) ? (length1 - length2) : (length2 - length1);
+				//res = (asc > 0) ? (file1.bf.f.list().length - file2.bf.f.list().length) : (file2.bf.f.list().length - file1.bf.f.list().length);
             } else {
-				res = (asc > 0) ? Long.valueOf(file1.length).compareTo(file2.length) : Long.valueOf(file2.length).compareTo(file1.length);
+				final long length1 = file1.length;
+				final long length2 = file2.length;
+				if (length1 < length2) {
+					res = (asc > 0) ? -1 : 1;
+				} else if (length1 > length2) {
+					res = (asc > 0) ? 1 : -1;
+				} else {
+					res = 0;
+				}
+				//res = (asc > 0) ? Long.valueOf(file1.length).compareTo(file2.length) : Long.valueOf(file2.length).compareTo(file1.length);
             }
         } else {
 			final String ext_a = FileUtil.getExtension(file1.name);

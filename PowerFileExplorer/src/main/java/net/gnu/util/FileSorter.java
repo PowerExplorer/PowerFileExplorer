@@ -63,9 +63,22 @@ public class FileSorter implements Comparator<File> {
             res = (asc > 0) ? Long.valueOf(file1.lastModified()).compareTo(file2.lastModified()) : Long.valueOf(file2.lastModified()).compareTo(file1.lastModified());
         } else if (sort == SIZE) {
             if (file1.isDirectory()) {
-				res = (asc > 0) ? (file1.list().length - file2.list().length) : (file2.list().length - file1.list().length);
+				final String[] list1 = file1.list();
+				final int length1 = ((list1 == null) ? 0 : list1.length);
+				final String[] list2 = file2.list();
+				final int length2 = ((list2 == null) ? 0 : list2.length);
+				res = (asc > 0) ? (length1 - length2) : (length2 - length1);
             } else {
-				res = (asc > 0) ? Long.valueOf(file1.length()).compareTo(file2.length()) : Long.valueOf(file2.length()).compareTo(file1.length());
+				final long length1 = file1.length();
+				final long length2 = file2.length();
+				if (length1 < length2) {
+					res = (asc > 0) ? -1 : 1;
+				} else if (length1 > length2) {
+					res = (asc > 0) ? 1 : -1;
+				} else {
+					res = 0;
+				}
+				//res = (asc > 0) ? Long.valueOf(file1.length()).compareTo(file2.length()) : Long.valueOf(file2.length()).compareTo(file1.length());
             }
         } else {
 			name1 = file1.getName();
