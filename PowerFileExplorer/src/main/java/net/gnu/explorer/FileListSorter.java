@@ -37,19 +37,15 @@ public class FileListSorter implements Comparator<LayoutElement> {
 	public static final int ASCENDING = 1;
 	public static final int DESCENDING = -1;
 
-    private int dirsOnTop = 0;
-    private int asc = 1;
-    private int sort = 0;
+    private final int dirsOnTop;// = 0;
+    private final int asc;// = 1;
+    private final int sort;// = 0;
 
-    public FileListSorter(int dir, int sort, int asc) {
+    public FileListSorter(final int dir, final int sort, final int asc) {
         this.dirsOnTop = dir;
         this.asc = asc;
         this.sort = sort;
     }
-
-//    private boolean isDirectory(LayoutElements path) {
-//        return path.isDirectory();
-//    }
 
     /**
      * Compares two elements and return negative, zero and positive integer if first argument is
@@ -59,25 +55,21 @@ public class FileListSorter implements Comparator<LayoutElement> {
      * @return
      */
     @Override
-    public int compare(LayoutElement file1, LayoutElement file2) {
+    public int compare(final LayoutElement file1, final LayoutElement file2) {
 
-        /*File f1;
-
-		 if(!file1.hasSymlink()) {
-
-		 f1=new File(file1.getDesc());
-		 } else {
-		 f1=new File(file1.getSymlink());
-		 }
-
-		 File f2;
-
-		 if(!file2.hasSymlink()) {
-
-		 f2=new File(file2.getDesc());
-		 } else {
-		 f2=new File(file1.getSymlink());
-		 }*/
+//        File f1;
+//		if (!file1.hasSymlink()) {
+//			f1 = new File(file1.path);
+//		} else {
+//			f1 = new File(file1.getSymlink());
+//		}
+//
+//		File f2;
+//		if (!file2.hasSymlink()) {
+//			f2 = new File(file2.path);
+//		} else {
+//			f2 = new File(file1.getSymlink());
+//		}
 
         if (dirsOnTop == DIR_TOP) {
             if (file1.isDirectory && !file2.isDirectory) {
@@ -93,41 +85,32 @@ public class FileListSorter implements Comparator<LayoutElement> {
             }
         }
 
+		final int res;
         if (sort == NAME) {
-            // sort by name
-            return asc * file1.name.compareToIgnoreCase(file2.name);
+            res = (asc > 0) ? file1.name.compareToIgnoreCase(file2.name) : file2.name.compareToIgnoreCase(file1.name);
+			if (res == 0) {
+				res = file1.path.compareToIgnoreCase(file2.path);
+			}
+			return res;
         } else if (sort == DATE) {
-            // sort by last modified
-            return asc * Long.valueOf(file1.lastModified).compareTo(file2.lastModified);
+            res = (asc > 0) ? Long.valueOf(file1.lastModified).compareTo(file2.lastModified) : Long.valueOf(file2.lastModified).compareTo(file1.lastModified);
         } else if (sort == SIZE) {
-            // sort by size
-            if (!file1.isDirectory && !file2.isDirectory) {
-				return asc * Long.valueOf(file1.length).compareTo(file2.length);
+            if (file1.isDirectory) {
+				res = (asc > 0) ? (file1.bf.f.list().length - file2.bf.f.list().length) : (file2.bf.f.list().length - file1.bf.f.list().length);
             } else {
-                return asc * (file1.bf.f.list().length - file2.bf.f.list().length);
+				res = (asc > 0) ? Long.valueOf(file1.length).compareTo(file2.length) : Long.valueOf(file2.length).compareTo(file1.length);
             }
-        } else if (sort == TYPE) {
-            // sort by type
-            if (!file1.isDirectory && !file2.isDirectory) {
-
-                final String name1 = file1.name;
-				final String ext_a = FileUtil.getExtension(name1);
-                final String name2 = file2.name;
-				final String ext_b = FileUtil.getExtension(name2);
-
-                final int res = asc * ext_a.compareTo(ext_b);
-                if (res == 0) {
-                    return asc * name1.compareToIgnoreCase(name2);
-                }
-                return res;
-            } else {
-                return file1.name.compareToIgnoreCase(file2.name);
-            }
+        } else {
+			final String ext_a = FileUtil.getExtension(file1.name);
+			final String ext_b = FileUtil.getExtension(file2.name);
+			res = (asc > 0) ? ext_a.compareTo(ext_b) : ext_b.compareTo(ext_a);
         }
-        return 0;
-
+		if (res == 0) {
+			res = file1.name.compareToIgnoreCase(file2.name);
+			if (res == 0) {
+				res = file1.path.compareToIgnoreCase(file2.path);
+			}
+		}
+		return res;
     }
-
-    
-
 }
