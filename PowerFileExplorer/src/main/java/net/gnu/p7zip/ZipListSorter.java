@@ -16,18 +16,18 @@ public class ZipListSorter implements Comparator<ZipEntry> {
 	public static final int ASCENDING = 1;
 	public static final int DESCENDING = -1;
 
-    private int dirsOnTop = 0;
-    private int asc = 1;
-    private int sort = 0;
+    private final int dirsOnTop;
+    private final int asc;
+    private final int sort;
 
-    public ZipListSorter(int dir, int sort, int asc) {
+    public ZipListSorter(final int dir, final int sort, final int asc) {
         this.dirsOnTop = dir;
         this.asc = asc;
         this.sort = sort;
     }
 
     @Override
-    public int compare(ZipEntry file1, ZipEntry file2) {
+    public int compare(final ZipEntry file1, final ZipEntry file2) {
 
         if (dirsOnTop == DIR_TOP) {
             if (file1.isDirectory && !file2.isDirectory) {
@@ -42,39 +42,33 @@ public class ZipListSorter implements Comparator<ZipEntry> {
                 return -1;
             }
         }
-
+		
+		final int res;
         if (sort == NAME) {
-            // sort by name
-            return asc * file1.name.compareToIgnoreCase(file2.name);
+            res = (asc > 0) ? file1.name.compareToIgnoreCase(file2.name) : file2.name.compareToIgnoreCase(file1.name);
+			if (res == 0) {
+				res = file1.path.compareToIgnoreCase(file2.path);
+			}
+			return res;
         } else if (sort == DATE) {
-            // sort by last modified
-            return asc * Long.valueOf(file1.lastModified).compareTo(file2.lastModified);
+            res = (asc > 0) ? Long.valueOf(file1.lastModified).compareTo(file2.lastModified) : Long.valueOf(file2.lastModified).compareTo(file1.lastModified);
         } else if (sort == SIZE) {
-            // sort by size
-            if (!file1.isDirectory && !file2.isDirectory) {
-				return asc * Long.valueOf(file1.length).compareTo(file2.length);
+            if (file1.isDirectory) {
+				res = (asc > 0) ? (file1.list.size() - file2.list.size()) : (file2.list.size() - file1.list.size());
             } else {
-                return asc * (file1.list.size() - file2.list.size());
+				res = (asc > 0) ? Long.valueOf(file1.length).compareTo(file2.length) : Long.valueOf(file2.length).compareTo(file1.length);
             }
-        } else if (sort == TYPE) {
-            // sort by type
-            if (!file1.isDirectory && !file2.isDirectory) {
-
-                final String name1 = file1.name;
-				final String ext_a = FileUtil.getExtension(name1);
-                final String name2 = file2.name;
-				final String ext_b = FileUtil.getExtension(name2);
-
-                final int res = asc * ext_a.compareTo(ext_b);
-                if (res == 0) {
-                    return asc * name1.compareToIgnoreCase(name2);
-                }
-                return res;
-            } else {
-                return file1.name.compareToIgnoreCase(file2.name);
-            }
+        } else {
+			final String ext_a = FileUtil.getExtension(file1.name);
+			final String ext_b = FileUtil.getExtension(file2.name);
+			res = (asc > 0) ? ext_a.compareTo(ext_b) : ext_b.compareTo(ext_a);
         }
-        return 0;
-
+		if (res == 0) {
+			res = file1.name.compareToIgnoreCase(file2.name);
+			if (res == 0) {
+				res = file1.path.compareToIgnoreCase(file2.path);
+			}
+		}
+		return res;
     }
 }

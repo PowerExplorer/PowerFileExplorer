@@ -139,7 +139,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	}
 
 	public String getTitle() {
-		if (currentPathTitle != null && currentPathTitle.length() > 0) {
+		if (currentPathTitle != null && currentPathTitle.length() > 0 && type != TYPE.PHOTO) {
 			return currentPathTitle.substring(currentPathTitle.lastIndexOf("/") + 1);
 		} else {
 			return title;

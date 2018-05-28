@@ -524,7 +524,7 @@
 
         </activity>
 
-		<!--<activity android:name="net.gnu.explorer.PlayerActivity"
+		<activity android:name="net.gnu.explorer.MediaPlayerActivity"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
 			android:launchMode="singleTop"
 			android:icon="@drawable/exo_banner"
@@ -542,7 +542,7 @@
 				<action android:name="com.google.android.exoplayer.demo.action.VIEW_LIST"/>
 				<category android:name="android.intent.category.DEFAULT"/>
 			</intent-filter>
-		</activity>-->
+		</activity>
 
 
 

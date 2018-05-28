@@ -5,7 +5,7 @@ import android.os.*;
 import android.content.*;
 import android.view.*;
 import net.gnu.explorer.R;
-//import com.jarvanmo.demo.MediaPlayerFragment;
+
 import com.google.android.exoplayer2.demo.MediaPlayerFragment;
 
 public class MediaPlayerActivity extends FragmentActivity {
