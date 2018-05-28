@@ -39,7 +39,7 @@
 				android:id="@+id/linkButton"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/button"
+				android:background="@drawable/button_mu"
 				android:src="@drawable/ic_link_white_24dp"
 				/>
 
@@ -47,7 +47,7 @@
 				android:id="@+id/searchButton"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/button"
+				android:background="@drawable/button_mu"
 				android:src="@drawable/ic_search_white_24dp"
 				/>
 
@@ -55,7 +55,7 @@
 				android:id="@+id/outlineButton"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/button"
+				android:background="@drawable/button_mu"
 				android:src="@drawable/ic_toc_white_24dp"
 				/>
 
@@ -73,7 +73,7 @@
 				android:id="@+id/searchClose"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/button"
+				android:background="@drawable/button_mu"
 				android:src="@drawable/ic_close_white_24dp"
 				/>
 
@@ -98,7 +98,7 @@
 				android:id="@+id/searchBack"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/button"
+				android:background="@drawable/button_mu"
 				android:src="@drawable/ic_chevron_left_white_24dp"
 				/>
 
@@ -106,7 +106,7 @@
 				android:id="@+id/searchForward"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:background="@drawable/button"
+				android:background="@drawable/button_mu"
 				android:src="@drawable/ic_chevron_right_white_24dp"
 				/>
 
@@ -134,7 +134,7 @@
 			android:paddingTop="12dp"
 			android:paddingBottom="8dp"
 			android:background="@color/toolbar"
-			android:thumb="@drawable/seek_thumb"
+			android:thumb="@drawable/seek_thumb_mu"
 			android:progressDrawable="@drawable/seek_line"
 			/>
 

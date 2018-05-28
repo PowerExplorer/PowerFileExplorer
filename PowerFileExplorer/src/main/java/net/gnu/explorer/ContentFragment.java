@@ -2752,7 +2752,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			Collections.sort(songs, new Comparator<BaseFile>() {
 					@Override
 					public int compare(BaseFile lhs, BaseFile rhs) {
-						return -1 * Long.valueOf(lhs.getDate()).compareTo(rhs.getDate());
+						return -1 * Long.valueOf(lhs.date).compareTo(rhs.date);
 
 					}
 				});

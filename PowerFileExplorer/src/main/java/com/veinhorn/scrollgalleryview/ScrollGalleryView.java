@@ -33,7 +33,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import com.amaze.filemanager.ui.icons.MimeTypes;
 import android.net.Uri;
 import android.content.Intent;
-import net.gnu.explorer.MediaPlayerActivity;
 import android.widget.Toast;
 import java.util.TreeSet;
 import java.util.HashSet;
@@ -94,6 +93,8 @@ import com.ToxicBakery.viewpager.transforms.DrawFromBackTransformer;
 import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
 import com.amaze.filemanager.utils.MainActivityHelper;
 import com.amaze.filemanager.utils.color.ColorUsage;
+import net.gnu.explorer.MediaPlayerActivity;
+import java.util.LinkedList;
 
 public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListener, OnClickListener {//OnTouchListener, 
 
@@ -101,7 +102,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 
 	private FragmentManager fragmentManager;
     private ScreenSlidePagerAdapter imageViewPagerAdapter;
-    private List<File> mListOfMedia;
+    private List<File> mListOfMedia = new LinkedList<>();
 	private int sizeMediaFiles;
 
     private int thumbnailSize = 54; // width and height in pixels

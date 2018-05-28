@@ -184,7 +184,7 @@ public class CopyService extends Service {
                     findAndReplaceEncryptedEntry(sourceFile);
                 }
             }
-            return id;
+            return Integer.valueOf(id);
         }
 
         @Override
@@ -357,7 +357,7 @@ public class CopyService extends Service {
                 try {
                     if (!move) RootUtils.copy(sourceFile.getPath(), targetFile.getPath());
                     else if (move) RootUtils.move(sourceFile.getPath(), targetFile.getPath());
-                    ServiceWatcherUtil.POSITION += sourceFile.getSize();
+                    ServiceWatcherUtil.POSITION += sourceFile.size;
                 } catch (RootNotPermittedException e) {
                     failedFOps.add(sourceFile);
                     e.printStackTrace();
@@ -558,7 +558,7 @@ public class CopyService extends Service {
                     break;
                 }
             }
-            return baseFiles.get(index).getSize() == baseFiles1.get(index1).getSize();
+            return baseFiles.get(index).size == baseFiles1.get(index1).size;
         }
     }
 

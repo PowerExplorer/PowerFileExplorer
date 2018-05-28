@@ -97,7 +97,7 @@ public abstract class PIDFinder {
                                 }
                             }
                             if (found) {
-                                pids.add(Integer.parseInt(PID));
+                                pids.add(Integer.valueOf(PID));
                             }
                         }
                         ++lineCounter[0];

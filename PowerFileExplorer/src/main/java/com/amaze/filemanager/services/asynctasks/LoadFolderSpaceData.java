@@ -61,7 +61,7 @@ public class LoadFolderSpaceData extends AsyncTask<Void, Long, Pair<String, List
             }
         });
 
-        if (dataArray[0] != -1 && dataArray[0] != 0) {
+        if (dataArray != null && dataArray[0] != -1 && dataArray[0] != 0) {
             long totalSpace = dataArray[0];
 
             List<PieEntry> entries = createEntriesFromArray(dataArray, false);
@@ -74,7 +74,7 @@ public class LoadFolderSpaceData extends AsyncTask<Void, Long, Pair<String, List
 
     @Override
     protected void onProgressUpdate(Long[] dataArray) {
-        if (dataArray[0] != -1 && dataArray[0] != 0) {
+        if (dataArray != null && dataArray[0] != -1 && dataArray[0] != 0) {
             long totalSpace = dataArray[0];
 
             List<PieEntry> entries = createEntriesFromArray(

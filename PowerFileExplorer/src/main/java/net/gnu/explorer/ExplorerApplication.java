@@ -7,19 +7,21 @@ import android.content.pm.*;
 import android.os.*;
 import dalvik.system.*;
 import java.lang.reflect.*;
+import jp.sblo.pandora.jota.*;
+import android.util.Log;
+import net.gnu.androidutil.*;
+import com.amaze.filemanager.utils.AppConfig;
+import net.gnu.texteditor.TextEditorActivity;
+//import net.gnu.mupdf.viewer.app.LibraryActivity;
+import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import jp.sblo.pandora.jota.*;
-import android.util.Log;
-import net.gnu.androidutil.*;
-import com.amaze.filemanager.utils.AppConfig;
-import net.gnu.texteditor.TextEditorActivity;
-import net.gnu.mupdf.viewer.DocumentActivity;
-import net.gnu.mupdf.viewer.app.LibraryActivity;
+import android.content.Context;
+//import android.support.multidex.MultiDex;
 
 public class ExplorerApplication extends JotaTextEditor {
 	
@@ -103,7 +105,13 @@ public class ExplorerApplication extends JotaTextEditor {
 		PRIVATE_DIR = new File(PRIVATE_PATH);
 		PRIVATE_DIR.mkdirs();
 	}
-
+	
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		//MultiDex.install(this);
+	}
+	
 	@Override
     public void onCreate() {
         super.onCreate();
@@ -115,13 +123,10 @@ public class ExplorerApplication extends JotaTextEditor {
 			AndroidUtils.createShortCut(getApplicationContext(), TextEditorActivity.class, "Text Editor", R.drawable.textpng);
 //			AndroidUtils.createShortCut(getApplicationContext(), MediaPlayerActivity.class, "Media Player", R.drawable.exo_banner);
 //			AndroidUtils.createShortCut(getApplicationContext(), WebActivity.class, "WebView", R.drawable.html);
-			AndroidUtils.createShortCut(getApplicationContext(), LibraryActivity.class, "PDF Viewer", R.drawable.pdf_icon);
+			//AndroidUtils.createShortCut(getApplicationContext(), LibraryActivity.class, "PDF Viewer", R.drawable.pdf_icon);
 			AndroidUtils.setSharedPreference(this, "install_shortcut", true);
 		}
-//		AndroidUtils.copyAssetToDir(this, PRIVATE_PATH, "run_prettify.js");
-//		AndroidUtils.copyAssetToDir(this, PRIVATE_PATH, "prettify.js");
-//		AndroidUtils.copyAssetToDir(this, PRIVATE_PATH, "prettify.css");
-//		AndroidUtils.copyAssetToDir(this, PRIVATE_PATH, "sons-of-obsidian.css");
+
     }
 	
 	public static ExplorerApplication getInstance() {
@@ -172,6 +177,23 @@ public class ExplorerApplication extends JotaTextEditor {
 		}
 	}
 
+//	//2.7.3
+//	/** Returns a {@link DataSource.Factory}. */
+//	public DataSource.Factory buildDataSourceFactory(TransferListener<? super DataSource> listener) {
+//		return new DefaultDataSourceFactory(this, listener, buildHttpDataSourceFactory(listener));
+//	}
+//
+//	/** Returns a {@link HttpDataSource.Factory}. */
+//	public HttpDataSource.Factory buildHttpDataSourceFactory(
+//		TransferListener<? super DataSource> listener) {
+//		return new DefaultHttpDataSourceFactory(userAgent, listener);
+//	}
+
+	public boolean useExtensionRenderers() {
+		return true;//BuildConfig.FLAVOR.equals("withExtensions");
+	}
+	
+//	//2.3.1
 	public DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
 		return new DefaultDataSourceFactory(this, bandwidthMeter,
 											buildHttpDataSourceFactory(bandwidthMeter));
@@ -181,10 +203,6 @@ public class ExplorerApplication extends JotaTextEditor {
 		return new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter);
 	}
 
-	public boolean useExtensionRenderers() {
-		return true;//BuildConfig.FLAVOR.equals("withExtensions");
-	}
 	
-
 }
 

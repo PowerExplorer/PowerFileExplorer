@@ -256,7 +256,7 @@ public class CHMFile implements Closeable {
 				int freeSpace = in.read32(); // Length of free space and/or quickref area at end of directory chunk
 				// directory index entries, sorted by filename (case insensitive)
 				while (in.available() > freeSpace) {
-					index.put(in.readUTF8(in.readENC()), in.readENC());
+					index.put(in.readUTF8(in.readENC()), Integer.valueOf(in.readENC()));
 				}
 				log.fine("Index L" + level + indexTree);
 			}
@@ -273,7 +273,7 @@ public class CHMFile implements Closeable {
 					break; // we found its chunk, break anyway
 				}
 				lastKey = item.getKey();
-				chunkNo = item.getValue();
+				chunkNo = item.getValue().intValue();
 			}
 			return resolveIndexedEntry(name, chunkNo, level + 1);
 		} else { // process the listing chunk, and cache entries in the whole chunk
@@ -501,7 +501,7 @@ public class CHMFile implements Closeable {
 
 					int cachedNo = blockNo / resetInterval;
 					synchronized (cachedBlocks) {
-						byte[][] cache = cachedBlocks.get(cachedNo);
+						byte[][] cache = cachedBlocks.get(Integer.valueOf(cachedNo));
 						if (cache == null) {
 							if ((cache = cachedBlocks.prune()) == null) // try reuse old caches
 							{
@@ -518,7 +518,7 @@ public class CHMFile implements Closeable {
 										createInputStream(sectionOffset + addressTable[blockNo], len),
 										cache[i]); // here is the heart
 							}
-							cachedBlocks.put(cachedNo, cache);
+							cachedBlocks.put(Integer.valueOf(cachedNo), cache);
 						}
 						if (buf == null) // allocate the buffer
 						{

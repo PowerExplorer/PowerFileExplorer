@@ -56,7 +56,7 @@ public class HFile {
 	public String toString() {
 		return mode + ": " + path;
 	}
-	
+
     public HFile(OpenMode mode, String path, String name, boolean isDirectory) {
         this.mode = mode;
         if (path.startsWith("smb://") || isSmb()) {
@@ -183,7 +183,7 @@ public class HFile {
             case ROOT:
                 BaseFile baseFile = generateBaseFileFromParent();
                 if (baseFile != null)
-                    return baseFile.getDate();
+                    return baseFile.date;
         }
         return new File("/").lastModified();
     }
@@ -208,7 +208,7 @@ public class HFile {
                 return s;
             case ROOT:
                 BaseFile baseFile = generateBaseFileFromParent();
-                if (baseFile != null) return baseFile.getSize();
+                if (baseFile != null) return baseFile.size;
                 break;
         }
         return s;
@@ -236,7 +236,7 @@ public class HFile {
                 return s;
             case ROOT:
                 BaseFile baseFile=generateBaseFileFromParent();
-                if (baseFile != null) return baseFile.getSize();
+                if (baseFile != null) return baseFile.size;
                 break;
             case OTG:
                 s = OTGUtil.getDocumentFile(path, context, false).length();
@@ -525,7 +525,7 @@ public class HFile {
                 break;
             case ROOT:
                 BaseFile baseFile = generateBaseFileFromParent();
-                if (baseFile != null) size = baseFile.getSize();
+                if (baseFile != null) size = baseFile.size;
                 break;
             default:
                 return 0L;
@@ -557,7 +557,7 @@ public class HFile {
                 break;
             case ROOT:
                 BaseFile baseFile=generateBaseFileFromParent();
-                if (baseFile != null) size = baseFile.getSize();
+                if (baseFile != null) size = baseFile.size;
                 break;
             case OTG:
                 size = Futils.folderSize(path, context);
@@ -662,12 +662,13 @@ public class HFile {
             try {
                 SmbFile smbFile = new SmbFile(path);
                 for (SmbFile smbFile1 : smbFile.listFiles()) {
-                    BaseFile baseFile = new BaseFile(smbFile1.getPath());
+                    BaseFile baseFile = new BaseFile(smbFile1.getPath(), "", smbFile1.lastModified(), smbFile1.isDirectory() ? 0: smbFile1.length(), smbFile1.isDirectory())
+						;//new BaseFile(smbFile1.getPath());
                     baseFile.setName(smbFile1.getName());
                     baseFile.setMode(OpenMode.SMB);
-                    baseFile.setDirectory(smbFile1.isDirectory());
-                    baseFile.setDate(smbFile1.lastModified());
-                    baseFile.setSize(baseFile.isDirectory() ? 0 : smbFile1.length());
+                    //baseFile.setDirectory(smbFile1.isDirectory());
+//                    baseFile.setDate(smbFile1.lastModified());
+//                    baseFile.setSize(baseFile.isDirectory() ? 0 : smbFile1.length());
                     arrayList.add(baseFile);
                 }
             } catch (MalformedURLException e) {
@@ -702,12 +703,13 @@ public class HFile {
                 try {
                     SmbFile smbFile = new SmbFile(path);
                     for (SmbFile smbFile1 : smbFile.listFiles()) {
-                        BaseFile baseFile=new BaseFile(smbFile1.getPath());
+                        BaseFile baseFile=new BaseFile(smbFile1.getPath(), "", smbFile1.lastModified(), smbFile1.isDirectory() ? 0: smbFile1.length(), smbFile1.isDirectory())
+							;//BaseFile(smbFile1.getPath());
                         baseFile.setName(smbFile1.getName());
                         baseFile.setMode(OpenMode.SMB);
-                        baseFile.setDirectory(smbFile1.isDirectory());
-                        baseFile.setDate(smbFile1.lastModified());
-                        baseFile.setSize(baseFile.isDirectory() ?0: smbFile1.length());
+                        //baseFile.setDirectory(smbFile1.isDirectory());
+//                        baseFile.setDate(smbFile1.lastModified());
+//                        baseFile.setSize(baseFile.isDirectory() ?0: smbFile1.length());
                         arrayList.add(baseFile);
                     }
                 } catch (MalformedURLException e) {

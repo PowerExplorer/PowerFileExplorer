@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import java.io.File;
 import java.util.List;
-import net.gnu.explorer.R;
 import android.view.View.OnClickListener;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;

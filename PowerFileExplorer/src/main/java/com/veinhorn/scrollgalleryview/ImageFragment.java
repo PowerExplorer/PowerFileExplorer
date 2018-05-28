@@ -80,7 +80,7 @@ public class ImageFragment extends Fragment {
 	private View rootView;
 	private float minZoom;
 	private float maxZoom;
-	static float DEFAULT_ZOOM = 1f;
+	static float DEFAULT_ZOOM = 2f;
 	static float curZoom = DEFAULT_ZOOM;
 	static int curDelay = 1000;//ScrollGalleryView.DELAY;
 	static int curTransform = 12;

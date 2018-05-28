@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
-import net.gnu.explorer.R;
 import com.amaze.filemanager.filesystem.BaseFile;
 import com.amaze.filemanager.filesystem.FileUtil;
 import com.amaze.filemanager.filesystem.HFile;
@@ -158,7 +157,7 @@ public class GenericCopyUtil {
                     return;
                 } else {
                     cloudStorageDropbox.upload(CloudUtil.stripPath(OpenMode.DROPBOX, mTargetFile.getPath()),
-											   bufferedInputStream, mSourceFile.getSize(), true);
+											   bufferedInputStream, mSourceFile.size, true);
                     return;
                 }
             } else if (mTargetFile.isBoxFile()) {
@@ -172,7 +171,7 @@ public class GenericCopyUtil {
                     return;
                 } else {
                     cloudStorageBox.upload(CloudUtil.stripPath(OpenMode.BOX, mTargetFile.getPath()),
-										   bufferedInputStream, mSourceFile.getSize(), true);
+										   bufferedInputStream, mSourceFile.size, true);
                     bufferedInputStream.close();
                     return;
                 }
@@ -188,7 +187,7 @@ public class GenericCopyUtil {
                     return;
                 } else {
                     cloudStorageGdrive.upload(CloudUtil.stripPath(OpenMode.GDRIVE, mTargetFile.getPath()),
-											  bufferedInputStream, mSourceFile.getSize(), true);
+											  bufferedInputStream, mSourceFile.size, true);
                     bufferedInputStream.close();
                     return;
                 }
@@ -203,7 +202,7 @@ public class GenericCopyUtil {
                     return;
                 } else {
                     cloudStorageOnedrive.upload(CloudUtil.stripPath(OpenMode.ONEDRIVE, mTargetFile.getPath()),
-												bufferedInputStream, mSourceFile.getSize(), true);
+												bufferedInputStream, mSourceFile.size, true);
                     bufferedInputStream.close();
                     return;
                 }
@@ -288,7 +287,7 @@ public class GenericCopyUtil {
 	throws IOException {
 
         MappedByteBuffer byteBuffer = outChannel.map(FileChannel.MapMode.READ_WRITE, 0,
-													 mSourceFile.getSize());
+													 mSourceFile.size);
         int count = 0;
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		while ((count = bufferedInputStream.read(buffer)) != -1) {
@@ -311,7 +310,7 @@ public class GenericCopyUtil {
         //MappedByteBuffer outByteBuffer = outChannel.map(FileChannel.MapMode.READ_WRITE, 0, inChannel.size());
 
         ReadableByteChannel inByteChannel = new CustomReadableByteChannel(inChannel);
-        outChannel.transferFrom(inByteChannel, 0, mSourceFile.getSize());
+        outChannel.transferFrom(inByteChannel, 0, mSourceFile.size);
 		return true;
     }
 
@@ -336,7 +335,7 @@ public class GenericCopyUtil {
 
     private boolean copyFile(FileChannel inChannel, BufferedOutputStream bufferedOutputStream)
 	throws IOException {
-        MappedByteBuffer inBuffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, mSourceFile.getSize());
+        MappedByteBuffer inBuffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, mSourceFile.size);
 
         int count = -1;
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];

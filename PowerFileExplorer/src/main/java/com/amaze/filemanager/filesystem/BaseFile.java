@@ -12,7 +12,7 @@ import net.gnu.util.Util;
  */
 public class BaseFile extends HFile implements Parcelable {
 
-    private long date, size;
+    public final long date, size;
     private boolean isDirectory;
     private String permission;
     private String name;
@@ -83,21 +83,21 @@ public class BaseFile extends HFile implements Parcelable {
         this.link = link;
     }
 
-    public long getDate() {
-        return date;
-    }
+//    public long getDate() {
+//        return date;
+//    }
 
-    public void setDate(long date) {
-        this.date = date;
-    }
+//    public void setDate(long date) {
+//        this.date = date;
+//    }
 
-    public long getSize() {
-        return size;
-    }
+//    public long getSize() {
+//        return size;
+//    }
 
-    public void setSize(long size) {
-        this.size = size;
-    }
+//    public void setSize(long size) {
+//        this.size = size;
+//    }
 
     /**
      * @return

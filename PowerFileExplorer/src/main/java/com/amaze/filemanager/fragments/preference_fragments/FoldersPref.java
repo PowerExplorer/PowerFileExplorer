@@ -66,7 +66,7 @@ public class FoldersPref extends PreferenceFragment implements Preference.OnPref
             p.setSummary(currentValue.get(i) [1]);
             p.setOnPreferenceClickListener(this);
 
-            position.put(p, i);
+            position.put(p, Integer.valueOf(i));
             getPreferenceScreen().addPreference(p);
         }
     }
@@ -132,7 +132,7 @@ public class FoldersPref extends PreferenceFragment implements Preference.OnPref
                         p.setSummary(editText2.getText());
                         p.setOnPreferenceClickListener(FoldersPref.this);
 
-                        position.put(p, currentValue.size());
+                        position.put(p, Integer.valueOf(currentValue.size()));
                         getPreferenceScreen().addPreference(p);
 
                         String[] values = new String[] {editText1.getText().toString(),

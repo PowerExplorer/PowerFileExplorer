@@ -559,7 +559,7 @@ public class GeneralDialogCreation {
         final ExecutorService executor = Executors.newFixedThreadPool(3);
         final Context ctx = base.getApplicationContext();
         int accentColor = base.getColorPreference().getColor(ColorUsage.ACCENT);
-        long last = baseFile.getDate();
+        long last = baseFile.date;
         final String date = Utils.getDate(last),
 			items = ctx.getString(R.string.calculating),
 			name  = baseFile.getName(),

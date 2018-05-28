@@ -16,11 +16,11 @@ import android.view.WindowManager;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Scroller;
+import com.artifex.mupdf.fitz.Link;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 import net.gnu.explorer.R;
-import com.artifex.mupdf.fitz.Link;
 
 public class ReaderView
 extends AdapterView<Adapter>
@@ -121,7 +121,7 @@ implements GestureDetector.OnGestureListener, ScaleGestureDetector.OnScaleGestur
 	}
 
 	public void pushHistory() {
-		mHistory.push(mCurrent);
+		mHistory.push(Integer.valueOf(mCurrent));
 	}
 
 	public int getDisplayedViewIndex() {

@@ -15,7 +15,6 @@ import net.gnu.explorer.R;
 import android.view.View;
 import com.amaze.filemanager.ui.icons.MimeTypes;
 import android.util.Log;
-import net.gnu.explorer.MediaPlayerActivity;
 import android.net.Uri;
 import android.content.Intent;
 import net.gnu.androidutil.AndroidUtils;

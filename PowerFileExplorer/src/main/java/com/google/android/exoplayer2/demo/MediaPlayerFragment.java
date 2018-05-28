@@ -1169,10 +1169,6 @@ PlaybackControlView.VisibilityListener {
 		debugRootView.setVisibility(View.VISIBLE);
 	}
 
-	private void showToast(int messageId) {
-		showToast(getString(messageId));
-	}
-
 	private static boolean isBehindLiveWindow(ExoPlaybackException e) {
 		if (e.type != ExoPlaybackException.TYPE_SOURCE) {
 			return false;

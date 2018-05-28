@@ -531,7 +531,7 @@ public class CHMActivity extends AppCompatActivity {
                             @Override
                             protected void onProgressUpdate(Integer... values) {
                                 super.onProgressUpdate(values);
-                                searchProgress.setProgress(values[0]);
+                                searchProgress.setProgress(values[0].intValue());
                                 if (values[1] == 1) {
                                     searchResult.add(listSite.get(values[0]));
                                     adapter.notifyDataSetChanged();

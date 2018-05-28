@@ -50,7 +50,9 @@ repositories {
         dirs 'libs'
     }
 }
-	//search method 	\n\s*[^\s\*/\{\}\(\);]*\s*[^\s\{\}\(\);/]*\s*[^\s\{\}\(\);/]*\s*[^\s;/\{\}\(\)]+\s+[^\s\.;,/\(\)\{\}]+\s*\([^=!\|\(\)\{\};/]*\)\s*\{
+
+//	git clone -b fanplayer https://github.com/rockcarry/ffmpeg
+//search method	\n\s*[^\s\*/\{\}\(\);]*\s*[^\s\{\}\(\);/]*\s*[^\s\{\}\(\);/]*\s*[^\s;/\{\}\(\)]+\s+[^\s\.;,/\(\)\{\}]+\s*\([^=!\|\(\)\{\};/]*\)\s*\{
 dependencies{
     compile fileTree(dir: 'libs', include: ['*.jar'])
 	
@@ -71,13 +73,9 @@ dependencies{
 	//compile files('libs/httpmime-4.2.5.jar')
 	//compile files('libs/pdfparse.jar')
 	
-	compile 'com.android.support:support-annotations:24.1.1'
+	//compile 'com.android.support:support-annotations:24.1.1'
 	compile 'com.android.support:support-vector-drawable:24.1.1'
 	compile 'com.android.support:animated-vector-drawable:24.1.1'
-	
-	compile 'com.android.support:support-v4:24.1.1'
-	compile 'com.android.support:appcompat-v7:24.1.1'
-	//compile 'com.android.support:support-v13:24.1.1'
 	
 	compile 'com.android.support:recyclerview-v7:24.1.1'
 	compile 'com.android.support:design:24.1.1'
@@ -87,9 +85,18 @@ dependencies{
 	//compile 'com.android.support:palette-v7:24.1.1'
 	
 	compile 'eu.chainfire:libsuperuser:1.0.0.+'
-	compile 'com.afollestad.material-dialogs:core:0.9.2.3+'
+	compile ('com.afollestad.material-dialogs:core:0.9.2.3') {
+		transitive = false
+	}
 	compile 'com.cloudrail:cloudrail-si-android:2.18.0'
 	compile 'com.google.android.exoplayer:exoplayer:r2.3.1'
+	//compile ('org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0') {
+	//	transitive = false
+	//}
+	
+	//compile 'com.android.support:support-v13:24.1.1'
+	compile 'com.android.support:appcompat-v7:24.1.1'
+	compile 'com.android.support:support-v4:24.1.1'
 	
 	//support-v4
 	//compile 'com.android.support:support-compat:25.3.1'
@@ -127,7 +134,7 @@ dependencies{
 	
 	
 	
-	
+	//
 	//compile 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 	//compile 'com.daimajia.swipelayout:library:1.2.0+'
 	//compile 'com.artifex.mupdf:fitz:1.19.+'
@@ -174,11 +181,11 @@ dependencies{
 	//compile 'com.jarvanmo:exoplayerview:1.0.7'
 	//compile 'com.afollestad:easyvideoplayer:0.3.0'
 	//compile 'ch.acra:acra:4.9.2'
-	//compile 'com.google.android.exoplayer:exoplayer-core:r2.5.1'
-	//compile 'com.google.android.exoplayer:exoplayer-dash:r2.5.1'
-	//compile 'com.google.android.exoplayer:exoplayer-ui:r2.5.1'
-	//compile 'com.google.android.exoplayer:exoplayer-hls:r2.5.1'
-	//compile 'com.google.android.exoplayer:exoplayer-smoothstreaming:r2.5.1'
+	//compile 'com.google.android.exoplayer:exoplayer-core:2.7.3'
+	//compile 'com.google.android.exoplayer:exoplayer-dash:2.7.3'
+	//compile 'com.google.android.exoplayer:exoplayer-ui:2.7.3'
+	//compile 'com.google.android.exoplayer:exoplayer-hls:2.7.3'
+	//compile 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.7.3'
 	//compile 'com.google.android.exoplayer:exoplayer:2.7.3'
 	//compile 'com.google.android.exoplayer:extension-rtmp:2.7.3'
 	//compile 'com.google.android.exoplayer:extension-okhttp:2.7.3'
@@ -488,8 +495,7 @@ android {
             shrinkResources false
             useProguard false
             zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard/proguard-project.pro',
-                    'proguard/proguard-google-play-services.pro'
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard/proguard-project.pro', 'proguard/proguard-google-play-services.pro'
         }
         
         release {

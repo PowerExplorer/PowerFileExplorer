@@ -35,7 +35,6 @@ import com.amaze.filemanager.utils.OpenMode;
 import com.amaze.filemanager.utils.files.EncryptDecryptUtils;
 import com.amaze.filemanager.utils.files.Futils;
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.demo.MediaPlayerFragment;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import net.gnu.texteditor.TextFrag;
 import android.view.MotionEvent;
 import com.thefinestartist.finestwebview.WebFragment;
 import android.app.Activity;
+import com.google.android.exoplayer2.demo.MediaPlayerFragment;
 //import org.geometerplus.android.fbreader.FBReader;
 
 public abstract class Frag extends Fragment implements View.OnTouchListener, Cloneable, Serializable {
@@ -269,7 +269,11 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
         //fixIcons(false);
     }
 
-    protected void showToast(final String message) {
+    protected void showToast(int messageId) {
+		showToast(getString(messageId));
+	}
+
+	protected void showToast(final String message) {
         if (this.toast == null) {
             // Create toast if found null, it would he the case of first call only
             this.toast = Toast.makeText(fragActivity, message, Toast.LENGTH_SHORT);

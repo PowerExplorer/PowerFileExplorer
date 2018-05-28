@@ -22,7 +22,7 @@
 
     <style name="Theme.Sample" parent="Theme.Base" />
 
-    <style name="AppTheme" parent="Theme.Sample" />
+    <!--<style name="AppTheme" parent="Theme.Sample" />-->
     <!-- Widget styling -->
 
     <style name="Widget" />

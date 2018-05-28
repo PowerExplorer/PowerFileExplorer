@@ -9,22 +9,19 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-
+import com.artifex.mupdf.fitz.Document;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.artifex.mupdf.fitz.Document; /* for file name recognition */
-import net.gnu.mupdf.viewer.DocumentActivity;
 import net.gnu.explorer.R;
+import net.gnu.mupdf.viewer.DocumentActivity;
 import android.app.ActionBar;
 
 public class LibraryActivity extends ListActivity {
@@ -66,11 +63,11 @@ public class LibraryActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		/* Hide 'home' icon on old themes */
-		ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getActionBar();
 		if (actionBar != null) {
 			actionBar.setDisplayShowHomeEnabled(false);
 		}
-		
+
 		prefs = getPreferences(Context.MODE_PRIVATE);
 
 		topDirectory = Environment.getExternalStorageDirectory();

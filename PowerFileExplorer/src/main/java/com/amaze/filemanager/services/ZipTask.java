@@ -186,7 +186,7 @@ public class ZipTask extends Service {
 
             zipPath = p1[0].getString(KEY_COMPRESS_PATH);
             execute(toFileArray(baseFiles), zipPath);
-            return id;
+            return Integer.valueOf(id);
         }
 
         @Override
