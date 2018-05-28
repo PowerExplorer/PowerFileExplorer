@@ -65,7 +65,7 @@ import android.view.View.OnTouchListener;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.app.WallpaperManager;
 import java.io.FileInputStream;
-import net.gnu.explorer.FileListSorter;
+import net.gnu.explorer.LayoutElementSorter;
 import net.gnu.util.FileSorter;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import com.ToxicBakery.viewpager.transforms.ForegroundToBackgroundTransformer;

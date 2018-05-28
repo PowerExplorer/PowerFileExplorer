@@ -102,7 +102,7 @@ import net.gnu.p7zip.Zip;
 import net.gnu.zpaq.Zpaq;
 import net.gnu.p7zip.DecompressTask;
 import net.gnu.p7zip.ZipEntry;
-import net.gnu.p7zip.ZipListSorter;
+import net.gnu.p7zip.ZipEntrySorter;
 
 public class ZipFragment extends FileFrag implements View.OnClickListener {
 
@@ -128,7 +128,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	private LoadFiles loadList = new LoadFiles();
 	private int file_count, folder_count, columns;
 	
-	private ZipListSorter zipListSorter;
+	private ZipEntrySorter zipListSorter;
 	private LinkedList<Map<String, Object>> backStack = new LinkedList<>();
 	//private LinkedList<String> history = new LinkedList<>();
 	private FileObserver mFileObserver;
@@ -435,35 +435,35 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		allType.setText("Type");
 		switch (order) {
 			case "Name ▼":
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.DESCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.DESCENDING);
 				allName.setText("Name ▼");
 				break;
 			case "Date ▲":
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.ASCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.ASCENDING);
 				allDate.setText("Date ▲");
 				break;
 			case "Date ▼":
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.DESCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.DESCENDING);
 				allDate.setText("Date ▼");
 				break;
 			case "Size ▲":
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.ASCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.ASCENDING);
 				allSize.setText("Size ▲");
 				break;
 			case "Size ▼":
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.DESCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.DESCENDING);
 				allSize.setText("Size ▼");
 				break;
 			case "Type ▲":
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.ASCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.ASCENDING);
 				allType.setText("Type ▲");
 				break;
 			case "Type ▼":
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.DESCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.DESCENDING);
 				allType.setText("Type ▼");
 				break;
 			default:
-				zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.ASCENDING);
+				zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.ASCENDING);
 				allName.setText("Name ▲");
 				break;
 		}
@@ -1027,11 +1027,11 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			case R.id.allName:
 				if (allName.getText().toString().equals("Name ▲")) {
 					allName.setText("Name ▼");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.DESCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Name ▼");
 				} else {
 					allName.setText("Name ▲");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.ASCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.NAME, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Name ▲");
 				}
 				//Log.d(TAG, "activity.slideFrag.indexOf " + activity.slideFrag.indexOf(ContentFragment.this));
@@ -1044,11 +1044,11 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			case R.id.allType:
 				if (allType.getText().toString().equals("Type ▲")) {
 					allType.setText("Type ▼");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.DESCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Type ▼");
 				} else {
 					allType.setText("Type ▲");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.ASCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.TYPE, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Type ▲");
 				}
 				allName.setText("Name");
@@ -1060,11 +1060,11 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			case R.id.allDate:
 				if (allDate.getText().toString().equals("Date ▲")) {
 					allDate.setText("Date ▼");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.DESCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Date ▼");
 				} else {
 					allDate.setText("Date ▲");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.ASCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.DATE, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Date ▲");
 				}
 				allName.setText("Name");
@@ -1076,11 +1076,11 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			case R.id.allSize:
 				if (allSize.getText().toString().equals("Size ▲")) {
 					allSize.setText("Size ▼");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.DESCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Size ▼");
 				} else {
 					allSize.setText("Size ▲");
-					zipListSorter = new ZipListSorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.ASCENDING);
+					zipListSorter = new ZipEntrySorter(zipListSorter.DIR_TOP, zipListSorter.SIZE, zipListSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ZipFragSortTypeL" + activity.slideFrag.indexOfMTabs(ZipFragment.this)) : ("ZipFragSortTypeR" + activity.slideFrag2.indexOfMTabs(ZipFragment.this)), "Size ▲");
 				}
 				allName.setText("Name");

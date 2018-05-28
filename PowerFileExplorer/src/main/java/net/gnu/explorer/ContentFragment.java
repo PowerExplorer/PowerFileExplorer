@@ -124,7 +124,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	private int sortby, dsort, asc;
     private String smbPath;
 	private boolean mRetainSearchTask = false;
-	private FileListSorter fileListSorter;
+	private LayoutElementSorter fileListSorter;
 	private LinkedList<Map<String, Object>> backStack = new LinkedList<>();
 	private LinkedList<String> history = new LinkedList<>();
 	private FileObserver mFileObserver;
@@ -503,35 +503,35 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		allType.setText("Type");
 		switch (order) {
 			case "Name ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.DESCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.NAME, LayoutElementSorter.DESCENDING);
 				allName.setText("Name ▼");
 				break;
 			case "Date ▲":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.ASCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.DATE, LayoutElementSorter.ASCENDING);
 				allDate.setText("Date ▲");
 				break;
 			case "Date ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.DESCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.DATE, LayoutElementSorter.DESCENDING);
 				allDate.setText("Date ▼");
 				break;
 			case "Size ▲":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.ASCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.SIZE, LayoutElementSorter.ASCENDING);
 				allSize.setText("Size ▲");
 				break;
 			case "Size ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.DESCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.SIZE, LayoutElementSorter.DESCENDING);
 				allSize.setText("Size ▼");
 				break;
 			case "Type ▲":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.ASCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.TYPE, LayoutElementSorter.ASCENDING);
 				allType.setText("Type ▲");
 				break;
 			case "Type ▼":
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.DESCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.TYPE, LayoutElementSorter.DESCENDING);
 				allType.setText("Type ▼");
 				break;
 			default:
-				fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.ASCENDING);
+				fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.NAME, LayoutElementSorter.ASCENDING);
 				allName.setText("Name ▲");
 				break;
 		}
@@ -1635,11 +1635,11 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			case R.id.allName:
 				if (allName.getText().toString().equals("Name ▲")) {
 					allName.setText("Name ▼");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.DESCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.NAME, LayoutElementSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Name ▼");
 				} else {
 					allName.setText("Name ▲");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.NAME, FileListSorter.ASCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.NAME, LayoutElementSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Name ▲");
 				}
 				//Log.d(TAG, "activity.slideFrag.indexOf " + activity.slideFrag.indexOf(ContentFragment.this));
@@ -1652,11 +1652,11 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			case R.id.allType:
 				if (allType.getText().toString().equals("Type ▲")) {
 					allType.setText("Type ▼");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.DESCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.TYPE, LayoutElementSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Type ▼");
 				} else {
 					allType.setText("Type ▲");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.TYPE, FileListSorter.ASCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.TYPE, LayoutElementSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Type ▲");
 				}
 				allName.setText("Name");
@@ -1668,11 +1668,11 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			case R.id.allDate:
 				if (allDate.getText().toString().equals("Date ▲")) {
 					allDate.setText("Date ▼");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.DESCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.DATE, LayoutElementSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Date ▼");
 				} else {
 					allDate.setText("Date ▲");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.DATE, FileListSorter.ASCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.DATE, LayoutElementSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Date ▲");
 				}
 				allName.setText("Name");
@@ -1684,11 +1684,11 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			case R.id.allSize:
 				if (allSize.getText().toString().equals("Size ▲")) {
 					allSize.setText("Size ▼");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.DESCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.SIZE, LayoutElementSorter.DESCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Size ▼");
 				} else {
 					allSize.setText("Size ▲");
-					fileListSorter = new FileListSorter(FileListSorter.DIR_TOP, FileListSorter.SIZE, FileListSorter.ASCENDING);
+					fileListSorter = new LayoutElementSorter(LayoutElementSorter.DIR_TOP, LayoutElementSorter.SIZE, LayoutElementSorter.ASCENDING);
 					AndroidUtils.setSharedPreference(activity, (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) ? ("ContentFragSortType" + activity.slideFrag.indexOfMTabs(ContentFragment.this)) : ("ExplorerFragSortType" + activity.slideFrag2.indexOfMTabs(ContentFragment.this)), "Size ▲");
 				}
 				allName.setText("Name");
