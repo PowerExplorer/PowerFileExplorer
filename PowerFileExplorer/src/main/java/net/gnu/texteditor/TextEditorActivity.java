@@ -7,24 +7,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import net.gnu.common.activities.SampleActivityBase;
 import net.gnu.explorer.R;
 import net.gnu.explorer.SlidingTabsFragment;
+import android.support.v4.app.FragmentActivity;
 
-/**
- * A simple launcher activity containing a summary sample description, sample log and a custom
- * {@link android.support.v4.app.Fragment} which can display a view.
- * <p>
- * For devices with displays with a width of 720dp or greater, the sample log is always visible,
- * on other devices it's visibility is controlled by an item on the Action Bar.
- */
-public class TextEditorActivity extends SampleActivityBase {//
+public class TextEditorActivity extends FragmentActivity {//
 
     private static final String TAG = "TextEditorActivity";
 
-    // Whether the Log Fragment is currently shown
-    private boolean mLogShown;
-	SlidingTabsFragment slideFrag;
+    private SlidingTabsFragment slideFrag;
 	private FragmentManager supportFragmentManager;
 	public TextFrag main;
 	

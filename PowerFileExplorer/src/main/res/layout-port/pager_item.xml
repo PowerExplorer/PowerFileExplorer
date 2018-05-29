@@ -196,7 +196,7 @@
 	</LinearLayout>
 
 	<View
-		android:id="@+id/horizontalDivider0"
+		android:id="@+id/horizontalDivider7"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_alignParentLeft="true"
@@ -212,7 +212,7 @@
 		android:layout_gravity="center"
 		android:layout_alignParentLeft="true"
 		android:layout_toLeftOf="@+id/horizontalDivider6"
-		android:layout_below="@+id/horizontalDivider0"
+		android:layout_below="@+id/horizontalDivider7"
 		android:padding="0dp"
 	>
 
@@ -249,7 +249,7 @@
 	</LinearLayout>
 
 	<View
-		android:id="@+id/horizontalDivider12"
+		android:id="@+id/horizontalDivider0"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_alignParentLeft="true"
@@ -265,7 +265,7 @@
 		android:layout_gravity="center"
 		android:layout_alignParentLeft="true"
 		android:layout_toLeftOf="@+id/horizontalDivider6"
-		android:layout_below="@+id/horizontalDivider12"
+		android:layout_below="@+id/horizontalDivider0"
 		android:padding="0dp"
 	>
 
@@ -362,7 +362,7 @@
 			android:textAppearance="?android:textAppearanceMedium"/>
 	</LinearLayout>
 	<View
-		android:id="@+id/horizontalDivider7"
+		android:id="@+id/horizontalDivider12"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_alignParentLeft="true"
@@ -376,7 +376,7 @@
 	android:layout_height="fill_parent"
 	android:scrollbars="vertical"
 	android:divider="@drawable/list_selector"
-	android:layout_below="@+id/horizontalDivider7"
+	android:layout_below="@+id/horizontalDivider12"
 	android:drawSelectorOnTop="true"
 	android:drawablePadding="10dp"
 	/-->
@@ -384,7 +384,7 @@
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_below="@+id/horizontalDivider7"
+		android:layout_below="@+id/horizontalDivider12"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentBottom="true"
 		android:layout_toLeftOf="@+id/horizontalDivider6">

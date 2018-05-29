@@ -73,7 +73,7 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 	private AppsAdapter appStatAdapter;
 
 	//private final ArrayList<AppStats> tempOriDataSourceL1 = new ArrayList<>();
-	private final HashSet<AppStats> myChecked = new HashSet<>();
+	private HashSet<AppStats> myChecked = new HashSet<>();
 //	private ListView listView;
 
 	private final Handler handler = new Handler();
@@ -172,11 +172,11 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 	@Override
 	public void clone(final Frag frag, final boolean fake) {
 		super.clone(frag, fake);
-		if (frag instanceof DataTrackerFrag && ((DataTrackerFrag)frag).gridLayoutManager != null) {
+		if (frag instanceof DataTrackerFrag) {//} && ((DataTrackerFrag)frag).gridLayoutManager != null) {
 			final DataTrackerFrag dataTrackerFrag = (DataTrackerFrag)frag;
 			appStatAdapter = dataTrackerFrag.appStatAdapter;
 			appStatsList = dataTrackerFrag.appStatsList;
-			//appStatsComparator = dataTrackerFrag.appStatsComparator;
+			myChecked = dataTrackerFrag.myChecked;
 		}
 	}
 

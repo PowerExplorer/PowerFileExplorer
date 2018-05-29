@@ -130,7 +130,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 	@Override
 	public void clone(final Frag frag, final boolean fake) {
 		super.clone(frag, fake);
-		if (frag instanceof ProcessFragment && ((ProcessFragment)frag).gridLayoutManager != null) {
+		if (frag instanceof ProcessFragment) {//} && ((ProcessFragment)frag).gridLayoutManager != null) {
 			final ProcessFragment appsFragment = (ProcessFragment)frag;
 			lpinfo = appsFragment.lpinfo;
 			adapter = appsFragment.adapter;
@@ -165,7 +165,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		v.findViewById(R.id.share).setOnClickListener(this);
 		v.findViewById(R.id.shortcuts).setOnClickListener(this);
 		v.findViewById(R.id.kill).setOnClickListener(this);
-		
+
 
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
@@ -342,6 +342,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 					tempInfo.add(new ProcessInfo(r, label, r.processName, r.importance, r.pid, 0, null));
 				}
 			}
+			Collections.sort(tempInfo, processSorter);
 
 			return tempInfo;
 		}
@@ -351,11 +352,13 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			if (isCancelled()) {
 				return;
 			}
-			Collections.sort(tempInfo, processSorter);
 			lpinfo.clear();
-			lpinfo.addAll(tempOriDataSourceL1);
-			tempOriDataSourceL1.clear();
-			tempOriDataSourceL1.addAll(tempInfo);
+			lpinfo.addAll(tempInfo);//tempOriDataSourceL1);
+			synchronized (tempOriDataSourceL1) {
+				tempOriDataSourceL1.clear();
+				tempOriDataSourceL1.addAll(tempInfo);
+			}
+
 			updateStatus();
 			//listView.setSelectionFromTop(index, top);
 			for (String kSt : killList) {
@@ -467,44 +470,48 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				searchMode = true;
 				searchVal = searchET.getText().toString();
 				final String param = (String)params[0];
-				for (ProcessInfo pi : tempOriDataSourceL1) {
-					if (pi.label.contains(param) || pi.packageName.contains(param)) {
-						templpinfo.add(pi);
+				synchronized (tempOriDataSourceL1) {
+					for (ProcessInfo pi : tempOriDataSourceL1) {
+						if (pi.label.contains(param) || pi.packageName.contains(param)) {
+							templpinfo.add(pi);
+						}
 					}
 				}
 			} else {
 				int sel = params[0];
-				if (sel == 0) {
-					templpinfo.addAll(tempOriDataSourceL1);
-				} else {
-					for (ProcessInfo pi : tempOriDataSourceL1) {
-						if (sel == 1 && pi.isSystemApp) {
-							templpinfo.add(pi);
-						} else if (sel == 2 && pi.isUpdatedSystemApp) {
-							templpinfo.add(pi);
-						} else if (sel == 3 && !pi.isSystemApp) {
-							templpinfo.add(pi);
-						} else if (sel == 4 && pi.isInternal) {
-							templpinfo.add(pi);
-						} else if (sel == 5 && pi.isExternalAsec) {
-							templpinfo.add(pi);
-						} else if (sel == 6 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-							templpinfo.add(pi);
-						} else if (sel == 7 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
-							templpinfo.add(pi);
-						} else if (sel == 8 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE) {
-							templpinfo.add(pi);
-						} else if (sel == 9 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE) {
-							templpinfo.add(pi);
-						} else if (sel == 10 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE) {
-							templpinfo.add(pi);
-						} else if (sel == 11 && pi.status == 150) {
-							templpinfo.add(pi);
-						} else if (sel == 12 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE) {
-							templpinfo.add(pi);
-						} else if (sel == 13 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_EMPTY) {
-							templpinfo.add(pi);
-						} 
+				synchronized (tempOriDataSourceL1) {
+					if (sel == 0) {
+						templpinfo.addAll(tempOriDataSourceL1);
+					} else {
+						for (ProcessInfo pi : tempOriDataSourceL1) {
+							if (sel == 1 && pi.isSystemApp) {
+								templpinfo.add(pi);
+							} else if (sel == 2 && pi.isUpdatedSystemApp) {
+								templpinfo.add(pi);
+							} else if (sel == 3 && !pi.isSystemApp) {
+								templpinfo.add(pi);
+							} else if (sel == 4 && pi.isInternal) {
+								templpinfo.add(pi);
+							} else if (sel == 5 && pi.isExternalAsec) {
+								templpinfo.add(pi);
+							} else if (sel == 6 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+								templpinfo.add(pi);
+							} else if (sel == 7 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
+								templpinfo.add(pi);
+							} else if (sel == 8 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE) {
+								templpinfo.add(pi);
+							} else if (sel == 9 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE) {
+								templpinfo.add(pi);
+							} else if (sel == 10 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE) {
+								templpinfo.add(pi);
+							} else if (sel == 11 && pi.status == 150) {
+								templpinfo.add(pi);
+							} else if (sel == 12 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE) {
+								templpinfo.add(pi);
+							} else if (sel == 13 && pi.status == ActivityManager.RunningAppProcessInfo.IMPORTANCE_EMPTY) {
+								templpinfo.add(pi);
+							} 
+						}
 					}
 				}
 			}
@@ -1013,7 +1020,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 			private final TextView name;
 			private final TextView items;
 			private final TextView attr;
-			
+
 			private final TextView type;
 			private final ImageButton cbx;
 			private final ImageView image;
@@ -1039,7 +1046,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				ll.setOnLongClickListener(ProcessAdapter.this);
 				more.setOnLongClickListener(ProcessAdapter.this);
 				cbx.setOnLongClickListener(ProcessAdapter.this);
-			
+
 				more.setColorFilter(ExplorerActivity.TEXT_COLOR);
 				name.setTextColor(ExplorerActivity.DIR_COLOR);
 				items.setTextColor(ExplorerActivity.TEXT_COLOR);
@@ -1200,7 +1207,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				inflater.inflate(R.menu.process, menuBuilder);
 				final MenuPopupHelper optionsMenu = new MenuPopupHelper(activity , menuBuilder, allSize);
 				optionsMenu.setForceShowIcon(true);
-				
+
 				Drawable icon = menuBuilder.findItem(R.id.shortcut).getIcon();
 				icon.setFilterBitmap(true);
 				icon.clearColorFilter();
@@ -1208,7 +1215,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				icon = menuBuilder.findItem(R.id.properties).getIcon();
 				icon.setFilterBitmap(true);
 				icon.clearColorFilter();
-				
+
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {

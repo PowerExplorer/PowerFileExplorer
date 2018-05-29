@@ -100,11 +100,11 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		if (!backupPath.exists())
 			backupPath.mkdirs();
 	}
-	
+
 	@Override
 	public void clone(final Frag frag, final boolean fake) {
 		super.clone(frag, fake);
-		if (frag instanceof AppsFragment && ((AppsFragment)frag).gridLayoutManager != null) {
+		if (frag instanceof AppsFragment) {//} && ((AppsFragment)frag).gridLayoutManager != null) {
 			final AppsFragment appsFragment = (AppsFragment)frag;
 			appList = appsFragment.appList;
 			appAdapter = appsFragment.appAdapter;
@@ -424,27 +424,31 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			if (params[0] instanceof String) {
 				searchMode = true;
 				searchVal = searchET.getText().toString();
-				for (AppInfo pi : tempOriDataSourceL1) {
-					if (pi.label.contains((String)params[0]) || pi.packageName.contains((String)params[0])) {
-						tempAppList.add(pi);
+				synchronized (tempOriDataSourceL1) {
+					for (AppInfo pi : tempOriDataSourceL1) {
+						if (pi.label.contains((String)params[0]) || pi.packageName.contains((String)params[0])) {
+							tempAppList.add(pi);
+						}
 					}
 				}
 			} else {
 				int sel = params[0];
-				if (sel == 0) {
-					tempAppList.addAll(tempOriDataSourceL1);
-				} else {
-					for (AppInfo pi : tempOriDataSourceL1) {
-						if (sel == 1 && pi.isSystemApp) {
-							tempAppList.add(pi);
-						} else if (sel == 2 && pi.isUpdatedSystemApp) {
-							tempAppList.add(pi);
-						} else if (sel == 3 && !pi.isSystemApp) {
-							tempAppList.add(pi);
-						} else if (sel == 4 && pi.isInternal) {
-							tempAppList.add(pi);
-						} else if (sel == 5 && pi.isExternalAsec) {
-							tempAppList.add(pi);
+				synchronized (tempOriDataSourceL1) {
+					if (sel == 0) {
+						tempAppList.addAll(tempOriDataSourceL1);
+					} else {
+						for (AppInfo pi : tempOriDataSourceL1) {
+							if (sel == 1 && pi.isSystemApp) {
+								tempAppList.add(pi);
+							} else if (sel == 2 && pi.isUpdatedSystemApp) {
+								tempAppList.add(pi);
+							} else if (sel == 3 && !pi.isSystemApp) {
+								tempAppList.add(pi);
+							} else if (sel == 4 && pi.isInternal) {
+								tempAppList.add(pi);
+							} else if (sel == 5 && pi.isExternalAsec) {
+								tempAppList.add(pi);
+							}
 						}
 					}
 				}
@@ -712,7 +716,8 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				e.printStackTrace();
                 //Toast.makeText(getActivity(), "" + e, Toast.LENGTH_LONG).show();
             }
-            return tempAppList;
+            Collections.sort(tempAppList, appListSorter);
+			return tempAppList;
         }
 
 		@Override
@@ -722,12 +727,14 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				return;
 			}
 			try {
-				Collections.sort(tempAppList, appListSorter);
 				appList.clear();
-				tempOriDataSourceL1.clear();
 				selectedInList1.clear();
 				appList.addAll(tempAppList);
-				tempOriDataSourceL1.addAll(tempAppList);
+				synchronized (tempOriDataSourceL1) {
+					tempOriDataSourceL1.clear();
+					tempOriDataSourceL1.addAll(tempAppList);
+				}
+
 				appAdapter.notifyDataSetChanged();
 
 				selectionStatusTV.setText(selectedInList1.size() + "/" + appList.size() + "/" + tempOriDataSourceL1.size());

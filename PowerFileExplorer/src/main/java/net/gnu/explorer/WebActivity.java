@@ -7,8 +7,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import com.thefinestartist.finestwebview.WebFragment;
 import net.gnu.androidutil.AndroidUtils;
-import net.gnu.common.logger.Log;
 import net.gnu.explorer.R;
+import android.util.Log;
 
 public class WebActivity extends FragmentActivity {
     

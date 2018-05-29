@@ -292,21 +292,30 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 			selectedInList1 = fileFrag.selectedInList1;
 			tempOriDataSourceL1 = fileFrag.tempOriDataSourceL1;
 			tempSelectedInList1 = fileFrag.tempSelectedInList1;
-			sortBarLayout.setVisibility(fileFrag.sortBarLayout.getVisibility());
-			commands.setVisibility(fileFrag.commands.getVisibility());
-			if (fileFrag.selStatusLayout != null) {
-				selStatusLayout.setVisibility(fileFrag.selStatusLayout.getVisibility());
-				rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
-				rightStatus.setText(fileFrag.rightStatus.getText());
-			}
-			selectionStatusTV.setVisibility(fileFrag.selectionStatusTV.getVisibility());
-			selectionStatusTV.setText(fileFrag.selectionStatusTV.getText());
-			sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+			if (sortBarLayout != null && fileFrag.sortBarLayout != null) {
+				sortBarLayout.setVisibility(fileFrag.sortBarLayout.getVisibility());
+				commands.setVisibility(fileFrag.commands.getVisibility());
+				
+				if (selStatusLayout != null && fileFrag.selStatusLayout != null) {
+					selStatusLayout.setVisibility(fileFrag.selStatusLayout.getVisibility());
+				}
+				horizontalDivider0.setVisibility(fileFrag.horizontalDivider0.getVisibility());
+				horizontalDivider12.setVisibility(fileFrag.horizontalDivider12.getVisibility());
+				
+				if (rightStatus != null && fileFrag.rightStatus != null) {
+					rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
+					rightStatus.setText(fileFrag.rightStatus.getText());
+				}
+				
+				selectionStatusTV.setVisibility(fileFrag.selectionStatusTV.getVisibility());
+				selectionStatusTV.setText(fileFrag.selectionStatusTV.getText());
+				sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
 
-			final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
-			final View vi = fileFrag.listView.getChildAt(0); 
-			final int top = (vi == null) ? 0 : vi.getTop();
-			gridLayoutManager.scrollToPositionWithOffset(index, top);
+				final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
+				final View vi = fileFrag.listView.getChildAt(0); 
+				final int top = (vi == null) ? 0 : vi.getTop();
+				gridLayoutManager.scrollToPositionWithOffset(index, top);
+			}
 		}
 	}
 

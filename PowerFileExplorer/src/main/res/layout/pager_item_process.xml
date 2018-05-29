@@ -100,7 +100,7 @@
 	</LinearLayout>
 
 	<View
-		android:id="@+id/horizontalDivider0"
+		android:id="@+id/horizontalDivider7"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_below="@+id/top"
@@ -112,7 +112,7 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
 		android:layout_gravity="center"
-		android:layout_below="@+id/horizontalDivider0"
+		android:layout_below="@+id/horizontalDivider7"
 		android:padding="0dp"
 	>
 		<TextView
@@ -147,7 +147,7 @@
 	</LinearLayout>
 
 	<View
-		android:id="@+id/horizontalDivider12"
+		android:id="@+id/horizontalDivider0"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_below="@+id/selStatusLayout"
@@ -159,7 +159,7 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
 		android:layout_gravity="center"
-		android:layout_below="@+id/horizontalDivider12"
+		android:layout_below="@+id/horizontalDivider0"
 		android:padding="0dp"
 	>
 
@@ -241,7 +241,7 @@
 	</LinearLayout>
 
 	<View
-		android:id="@+id/horizontalDivider7"
+		android:id="@+id/horizontalDivider12"
 		android:layout_width="match_parent"
 		android:layout_height="1dp"
 		android:layout_below="@+id/sortBarLayout"
@@ -250,14 +250,13 @@
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_below="@+id/horizontalDivider7"
+		android:layout_below="@+id/horizontalDivider12"
 		android:layout_above="@+id/horizontalDivider6">
 
 		<android.support.v4.widget.SwipeRefreshLayout 
 			android:id="@+id/swipe_refresh_layout"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_below="@+id/horizontalDivider7"
 		>
 			<com.l4digital.fastscroll.FastScrollRecyclerView
 				android:id="@+id/listView1"
