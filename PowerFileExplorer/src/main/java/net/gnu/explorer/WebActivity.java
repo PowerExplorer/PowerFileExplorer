@@ -17,7 +17,7 @@ public class WebActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.pdf_main);
+        setContentView(R.layout.player);
         onNewIntent(getIntent());
     }
 
@@ -42,7 +42,7 @@ public class WebActivity extends FragmentActivity {
 					Bundle args = new Bundle();
 					args.putString("url", url);
 					fragment.setArguments(args);
-					fragmentManager.beginTransaction().replace(R.id.content_frame, fragment, "web").commit();
+					fragmentManager.beginTransaction().replace(R.id.content_fragment, fragment, "web").commit();
 				} else {
 					fragment.load(url);
 				}

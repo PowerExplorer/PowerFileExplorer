@@ -102,9 +102,9 @@
 				android:id="@+id/enabled"
 
 				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:layout_gravity="center_horizontal|center_vertical"
-				android:gravity="center_horizontal|center_vertical"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:gravity="center"
 				android:layout_weight="1"
 				android:singleLine="true"
 				android:paddingLeft="6dp"
@@ -117,9 +117,9 @@
 				android:id="@+id/totalBtn"
 
 				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:layout_gravity="center_horizontal|center_vertical"
-				android:gravity="center_horizontal|center_vertical"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:gravity="center"
 				android:textOn="Total"
 				android:textOff="Now"
 				android:layout_weight="1"
@@ -130,7 +130,7 @@
 				android:textStyle="normal"
 				android:checked="false"
 			/>
-			<EditText
+			<!--<EditText
 				android:id="@+id/search_box"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
 				android:textStyle="normal"
 				android:singleLine="true"
 				android:visibility="invisible"
-			/>
+			/>-->
 
 		</LinearLayout>
 	</HorizontalScrollView>
