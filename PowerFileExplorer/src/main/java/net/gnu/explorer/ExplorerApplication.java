@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import android.content.Context;
+import net.gnu.mupdf.viewer.app.LibraryActivity;
 //import android.support.multidex.MultiDex;
 
 public class ExplorerApplication extends JotaTextEditor {
@@ -123,7 +124,7 @@ public class ExplorerApplication extends JotaTextEditor {
 			AndroidUtils.createShortCut(getApplicationContext(), TextEditorActivity.class, "Text Editor", R.drawable.textpng);
 //			AndroidUtils.createShortCut(getApplicationContext(), MediaPlayerActivity.class, "Media Player", R.drawable.exo_banner);
 //			AndroidUtils.createShortCut(getApplicationContext(), WebActivity.class, "WebView", R.drawable.html);
-			//AndroidUtils.createShortCut(getApplicationContext(), LibraryActivity.class, "PDF Viewer", R.drawable.pdf_icon);
+			AndroidUtils.createShortCut(getApplicationContext(), LibraryActivity.class, "PDF Viewer", R.drawable.pdf_icon);
 			AndroidUtils.setSharedPreference(this, "install_shortcut", true);
 		}
 

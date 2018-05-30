@@ -30,6 +30,7 @@ import android.app.Activity;
 import net.gnu.util.Util;
 import com.amaze.filemanager.utils.OpenMode;
 import android.widget.ImageView;
+import android.view.ViewGroup.LayoutParams;
 
 public class SlidingTabsFragment extends Fragment implements TabAction {
 
@@ -156,6 +157,15 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		// Give the SlidingTabLayout the ViewPager, this must be done AFTER the
 		// ViewPager has had it's PagerAdapter set.
 		mSlidingHorizontalScroll = (SlidingHorizontalScroll) view.findViewById(R.id.sliding_tabs);
+		
+		final Activity activ = getActivity();
+		if (activ instanceof TextEditorActivity) {
+			final View v = mSlidingHorizontalScroll.getChildAt(0);
+			final ViewGroup.LayoutParams lp = v.getLayoutParams();
+			lp.height = (int)(30 * getResources().getDisplayMetrics().density);
+			v.setLayoutParams(lp);
+		}
+		
 		mSlidingHorizontalScroll.fra = SlidingTabsFragment.this;
 		tabClicks = new TabClicks(12);
 
@@ -225,7 +235,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						}
 					}
 					final Frag createFragment = pagerAdapter.getItem(position);
-					final Activity activ = getActivity();
+					//final Activity activ = getActivity();
 					if (activ instanceof ExplorerActivity) {
 						final ExplorerActivity activity = (ExplorerActivity) activ;
 						if (createFragment.type == Frag.TYPE.EXPLORER) {

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-	xmlns:android="http://schemas.android.com/apk/res/android">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:compat="http://schemas.android.com/apk/res-auto" 
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context="net.gnu.texteditor.TextEditorActivity">
 
 	<item android:title="@string/menu_file"
 		android:id="@+id/menu_file"
-		android:icon = "@drawable/ic_menu_archive"
-		android:showAsAction="ifRoom"
+		android:showAsAction="ifRoom|withText"
+		compat:showAsAction="ifRoom|withText"
 		android:alphabeticShortcut = "F">
 		<menu>
 			<item android:id="@+id/menu_file_history" 	
@@ -59,8 +62,8 @@
 
 	<item android:title="@string/menu_edit" 
 		android:id="@+id/menu_edit"
-		android:icon = "@drawable/ic_menu_edit_ab"
-		android:showAsAction="ifRoom"
+		compat:showAsAction="ifRoom|withText"
+		android:showAsAction="ifRoom|withText"
 		android:alphabeticShortcut = "E">
 
 		<menu>

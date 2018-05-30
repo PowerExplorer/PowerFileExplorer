@@ -10,8 +10,10 @@ import android.view.Menu;
 import net.gnu.explorer.R;
 import net.gnu.explorer.SlidingTabsFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 
-public class TextEditorActivity extends FragmentActivity {//
+public class TextEditorActivity extends AppCompatActivity {//
 
     private static final String TAG = "TextEditorActivity";
 
@@ -21,8 +23,9 @@ public class TextEditorActivity extends FragmentActivity {//
 	
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_editor);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+		super.onCreate(savedInstanceState);
+        setContentView(R.layout.player);
 
 		supportFragmentManager = getSupportFragmentManager();
 		if (savedInstanceState == null) {

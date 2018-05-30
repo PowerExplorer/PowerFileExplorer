@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Base application theme. Theme.AppCompat.Light.DarkActionBar-->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+		<!--<item name="android:actionButtonStyle">@style/myActionButtonStyle</item>-->
+		<item name="actionButtonStyle">@style/myActionButtonStyle</item>
     </style>
 	
 	<!--<style name="AppTheme" parent="@android:style/Theme.Holo.Light">
 	</style>-->
+	
+	<style name="myActionButtonStyle" parent="Widget.AppCompat.ActionButton">
+		<item name="android:minWidth">40dp</item>
+		<item name="android:maxWidth">80dp</item>
+		<item name="android:width">60dp</item>
+	</style>
+	
 	<style name="Animations" />
 
 	<!-- PopDownMenu -->
