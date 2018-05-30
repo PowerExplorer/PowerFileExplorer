@@ -647,6 +647,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	@Override
     public void onRefresh() {
+		Log.i(TAG, "onRefresh " + mSwipeRefreshLayout.isRefreshing());
         final Editable s = searchET.getText();
 		if (s.length() > 0) {
 			textSearch.afterTextChanged(s);
@@ -1725,6 +1726,11 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				} else {
 					mi.setEnabled(false);
 				}
+				
+				if (openMode == OpenMode.CUSTOM) {
+					menuBuilder.findItem(R.id.newFolder).setVisible(false);
+					menuBuilder.findItem(R.id.newFile).setVisible(false);
+				}
 
 				final int size = menuBuilder.size();
 				for (int i = 0; i < size;i++) {
@@ -1739,9 +1745,11 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							Log.d(TAG, item.getTitle() + ".");
 							switch (item.getItemId())  {
 								case R.id.sdcard:
+									openMode = OpenMode.FILE;
 									changeDir("/sdcard", true);
 									break;
 								case R.id.microsd:
+									openMode = OpenMode.FILE;
 									changeDir("/storage/MicroSD", true);
 									break;
 								case R.id.newFolder:
@@ -2305,12 +2313,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 		@Override
 		protected void onCancelled() {
+			Log.d(TAG, "LoadFiles.onCancelled " + mSwipeRefreshLayout.isRefreshing());
 			mSwipeRefreshLayout.setRefreshing(false);
 			super.onCancelled();
 		}
 		
 		@Override
 		protected void onPreExecute() {
+			super.onPreExecute();
 			mSwipeRefreshLayout.setRefreshing(true);
 		}
 
@@ -2396,6 +2406,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							arrayList = listRecentFiles();
 							break;
 					}
+					Log.d(TAG, "LoadFiles.doInBackground " + currentPathTitle + ", " + slidingTabsFragment.side + ", arrayList=" + arrayList.size());
 					
 					if (arrayList != null) {
 						dataSourceL1a = addTo(arrayList);
@@ -2624,7 +2635,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				selectionStatusTV.setText(selectedInList1.size() 
 										 + "/" + dataSourceL1.size());
 			}
-			Log.d(TAG, "LoadFiles.onPostExecute " + currentPathTitle + ", " + slidingTabsFragment.side + ", dataSourceL1=" + dataSourceL1.size() + ", srcAdapter=" + srcAdapter.getItemCount() + ", same Adapter " + (listView.getAdapter() == srcAdapter) + ", LayoutManager " + listView.getLayoutManager().getItemCount() + ", Visibility " + listView.getVisibility());
+			Log.d(TAG, "LoadFiles.onPostExecute " + currentPathTitle + ", " + slidingTabsFragment.side + ", dataSourceL1=" + dataSourceL1.size());// + ", srcAdapter=" + srcAdapter.getItemCount() + ", same Adapter " + (listView.getAdapter() == srcAdapter) + ", LayoutManager " + listView.getLayoutManager().getItemCount() + ", Visibility " + listView.getVisibility());
 
 			updateDir(currentPathTitle);
 			mSwipeRefreshLayout.setRefreshing(false);
@@ -2645,11 +2656,11 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			showToast(message[0]);
 		}
 
-		private ArrayList<LayoutElement> addTo(ArrayList<BaseFile> baseFiles) {
-			ArrayList<LayoutElement> items = new ArrayList<>();
+		private ArrayList<LayoutElement> addTo(final ArrayList<BaseFile> baseFiles) {
+			final ArrayList<LayoutElement> items = new ArrayList<>();
 
 			for (int i = 0; i < baseFiles.size(); i++) {
-				BaseFile baseFile = baseFiles.get(i);
+				final BaseFile baseFile = baseFiles.get(i);
 				//File f = new File(ele.getPath());
 
 				if (!dataUtils.getHiddenfiles().contains(baseFile.getPath())) {
@@ -2667,25 +2678,26 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listaudio() {
-			String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-			String[] projection = {
+			final String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+			final String[] projection = {
                 MediaStore.Audio.Media.DATA
 			};
 
-			Cursor cursor = activity.getContentResolver().query(
+			final Cursor cursor = activity.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 projection,
                 selection,
                 null,
                 null);
 
-			ArrayList<BaseFile> songs = new ArrayList<>();
+			final ArrayList<BaseFile> songs = new ArrayList<>();
 			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				do {
-					String path = cursor.getString(cursor.getColumnIndex
+					final String path = cursor.getString(cursor.getColumnIndex
 												   (MediaStore.Files.FileColumns.DATA));
-					BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
-					if (strings != null) songs.add(strings);
+					final BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
+					if (strings != null) 
+						songs.add(strings);
 				} while (cursor.moveToNext());
 			}
 			cursor.close();
@@ -2693,16 +2705,18 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listImages() {
-			ArrayList<BaseFile> songs = new ArrayList<>();
+			final ArrayList<BaseFile> songs = new ArrayList<>();
 			final String[] projection = {MediaStore.Images.Media.DATA};
 			final Cursor cursor = activity.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 																	  projection, null, null, null);
 			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				do {
-					String path = cursor.getString(cursor.getColumnIndex
+					final String path = cursor.getString(cursor.getColumnIndex
 												   (MediaStore.Files.FileColumns.DATA));
-					BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
-					if (strings != null) songs.add(strings);
+					final BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
+					if (strings != null) {
+						songs.add(strings);
+					}
 				} while (cursor.moveToNext());
 			}
 			cursor.close();
@@ -2710,16 +2724,17 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listVideos() {
-			ArrayList<BaseFile> songs = new ArrayList<>();
+			final ArrayList<BaseFile> songs = new ArrayList<>();
 			final String[] projection = {MediaStore.Images.Media.DATA};
 			final Cursor cursor = activity.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
 																	  projection, null, null, null);
 			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				do {
-					String path = cursor.getString(cursor.getColumnIndex
+					final String path = cursor.getString(cursor.getColumnIndex
 												   (MediaStore.Files.FileColumns.DATA));
-					BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
-					if (strings != null) songs.add(strings);
+					final BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
+					if (strings != null) 
+						songs.add(strings);
 				} while (cursor.moveToNext());
 			}
 			cursor.close();
@@ -2727,23 +2742,23 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listRecentFiles() {
-			ArrayList<BaseFile> songs = new ArrayList<>();
+			final ArrayList<BaseFile> songs = new ArrayList<>();
 			final String[] projection = {MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.DATE_MODIFIED};
-			Calendar c = Calendar.getInstance();
+			final Calendar c = Calendar.getInstance();
 			c.set(Calendar.DAY_OF_YEAR, c.get(Calendar.DAY_OF_YEAR) - 2);
-			Date d = c.getTime();
-			Cursor cursor = activity.getContentResolver().query(MediaStore.Files
+			final Date d = c.getTime();
+			final Cursor cursor = activity.getContentResolver().query(MediaStore.Files
 															  .getContentUri("external"), projection,
 															  null,
 															  null, null);
 			if (cursor == null) return songs;
 			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				do {
-					String path = cursor.getString(cursor.getColumnIndex
+					final String path = cursor.getString(cursor.getColumnIndex
 												   (MediaStore.Files.FileColumns.DATA));
-					File f = new File(path);
+					final File f = new File(path);
 					if (d.compareTo(new Date(f.lastModified())) != 1 && !f.isDirectory()) {
-						BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
+						final BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
 						if (strings != null) songs.add(strings);
 					}
 				} while (cursor.moveToNext());
@@ -2764,18 +2779,19 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listApks() {
-			ArrayList<BaseFile> songs = new ArrayList<>();
+			final ArrayList<BaseFile> songs = new ArrayList<>();
 			final String[] projection = {MediaStore.Files.FileColumns.DATA};
 
-			Cursor cursor = activity.getContentResolver()
+			final Cursor cursor = activity.getContentResolver()
                 .query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
 			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				do {
-					String path = cursor.getString(cursor.getColumnIndex
+					final String path = cursor.getString(cursor.getColumnIndex
 												   (MediaStore.Files.FileColumns.DATA));
 					if (path != null && path.endsWith(".apk")) {
-						BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
-						if (strings != null) songs.add(strings);
+						final BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
+						if (strings != null)
+							songs.add(strings);
 					}
 				} while (cursor.moveToNext());
 			}
@@ -2784,12 +2800,12 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listRecent() {
-			UtilsHandler utilsHandler = new UtilsHandler(activity);
+			final UtilsHandler utilsHandler = new UtilsHandler(activity);
 			final ArrayList<String> paths = utilsHandler.getHistoryList();
-			ArrayList<BaseFile> songs = new ArrayList<>();
+			final ArrayList<BaseFile> songs = new ArrayList<>();
 			for (String f : paths) {
 				if (!f.equals("/")) {
-					BaseFile a = RootHelper.generateBaseFile(new File(f), SHOW_HIDDEN);
+					final BaseFile a = RootHelper.generateBaseFile(new File(f), SHOW_HIDDEN);
 					a.generateMode(activity);
 					if (a != null && !a.isSmb() && !(a).isDirectory() && a.exists())
 						songs.add(a);
@@ -2799,19 +2815,19 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listDocs() {
-			ArrayList<BaseFile> songs = new ArrayList<>();
+			final ArrayList<BaseFile> songs = new ArrayList<>();
 			final String[] projection = {MediaStore.Files.FileColumns.DATA};
-			Cursor cursor = activity.getContentResolver().query(MediaStore.Files.getContentUri("external"),
+			final Cursor cursor = activity.getContentResolver().query(MediaStore.Files.getContentUri("external"),
 																projection, null, null, null);
-			String[] types = new String[]{".pdf", ".xml", ".html", ".asm", ".text/x-asm", ".def", ".in", ".rc",
+			final String[] types = new String[]{".pdf", ".xml", ".html", ".asm", ".text/x-asm", ".def", ".in", ".rc",
                 ".list", ".log", ".pl", ".prop", ".properties", ".rc",
                 ".doc", ".docx", ".msg", ".odt", ".pages", ".rtf", ".txt", ".wpd", ".wps"};
 			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				do {
-					String path = cursor.getString(cursor.getColumnIndex
+					final String path = cursor.getString(cursor.getColumnIndex
 												   (MediaStore.Files.FileColumns.DATA));
 					if (path != null && contains(types, path)) {
-						BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
+						final BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
 						if (strings != null) songs.add(strings);
 					}
 				} while (cursor.moveToNext());
@@ -2851,10 +2867,18 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	
 
 	private class SearchFileNameTask extends AsyncTask<String, Long, ArrayList<LayoutElement>> {
+		
+		@Override
+		protected void onCancelled() {
+			Log.d(TAG, "SearchFileNameTask.onCancelled " + mSwipeRefreshLayout.isRefreshing());
+			mSwipeRefreshLayout.setRefreshing(false);
+			super.onCancelled();
+		}
+		
 		protected void onPreExecute() {
-			if (!mSwipeRefreshLayout.isRefreshing()) {
-				mSwipeRefreshLayout.setRefreshing(true);
-			}
+			super.onPreExecute();
+			mSwipeRefreshLayout.setRefreshing(true);
+			
 			searchVal = searchET.getText().toString();
 			showToast("Searching...");
 			dataSourceL1.clear();
@@ -2892,9 +2916,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		@Override
 		protected void onPostExecute(ArrayList<LayoutElement> result) {
 
-			if (mSwipeRefreshLayout.isRefreshing()) {
-				mSwipeRefreshLayout.setRefreshing(false);
-			}
+			mSwipeRefreshLayout.setRefreshing(false);
+			
 			dataSourceL1.addAll(result);
 			selectedInList1.clear();
 			srcAdapter.notifyDataSetChanged();

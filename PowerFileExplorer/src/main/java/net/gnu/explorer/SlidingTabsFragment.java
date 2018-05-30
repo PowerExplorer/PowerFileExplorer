@@ -238,7 +238,15 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					//final Activity activ = getActivity();
 					if (activ instanceof ExplorerActivity) {
 						final ExplorerActivity activity = (ExplorerActivity) activ;
-						if (createFragment.type == Frag.TYPE.EXPLORER) {
+						
+						createFragment.select(true);
+						if (side == Side.LEFT) {
+							createFragment.slidingTabsFragment.width = activity.balance;
+						} else {
+							createFragment.slidingTabsFragment.width = -activity.balance;
+						}
+						
+						if (createFragment.type == Frag.TYPE.EXPLORER && ((ContentFragment)createFragment).openMode == OpenMode.FILE) {
 							activity.dir = ((ContentFragment) createFragment).currentPathTitle;
 
 							if (side == Side.LEFT) {
@@ -257,13 +265,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 								//activity.curSelectionFragIndex2 = getFragIndex(Frag.TYPE.SELECTION);
 							}
 						}
-						createFragment.select(true);
-						if (side == Side.LEFT) {
-							createFragment.slidingTabsFragment.width = activity.balance;
-						} else {
-							createFragment.slidingTabsFragment.width = -activity.balance;
-						}
-
+						
 						if (createFragment instanceof FileFrag) {
 							FileFrag fileFrag = ((FileFrag)createFragment);
 							if (fileFrag.selectedInList1.size() == 0 && 

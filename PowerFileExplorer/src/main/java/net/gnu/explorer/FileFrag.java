@@ -120,7 +120,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
     public boolean GO_BACK_ITEM, SHOW_THUMBS, COLORISE_ICONS, SHOW_DIVIDERS, 
 	SHOW_HEADERS;
 
-	public SwipeRefreshLayout mSwipeRefreshLayout;
+	SwipeRefreshLayout mSwipeRefreshLayout;
 
 	public BitmapDrawable folder, apk, DARK_IMAGE, DARK_VIDEO;
 	public boolean IS_LIST = true;
@@ -173,7 +173,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 	long lastScroll = System.currentTimeMillis();
 	protected InputMethodManager imm;
 	Resources res;
-	
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -221,7 +221,14 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		allSize = (TextView) v.findViewById(R.id.allSize);
 		allType = (TextView) v.findViewById(R.id.allType);
 		selectionStatusTV = (TextView) v.findViewById(R.id.selectionStatusTV);
+
 		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setColorSchemeResources(
+			android.R.color.holo_blue_bright,
+			android.R.color.holo_red_light);
+		mSwipeRefreshLayout.setProgressViewOffset(false, 0,
+												  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, res.getDisplayMetrics()));
+		
 		horizontalDivider0 = v.findViewById(R.id.horizontalDivider0);
 		horizontalDivider12 = v.findViewById(R.id.horizontalDivider12);
 
@@ -295,18 +302,18 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 			if (sortBarLayout != null && fileFrag.sortBarLayout != null) {
 				sortBarLayout.setVisibility(fileFrag.sortBarLayout.getVisibility());
 				commands.setVisibility(fileFrag.commands.getVisibility());
-				
+
 				if (selStatusLayout != null && fileFrag.selStatusLayout != null) {
 					selStatusLayout.setVisibility(fileFrag.selStatusLayout.getVisibility());
 				}
 				horizontalDivider0.setVisibility(fileFrag.horizontalDivider0.getVisibility());
 				horizontalDivider12.setVisibility(fileFrag.horizontalDivider12.getVisibility());
-				
+
 				if (rightStatus != null && fileFrag.rightStatus != null) {
 					rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
 					rightStatus.setText(fileFrag.rightStatus.getText());
 				}
-				
+
 				selectionStatusTV.setVisibility(fileFrag.selectionStatusTV.getVisibility());
 				selectionStatusTV.setText(fileFrag.selectionStatusTV.getText());
 				sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
@@ -570,7 +577,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 				mi.setTitle("2 panels equal");
 			}
 		}
-        
+
 		popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					switch (item.getItemId()) {
