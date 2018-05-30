@@ -1699,7 +1699,37 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
                 utils.openFile(new File(path), this);
                 return;
             }
-			(slideFrag1Selected ? slideFrag : slideFrag2).addTab(hFile.getMode(), path);
+			final SlidingTabsFragment sliding = slideFrag1Selected ? slideFrag : slideFrag2;
+			if (Util.isInteger(path)) {
+				final int type = Integer.valueOf(path);
+				final int size = sliding.pagerAdapter.getCount() - 1;
+				boolean exists = false;
+				int i = 0;
+				for (i = 1; i < size; i++) {
+					final Frag item = sliding.pagerAdapter.getItem(i);
+					if (item instanceof ContentFragment && ((ContentFragment)item).openMode == OpenMode.CUSTOM) {
+						final String title = ((ContentFragment)item).getTitle();
+						if ("Images".equals(title) && type == 0
+							|| "Videos".equals(title) && type == 1
+							|| "Audio".equals(title) && type == 2
+							|| "Docs".equals(title) && type == 3
+							|| "Apk".equals(title) && type == 4
+							|| "Recent".equals(title) && type == 5
+							|| "Recent Files".equals(title) && type == 6) {
+							exists = true;
+							break;
+						}
+					}
+				}
+				if (exists) {
+					sliding.setCurrentItem(i, true);
+				} else {
+					sliding.addTab(hFile.getMode(), path);
+				}
+			} else {
+				sliding.addTab(hFile.getMode(), path);
+			}
+			
 //            ContentFragment mainFrag = slideFrag1Selected ? curContentFrag : curExplorerFrag;
 //            if (mainFrag != null) {
 //                mainFrag.changeDir(pendingPath, OpenMode.UNKNOWN);

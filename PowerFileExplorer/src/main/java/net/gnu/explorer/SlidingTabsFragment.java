@@ -832,7 +832,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		mSlidingHorizontalScroll.setViewPager(mViewPager);
 	}
 
-	public void setCurrentItem(int pos, boolean smooth) {
+	public void setCurrentItem(final int pos, final boolean smooth) {
 		mViewPager.setCurrentItem(pos, smooth);
 	}
 
@@ -842,7 +842,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 	private class PagerItem implements Parcelable {
 		private static final String TAG = "PagerItem";
-		private Frag frag;
+		private final Frag frag;
 		private Frag fakeFrag;
 
 		private PagerItem(final Frag frag1) {

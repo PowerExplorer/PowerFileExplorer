@@ -432,12 +432,12 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					//if (detector.getCurrentSpan() > 300 && detector.getTimeDelta() > 50) {
 					//Log.d(TAG, "onScale " + (detector.getCurrentSpan() - detector.getPreviousSpan()) + ", getTimeDelta " + detector.getTimeDelta());
 					//mScaling = true;
-					mSwipeRefreshLayout.setEnabled(false);
+					//mSwipeRefreshLayout.setEnabled(false);
 					if (detector.getCurrentSpan() - detector.getPreviousSpan() < -80 * activity.density) {
 						if (spanCount == 1) {
 							spanCount = 2;
 							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
+							//mSwipeRefreshLayout.setEnabled(true);
 							return true;
 						} else if (spanCount == 2 && slidingTabsFragment.width >= 0) {
 							if (activity.right.getVisibility() == View.GONE || activity.left.getVisibility() == View.GONE) {
@@ -446,25 +446,25 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 								spanCount = 4;
 							}
 							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
+							//mSwipeRefreshLayout.setEnabled(true);
 							return true;
 						}
 					} else if (detector.getCurrentSpan() - detector.getPreviousSpan() > 80 * activity.density) {
 						if ((spanCount == 4 || spanCount == 8)) {
 							spanCount = 2;
 							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
+							//mSwipeRefreshLayout.setEnabled(true);
 							return true;
 						} else if (spanCount == 2) {
 							spanCount = 1;
 							setRecyclerViewLayoutManager();
-							mSwipeRefreshLayout.setEnabled(true);
+							//mSwipeRefreshLayout.setEnabled(true);
 							return true;
 						} 
 					}
 					//}
 					//mScaling = false;
-					mSwipeRefreshLayout.setEnabled(true);
+					//mSwipeRefreshLayout.setEnabled(true);
 					return false;
 				}
 			});
@@ -2124,9 +2124,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				final String filesearch = text.toString();
 				Log.d(TAG, "quicksearch " + filesearch);
 				if (filesearch.length() > 0) {
-					if (searchTask.getStatus() == AsyncTask.Status.RUNNING) {
-						searchTask.cancel(true);
-					}
+					searchTask.cancel(true);
 					searchTask = new SearchFileNameTask();
 					searchTask.execute(filesearch);
 				}
@@ -2304,19 +2302,19 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		loadList.cancel(true);
 		searchTask.cancel(true);
 		loadList = new LoadFiles();
-		loadList.execute(curDir, doScroll);
+		loadList.execute(curDir, Boolean.valueOf(doScroll));
 	}
 	
 	private class LoadFiles extends AsyncTask<Object, String, List<LayoutElement>> {
 
 		private Boolean doScroll;
 
-		@Override
-		protected void onCancelled() {
-			Log.d(TAG, "LoadFiles.onCancelled " + mSwipeRefreshLayout.isRefreshing());
-			mSwipeRefreshLayout.setRefreshing(false);
-			super.onCancelled();
-		}
+//		@Override
+//		protected void onCancelled() {
+//			Log.d(TAG, "LoadFiles.onCancelled " + mSwipeRefreshLayout.isRefreshing());
+//			mSwipeRefreshLayout.setRefreshing(false);
+//			super.onCancelled();
+//		}
 		
 		@Override
 		protected void onPreExecute() {
@@ -2326,7 +2324,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 		@Override
 		protected List<LayoutElement> doInBackground(Object... params) {
-			String path = (String) params[0];
+			final String path = (String) params[0];
 			doScroll = (Boolean) params[1];
 			
 			noMedia = false;
@@ -2868,12 +2866,12 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	private class SearchFileNameTask extends AsyncTask<String, Long, ArrayList<LayoutElement>> {
 		
-		@Override
-		protected void onCancelled() {
-			Log.d(TAG, "SearchFileNameTask.onCancelled " + mSwipeRefreshLayout.isRefreshing());
-			mSwipeRefreshLayout.setRefreshing(false);
-			super.onCancelled();
-		}
+//		@Override
+//		protected void onCancelled() {
+//			Log.d(TAG, "SearchFileNameTask.onCancelled " + mSwipeRefreshLayout.isRefreshing());
+//			mSwipeRefreshLayout.setRefreshing(false);
+//			super.onCancelled();
+//		}
 		
 		protected void onPreExecute() {
 			super.onPreExecute();
