@@ -59,6 +59,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask.Status;
 import net.gnu.util.Util;
 import java.util.HashSet;
+import android.graphics.PorterDuff;
 
 public class AppsFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -952,12 +953,12 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			optionsMenu.setForceShowIcon(true);
 
 			Drawable icon = menuBuilder.findItem(R.id.shortcut).getIcon();
-			icon.setFilterBitmap(true);
-			icon.clearColorFilter();
+			icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 			icon = menuBuilder.findItem(R.id.properties).getIcon();
-			icon.setFilterBitmap(true);
-			icon.clearColorFilter();
+			icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+			
+			menuBuilder.findItem(R.id.play).getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 			menuBuilder.setCallback(new MenuBuilder.Callback() {
 					@Override

@@ -64,6 +64,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.GridLayoutManager;
+import android.graphics.PorterDuff;
 
 public class DataTrackerFrag extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -781,10 +782,10 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		@Override
 		public void onClick(final View view) {
 			Log.d(TAG, view.getTag() + ".");
-			if (myChecked.size() > 0) {
-				onLongClick(view);
-				return;
-			}
+//			if (myChecked.size() > 0) {
+//				onLongClick(view);
+//				return;
+//			}
 			if (view.getId() == R.id.cbx) {
 				view.setSelected(!view.isSelected());
 				toggleChecked(view.isSelected(), (AppStats) view.getTag());
@@ -795,8 +796,16 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				inflater.inflate(R.menu.process, menuBuilder);
 				final MenuPopupHelper optionsMenu = new MenuPopupHelper(activity , menuBuilder, allSize);
 				optionsMenu.setForceShowIcon(true);
-				final MenuItem mi = menuBuilder.findItem(R.id.info);
-				mi.setVisible(false);
+				
+				MenuItem mi = menuBuilder.findItem(R.id.properties);
+				mi.getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				
+				mi = menuBuilder.findItem(R.id.shortcut);
+				mi.getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				
+				mi = menuBuilder.findItem(R.id.play);
+				mi.getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {

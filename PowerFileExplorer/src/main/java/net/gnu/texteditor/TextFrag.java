@@ -73,14 +73,16 @@ import android.widget.LinearLayout.LayoutParams;
 import net.gnu.explorer.R;
 import jp.sblo.pandora.jota.*;
 import android.support.v4.app.Fragment;
-import android.view.*;
+import net.gnu.explorer.Frag;
+import net.gnu.explorer.SlidingTabsFragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import net.gnu.explorer.ExplorerActivity;
+import android.graphics.PorterDuff;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 
-import android.util.*;
-import android.app.*;
-import android.graphics.*;
-import net.gnu.explorer.*;
-import android.graphics.drawable.*;
-import android.content.res.*;
 
 public class TextFrag extends Frag implements JotaDocumentWatcher, ShortcutListener,
 OnFileLoadListener {
@@ -248,7 +250,21 @@ OnFileLoadListener {
 		mContent = ((LinearLayout)view.findViewById(R.id.content));
 		if (fragActivity instanceof TextEditorActivity) {
 			mContent.removeView(mToolbarBase);
-			fragActivity.getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+			final ActionBar actionBar = ((TextEditorActivity)fragActivity).getSupportActionBar();
+			if (actionBar != null) {
+				actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+				actionBar.setCustomView(mToolbarBase);
+				//actionBar.setBackgroundDrawable(getResources().getDrawable((R.drawable.list_item_background_normal)));
+				if (!(mToolbarBase.getChildAt(0) instanceof ImageView)) {
+					final ImageView iv = new ImageView(fragActivity);
+					iv.setImageResource(R.drawable.textpng);
+					iv.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+					mToolbarBase.addView(iv, 0);
+					
+					final Toolbar parent =(Toolbar) mToolbarBase.getParent();
+					parent.setContentInsetsAbsolute(0, 0);
+				}
+			}
 			view.findViewById(R.id.horizontalDivider).setVisibility(View.GONE);
 		} else {
 			view.findViewById(R.id.horizontalDivider).setVisibility(View.VISIBLE);
@@ -1233,17 +1249,22 @@ OnFileLoadListener {
 //			new IcsWrapper().setShowAsActionIfRoomWithText(menuitem);
 //	        menuitem.setIcon(R.drawable.ic_menu_edit_ab);
 //        }
-		if (fragActivity instanceof TextEditorActivity) {
-			if (!(mToolbarBase.getChildAt(0) instanceof ImageView)) {
-				final ImageView iv = new ImageView(fragActivity);
-				iv.setImageResource(R.drawable.textpng);
-				iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-				mToolbarBase.addView(iv, 0);
-			}
-			final ActionBar actionBar = fragActivity.getActionBar();
-			actionBar.setCustomView(mToolbarBase);
-			actionBar.setBackgroundDrawable(getResources().getDrawable((R.drawable.list_item_background_normal)));
-		}
+//		if (fragActivity instanceof TextEditorActivity) {
+//			final ActionBar actionBar = ((TextEditorActivity)fragActivity).getSupportActionBar();
+//			actionBar.setCustomView(mToolbarBase);
+//			actionBar.setBackgroundDrawable(getResources().getDrawable((R.drawable.list_item_background_normal)));
+//			if (!(mToolbarBase.getChildAt(0) instanceof ImageView)) {
+//				final ImageView iv = new ImageView(fragActivity);
+//				iv.setImageResource(R.drawable.textpng);
+//				iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//				mToolbarBase.addView(iv, 0);
+//				final ViewGroup.LayoutParams lp = mToolbarBase.getLayoutParams();
+//				lp.width = LayoutParams.MATCH_PARENT;
+//				mToolbarBase.setLayoutParams(lp);
+//				final Toolbar parent =(Toolbar) mToolbarBase.getParent();
+//				parent.setContentInsetsAbsolute(0, 0);
+//			}
+//		}
         super.onPrepareOptionsMenu(menu);//return 
     }
 
@@ -2675,9 +2696,9 @@ OnFileLoadListener {
 
         if ( mBootSettings.hideTitleBar) {
             if ( JotaTextEditor.sIceCreamSandwich ){
-                fragActivity.setTheme(R.style.Theme_Holo_NoTitleBar);
-            }else{
-                fragActivity.setTheme(R.style.Theme_NoTitleBar);
+                fragActivity.setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar);
+            } else {
+                fragActivity.setTheme(R.style.Theme_AppCompat_NoActionBar);
             }
         }
 
@@ -2799,20 +2820,22 @@ OnFileLoadListener {
 		Button button;
 		ImageView iv = null;
 		final int density = (int)getResources().getDisplayMetrics().density;
-		final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+		final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		lp.gravity = Gravity.CENTER;
+		final Context ctx = getContext();
 		for( Integer function : toolbars ){
             if ( bigButton ){
-                button = new Button(fragActivity);//, null, com.android.internal.R.attr.buttonStyle);
-                button.setTextSize(20);
+                button = new Button(ctx);//, null, R.style.Widget_AppCompat_Button);
+                button.setTextSize(16);
                 button.setBackgroundResource( R.drawable.btn_default );
 				//button.setPadding(0, 5 * density, 0, 0);
-            }else{
-                button = new Button(fragActivity);//, null, R.style.Widget_Button_Small);
-                button.setTextSize(16);
+            } else {
+                button = new Button(ctx);//, null, R.style.Widget_AppCompat_Button_Small);
+                button.setTextSize(14);
                 button.setBackgroundResource(R.drawable.btn_default_small);
 				//button.setPadding(0, 5 * density, 0, 0);
-            }
-			
+			}
+			button.setMinWidth(72 * density);
 			if (!(fragActivity instanceof TextEditorActivity)) {
 				final String toolname = SettingsShortcutActivity.TBL_TOOLNAME[function];
 				iv = new ImageView(fragActivity);
@@ -2859,7 +2882,8 @@ OnFileLoadListener {
 				button.setText(getToolbarLabel(function));
 				button.setTextColor(0xff404040);
 			}
-			View v = button != null ? button : iv;
+			final View v = button != null ? button : iv;
+			//v.setMinimumWidth(60 * density);
             v.setTag(function);
             v.setOnClickListener(mOnClickToolbar);
             v.setFocusable(false);

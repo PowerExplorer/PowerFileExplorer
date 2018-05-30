@@ -52,6 +52,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.gnu.androidutil.AndroidUtils;
 import net.gnu.util.Util;
+import android.graphics.PorterDuff;
 
 public class ProcessFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -1192,10 +1193,10 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		@Override
 		public void onClick(final View view) {
 			Log.d(TAG, view.getTag() + ".");
-			if (selectedInList1.size() > 0) {
-				onLongClick(view);
-				return;
-			}
+//			if (selectedInList1.size() > 0) {
+//				onLongClick(view);
+//				return;
+//			}
 			final int id = view.getId();
 			if (id == R.id.cbx) {
 				view.setSelected(!view.isSelected());
@@ -1209,12 +1210,12 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 				optionsMenu.setForceShowIcon(true);
 
 				Drawable icon = menuBuilder.findItem(R.id.shortcut).getIcon();
-				icon.setFilterBitmap(true);
-				icon.clearColorFilter();
+				icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 				icon = menuBuilder.findItem(R.id.properties).getIcon();
-				icon.setFilterBitmap(true);
-				icon.clearColorFilter();
+				icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+
+				menuBuilder.findItem(R.id.play).getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
@@ -1261,7 +1262,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 										Toast.makeText(ProcessFragment.this.getContext(), "Can't Uninstall" , Toast.LENGTH_SHORT).show();
 									}
 									break;
-								case R.id.info:
+								case R.id.properties:
 									//Toast.makeText(ProcessManager.this, "Process : "+display_process.get(position).processName +" lru : " +display_process.get(position).lru + " Pid :  " +display_process.get(position).pid, Toast.LENGTH_SHORT).show();	
 									final AlertDialog alert1 = new AlertDialog.Builder(ProcessFragment.this.getContext()).create();
 									alert1.setTitle("Process Info");
