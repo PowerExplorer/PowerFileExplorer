@@ -12,6 +12,10 @@ import com.amaze.filemanager.filesystem.RootHelper;
 
 import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
+import android.os.AsyncTask;
+import com.amaze.filemanager.ui.LayoutElement;
+import java.util.List;
+import net.gnu.explorer.ContentFragment;
 
 /**
  * Created by Vishal on 27-04-2017.
@@ -30,13 +34,13 @@ public class OTGUtil {
      * @param context context for loading
      * @return an array of list of files at the path
      */
-    public static ArrayList<BaseFile> getDocumentFilesList(String path, Context context) {
-        SharedPreferences manager = PreferenceManager.getDefaultSharedPreferences(context);
-        String rootUriString = manager.getString(ExplorerActivity.KEY_PREF_OTG, null);
+    public static ArrayList<BaseFile> getDocumentFilesList(final String path, final Context context, final ContentFragment.LoadFiles updater) {
+        final SharedPreferences manager = PreferenceManager.getDefaultSharedPreferences(context);
+        final String rootUriString = manager.getString(ExplorerActivity.KEY_PREF_OTG, null);
         DocumentFile rootUri = DocumentFile.fromTreeUri(context, Uri.parse(rootUriString));
-        ArrayList<BaseFile> files = new ArrayList<>();
+        ArrayList<BaseFile> files = new ArrayList<>(1024);
 
-        String[] parts = path.split("/");
+        final String[] parts = path.split("/");
         for (int i = 0; i < parts.length; i++) {
 
             // first omit 'otg:/' before iterating through DocumentFile
@@ -47,7 +51,8 @@ public class OTGUtil {
             rootUri = rootUri.findFile(parts[i]);
         }
 
-        Log.d(context.getClass().getSimpleName(), "Found URI for: " + rootUri.getName());
+		long prevUpdate = System.currentTimeMillis();
+		Log.d(context.getClass().getSimpleName(), "Found URI for: " + rootUri.getName());
         // we have the end point DocumentFile, list the files inside it and return
         for (DocumentFile file : rootUri.listFiles()) {
             try {
@@ -60,11 +65,19 @@ public class OTGUtil {
                     baseFile.setName(file.getName());
                     baseFile.setMode(OpenMode.OTG);
                     files.add(baseFile);
+					final long present = System.currentTimeMillis();
+					if (updater != null && present - prevUpdate > 1000 && !updater.busyNoti) {
+						prevUpdate = present;
+						updater.publish(files);
+						files = new ArrayList<>(1024);
+					}
                 }
             } catch (Exception e) {
             }
         }
-
+		if (updater != null) {
+			updater.publish(files);
+		}
         return files;
     }
 

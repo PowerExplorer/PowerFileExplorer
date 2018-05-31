@@ -153,7 +153,7 @@ public class Futils {
      * Helper method to get size of an otg folder
      */
     public static long folderSize(String path, Context context) {
-        return getTotalBytes(OTGUtil.getDocumentFilesList(path, context), context);
+        return getTotalBytes(OTGUtil.getDocumentFilesList(path, context, null), context);
     }
 
     /**

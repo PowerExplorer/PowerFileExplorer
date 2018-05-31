@@ -721,12 +721,12 @@ public class HFile {
                 }
                 break;
             case OTG:
-                arrayList = OTGUtil.getDocumentFilesList(path, context);
+                arrayList = OTGUtil.getDocumentFilesList(path, context, null);
                 break;
             case DROPBOX:
                 try {
 
-                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.DROPBOX), OpenMode.DROPBOX);
+                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.DROPBOX), OpenMode.DROPBOX, null);
                 } catch (CloudPluginException e) {
                     e.printStackTrace();
 
@@ -736,7 +736,7 @@ public class HFile {
             case BOX:
                 try {
 
-                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.BOX), OpenMode.BOX);
+                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.BOX), OpenMode.BOX, null);
                 } catch (CloudPluginException e) {
                     e.printStackTrace();
                     arrayList = new ArrayList<>();
@@ -745,7 +745,7 @@ public class HFile {
             case GDRIVE:
                 try {
 
-                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.GDRIVE), OpenMode.GDRIVE);
+                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.GDRIVE), OpenMode.GDRIVE, null);
                 } catch (CloudPluginException e) {
                     e.printStackTrace();
 
@@ -755,7 +755,7 @@ public class HFile {
             case ONEDRIVE:
                 try {
 
-                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.ONEDRIVE), OpenMode.ONEDRIVE);
+                    arrayList = CloudUtil.listFiles(path, dataUtils.getAccount(OpenMode.ONEDRIVE), OpenMode.ONEDRIVE, null);
                 } catch (CloudPluginException e) {
                     e.printStackTrace();
 

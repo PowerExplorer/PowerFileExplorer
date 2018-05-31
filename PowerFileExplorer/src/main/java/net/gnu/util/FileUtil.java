@@ -63,6 +63,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import com.amaze.filemanager.ui.LayoutElement;
 import com.amaze.filemanager.utils.OnProgressUpdate;
+import net.gnu.explorer.ContentFragment;
 
 public class FileUtil {
 
@@ -1763,14 +1764,24 @@ public class FileUtil {
 		return l;
 	}
 	
-	public static Collection<LayoutElement> getFilesBy(final Collection<LayoutElement> ff, String in, boolean includeFolder) {
+	public static Collection<LayoutElement> getFilesBy(final Collection<LayoutElement> ff, String in, boolean includeFolder, final ContentFragment.SearchFileNameTask updater) {
 		if (ff != null && ff.size() > 0) {
-			final List<LayoutElement> lf = new LinkedList<>();
+			ArrayList<LayoutElement> lf = new ArrayList<>(1024);
+			long prevUpdate = System.currentTimeMillis();
 			for (LayoutElement f : ff) {
 				final Collection<File> filesBy = getFilesBy(f.bf.f, in, includeFolder);
 				for (File fi : filesBy) {
 					lf.add(new LayoutElement(fi));
 				}
+				final long present = System.currentTimeMillis();
+				if (updater != null && present - prevUpdate > 1000 && !updater.busyNoti) {
+					prevUpdate = present;
+					updater.publish(lf);
+					lf = new ArrayList<>(1024);
+				}
+			}
+			if (updater != null) {
+				updater.publish(lf);
 			}
 			return lf;
 		} else {
@@ -1790,15 +1801,28 @@ public class FileUtil {
 //		}
 //	}
 
-	public static Collection<File> getFilesBy(final File[] ff, String in, boolean includeFolder) {
+	public static Collection<LayoutElement> getFilesBy(final File[] ff, String in, boolean includeFolder, final ContentFragment.SearchFileNameTask updater) {
 		if (ff != null && ff.length > 0) {
-			final List<File> lf = new LinkedList<>();
+			ArrayList<LayoutElement> lf = new ArrayList<>();
+			long prevUpdate = System.currentTimeMillis();
 			for (File f : ff) {
-				lf.addAll(getFilesBy(f, in, includeFolder));
+				final Collection<File> filesBy = getFilesBy(f, in, includeFolder);
+				for (File le : filesBy) {
+					lf.add(new LayoutElement(le));
+				}
+				final long present = System.currentTimeMillis();
+				if (updater != null && present - prevUpdate > 1000 && !updater.busyNoti) {
+					prevUpdate = present;
+					updater.publish(lf);
+					lf = new ArrayList<>(1024);
+				}
+			}
+			if (updater != null) {
+				updater.publish(lf);
 			}
 			return lf;
 		} else {
-			return new LinkedList<File>();
+			return new LinkedList<LayoutElement>();
 		}
 	}
 	

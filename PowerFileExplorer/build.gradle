@@ -88,7 +88,7 @@ dependencies{
 	compile ('com.afollestad.material-dialogs:core:0.9.2.3') {
 		transitive = false
 	}
-	compile 'com.cloudrail:cloudrail-si-android:2.18.0'
+	compile 'com.cloudrail:cloudrail-si-android:2.22.2'
 	compile 'com.google.android.exoplayer:exoplayer:r2.3.1'
 	//compile ('org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0') {
 	//	transitive = false

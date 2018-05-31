@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import net.gnu.explorer.ExplorerActivity;
+import net.gnu.explorer.ContentFragment;
 
 /**
  * Created by vishal on 19/4/17.
@@ -33,25 +34,34 @@ import net.gnu.explorer.ExplorerActivity;
 
 public class CloudUtil {
 
-    public static ArrayList<BaseFile> listFiles(String path, CloudStorage cloudStorage, OpenMode openMode)
-            throws CloudPluginException {
+    public static ArrayList<BaseFile> listFiles(final String path, final CloudStorage cloudStorage, final OpenMode openMode, final ContentFragment.LoadFiles updater)
+	throws CloudPluginException {
 
         ArrayList<BaseFile> baseFiles = new ArrayList<>();
 
-        String strippedPath = stripPath(openMode, path);
+		final String strippedPath = stripPath(openMode, path);
 
         try {
+			long prevUpdate = System.currentTimeMillis();
+			for (CloudMetaData cloudMetaData : cloudStorage.getChildren(strippedPath)) {
 
-            for (CloudMetaData cloudMetaData : cloudStorage.getChildren(strippedPath)) {
-
-                BaseFile baseFile = new BaseFile(path + "/" + cloudMetaData.getName(),
-                        "", (cloudMetaData.getModifiedAt() == null)
-                        ? 0l : cloudMetaData.getModifiedAt(), cloudMetaData.getSize(),
-                        cloudMetaData.getFolder());
+				final BaseFile baseFile = new BaseFile(path + "/" + cloudMetaData.getName(),
+													   "", (cloudMetaData.getModifiedAt() == null)
+													   ? 0l : cloudMetaData.getModifiedAt(), cloudMetaData.getSize(),
+													   cloudMetaData.getFolder());
                 baseFile.setName(cloudMetaData.getName());
                 baseFile.setMode(openMode);
-                baseFiles.add(baseFile);
+				baseFiles.add(baseFile);
+				final long present = System.currentTimeMillis();
+				if (updater != null && present - prevUpdate > 1000 && !updater.busyNoti) {
+					prevUpdate = present;
+					updater.publish(baseFiles);
+					baseFiles = new ArrayList<>(1024);
+				}
             }
+			if (updater != null) {
+				updater.publish(baseFiles);
+			}
         } catch (Exception e) {
             e.printStackTrace();
             throw new CloudPluginException();
