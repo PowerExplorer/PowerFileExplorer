@@ -9,10 +9,10 @@
 *.class
 *.o
 *.a
-*.so
+#*.so
 *.d
-*.jar
-*.aar
+#*.jar
+#*.aar
 *.7z
 *.rartemp*
 
@@ -20,7 +20,7 @@
 bin/
 gen/
 out/
-libs/
+#libs/
 
 # Gradle files
 .gradle/
