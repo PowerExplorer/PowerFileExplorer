@@ -376,12 +376,8 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			AdapterView<?> parent, View view, int position, long id) {
 			Log.i(TAG, "onItemSelected view " + view + ", position " + position + ", id " + id);
 			//showToast("Spinner1: position=" + position + " id=" + id);
-			AsyncTask.Status status;
 			synchronized (searchTask) {
-				if ((status = searchTask.getStatus()) == AsyncTask.Status.RUNNING
-					|| status == AsyncTask.Status.PENDING) {
-					searchTask.cancel(true);
-				}
+				searchTask.cancel(true);
 				searchTask = new SearchFileNameTask();
 				searchTask.execute(position);
 			}
@@ -398,12 +394,8 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			final String filesearch = text.toString();
 			Log.d("quicksearch", "filesearch " + filesearch);
 			if (filesearch.length() > 0) {
-				AsyncTask.Status status;
 				synchronized (searchTask) {
-					if (((status = searchTask.getStatus()) == AsyncTask.Status.RUNNING
-						|| status == AsyncTask.Status.PENDING)) {
-						searchTask.cancel(true);
-					}
+					searchTask.cancel(true);
 					searchTask = new SearchFileNameTask();
 					searchTask.execute(filesearch);
 				}
@@ -459,9 +451,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 		@Override
 		protected void onPostExecute(ArrayList<AppInfo> tempAppList) {
-			if (isCancelled()) {
-				return;
-			}
+			
 			Collections.sort(tempAppList, appListSorter);
 			appList.clear();
 			appList.addAll(tempAppList);
@@ -681,11 +671,14 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		appLoadTask.execute();
 	}
 
-	class LoadAppListTask extends AsyncTask<Void, Void, ArrayList<AppInfo>> {
+	class LoadAppListTask extends AsyncTask<Void, ArrayList<AppInfo>, Void> {
 
 		private final int index, top;
 		private final boolean save;
 
+		public long prevUpdate = 0;
+		public boolean busyNoti = false;
+		
 		public LoadAppListTask(final boolean save, final int top, final int index) {
 			this.save = save;
 			this.index = index;
@@ -694,11 +687,14 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 		@Override
 		protected void onPreExecute() {
+			appList.clear();
+			selectedInList1.clear();
+			appAdapter.notifyDataSetChanged();
 			mSwipeRefreshLayout.setRefreshing(true);
 		}
 
-		protected ArrayList<AppInfo> doInBackground(Void[] p1) {
-            final ArrayList<AppInfo> tempAppList = new ArrayList<AppInfo>();
+		protected Void doInBackground(Void[] p1) {
+            ArrayList<AppInfo> tempAppList = new ArrayList<AppInfo>(64);
 			try {
                 final PackageManager packageManager = activity.getPackageManager();
 				final List<PackageInfo> all_apps = packageManager.getInstalledPackages(PackageManager.GET_META_DATA);
@@ -709,31 +705,42 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 					tempAppList.add(new AppInfo(packageManager, pinfo));
 
+					final long present = System.currentTimeMillis();
+					if (present - prevUpdate > 1000 && !busyNoti) {
+						prevUpdate = present;
+						publishProgress(tempAppList);
+						tempAppList = new ArrayList<>(64);
+					}
 					//packageInfos.add(pinfo);
 					//System.out.println( new ObjectDumper(pinfo).dump());
 				}
+				publishProgress(tempAppList);
 				//Collections.sort(layoutElems, new FileListSorter(0, sortby, asc, false));
             } catch (Throwable e) {
 				e.printStackTrace();
                 //Toast.makeText(getActivity(), "" + e, Toast.LENGTH_LONG).show();
             }
-            Collections.sort(tempAppList, appListSorter);
-			return tempAppList;
+            return null;//tempAppList;
         }
 
 		@Override
+		protected void onProgressUpdate(ArrayList<AppInfo>... values) {
+			super.onProgressUpdate(values);
+			busyNoti = true;
+			appList.addAll(values[0]);
+			appAdapter.notifyDataSetChanged();
+			busyNoti = false;
+			selectionStatusTV.setText(selectedInList1.size() + "/" + appList.size());
+		}
+
+		@Override
 		// Once the image is downloaded, associates it to the imageView
-		protected void onPostExecute(ArrayList<AppInfo> tempAppList) {
-			if (isCancelled()) {
-				return;
-			}
+		protected void onPostExecute(Void v) {
 			try {
-				appList.clear();
-				selectedInList1.clear();
-				appList.addAll(tempAppList);
+				Collections.sort(appList, appListSorter);
 				synchronized (tempOriDataSourceL1) {
 					tempOriDataSourceL1.clear();
-					tempOriDataSourceL1.addAll(tempAppList);
+					tempOriDataSourceL1.addAll(appList);
 				}
 
 				appAdapter.notifyDataSetChanged();

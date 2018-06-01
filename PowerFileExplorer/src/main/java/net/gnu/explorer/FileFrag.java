@@ -226,8 +226,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		mSwipeRefreshLayout.setColorSchemeResources(
 			android.R.color.holo_blue_bright,
 			android.R.color.holo_red_light);
-		mSwipeRefreshLayout.setProgressViewOffset(false, 0,
-												  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, res.getDisplayMetrics()));
+		//mSwipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, res.getDisplayMetrics()));
 		
 		horizontalDivider0 = v.findViewById(R.id.horizontalDivider0);
 		horizontalDivider12 = v.findViewById(R.id.horizontalDivider12);
