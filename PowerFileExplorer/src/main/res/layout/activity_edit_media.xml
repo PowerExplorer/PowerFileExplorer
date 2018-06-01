@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:rsb="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fadeScrollbars="false"
+    android:orientation="vertical"
+    android:fillViewport="true">
+
+    <RelativeLayout
+
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="5dp" />
+
+
+        <org.florescu.android.rangeseekbar.RangeSeekBar
+            android:id="@+id/rangeSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/videoView"
+            android:layout_marginTop="5dp"
+            app:showLabels="false"
+            rsb:activeColor="#ED1C24"
+            rsb:textAboveThumbsColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/rangeSeekBar"
+            android:layout_alignStart="@+id/rangeSeekBar"
+            android:layout_below="@+id/rangeSeekBar"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/rangeSeekBar"
+            android:layout_alignRight="@+id/rangeSeekBar"
+            android:layout_below="@+id/rangeSeekBar"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvRight"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="@string/rangeSeekBarText"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/uploadVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvInstructions"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/uploadVideo"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+		<com.lylc.widget.circularprogressbar.CircularProgressBar
+			android:id="@+id/circularprogressbar"
+			style="@style/Widget.ProgressBar.CircularProgressBar"
+			android:layout_width="80dip"
+			android:layout_height="80dip"
+			android:layout_below="@+id/button"
+			android:layout_marginTop="0dp"
+			android:layout_centerHorizontal="true"
+			android:visibility="invisible"
+			app:cpb_subtitle=""
+			app:cpb_title="" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:layout_toRightOf="@+id/textView"
+			android:layout_marginTop="0dp"
+			android:id="@+id/textView3"
+			android:text=""
+			android:textColor="@color/avaneTextColor" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/circularprogressbar"
+			android:id="@+id/errorTv"
+			android:text=""
+			android:textColor="@color/avaneTextColor" />
+
+        <TableLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/uploadVideo"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal|bottom"
+            android:orientation="horizontal">
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/compressVideo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/compressVideo"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/cropVideo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/cutVideo"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/extractImages"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/extractImages"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/extractAudio"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/extractAudio"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/fadeEffect"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/addFade"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/increaseSpeed"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/increaseSpeed"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/decreaseSpeed"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/decreaseSpeed"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/reverseVideo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/reverseVideo"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+            </TableRow>
+        </TableLayout>
+
+
+    </RelativeLayout>
+</LinearLayout>

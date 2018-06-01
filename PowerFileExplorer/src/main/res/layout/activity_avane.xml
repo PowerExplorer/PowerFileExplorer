@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:circular="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    
+    tools:context=".MainActivity"
+    android:background="@color/avaneBgColor">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/textView"
+        android:text=""
+        android:textColor="@color/avaneTextColor" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_marginTop="0dp"
+        android:id="@+id/textView3"
+        android:text=""
+        android:textColor="@color/avaneTextColor" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_below="@+id/textView"
+        android:id="@+id/inputFile"
+        android:textColor="@color/avaneTextColor" />
+
+    <Button
+        android:text="Encode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:layout_marginTop="0dp"
+        android:layout_below="@+id/inputFile"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="false"
+        android:background="@color/avaneButtonBgColor"
+        android:textColor="@color/avaneTextColor" />
+
+    <com.lylc.widget.circularprogressbar.CircularProgressBar
+        android:id="@+id/circularprogressbar"
+        style="@style/Widget.ProgressBar.CircularProgressBar"
+        android:layout_width="80dip"
+        android:layout_height="80dip"
+        android:layout_below="@+id/button"
+        android:layout_marginTop="0dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        circular:cpb_subtitle=""
+        circular:cpb_title="" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_below="@+id/circularprogressbar"
+        android:id="@+id/errorTv"
+        android:text=""
+        android:textColor="@color/avaneTextColor" />
+
+</RelativeLayout>
