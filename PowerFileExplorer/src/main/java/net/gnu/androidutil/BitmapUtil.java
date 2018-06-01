@@ -40,7 +40,7 @@ public class BitmapUtil {
 	public static Bitmap createVideoThumbnail(String path) {
         return ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.MINI_KIND);        
     }
-	
+
 	public static void setImageDrawable(ImageView imgView, Context ctx, int resId) {
 		imgView.setImageBitmap(BitmapFactory.decodeResource(ctx.getResources(), resId));
 	}
@@ -68,7 +68,7 @@ public class BitmapUtil {
 	}
 
 	public static int calculateSampleSize(BitmapFactory.Options options,
-										   int newHeight, int newWidth) {
+										  int newHeight, int newWidth) {
 		int sampleSize = 1;
 
 		while (((options.outHeight / 2) / sampleSize) > newHeight
@@ -90,7 +90,7 @@ public class BitmapUtil {
 
 		return options;
 	}
-	
+
 	public static BitmapFactory.Options getBitmapDimesions(final String img) {
 
 		final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -100,7 +100,7 @@ public class BitmapUtil {
 
 		return options;
 	}
-	
+
 	public static Bitmap getBitmapForVisibleRegion(WebView webview) {
 		Bitmap returnedBitmap = null;
 		webview.setDrawingCacheEnabled(true);
@@ -108,7 +108,7 @@ public class BitmapUtil {
 		webview.setDrawingCacheEnabled(false);
 		return returnedBitmap;
 	}
-	
+
 	public static Bitmap getThumbnail(Context context, Uri uri, int size)
 	throws FileNotFoundException, IOException {
         InputStream input = context.getContentResolver().openInputStream(uri);
@@ -136,7 +136,7 @@ public class BitmapUtil {
         input.close();
         return bitmap;
     }
-	
+
     private static int getPowerOfTwoForSampleRatio(double ratio) {
         int k = Integer.highestOneBit((int) Math.floor(ratio));
         if (k == 0)
@@ -144,7 +144,7 @@ public class BitmapUtil {
         else
             return k;
     }
-	
+
 	public Bitmap scaleRelative2View(View view, Bitmap bitmap, float inScaleX, float inScaleY) {
         // create a matrix for the manipulation
         Matrix matrix = new Matrix();
@@ -170,7 +170,32 @@ public class BitmapUtil {
 
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
-	
+
+	public static Bitmap resizeKeepScale(final Bitmap bitmap, final int max) {
+		//Log.d(TAG, "resizeKeepScale " + max);
+		int bmpWidth = bitmap.getWidth();
+		int bmpHeight = bitmap.getHeight();
+		if (bmpWidth < bmpHeight) {
+			bmpWidth = Math.max(1, (bmpWidth * max / bmpHeight));
+			bmpHeight = max;
+		} else {
+			bmpHeight = Math.max(1, (bmpHeight * max / bmpWidth));
+			bmpWidth = max;
+		}
+		final Bitmap createScaledBitmap = Bitmap.createScaledBitmap(bitmap, bmpWidth, bmpHeight, true);
+		final Rect rect = new Rect((max - bmpWidth)/2, (max - bmpHeight)/2, bmpWidth, bmpHeight);
+
+		final Bitmap output = Bitmap.createBitmap(max, max, Bitmap.Config.ARGB_8888);
+		final Canvas canvas = new Canvas(output);
+		canvas.drawARGB(0, 0, 0, 0);
+
+		final Paint paint = new Paint();
+		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
+		canvas.drawBitmap(createScaledBitmap, rect, rect, paint);
+		createScaledBitmap.recycle();
+		return output;
+	}
+
 	/**
 	 * scale the bitmap to a long edge of max
 	 * 
@@ -178,23 +203,23 @@ public class BitmapUtil {
 	 * @param Integer
 	 * @return Bitmap
 	 */
-	public static Bitmap scaleBmp(Bitmap bmp, int max) {
-		float bmpWidth = bmp.getWidth();
-		float bmpHeight = bmp.getHeight();
+	public static Bitmap scaleBmp(final Bitmap bmp, final int max) {
+		int bmpWidth = bmp.getWidth();
+		int bmpHeight = bmp.getHeight();
 		if (bmpWidth < bmpHeight) {
-			bmpWidth = (bmpWidth * max / bmpHeight);
+			bmpWidth = Math.max(1, (bmpWidth * max / bmpHeight));
 			bmpHeight = max;
 		} else {
-			bmpHeight = (bmpHeight * max / bmpWidth);
+			bmpHeight = Math.max(1, (bmpHeight * max / bmpWidth));
 			bmpWidth = max;
 		}
-		if (bmpWidth > 0 && bmpWidth > 0) {
-			bmp = Bitmap.createScaledBitmap(bmp, (int) bmpWidth,
-											(int) bmpHeight, true);
-		}
-		return bmp;
+		//if (bmpWidth > 0 && bmpWidth > 0) {
+		return Bitmap.createScaledBitmap(bmp, bmpWidth,
+										 bmpHeight, true);
+//		}
+//		return bmp;
 	}
-	
+
 	public static File saveBitmap(final Bitmap bitmap,
 								  final String filename) {
 		OutputStream outStream = null;
@@ -213,7 +238,7 @@ public class BitmapUtil {
 		}
 		return out;
 	}
-	
+
 	public static void recycleBitmap(ImageView iv) {
         Drawable d = iv.getDrawable();
         if (d instanceof BitmapDrawable) {
@@ -222,7 +247,7 @@ public class BitmapUtil {
         }
         d.setCallback(null);
     }
-	
+
 	public static Bitmap rotate(Bitmap bitmap, int rotation) {
 
         int targetWidth = bitmap.getWidth();
@@ -243,7 +268,7 @@ public class BitmapUtil {
         bitmap.recycle();
         return targetBitmap;
     }
-	
+
 	public static Bitmap rotateImageView(int angle, Bitmap bitmap) {
 
 		if (bitmap == null)
@@ -260,17 +285,17 @@ public class BitmapUtil {
 		bitmap.recycle();
 		return resizedBitmap;
 	}
-	
+
 	public static Bitmap loadScaledBitmap(Context context, String bitmapFilePath, int widthDp, int heightDp) throws IOException {
 		//create movie icon
 		Bitmap bitmap;
-		bitmap=BitmapFactory.decodeStream(context.openFileInput(bitmapFilePath));
-		bitmap=Bitmap.createScaledBitmap(bitmap, widthDp, heightDp, true);
+		bitmap = BitmapFactory.decodeStream(context.openFileInput(bitmapFilePath));
+		bitmap = Bitmap.createScaledBitmap(bitmap, widthDp, heightDp, true);
 		return bitmap;
 	}
-	
+
 	public static Bitmap loadBitmapAndScale(final String filePath,
-										   final int width, final int height) {
+											final int width, final int height) {
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 		options.inDither = false;
@@ -318,7 +343,7 @@ public class BitmapUtil {
 		}
 		return inSampleSize;
 	}
-	
+
 	public static Bitmap circularBitmap(Bitmap bitmap) {
 		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
 											bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -340,7 +365,7 @@ public class BitmapUtil {
 		//return _bmp;
 		return output;
 	}
-	
+
 	public static Bitmap centerCrop(Bitmap srcBmp) {
         Bitmap dstBmp = null;
         if (srcBmp.getWidth() >= srcBmp.getHeight()) {
@@ -362,7 +387,7 @@ public class BitmapUtil {
         }
         return dstBmp;
     }
-	
+
 	public static Bitmap cropCenter(Bitmap bitmap) {
 
         int minSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
@@ -382,7 +407,7 @@ public class BitmapUtil {
         bitmap.recycle();
         return targetBitmap;
     }
-	
+
 	public static Bitmap drawableToBitmap(int res_id, Context context) {
 		BitmapDrawable drawable = (BitmapDrawable) context.getResources().getDrawable(res_id);
 		Bitmap bitmap = drawable.getBitmap();
@@ -390,25 +415,25 @@ public class BitmapUtil {
 	}
 
 	public static Bitmap drawableToBitmap(Drawable drawable) {
-		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),drawable.getIntrinsicHeight(),
+		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
 											drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565);
 		Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),drawable.getIntrinsicHeight());
+		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
 		drawable.draw(canvas);
 		return bitmap;
     }
-	
+
 	public static Drawable bitmapToDrawable(Bitmap bitmap) {
 		return new BitmapDrawable(bitmap);
     }
-	
+
 	public static Bitmap bytes2Bimap(byte[] b) {
 		if (b.length == 0) {
 			return null;
 		}
 		return BitmapFactory.decodeByteArray(b, 0, b.length);  
     }
-	
+
 	public static Bitmap getScaledScreenshot(final Activity activity, int scaleWidth, int scaleHeight, boolean relativeScaleIfTrue) {
         final View someView = activity.findViewById(android.R.id.content);
         final View rootView = someView.getRootView();

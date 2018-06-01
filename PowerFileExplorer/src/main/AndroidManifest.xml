@@ -328,15 +328,16 @@
 		</activity>
 		<activity
 			android:name="net.gnu.mupdf.viewer.app.LibraryActivity"
-			android:configChanges="orientation|screenSize|keyboardHidden">
+			android:configChanges="orientation|screenSize|keyboardHidden"
+			android:label="PDF Reader">
 			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 		</activity>
 
 		<activity android:name="com.tuarua.avane.android.libavaneexample.MainActivity"
-			android:label="Ffmpeg utilities">
+			android:label="FFMpeg Utilities">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -344,7 +345,8 @@
 		</activity>
 
 		<activity android:name="videoeditor.bhuvnesh.com.ffmpegvideoeditor.activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+			android:label="Media Editor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -437,7 +439,10 @@
 			android:label="Text Editor"
 			android:theme="@style/AppTheme"
 		>
-
+			<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.OPEN_DOCUMENT" />

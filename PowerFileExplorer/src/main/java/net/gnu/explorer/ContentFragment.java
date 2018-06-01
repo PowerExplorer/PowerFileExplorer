@@ -2609,9 +2609,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		
 		@Override
 		public void onProgressUpdate(final Object... message) {
-			Log.d(TAG, "onProgressUpdate " + message[0]);
 			if (message != null) {
 				if (message[0] instanceof String) {
+					Log.d(TAG, "onProgressUpdate " + message[0]);
 					showToast(message[0]);
 				} else {
 					busyNoti = true;

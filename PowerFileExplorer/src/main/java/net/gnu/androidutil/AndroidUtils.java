@@ -101,7 +101,7 @@ public class AndroidUtils {
 		if (f.isFile()) {
 			if (MimeTypes.getMimeType(f).startsWith("image")) {
 				final int size = (int) context.getResources().getDimension(android.R.dimen.app_icon_size);
-				addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapUtil.scaleBmp(BitmapFactory.decodeFile(absolutePath), size));
+				addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapUtil.resizeKeepScale(BitmapFactory.decodeFile(absolutePath), size));
 				shortcutIntent = new Intent(context.getApplicationContext(),
 											PhotoActivity.class);
 			} else {
