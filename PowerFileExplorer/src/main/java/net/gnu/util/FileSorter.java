@@ -18,9 +18,9 @@ public class FileSorter implements Comparator<File> {
 	public static final int DESCENDING = -1;
 
     private final int dirsOnTop;// = 0;
-    private final int asc;// = 1;
     private final int sort;// = 0;
-
+	private final int asc;// = 1;
+    
     public FileSorter(final int dir, final int sort, final int asc) {
         this.dirsOnTop = dir;
         this.asc = asc;

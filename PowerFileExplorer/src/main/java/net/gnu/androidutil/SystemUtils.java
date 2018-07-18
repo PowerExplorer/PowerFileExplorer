@@ -13,10 +13,74 @@ import android.widget.*;
 import android.os.Build;
 import java.lang.reflect.*;
 import android.telephony.*;
+import net.gnu.util.ObjectDumper;
 
 public class SystemUtils {
 	
 	private static final String TAG = "SystemUtils";
+
+	public static List<CharSequence>[] getSystemService(Context ctx) {
+		
+		Field[] f = Context.class.getDeclaredFields();
+		
+		final ArrayList<String> ls = new ArrayList<String>();
+		final ArrayList<StringBuilder> ls2 = new ArrayList<StringBuilder>();
+		
+		for (Field ff : f) {
+			
+			//Log.d(TAG, ff + ".");
+			
+			if (ff.getType() == String.class) {// && ff.getName().equals("SENSOR_SERVICE")) {
+				
+				StringBuilder sb = new StringBuilder();
+				
+				String service = ff.getName();
+				ls.add(service.replaceAll("_", " "));
+
+				try {
+					Object fVal = ff.get(ctx);
+					Object obj = ctx.getSystemService((String)fVal);
+
+					Log.d(TAG, service + ": " + fVal + ": " + obj + ".");
+					sb.append(new ObjectDumper(obj).dump());
+
+//					if (obj != null) {
+//						
+//						Class<? extends Object> clazz = obj.getClass();
+//						Method[] ms = clazz.getMethods();
+//						
+//						for (Method m : ms) {
+//							try {
+//								String methodName = m.getName();
+//								//Log.d(TAG, clazz.getName() + ": " + methodName + ": isAccessible: " + m.isAccessible() + ": " + m);
+//								m.setAccessible(true);
+//								
+//								if (methodName.startsWith("get") 
+//									&& methodName.endsWith("List")
+//									&& m.getParameterTypes().length == 1
+//									&& (m.getParameterTypes()[0] == Integer.TYPE
+//									|| m.getParameterTypes()[0] == Integer.class)
+//									) {
+//									Object invoke = m.invoke(obj, -1);
+//									Log.d(TAG, clazz.getName() + "." + methodName + ": invoke: " + invoke + ": " + m);
+//									sb.append(Util.toString(invoke));
+//								}
+//							} catch (Throwable e) {
+//								Log.e(TAG, ff.getName() + ": " + e.getMessage(), e);
+//							} finally {
+//								ls2.add(sb);
+//							}
+//						}
+//					}
+				} catch (Throwable e) {
+					Log.e(TAG, service + ": " + e.getMessage(), e);
+				} finally {
+					ls2.add(sb);
+				}
+			}
+		}
+		return new ArrayList[] {ls, ls2};
+	}
 	
 	public static ArrayList<CharSequence> getBuild() {
 		StringBuilder sb;

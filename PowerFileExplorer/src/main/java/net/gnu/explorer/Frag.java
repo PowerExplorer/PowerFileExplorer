@@ -269,7 +269,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
         //fixIcons(false);
     }
 
-    protected void showToast(int messageId) {
+    protected void showToast(final int messageId) {
 		showToast(getString(messageId));
 	}
 

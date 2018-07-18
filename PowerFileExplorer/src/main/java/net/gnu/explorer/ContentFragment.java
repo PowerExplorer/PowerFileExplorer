@@ -102,7 +102,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
     	
 	private ScaleGestureDetector mScaleGestureDetector;
 	private ImageButton dirMore;
-	private TextView mMessageView;
+	//private TextView mMessageView;
 	
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
 	private TextSearch textSearch = new TextSearch();
@@ -120,10 +120,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	private ImageButton addAllBtn;
 	private LinearLayout selectionCommandsLayout;
 	private LoadFiles loadList = new LoadFiles();
-	private int file_count, folder_count, columns;
-	private int sortby, dsort, asc;
+	//private int file_count, folder_count, columns;
+	//private int sortby, dsort, asc;
     private String smbPath;
-	private boolean mRetainSearchTask = false;
+	//private boolean mRetainSearchTask = false;
 	private LayoutElementSorter fileListSorter;
 	private LinkedList<Map<String, Object>> backStack = new LinkedList<>();
 	private LinkedList<String> history = new LinkedList<>();
@@ -2286,8 +2286,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 			Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + "suffix=" + suffix + ", suffixPattern=" + suffixPattern + ", " + openMode + ", " + ContentFragment.this);
 			
-			folder_count = 0;
-			file_count = 0;
+//			folder_count = 0;
+//			file_count = 0;
 			if (openMode == OpenMode.UNKNOWN) {
 				HFile hFile = new HFile(OpenMode.UNKNOWN, path);
 				hFile.generateMode(activity);
@@ -2612,17 +2612,19 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			if (message != null) {
 				if (message[0] instanceof String) {
 					Log.d(TAG, "onProgressUpdate " + message[0]);
-					showToast(message[0]);
+					showToast("" + message[0]);
 				} else {
 					busyNoti = true;
 					if (openMode != OpenMode.SMB && openMode != OpenMode.FILE && openMode != OpenMode.ROOT) {
+						Log.d(TAG, "onProgressUpdate addTo BaseFile");
 						addTo(dataSourceL1, (ArrayList<BaseFile>)message[0]);
 					} else {
+						Log.d(TAG, "onProgressUpdate addAll element");
 						dataSourceL1.addAll((ArrayList<LayoutElement>)message[0]);
 					}
 					srcAdapter.notifyDataSetChanged();
 					busyNoti = false;
-					selectionStatusTV.setText(selectedInList1.size() + "/" + dataSourceL1.size());
+					selectionStatusTV.setText("0/" + dataSourceL1.size());
 				}
 			} 
 		}
@@ -2682,14 +2684,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		private void addTo(final List<LayoutElement> items, final ArrayList<BaseFile> baseFiles) {
 			//final ArrayList<LayoutElement> items = new ArrayList<>();
 
-			ArrayList<String> hiddenfiles = dataUtils.getHiddenfiles();
-			for (int i = 0; i < baseFiles.size(); i++) {
-				final BaseFile baseFile = baseFiles.get(i);
+			final ArrayList<String> hiddenfiles = dataUtils.getHiddenfiles();
+			for (BaseFile baseFile : baseFiles) {
+				//final BaseFile baseFile = baseFiles.get(i);
 				//File f = new File(ele.getPath());
 
 				if (!hiddenfiles.contains(baseFile.getPath())) {
 					final LayoutElement layoutElement = new LayoutElement(baseFile);
-					layoutElement.setMode(baseFile.getMode());
+					layoutElement.setMode(openMode);//baseFile.getMode());
 					items.add(layoutElement);
 //					if (baseFile.isDirectory()) {
 //						folder_count++;
@@ -2855,24 +2857,24 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 
 		private ArrayList<BaseFile> listApks() {
-			ArrayList<BaseFile> songs = new ArrayList<>(1024);
+			ArrayList<BaseFile> songs = new ArrayList<>(0);
 			final String[] projection = {MediaStore.Files.FileColumns.DATA};
 
 			final Cursor cursor = activity.getContentResolver()
                 .query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
 			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				do {
+					songs = new ArrayList<>(1024);
 					final String path = cursor.getString(cursor.getColumnIndex
 												   (MediaStore.Files.FileColumns.DATA));
 					if (path != null && path.endsWith(".apk")) {
-						final BaseFile strings = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
-						if (strings != null)
-							songs.add(strings);
+						final BaseFile bf = RootHelper.generateBaseFile(new File(path), SHOW_HIDDEN);
+						if (bf != null)
+							songs.add(bf);
 						final long present = System.currentTimeMillis();
 						if (present - prevUpdate > 1000 && !busyNoti) {
 							prevUpdate = present;
 							publishProgress(songs);
-							songs = new ArrayList<>(1024);
 						}
 					}
 				} while (cursor.moveToNext());
@@ -3008,7 +3010,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			Log.d(TAG, "onProgressUpdate " + message[0]);
 			if (message != null) {
 				if (message[0] instanceof String) {
-					showToast(message[0]);
+					showToast("" + message[0]);
 				} else {
 					busyNoti = true;
 					dataSourceL1.addAll((ArrayList<LayoutElement>)message[0]);

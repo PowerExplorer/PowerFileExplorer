@@ -122,6 +122,15 @@ import net.gnu.p7zip.DecompressTask;
 import net.gnu.p7zip.ZipEntry;
 import java.util.Queue;
 import java.util.ArrayDeque;
+import net.gnu.searcher.IndexTitleFragment;
+import net.gnu.searcher.ReplaceAllFragment;
+import net.gnu.searcher.WordListFragment;
+import net.gnu.searcher.BatchFragment;
+import android.support.v7.app.AlertDialog;
+import net.gnu.androidutil.SystemUtils;
+import android.content.DialogInterface;
+import net.gnu.util.CommandUtils;
+import android.widget.ArrayAdapter;
 
 
 public class ExplorerActivity extends ThemedActivity implements OnRequestPermissionsResultCallback,
@@ -129,44 +138,62 @@ SmbConnectionListener, DataChangeListener, BookmarkCallback,
 CloudConnectionCallbacks, //SearchWorkerFragment.HelperCallbacks, 
 LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClickListener {
 
-	private static final String COMPRESS = CompressFragment.class.getSimpleName();
-	private static final String DECOMPRESS = DecompressFragment.class.getSimpleName();
-
+	private static final String COMPRESS = "CompressFragment";
+	private static final String DECOMPRESS = "DecompressFragment";
+	private static final String INDEX_TITLE = "IndexTitleFragment";
+	private static final String REPLACE = "ReplaceAllFragment";
+	private static final String WORDLIST = "WordListFragment";
+	private static final String BATCH_FRAGMENT = "BatchFragment";
+	
 	private CompressFragment compressFrag;
 	private DecompressFragment decompressFrag;
-
+	private IndexTitleFragment indexingFrag;
+	private ReplaceAllFragment replaceFrag;
+	private WordListFragment wlFrag;
+	private BatchFragment batchFrag;
+	
 	private String currentDialog = "";
 
 	public static final String KEY_INTENT_COMPRESS = "showCompressFrag";
 	public static final String KEY_INTENT_DECOMPRESS = "showDecompressFrag";
 	
-	public void compress(final String filePaths, final String archiveFilePath) {
-		currentDialog = COMPRESS;
-		Log.d(TAG, "compress(View view) " + compressFrag);
-		if (compressFrag == null) {
-			compressFrag = CompressFragment.newInstance();
-		}
-		compressFrag.files = filePaths;
-		compressFrag.saveTo = archiveFilePath;
+	public static final String HEAD_TABLE = 
+	"</head>\n"
+	+ "<body bgcolor=\"#FFFFF0\" text=\"#000000\" link=\"#0000ff\" vlink=\"#0000ff\">\n"
+	+ "<div align=\"center\">\n"
+	+ "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100.0%;border-collapse:collapse\">\n";
 
-		if (!compressFrag.isAdded()) {
-			compressFrag.show(getSupportFragmentManager(), COMPRESS);
-		}
-	}
+	public static final String HTML_STYLE = 
+	"<html>\n"
+	+ "<head>\n"
+	+ "<meta http-equiv=\"Content-Language\" content=\"en-us\" />\n"
+	+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
 
-	public void decompress(final String filePaths, final String extractToPath, String includes, boolean showDialog) {
-		currentDialog = DECOMPRESS;
-		if (decompressFrag == null) {
-			decompressFrag = DecompressFragment.newInstance();
-		}
-		decompressFrag.files = filePaths;
-		decompressFrag.saveTo = extractToPath;
-		decompressFrag.include = includes;
-		if (showDialog && !decompressFrag.isAdded()) {
-			decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
-		}
-	}
+	+ "<style type=\"text/css\">\n" 
+	+ "@font-face {\n"
+	+ "    font-family: DejaVuSerifCondensed;\n"
+	+ "    src: url(\"file:///android_asset/fonts/DejaVuSerifCondensed.ttf\");\n"
+	+ "}\n"
+	+ "td {\n"
+	+ "		vertical-align: top; border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt;\n" 
+	+ "}\n"
+	+ "body {\n"
+	+ "    font-family: DejaVuSerifCondensed;\n"
+	+ "    font-size: small;\n"
+	// + "    text-align: justify;"
+	+ "}"
+	+ "</style>\n";
 
+	public static final String EMPTY_HEAD = 
+	HTML_STYLE
+	+ "</head>\n"
+	+ "<body bgcolor=\"#FFFFF0\" text=\"#000000\" link=\"#0000ff\" vlink=\"#0000ff\">\n";
+	public static final String TD1_CENTER = "<td width='4%' align='center' valign='middle' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
+	public static final String TD2_CENTER = "<td width='76%' align='center' valign='middle' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
+	public static final String TD3_CENTER = "<td width='4%' align='center' valign='middle' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
+	public static final String TD1_LEFT = "<td>";// width='4%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
+	public static final String TD2_LEFT = "<td>";// width='76%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
+	public static final String TD3_LEFT = "<td>";// width='4%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
 	
 	private static final String TAG = "ExplorerActivity";
 	
@@ -189,6 +216,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public static final String ZIP_TITLE = "Compressed file (" + ZIP_SUFFIX + ")";
 	public static final int FILES_REQUEST_CODE = 13;
 	public static final int SAVETO_REQUEST_CODE = 14;
+	public static final int STARDICT_REQUEST_CODE = 16;
 	public static final boolean MULTI_FILES = true;
 	public static final int OUTLINE_REQUEST_CODE = 15;
 	
@@ -234,6 +262,18 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	private String mimes = "";
 	String dir = "";
 	
+	public static final String DOC_FILES_SUFFIX =
+	".doc; .docx; .txt; .html; .odt; .rtf; .epub; .fb2; .pdf; .pps; .ppt; .pptx; .xls; .xlsx; " +
+	".ods; .odp; .pub; .vsd; .htm; .xml; .xhtml; .java; .c; .cpp; .h; .md; .lua; .sh; bat; .list; .depend; .js; .jsp; .mk; .config; .configure; .machine; .asm; .css; .desktop; .inc; .shtm; .shtml; .i; .plist; .pro; .py; .s; .xpm; .ini";
+	public static final String TRANSLATE_FILES_SUFFIX =
+	".doc; .docx; .txt; .html; .odt; .rtf; .epub; .fb2; .pdf; .pps; .ppt; .pptx; .xls; .xlsx; " +
+	".ods; .odp; .htm; .xhtml; .shtm; .shtml;";
+	public static final String ORI_SUFFIX_TITLE = "Origin Document (" + DOC_FILES_SUFFIX + ")";
+	public static final String MODI_SUFFIX_TITLE = "Modified Document (" + DOC_FILES_SUFFIX + ")";
+	public static final String TXT_SUFFIX = ".txt";
+	public static final String TXT_SUFFIX_TITLE = "Dictionary Text (" + TXT_SUFFIX + ")";
+	public static final String IFO_SUFFIX = ".ifo";
+	public static final String IFO_SUFFIX_TITLE = "Dictionary File (" + IFO_SUFFIX + ")";
 	
 	public final static int REQUEST_CODE_PREFERENCES = 1, REQUEST_CODE_SRV_FORM = 2, REQUEST_CODE_OPEN = 3;
     public final static int FIND_ACT = 1017, SMB_ACT = 2751, FTP_ACT = 4501, SFTP_ACT = 2450;
@@ -397,6 +437,105 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		} else {
 			run.run();
 		}
+	}
+
+	public void compress(final String filePaths, final String archiveFilePath) {
+		currentDialog = COMPRESS;
+		Log.d(TAG, "compress(View view) " + compressFrag);
+		if (compressFrag == null) {
+			compressFrag = CompressFragment.newInstance();
+		}
+		compressFrag.files = filePaths;
+		compressFrag.saveTo = archiveFilePath;
+
+		if (!compressFrag.isAdded()) {
+			compressFrag.show(getSupportFragmentManager(), COMPRESS);
+		}
+	}
+
+	public void decompress(final String filePaths, final String extractToPath, String includes, boolean showDialog) {
+		currentDialog = DECOMPRESS;
+		if (decompressFrag == null) {
+			decompressFrag = DecompressFragment.newInstance();
+		}
+		decompressFrag.files = filePaths;
+		decompressFrag.saveTo = extractToPath;
+		decompressFrag.include = includes;
+		if (showDialog && !decompressFrag.isAdded()) {
+			decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+		}
+	}
+
+	public boolean batchDeleteRename(final List<LayoutElement> lel) {
+		currentDialog = BATCH_FRAGMENT;
+		if (batchFrag == null) {
+			batchFrag = BatchFragment.newInstance();
+		}
+		//batchFrag.files = lel;
+		if (!batchFrag.isAdded()) {
+			batchFrag.show(getSupportFragmentManager(), BATCH_FRAGMENT);
+		}
+		return true;
+	}
+
+	public boolean systemFeatures(final View item) {
+		final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		final ListView tv = new ListView(this);
+		final List<CharSequence> sensors = SystemUtils.getBuild();
+		sensors.addAll(Util.propertiesToListString(System.getProperties()));
+		sensors.addAll(Util.propertiesToListString(System.getenv()));
+		sensors.addAll(SystemUtils.getHardwareInfo(this));
+		sensors.add(CommandUtils.fetch_cpu_info());
+		sensors.add(CommandUtils.fetch_disk_info());
+		sensors.add(CommandUtils.fetch_mount_info());
+		sensors.add(CommandUtils.fetch_netcfg_info());
+		sensors.add(CommandUtils.fetch_netstat_info());
+		sensors.add(CommandUtils.fetch_process_info());
+
+		final ArrayAdapter<CharSequence> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, sensors);
+		tv.setAdapter(arrayAdapter);
+
+		alert.setIconAttribute(android.R.attr.dialogIcon);
+		alert.setTitle("System Features List");
+
+		alert.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+		alert.setView(tv);
+		final AlertDialog alertDialog = alert.create();
+		alertDialog.show();
+		return true;
+	}
+
+	public boolean sensors(final View item) {
+		final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		final ListView lv = new ListView(this);
+		final List<CharSequence>[] sensors = SystemUtils.getSensors(this);
+		final List<CharSequence>[] systemService = SystemUtils.getSystemService(this);
+		sensors[0].addAll(systemService[0]);
+		sensors[1].addAll(systemService[1]);
+		//Log.d("sensors[0]", CommonUtils.collectionToString(sensors[0], true, "\n"));
+		//Log.d("sensors[1]", CommonUtils.collectionToString(sensors[1], true, "\n"));
+		ExtensibleAdapter arrayAdapter = new ExtensibleAdapter(this, sensors[0], sensors[1], null);
+		lv.setAdapter(arrayAdapter);
+		//arrayAdapter.notifyDataSetChanged();
+
+		alert.setIconAttribute(android.R.attr.dialogIcon);
+		alert.setTitle("Sensor List");
+		//alert.setCancelable(true);
+		alert.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+		alert.setView(lv);
+		AlertDialog alertDialog = alert.create();
+		alertDialog.show();
+		return true;
 	}
 	
 	@Override
@@ -1148,6 +1287,23 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
 							}
 							Log.d(TAG, "decompressFrag " + decompressFrag);
+						} else if (REPLACE.equals(currentDialog)) {
+							replaceFrag.files = Util.collectionToString(stringExtra, false, "| ");
+							if (!replaceFrag.isAdded()) {
+								replaceFrag.show(getSupportFragmentManager(), REPLACE);
+							}
+							Log.d(TAG, "replaceFrag " + replaceFrag);
+						} else if (WORDLIST.equals(currentDialog)) {
+							wlFrag.files = Util.collectionToString(stringExtra, false, "|");
+							if (!wlFrag.isAdded()) {
+								wlFrag.show(getSupportFragmentManager(), WORDLIST);
+							}
+							Log.d(TAG, "wlFrag " + wlFrag);
+						} else if (BATCH_FRAGMENT.equals(currentDialog)) {
+							batchFrag.files =  Util.collectionToString(stringExtra, false, "|");
+							if (!batchFrag.isAdded()) {
+								batchFrag.show(getSupportFragmentManager(), BATCH_FRAGMENT);
+							}
 						} 
 					} else { // RESULT_CANCEL
 						showToast("No file selected");
@@ -1158,6 +1314,18 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 						} else if (DECOMPRESS.equals(currentDialog)) {
 							if (!decompressFrag.isAdded()) {
 								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
+							}
+						} else if (REPLACE.equals(currentDialog)) {
+							if (!replaceFrag.isAdded()) {
+								replaceFrag.show(getSupportFragmentManager(), REPLACE);
+							}
+						} else if (WORDLIST.equals(currentDialog)) {
+							if (!wlFrag.isAdded()) {
+								wlFrag.show(getSupportFragmentManager(), WORDLIST);
+							}
+						} else if (BATCH_FRAGMENT.equals(currentDialog)) {
+							if (!batchFrag.isAdded()) {
+								batchFrag.show(getSupportFragmentManager(), BATCH_FRAGMENT);
 							}
 						} 
 					}
@@ -1176,7 +1344,30 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
 							}
 							Log.d(TAG, "decompressFrag " + decompressFrag);
-						} 
+						} else if (INDEX_TITLE.equals(currentDialog)) {
+							indexingFrag.files = stringExtra.get(0);
+							if (!indexingFrag.isAdded()) {
+								indexingFrag.show(getSupportFragmentManager(), INDEX_TITLE);
+							}
+							Log.d(TAG, "indexingFrag " + indexingFrag);
+						} else if (REPLACE.equals(currentDialog)) {
+							replaceFrag.saveTo = stringExtra.get(0);
+							if (!replaceFrag.isAdded()) {
+								replaceFrag.show(getSupportFragmentManager(), REPLACE);
+							}
+							Log.d(TAG, "replaceFrag " + replaceFrag);
+						} else if (WORDLIST.equals(currentDialog)) {
+							wlFrag.saveTo = stringExtra.get(0);
+							if (!wlFrag.isAdded()) {
+								wlFrag.show(getSupportFragmentManager(), WORDLIST);
+							}
+							Log.d(TAG, "wlFrag " + wlFrag);
+						} else if (BATCH_FRAGMENT.equals(currentDialog)) {
+							batchFrag.saveTo = stringExtra.get(0);
+							if (!wlFrag.isAdded()) {
+								batchFrag.show(getSupportFragmentManager(), BATCH_FRAGMENT);
+							}
+						}
 					} else { // RESULT_CANCEL
 						showToast("No folder selected");
 						if (COMPRESS.equals(currentDialog)) {
@@ -1187,8 +1378,52 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 							if (!decompressFrag.isAdded()) {
 								decompressFrag.show(getSupportFragmentManager(), DECOMPRESS);
 							}
+						} else if (INDEX_TITLE.equals(currentDialog)) {
+							if (!indexingFrag.isAdded()) {
+								indexingFrag.show(getSupportFragmentManager(), INDEX_TITLE);
+							}
+						} else if (REPLACE.equals(currentDialog)) {
+							if (!replaceFrag.isAdded()) {
+								replaceFrag.show(getSupportFragmentManager(), REPLACE);
+							}
+						} else if (WORDLIST.equals(currentDialog)) {
+							if (!wlFrag.isAdded()) {
+								wlFrag.show(getSupportFragmentManager(), WORDLIST);
+							}
+						} else if (BATCH_FRAGMENT.equals(currentDialog)) {
+							if (!batchFrag.isAdded()) {
+								batchFrag.show(getSupportFragmentManager(), BATCH_FRAGMENT);
+							}
 						} 
 					}
+				} else if (requestCode == STARDICT_REQUEST_CODE) {
+					if (responseCode == Activity.RESULT_OK) {
+						List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
+						
+						if (REPLACE.equals(currentDialog)) {
+							replaceFrag.stardict = stringExtra.get(0);
+							if (!replaceFrag.isAdded()) {
+								replaceFrag.show(getSupportFragmentManager(), REPLACE);
+							}
+						} else if (WORDLIST.equals(currentDialog)) {
+							wlFrag.stardict = Util.collectionToString(stringExtra, false, "|");
+							if (!wlFrag.isAdded()) {
+								wlFrag.show(getSupportFragmentManager(), WORDLIST);
+							}
+						}
+					} else { // RESULT_CANCEL
+						showToast("No folder selected");
+						if (REPLACE.equals(currentDialog)) {
+							if (!replaceFrag.isAdded()) {
+								replaceFrag.show(getSupportFragmentManager(), REPLACE);
+							}
+						} else if (WORDLIST.equals(currentDialog)) {
+							if (!wlFrag.isAdded()) {
+								wlFrag.show(getSupportFragmentManager(), WORDLIST);
+							}
+						} 
+					}
+
 				} else if (requestCode == image_selector_request_code) {
 					if (sharedPref != null && intent != null && intent.getData() != null) {
 						if (SDK_INT >= 19)

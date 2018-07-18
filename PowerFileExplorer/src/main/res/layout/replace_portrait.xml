@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/titleLbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:longClickable="false"
+            android:paddingBottom="12dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="12dp"
+            android:text="Replace All"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="24sp" />
+
+        <View
+            android:id="@+id/horizontalDivider0"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/bright_blue" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="12dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="12dp" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/filesLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/filesBtn"
+                    android:layout_alignParentLeft="true"
+                    android:clickable="false"
+                    android:longClickable="false"
+                    android:text="File "
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/files"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/filesBtn"
+                    android:layout_toLeftOf="@+id/filesBtn"
+                    android:layout_toRightOf="@+id/filesLbl"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/filesBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:onClick="ok"
+                    android:padding="0dp"
+                    android:singleLine="true"
+                    android:text="..." />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/saveToLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/saveToBtn"
+                    android:layout_alignParentLeft="true"
+                    android:clickable="false"
+                    android:longClickable="false"
+                    android:text="Save to "
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/saveTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/partsLbl"
+                    android:layout_alignBaseline="@+id/saveToBtn"
+                    android:layout_toLeftOf="@+id/saveToBtn"
+                    android:layout_toRightOf="@+id/saveToLbl"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/saveToBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:onClick="ok"
+                    android:padding="0dp"
+                    android:singleLine="true"
+                    android:text="..." />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/stardictLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/stardictBtn"
+                    android:layout_alignParentLeft="true"
+                    android:clickable="false"
+                    android:longClickable="false"
+                    android:text="Stardict text "
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/stardict"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/stardictBtn"
+                    android:layout_toLeftOf="@+id/stardictBtn"
+                    android:layout_toRightOf="@+id/stardictLbl"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/stardictBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:onClick="ok"
+                    android:padding="0dp"
+                    android:singleLine="true"
+                    android:text="..." />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent" >
+
+                <TextView
+                    android:id="@+id/IncludeLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="true"
+                    android:text="Include files"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/include"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="false"
+                    android:text=".*?\\.([dxs]?htm[l]?|txt|java|c|cpp|h|hpp|xml|md|lua|sh|bat|list|depend|js|jsp|mk|config|configure|machine|asm|css|desktop|inc|i|plist|pro|py|s)"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent" >
+
+                <TextView
+                    android:id="@+id/ExcludeLbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="true"
+                    android:text="Exclude files "
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/exclude"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="false"
+                    android:text=".*?\\.(jp[e]?g|png|gif|bmp|psd|doc[x]?|xls[x]?|ppt[x]?|odt|ods|odp|pps|rtf|avi|mpe?g|mp3|mp4|ogg|apk|zip|7z|bz2|gz|tar|wim|xz|chm|fb2)"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent" >
+
+                <TextView
+                    android:id="@+id/replaceLbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="false"
+                    android:text="Replace"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/byLbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="false"
+                    android:text="By"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent" >
+
+                <EditText
+                    android:id="@+id/replace"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="false"
+                    android:text=""
+                    android:textSize="14sp" />
+
+                <View
+                    android:id="@+id/horizontalDivider5"
+                    android:layout_width="1dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp"
+                    android:background="?android:attr/dividerVertical" />
+
+                <EditText
+                    android:id="@+id/by"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:singleLine="false"
+                    android:text=""
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/regex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:longClickable="true"
+                android:text="Use Regex"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/caseSensitive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:longClickable="true"
+                android:text="Case Sensitive"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/includeEnter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:longClickable="true"
+                android:text="Multiline"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/backup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:longClickable="true"
+                android:text="Backup Source"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="14sp" />
+			
+			<TextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:longClickable="true"
+                android:singleLine="true"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/cancelDir"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxHeight="48dp"
+                android:minHeight="40dp"
+                android:onClick="cancel"
+                android:padding="0dp"
+                android:singleLine="true"
+                android:text="@string/cancel"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/okDir"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxHeight="48dp"
+                android:minHeight="40dp"
+                android:onClick="ok"
+                android:padding="0dp"
+                android:singleLine="true"
+                android:text="@string/ok"
+                android:textSize="24sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

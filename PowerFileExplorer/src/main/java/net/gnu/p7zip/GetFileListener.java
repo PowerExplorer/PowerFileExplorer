@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 public class GetFileListener implements OnClickListener {
 
 	private DialogFragment frag;
-	String action;
+	private String action;
 	private EditText filesET;
 	private String title;
 	private String suffix;
