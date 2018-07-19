@@ -88,7 +88,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		"Internal",
 		"External Asec"};
 
-	private LoadAppListTask appLoadTask;// = new LoadAppListTask(false, 0, 0);
+	private LoadAppListTask appLoadTask = new LoadAppListTask(false, 0, 0);
 	private int index;
 	private int top;
 	private TextSearch textSearch = new TextSearch();
@@ -652,23 +652,25 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 	public void loadlist(final boolean save) {
 
-		Log.d(TAG, "loadlist " + save);
-		if (save) {
-			index = gridLayoutManager.findFirstVisibleItemPosition();
-			final View vi = listView.getChildAt(0);
-			top = (vi == null) ? 0 : vi.getTop();
-		}
-		if (appLoadTask == null) {
-			appLoadTask = new LoadAppListTask(save, top, index);
-		} else {
-			final AsyncTask.Status status = appLoadTask.getStatus();
-			if (status == AsyncTask.Status.RUNNING ||
-				status == AsyncTask.Status.PENDING) {
-				appLoadTask.cancel(true);
+		Log.d(TAG, "loadlist " + save + ", fake " + fake);
+		if (!fake) {
+			if (save) {
+				index = gridLayoutManager.findFirstVisibleItemPosition();
+				final View vi = listView.getChildAt(0);
+				top = (vi == null) ? 0 : vi.getTop();
 			}
-			appLoadTask = new LoadAppListTask(save, top, index);
+//			if (appLoadTask == null) {
+//				appLoadTask = new LoadAppListTask(save, top, index);
+//			} else {
+//				final AsyncTask.Status status = appLoadTask.getStatus();
+//				if (status == AsyncTask.Status.RUNNING ||
+//					status == AsyncTask.Status.PENDING) {
+					appLoadTask.cancel(true);
+				//}
+				appLoadTask = new LoadAppListTask(save, top, index);
+			//}
+			appLoadTask.execute();
 		}
-		appLoadTask.execute();
 	}
 
 	class LoadAppListTask extends AsyncTask<Void, ArrayList<AppInfo>, Void> {

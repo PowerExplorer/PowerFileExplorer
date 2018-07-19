@@ -2600,8 +2600,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			}
 		}
 
-		public long prevUpdate = 0;
-		public boolean busyNoti = false;
+		public volatile long prevUpdate = 0;
+		public volatile boolean busyNoti = false;
 		
 		public void publish(final Object... message) {
 			publishProgress(message);

@@ -5,6 +5,7 @@ import android.view.*;
 import android.widget.*;
 import android.util.*;
 import net.gnu.texteditor.TextEditorActivity;
+import com.amaze.filemanager.utils.OpenMode;
 
 public class TabClicks {
 
@@ -56,7 +57,7 @@ public class TabClicks {
 					}
 				});
 		} else {
-			if (type != Frag.TYPE.EXPLORER) {
+			if (type != Frag.TYPE.EXPLORER || fra instanceof FileFrag && ((FileFrag)fra).openMode != OpenMode.FILE) {
 				menu.findItem(R.id.newTab).setVisible(false);
 			} else {
 				menu.findItem(R.id.explorer).setVisible(false);
