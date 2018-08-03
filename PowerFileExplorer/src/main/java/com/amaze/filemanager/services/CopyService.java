@@ -83,7 +83,7 @@ public class CopyService extends Service {
     private long totalSize = 0L;
     private int totalSourceFiles = 0;
     private int sourceProgress = 0;
-
+	private String targetPath;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -95,7 +95,7 @@ public class CopyService extends Service {
     public int onStartCommand(Intent intent, int flags, final int startId) {
         Bundle b = new Bundle();
         ArrayList<BaseFile> files = intent.getParcelableArrayListExtra(TAG_COPY_SOURCES);
-        String targetPath = intent.getStringExtra(TAG_COPY_TARGET);
+        targetPath = intent.getStringExtra(TAG_COPY_TARGET);
         int mode = intent.getIntExtra(TAG_COPY_OPEN_MODE, OpenMode.UNKNOWN.ordinal());
         final boolean move = intent.getBooleanExtra(TAG_COPY_MOVE, false);
 
@@ -106,7 +106,7 @@ public class CopyService extends Service {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         notificationIntent.putExtra(ExplorerActivity.KEY_INTENT_PROCESS_VIEWER, true);
         notificationIntent.putExtra("from", "CopyService");
-        Log.i("CopyService", "notificationIntent " + notificationIntent + ", " + notificationIntent.getExtras());
+        Log.i("CopyService", "notificationIntent " + notificationIntent + ", " + targetPath + ", " + notificationIntent.getExtras());
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, new Random().nextInt(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder = new NotificationCompat.Builder(c);
         mBuilder.setContentIntent(pendingIntent);
@@ -143,6 +143,9 @@ public class CopyService extends Service {
             sourceFiles = p1[0].getParcelableArrayList(TAG_COPY_SOURCES);
             final int id = p1[0].getInt(TAG_COPY_START_ID);
 
+			if (sourceFiles.size() == 0) {
+				return -1;
+			}
             // setting up service watchers and initial data packages
             // finding total size on background thread (this is necessary condition for SMB!)
             totalSize = Futils.getTotalBytes(sourceFiles, c);
@@ -197,6 +200,7 @@ public class CopyService extends Service {
             generateNotification(copy.failedFOps, move);
 
             Intent intent = new Intent("loadlist");
+			intent.putExtra("targetPath", targetPath);
             sendBroadcast(intent);
             stopSelf();
         }

@@ -153,7 +153,12 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, Void, Boolean> {
             if (mainFrag != null && mainFrag.currentPathTitle.equals(paths.get(0))) {
                 // mainFrag.updateList();
                 Intent intent = new Intent("loadlist");
-                context.sendBroadcast(intent);
+                intent.putExtra("targetPath", files.get(0).get(0).getParent());
+				context.sendBroadcast(intent);
+				intent = new Intent("loadlist");
+                final String get = paths.get(0);
+				intent.putExtra("targetPath", get.substring(0, get.lastIndexOf("/")));
+				context.sendBroadcast(intent);
             }
 
             for (int i = 0; i < paths.size(); i++) {

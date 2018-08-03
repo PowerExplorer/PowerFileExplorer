@@ -284,8 +284,8 @@ public class HFile {
             case ROOT:
                 return new File(path).getName();
             default:
-                StringBuilder builder = new StringBuilder(path);
-                name = builder.substring(builder.lastIndexOf("/") + 1, builder.length());
+                //StringBuilder builder = new StringBuilder(path);
+                name = path.substring(path.lastIndexOf("/") + 1, path.length());
         }
         return name;
     }
@@ -305,8 +305,8 @@ public class HFile {
             case OTG:
                 return OTGUtil.getDocumentFile(path, context, false).getName();
             default:
-                StringBuilder builder = new StringBuilder(path);
-                name = builder.substring(builder.lastIndexOf("/") + 1, builder.length());
+                //StringBuilder builder = new StringBuilder(path);
+                name = path.substring(path.lastIndexOf("/") + 1, path.length());
         }
         return name;
     }
@@ -360,8 +360,8 @@ public class HFile {
                 parentPath = new File(path).getParent();
                 break;
             default:
-                StringBuilder builder = new StringBuilder(path);
-                return builder.substring(0, builder.length() - (getName().length() + 1));
+                //StringBuilder builder = new StringBuilder(path);
+                return path.substring(0, path.length() - (getName().length() + 1));
         }
         return parentPath;
     }

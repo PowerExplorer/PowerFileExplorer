@@ -75,7 +75,6 @@ public abstract class RecyclerAdapter<M, VH extends RecyclerView.ViewHolder> ext
 	public void addAll(final Collection<? extends M> collection) {
 		if (collection != null) {
 			mDataset.addAll(collection);
-			notifyDataSetChanged();
 		}
 	}
 
@@ -85,13 +84,11 @@ public abstract class RecyclerAdapter<M, VH extends RecyclerView.ViewHolder> ext
 
 	public void clear() {
 		mDataset.clear();
-		notifyDataSetChanged();
 	}
 
 	public void removeAll(final Collection<? extends M> collection) {
 		if (collection != null) {
 			mDataset.removeAll(collection);
-			notifyDataSetChanged();
 		}
 	}
 

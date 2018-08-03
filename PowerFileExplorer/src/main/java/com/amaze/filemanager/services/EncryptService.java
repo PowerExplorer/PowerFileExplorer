@@ -183,7 +183,8 @@ public class EncryptService extends Service {
             if (!broadcastResult) {
 
                 Intent intent = new Intent("loadlist");
-                sendBroadcast(intent);
+                intent.putExtra("targetPath", baseFile.getParent());
+				sendBroadcast(intent);
             } else {
                 Intent intent = new Intent(EncryptDecryptUtils.DECRYPT_BROADCAST);
                 sendBroadcast(intent);

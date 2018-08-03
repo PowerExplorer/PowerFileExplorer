@@ -289,12 +289,13 @@ public class MainActivityHelper {
 				}
 
 				@Override
-				public void done(HFile hFile, final boolean b) {
+				public void done(final HFile hFile, final boolean b) {
 					themedActivity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
 								if (b) {
 									Intent intent = new Intent("loadlist");
+									intent.putExtra("targetPath", hFile.getParent());
 									themedActivity.sendBroadcast(intent);
 
 									// update the database entry to reflect rename for encrypted file

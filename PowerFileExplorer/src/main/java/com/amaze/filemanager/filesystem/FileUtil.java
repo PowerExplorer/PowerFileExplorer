@@ -503,7 +503,7 @@ public abstract class FileUtil {
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         // Try with Storage Access Framework.
@@ -808,7 +808,7 @@ public abstract class FileUtil {
      * @return The DocumentFile
      */
     public static DocumentFile getDocumentFile(final File file, final boolean isDirectory, Context context) {
-        String baseFolder = getExtSdCardFolder(file, context);
+        final String baseFolder = getExtSdCardFolder(file, context);
         boolean originalDirectory = false;
         if (baseFolder == null) {
             return null;
@@ -816,30 +816,38 @@ public abstract class FileUtil {
 
         String relativePath = null;
         try {
-            String fullPath = file.getCanonicalPath();
+            final String fullPath = file.getCanonicalPath();
             if (!baseFolder.equals(fullPath))
                 relativePath = fullPath.substring(baseFolder.length() + 1);
-            else originalDirectory = true;
+            else 
+				originalDirectory = true;
         } catch (IOException e) {
             return null;
         } catch (Exception f) {
             originalDirectory = true;
             //continue
         }
-        String as = PreferenceManager.getDefaultSharedPreferences(context).getString("URI", null);
+        final String as = PreferenceManager.getDefaultSharedPreferences(context).getString("URI", null);
 
         Uri treeUri = null;
-        if (as != null) treeUri = Uri.parse(as);
+        if (as != null) 
+			treeUri = Uri.parse(as);
         if (treeUri == null) {
             return null;
         }
 
         // start with root of SD card and then parse through document tree.
         DocumentFile document = DocumentFile.fromTreeUri(context, treeUri);
-        if (originalDirectory) return document;
-        String[] parts = relativePath.split("\\/");
+		if (originalDirectory) 
+			return document;
+        final String[] parts = relativePath.split("\\/");
+		//Log.d("FileUtil", "relativePath " + relativePath);
         for (int i = 0; i < parts.length; i++) {
-            DocumentFile nextDocument = document.findFile(parts[i]);
+            //Log.d("FileUtil", "parts[] " + parts[i]);
+			if (document == null) {
+				return null;
+			}
+			DocumentFile nextDocument = document.findFile(parts[i]);
 
             if (nextDocument == null) {
                 if ((i < parts.length - 1) || isDirectory) {
@@ -848,7 +856,8 @@ public abstract class FileUtil {
                     nextDocument = document.createFile("image", parts[i]);
                 }
             }
-            document = nextDocument;
+            //Log.d("FileUtil", "nextDocument " + nextDocument);
+			document = nextDocument;
         }
 
         return document;

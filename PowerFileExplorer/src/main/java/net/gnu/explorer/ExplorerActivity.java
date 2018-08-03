@@ -346,7 +346,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	};
 	
 	static int density;// = (int)(4 * getResources().getDisplayMetrics().density);
-	LinkedList<String> historyList = new LinkedList<>();
+//	LinkedList<String> historyList = new LinkedList<>();
 	int balance = 0; //0 =; -1 <; 1 >
 	private Resources resources;
 	

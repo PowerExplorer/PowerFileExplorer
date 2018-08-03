@@ -106,7 +106,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
 	private TextSearch textSearch = new TextSearch();
-	ArrayList<LayoutElement> dataSourceL1 = new ArrayList<>(4096);
+	volatile ArrayList<LayoutElement> dataSourceL1 = new ArrayList<>(4096);
 	List<LayoutElement> dataSourceL2;
 	LayoutElement tempPreviewL2 = null;
 	Button deletePastesBtn;
@@ -126,7 +126,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	//private boolean mRetainSearchTask = false;
 	private LayoutElementSorter fileListSorter;
 	private LinkedList<Map<String, Object>> backStack = new LinkedList<>();
-	private LinkedList<String> history = new LinkedList<>();
+//	private LinkedList<String> history = new LinkedList<>();
 	private FileObserver mFileObserver;
 	private Drawable drawableDelete;
 	private Drawable drawablePaste;
@@ -746,13 +746,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		outState.put(ExplorerActivity.EXTRA_FILTER_MIMETYPE, mimes);
 		outState.put(ExplorerActivity.EXTRA_MULTI_SELECT, multiFiles);
 		
-		final ArrayList<LayoutElement> dataSource = new ArrayList<>(dataSourceL1.size());
-		dataSource.addAll(dataSourceL1);
+		final ArrayList<LayoutElement> dataSource = new ArrayList<>(tempOriDataSourceL1);//dataSourceL1.size());
+		//dataSource.addAll(dataSourceL1);
 		outState.put("dataSourceL1", dataSource);
 		
-		final ArrayList<LayoutElement> selectedInList = new ArrayList<>(selectedInList1.size());
-		selectedInList.addAll(selectedInList1);
+		final ArrayList<LayoutElement> selectedInList = new ArrayList<>(selectedInList1);//selectedInList1.size());
+		//selectedInList.addAll(selectedInList1);
 		outState.put("selectedInList1", selectedInList);
+		//outState.put("tempOriDataSourceL1", new ArrayList<LayoutElement>(tempOriDataSourceL1));
 		
 		outState.put("searchMode", searchMode);
 		outState.put("searchVal", searchET.getText().toString());
@@ -778,11 +779,13 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		selectedInList1.addAll((ArrayList<LayoutElement>) savedInstanceState.get("selectedInList1"));
 		dataSourceL1.clear();
 		dataSourceL1.addAll((ArrayList<LayoutElement>) savedInstanceState.get("dataSourceL1"));
+		tempOriDataSourceL1.clear();
+		tempOriDataSourceL1.addAll(dataSourceL1);
 		
-		if (type == Frag.TYPE.SELECTION) {
-			tempOriDataSourceL1.clear();
-			tempOriDataSourceL1.addAll(dataSourceL1);
-		}
+//		if (type == Frag.TYPE.SELECTION) {
+//			tempOriDataSourceL1.clear();
+//			tempOriDataSourceL1.addAll(dataSourceL1);
+//		}
 		searchMode = savedInstanceState.get("searchMode");
 		searchVal = (String) savedInstanceState.get("searchVal");
 		//currentPathTitle = (String) savedInstanceState.get("currentPathTitle");
@@ -889,9 +892,13 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
         }
     }
 
+	private long lastUpdateList = System.currentTimeMillis();
+    private long curUpdateList = 0;
+	
 	public void updateList() {
 		Log.d(TAG, "updateList " + this);
-		if (type == Frag.TYPE.EXPLORER && !fake) {
+		if (type == Frag.TYPE.EXPLORER && !fake && ((curUpdateList = System.currentTimeMillis()) > lastUpdateList)) {
+			lastUpdateList = curUpdateList;
 			if (currentPathTitle != null) {
 				changeDir(currentPathTitle, false);
 			} else {
@@ -1045,8 +1052,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 								) {
             @Override
             public void onEvent(final int event, final String path) {
-                if (path != null) {
-                    Util.debug(TAG, "FileObserver received event %d, CREATE = 256;DELETE = 512;DELETE_SELF = 1024;MODIFY = 2;MOVED_FROM = 64;MOVED_TO = 128; path %s", event, path);
+                if (path != null && ((curUpdateList = System.currentTimeMillis()) > lastUpdateList)) {
+                    lastUpdateList = curUpdateList;
+					Log.d(TAG, String.format("FileObserver received event %d, CREATE = 256;DELETE = 512;DELETE_SELF = 1024;MODIFY = 2;MOVED_FROM = 64;MOVED_TO = 128; path %s, currentPathTitle %s", event, path, currentPathTitle));
 					activity.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -1234,19 +1242,23 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		this.openMode = openMode;
     }
 
-    private BroadcastReceiver receiver2 = new BroadcastReceiver() {
+	private BroadcastReceiver receiver2 = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             // load the list on a load broadcast
-            switch (openMode) {
+            Log.d(TAG, "receiver2 targetPath " + intent.getStringExtra("targetPath"));
+
+			switch (openMode) {
                 case ROOT:
                 case FILE:
                     // local file system don't need an explicit load, we've set an observer to
                     // take actions on creation/moving/deletion/modification of file on current path
                     //break;
                 default:
-                    updateList();
+					if (currentPathTitle != null && currentPathTitle.equals(intent.getStringExtra("targetPath"))) {
+						updateList();
+					}
                     break;
             }
         }
@@ -1326,8 +1338,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				curSelectionFrag2.nofilelayout.setVisibility(View.GONE);
 				curSelectionFrag2.mSwipeRefreshLayout.setVisibility(View.VISIBLE);
 			}
-			curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
-			curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
+			curContentFrag.notifyDataSetChanged();
+			curSelectionFrag2.notifyDataSetChanged();
 			curContentFrag.selectionStatusTV
 				.setText(curContentFrag.selectedInList1.size() + "/"
 						 + curContentFrag.dataSourceL1.size());
@@ -1365,12 +1377,12 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				}
 			}
 
-			curContentFrag.setAllCbxChecked(true);// allCbx.setChecked(true);
+			curContentFrag.setAllCbxChecked(true);
 			curContentFrag.selectedInList1.clear();
 			curSelectionFrag2.updateL2();
-			curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
-			curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
-			curContentFrag.allCbx.setEnabled(false);// allCbx.setEnabled(false);
+			curContentFrag.notifyDataSetChanged();
+			curSelectionFrag2.notifyDataSetChanged();
+			curContentFrag.allCbx.setEnabled(false);
 			curSelectionFrag2.allCbx.setSelected(false);
 
 			if (curSelectionFrag2.dataSourceL1.size() == 0) {
@@ -1401,8 +1413,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						 + curSelectionFrag2.dataSourceL1.size());
 		} else {
 			LayoutElement file = curContentFrag.dataSourceL1.get(0);//new File(dirSt, curContentFrag.dataSourceL1.get(0));
-			if (curContentFrag.dataSourceL1.size() == 1 && file.bf.exists()
-				&& !file.isDirectory) {
+			if (curContentFrag.dataSourceL1.size() == 1 && file.bf.exists() && !file.isDirectory) {
 				curSelectionFrag2.dataSourceL1.clear();
 				curSelectionFrag2.dataSourceL1.add(curContentFrag.dataSourceL1.get(0));
 
@@ -1410,8 +1421,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				curSelectionFrag2.tempOriDataSourceL1.add(curContentFrag.dataSourceL1.get(0));
 
 				curContentFrag.selectedInList1.clear();
-				curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
-				curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
+				curContentFrag.notifyDataSetChanged();
+				curSelectionFrag2.notifyDataSetChanged();
 			}
 		}
 	}
@@ -1431,8 +1442,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		curSelectionFrag2.searchButton.setEnabled(false);
 		curSelectionFrag2.listView.removeItemDecoration(curSelectionFrag2.dividerItemDecoration);
 		curSelectionFrag2.listView.invalidateItemDecorations();
-		curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
-		curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
+		curSelectionFrag2.notifyDataSetChanged();
+		curContentFrag.notifyDataSetChanged();
 		curContentFrag.selectionStatusTV
 			.setText(curContentFrag.selectedInList1.size() + "/"
 					 + curContentFrag.dataSourceL1.size());
@@ -1461,8 +1472,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				curSelectionFrag2.nofilelayout.setVisibility(View.VISIBLE);
 				curSelectionFrag2.mSwipeRefreshLayout.setVisibility(View.GONE);
 			} 
-			curSelectionFrag2.notifyDataSetChanged();// destAdapter.notifyDataSetChanged();
-			curContentFrag.notifyDataSetChanged();// srcAdapter.notifyDataSetChanged();
+			curSelectionFrag2.notifyDataSetChanged();
+			curContentFrag.notifyDataSetChanged();
 			curContentFrag.selectionStatusTV
 				.setText(curContentFrag.selectedInList1.size() + "/"
 						 + curContentFrag.dataSourceL1.size());
@@ -1582,8 +1593,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							commands.setVisibility(View.GONE);
 						}
 					}
-					selectionStatusTV.setText(selectedInList1.size() 
-											 + "/" + dataSourceL1.size());
+					selectionStatusTV.setText(selectedInList1.size() + "/" + dataSourceL1.size());
 					srcAdapter.notifyDataSetChanged();
 					updateDelPaste();
 				}
@@ -1755,6 +1765,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						@Override
 						public void run() {
 							dataSourceL1.removeAll(selectedInList1);
+							//srcAdapter.removeAll(selectedInList1);
 							selectedInList1.clear();
 							srcAdapter.notifyDataSetChanged();
 						}
@@ -2133,7 +2144,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		final int size = backStack.size() / 2;
 		Log.d(TAG, "trimBackStack " + size);
 		for (int i = 0; i < size; i++) {
-			backStack.remove(0);
+			backStack.removeFirst();
 		}
 	}
 
@@ -2146,9 +2157,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	boolean back() {
 		Map<String, Object> softBundle;
-		//Log.d(TAG, "back " + backStack.size());
+		Log.d(TAG, "back " + backStack.size());
 		if (backStack.size() >= 1 && (softBundle = backStack.pop()) != null && softBundle.get("dataSourceL1") != null) {
-			//Log.d(TAG, "back " + softBundle);
+			Log.d(TAG, "back " + backStack.size());
 			reload(softBundle);
 			return true;
 		} else {
@@ -2250,282 +2261,307 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //    }
 
 	public void changeDir(final String curDir, final boolean doScroll) {
-		Log.d(TAG, "changeDir " + curDir + ", doScroll " + doScroll + ", " + type + ", " + slidingTabsFragment.side);
+		Log.i(TAG, "changeDir " + curDir + ", doScroll " + doScroll + ", " + type + ", " + slidingTabsFragment.side);
 		if (fake) {
 			return;
 		}
 		loadList.cancel(true);
 		searchTask.cancel(true);
-		loadList = new LoadFiles();
-		loadList.execute(curDir, Boolean.valueOf(doScroll));
+		synchronized (dataSourceL1) {
+			loadList = new LoadFiles();
+			loadList.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, curDir, Boolean.valueOf(doScroll));
+		}
 	}
 	
-	public class LoadFiles extends AsyncTask<Object, Object, List<LayoutElement>> {
+	public class LoadFiles extends AsyncTask<Object, Object, Void> {
 
 		private Boolean doScroll;
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			dataSourceL1.clear();
-			selectedInList1.clear();
-			srcAdapter.notifyDataSetChanged();
-			mSwipeRefreshLayout.setRefreshing(true);
-		}
-
-		@Override
-		protected List<LayoutElement> doInBackground(Object... params) {
-			final String path = (String) params[0];
-			doScroll = (Boolean) params[1];
-			prevUpdate = System.currentTimeMillis();
-			noMedia = false;
-			List<LayoutElement> dataSourceL1a = new ArrayList<>(1024);
-			
-			if (currentPathTitle == null) {
-				return dataSourceL1a;
-			}
-			Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + "suffix=" + suffix + ", suffixPattern=" + suffixPattern + ", " + openMode + ", " + ContentFragment.this);
-			
-//			folder_count = 0;
-//			file_count = 0;
-			if (openMode == OpenMode.UNKNOWN) {
-				HFile hFile = new HFile(OpenMode.UNKNOWN, path);
-				hFile.generateMode(activity);
-
-				if (hFile.isLocal()) {
-					openMode = OpenMode.FILE;
-				} else if (hFile.isSmb()) {
-					openMode = OpenMode.SMB;
-					smbPath = path;
-				} else if (hFile.isOtgFile()) {
-					openMode = OpenMode.OTG;
-				} else if (hFile.isBoxFile()) {
-					openMode = OpenMode.BOX;
-				} else if (hFile.isDropBoxFile()) {
-					openMode = OpenMode.DROPBOX;
-				} else if (hFile.isGoogleDriveFile()) {
-					openMode = OpenMode.GDRIVE;
-				} else if (hFile.isOneDriveFile()) {
-					openMode = OpenMode.ONEDRIVE;
-				} else if (hFile.isCustomPath())
-					openMode = OpenMode.CUSTOM;
-				else if (android.util.Patterns.EMAIL_ADDRESS.matcher(path).matches()) {
-					openMode = OpenMode.ROOT;
+			Log.d(TAG, "LoadFiles.onPreExecute " + currentPathTitle);
+			synchronized (dataSourceL1) {
+				dataSourceL1.clear();
+				selectedInList1.clear();
+				srcAdapter.notifyDataSetChanged();
+				if (!mSwipeRefreshLayout.isRefreshing()) {
+					mSwipeRefreshLayout.setRefreshing(true);
 				}
 			}
+		}
+		
+		@Override
+		protected void onCancelled() {
+			synchronized (dataSourceL1) {
+				Log.d(TAG, "LoadFiles.onCancelled " + currentPathTitle);
+				dataSourceL1.clear();
+				selectedInList1.clear();
+				if (mSwipeRefreshLayout.isRefreshing()) {
+					mSwipeRefreshLayout.setRefreshing(false);
+				}
+			}
+		}
+		
+		@Override
+		protected Void doInBackground(Object... params) {
+			synchronized (dataSourceL1) {
+				dataSourceL1.clear();
+				selectedInList1.clear();
+				final String path = (String) params[0];
+				doScroll = (Boolean) params[1];
+				prevUpdate = System.currentTimeMillis();
+				noMedia = false;
+				List<LayoutElement> dataSourceL1a = new ArrayList<>(1024);
 
-			switch (openMode) {
-				case SMB:
-					HFile hFile = new HFile(OpenMode.SMB, path);
-					try {
-						SmbFile[] smbFile = hFile.getSmbFile(5000).listFiles();
-						//dataSourceL1a = 
-						addToSmb(smbFile, path);
-						//openMode = OpenMode.SMB;
-					} catch (SmbAuthException e) {
-						if (!e.getMessage().toLowerCase().contains("denied"))
-							reauthenticateSmb();
-						publishProgress(e.getLocalizedMessage());
-					} catch (SmbException | NullPointerException e) {
-						publishProgress(e.getLocalizedMessage());
-						e.printStackTrace();
+				if (currentPathTitle == null) {
+					return null;//dataSourceL1a;
+				}
+				Log.d(TAG, "LoadFiles.doInBackground " + path + ", " + "suffix=" + suffix + ", suffixPattern=" + suffixPattern + ", openMode " + openMode + ", " + type + ", " + slidingTabsFragment + ", fake=" + fake + ", currentPathTitle " + currentPathTitle + ", mimes=" + mimes + ", multi=" + multiFiles);
+
+//			folder_count = 0;
+//			file_count = 0;
+				if (openMode == OpenMode.UNKNOWN) {
+					HFile hFile = new HFile(OpenMode.UNKNOWN, path);
+					hFile.generateMode(activity);
+
+					if (hFile.isLocal()) {
+						openMode = OpenMode.FILE;
+					} else if (hFile.isSmb()) {
+						openMode = OpenMode.SMB;
+						smbPath = path;
+					} else if (hFile.isOtgFile()) {
+						openMode = OpenMode.OTG;
+					} else if (hFile.isBoxFile()) {
+						openMode = OpenMode.BOX;
+					} else if (hFile.isDropBoxFile()) {
+						openMode = OpenMode.DROPBOX;
+					} else if (hFile.isGoogleDriveFile()) {
+						openMode = OpenMode.GDRIVE;
+					} else if (hFile.isOneDriveFile()) {
+						openMode = OpenMode.ONEDRIVE;
+					} else if (hFile.isCustomPath())
+						openMode = OpenMode.CUSTOM;
+					else if (android.util.Patterns.EMAIL_ADDRESS.matcher(path).matches()) {
+						openMode = OpenMode.ROOT;
 					}
-					break;
-				case CUSTOM:
-					ArrayList<BaseFile> arrayList = null;
-					switch (Integer.parseInt(path)) {
-						case 0:
-							arrayList = listImages();
-							break;
-						case 1:
-							arrayList = listVideos();
-							break;
-						case 2:
-							arrayList = listAudio();
-							break;
-						case 3:
-							arrayList = listDocs();
-							break;
-						case 4:
-							arrayList = listApks();
-							break;
-						case 5:
-							arrayList = listRecent();
-							break;
-						case 6:
-							arrayList = listRecentFiles();
-							break;
-					}
-					Log.d(TAG, "LoadFiles.doInBackground " + currentPathTitle + ", " + slidingTabsFragment.side + ", arrayList=" + arrayList.size());
-					
-					//if (arrayList != null) {
+				}
+
+				switch (openMode) {
+					case SMB:
+						HFile hFile = new HFile(OpenMode.SMB, path);
+						try {
+							SmbFile[] smbFile = hFile.getSmbFile(5000).listFiles();
+							//dataSourceL1a = 
+							addToSmb(smbFile, path);
+							//openMode = OpenMode.SMB;
+						} catch (SmbAuthException e) {
+							if (!e.getMessage().toLowerCase().contains("denied"))
+								reauthenticateSmb();
+							publishProgress(e.getLocalizedMessage());
+						} catch (SmbException | NullPointerException e) {
+							publishProgress(e.getLocalizedMessage());
+							e.printStackTrace();
+						}
+						break;
+					case CUSTOM:
+						ArrayList<BaseFile> arrayList = null;
+						switch (Integer.parseInt(path)) {
+							case 0:
+								arrayList = listImages();
+								break;
+							case 1:
+								arrayList = listVideos();
+								break;
+							case 2:
+								arrayList = listAudio();
+								break;
+							case 3:
+								arrayList = listDocs();
+								break;
+							case 4:
+								arrayList = listApks();
+								break;
+							case 5:
+								arrayList = listRecent();
+								break;
+							case 6:
+								arrayList = listRecentFiles();
+								break;
+						}
+						Log.d(TAG, "LoadFiles.doInBackground " + currentPathTitle + ", " + slidingTabsFragment.side + ", arrayList=" + arrayList.size());
+
+						//if (arrayList != null) {
 						//dataSourceL1a = dataSourceL1;//addTo(arrayList);
 //					} else 
 //						return new ArrayList<LayoutElement>(0);
-					break;
-				case OTG:
-					//dataSourceL1a = 
-					addTo(dataSourceL1, listOtg(path));
-					//openMode = OpenMode.OTG;
-					break;
-				case DROPBOX:
-					CloudStorage cloudStorageDropbox = dataUtils.getAccount(OpenMode.DROPBOX);
-					try {
+						break;
+					case OTG:
 						//dataSourceL1a = 
-						addTo(dataSourceL1, listCloud(path, cloudStorageDropbox, OpenMode.DROPBOX));
-					} catch (CloudPluginException e) {
-						e.printStackTrace();
-						return new ArrayList<LayoutElement>(0);
-					}
-					break;
-				case BOX:
-					CloudStorage cloudStorageBox = dataUtils.getAccount(OpenMode.BOX);
-					try {
-						//dataSourceL1a = 
-						addTo(dataSourceL1, listCloud(path, cloudStorageBox, OpenMode.BOX));
-					} catch (CloudPluginException e) {
-						e.printStackTrace();
-						return new ArrayList<LayoutElement>(0);
-					}
-					break;
-				case GDRIVE:
-					CloudStorage cloudStorageGDrive = dataUtils.getAccount(OpenMode.GDRIVE);
-					try {
-						//dataSourceL1a = 
-						addTo(dataSourceL1, listCloud(path, cloudStorageGDrive, OpenMode.GDRIVE));
-					} catch (CloudPluginException e) {
-						e.printStackTrace();
-						return new ArrayList<LayoutElement>(0);
-					}
-					break;
-				case ONEDRIVE:
-					CloudStorage cloudStorageOneDrive = dataUtils.getAccount(OpenMode.ONEDRIVE);
-					try {
-						//dataSourceL1a = 
-						addTo(dataSourceL1, listCloud(path, cloudStorageOneDrive, OpenMode.ONEDRIVE));
-					} catch (CloudPluginException e) {
-						e.printStackTrace();
-						return new ArrayList<LayoutElement>(0);
-					}
-					break;
-				default:
-					// we're neither in OTG not in SMB, load the list based on root/general filesystem
-					//dataSourceL1a = new LinkedList<LayoutElement>();
-					try {
-						File curDir = new File(path);
-						while (curDir != null && !curDir.exists()) {
-							publishProgress(curDir.getAbsolutePath() + " is not existed");
-							curDir = curDir.getParentFile();
+						addTo(dataSourceL1, listOtg(path));
+						//openMode = OpenMode.OTG;
+						break;
+					case DROPBOX:
+						CloudStorage cloudStorageDropbox = dataUtils.getAccount(OpenMode.DROPBOX);
+						try {
+							//dataSourceL1a = 
+							addTo(dataSourceL1, listCloud(path, cloudStorageDropbox, OpenMode.DROPBOX));
+						} catch (CloudPluginException e) {
+							e.printStackTrace();
+							return null;//new ArrayList<LayoutElement>(0);
 						}
-						if (curDir == null) {
-							publishProgress("Current directory is not existed. Change to root");
-							curDir = new File("/");
+						break;
+					case BOX:
+						CloudStorage cloudStorageBox = dataUtils.getAccount(OpenMode.BOX);
+						try {
+							//dataSourceL1a = 
+							addTo(dataSourceL1, listCloud(path, cloudStorageBox, OpenMode.BOX));
+						} catch (CloudPluginException e) {
+							e.printStackTrace();
+							return null;//new ArrayList<LayoutElement>(0);
 						}
-
-						final String curPath = curDir.getAbsolutePath();
-						if (!currentPathTitle.equals(curPath)) {
-							if (backStack.size() > ExplorerActivity.NUM_BACK) {
-								backStack.remove(0);
+						break;
+					case GDRIVE:
+						CloudStorage cloudStorageGDrive = dataUtils.getAccount(OpenMode.GDRIVE);
+						try {
+							//dataSourceL1a = 
+							addTo(dataSourceL1, listCloud(path, cloudStorageGDrive, OpenMode.GDRIVE));
+						} catch (CloudPluginException e) {
+							e.printStackTrace();
+							return null;//new ArrayList<LayoutElement>(0);
+						}
+						break;
+					case ONEDRIVE:
+						CloudStorage cloudStorageOneDrive = dataUtils.getAccount(OpenMode.ONEDRIVE);
+						try {
+							//dataSourceL1a = 
+							addTo(dataSourceL1, listCloud(path, cloudStorageOneDrive, OpenMode.ONEDRIVE));
+						} catch (CloudPluginException e) {
+							e.printStackTrace();
+							return null;//new ArrayList<LayoutElement>(0);
+						}
+						break;
+					default:
+						// we're neither in OTG not in SMB, load the list based on root/general filesystem
+						//dataSourceL1a = new LinkedList<LayoutElement>();
+						try {
+							File curDir = new File(path);
+							while (curDir != null && !curDir.exists()) {
+								publishProgress(curDir.getAbsolutePath() + " is not existed");
+								curDir = curDir.getParentFile();
 							}
-							final Map<String, Object> bun = onSaveInstanceState();
-							backStack.push(bun);
-
-							history.remove(curPath);
-							if (history.size() > ExplorerActivity.NUM_BACK) {
-								history.remove(0);
-							}
-							history.push(curPath);
-
-							activity.historyList.remove(curPath);
-							if (activity.historyList.size() > ExplorerActivity.NUM_BACK) {
-								activity.historyList.remove(0);
-							}
-							activity.historyList.push(curPath);
-							tempPreviewL2 = null;
-						}
-						currentPathTitle = curPath;
-						//Log.d(TAG, Util.collectionToString(history, true, "\n"));
-						
-						if (mFileObserver != null) {
-							mFileObserver.stopWatching();
-						}
-						mFileObserver = createFileObserver(currentPathTitle);
-						mFileObserver.startWatching();
-						if (tempPreviewL2 != null && !tempPreviewL2.bf.f.exists()) {
-							tempPreviewL2 = null;
-						}
-						
-						ArrayList<BaseFile> files = RootHelper.getFilesList(currentPathTitle, ThemedActivity.rootMode, SHOW_HIDDEN,
-                            new RootHelper.GetModeCallBack() {
-                                @Override
-                                public void getMode(OpenMode mode) {
-                                    openMode = mode;
-                                }
-                            });
-						
-						String fName;
-						boolean isDirectory;
-						final ArrayList<String> hiddenfiles = dataUtils.getHiddenfiles();
-						//Log.d(TAG, "suffix=" + suffix + ", suffixPattern=" + suffixPattern);
-						for (BaseFile f : files) {
-							fName = f.getName();
-							isDirectory = f.isDirectory();
-
-							// It's the noMedia file. Raise the flag.
-							if (!noMedia && fName.equalsIgnoreCase(".nomedia")) {
-								noMedia = true;
+							if (curDir == null) {
+								publishProgress("Current directory is not existed. Change to root");
+								curDir = new File("/");
 							}
 
-							//If the user doesn't want to display hidden files and the file is hidden, ignore this file.
-							if (!displayHidden && f.f.isHidden()) {
-								continue;
+							final String curPath = curDir.getAbsolutePath();
+							if (!currentPathTitle.equals(curPath)) {
+								if (backStack.size() > ExplorerActivity.NUM_BACK) {
+									backStack.removeFirst();
+								}
+								final Map<String, Object> bun = onSaveInstanceState();
+								backStack.push(bun);
+								
+//								history.remove(curPath);
+//								if (history.size() > ExplorerActivity.NUM_BACK) {
+//									history.remove(0);
+//								}
+//								history.push(curPath);
+
+//								activity.historyList.remove(curPath);
+//								if (activity.historyList.size() > ExplorerActivity.NUM_BACK) {
+//									activity.historyList.remove(0);
+//								}
+//								activity.historyList.push(curPath);
+								tempPreviewL2 = null;
 							}
-							if (!hiddenfiles.contains(f.getPath())) {
-								//Log.d(TAG, "f.f=" + f.f + ", mimes=" + mimes + ", suffix=" + suffix + ", getMimeType=" + MimeTypes.getMimeType(f.f) + ", " + ((mimes + "").indexOf(MimeTypes.getMimeType(f.f) + "") >= 0));
-								if (isDirectory) {
-									//folder_count++;
-									if (!mWriteableOnly || f.f.canWrite()) {
-										dataSourceL1a.add(new LayoutElement(f));
+							currentPathTitle = curPath;
+							//Log.d(TAG, Util.collectionToString(history, true, "\n"));
+
+							if (mFileObserver != null) {
+								mFileObserver.stopWatching();
+							}
+							mFileObserver = createFileObserver(currentPathTitle);
+							mFileObserver.startWatching();
+							if (tempPreviewL2 != null && !tempPreviewL2.bf.f.exists()) {
+								tempPreviewL2 = null;
+							}
+
+							ArrayList<BaseFile> files = RootHelper.getFilesList(currentPathTitle, ThemedActivity.rootMode, SHOW_HIDDEN,
+								new RootHelper.GetModeCallBack() {
+									@Override
+									public void getMode(OpenMode mode) {
+										openMode = mode;
 									}
-								} else if (suffix.length() > 0) {//!mDirectoriesOnly
-									if (".*".equals(suffix) ||
-										"*".equals(suffix) ||
-										mimes.indexOf("*/*") > 0 || 
-										mimes.indexOf(MimeTypes.getMimeType(f.f) + "") >= 0) {
-										dataSourceL1a.add(new LayoutElement(f));
-										//file_count++;
-									} else {//if (suffix != null) 
-										if (suffixPattern.matcher(fName).matches()) {//}suffix.matches(".*?\\b" + ext + "\\b.*?")) {
+								});
+
+							String fName;
+							boolean isDirectory;
+							final ArrayList<String> hiddenfiles = dataUtils.getHiddenfiles();
+							//Log.d(TAG, "suffix=" + suffix + ", suffixPattern=" + suffixPattern);
+							for (BaseFile f : files) {
+								fName = f.getName();
+								isDirectory = f.isDirectory();
+
+								// It's the noMedia file. Raise the flag.
+								if (!noMedia && fName.equalsIgnoreCase(".nomedia")) {
+									noMedia = true;
+								}
+
+								//If the user doesn't want to display hidden files and the file is hidden, ignore this file.
+								if (!displayHidden && f.f.isHidden()) {
+									continue;
+								}
+								if (!hiddenfiles.contains(f.getPath())) {
+									//Log.d(TAG, "f.f=" + f.f + ", mimes=" + mimes + ", suffix=" + suffix + ", getMimeType=" + MimeTypes.getMimeType(f.f) + ", " + ((mimes + "").indexOf(MimeTypes.getMimeType(f.f) + "") >= 0));
+									if (isDirectory) {
+										//folder_count++;
+										if (!mWriteableOnly || f.f.canWrite()) {
+											dataSourceL1a.add(new LayoutElement(f));
+										}
+									} else if (suffix.length() > 0) {//!mDirectoriesOnly
+										if (".*".equals(suffix) ||
+											"*".equals(suffix) ||
+											mimes.indexOf("*/*") > 0 || 
+											mimes.indexOf(MimeTypes.getMimeType(f.f) + "") >= 0) {
 											dataSourceL1a.add(new LayoutElement(f));
 											//file_count++;
+										} else {//if (suffix != null) 
+											if (suffixPattern.matcher(fName).matches()) {//}suffix.matches(".*?\\b" + ext + "\\b.*?")) {
+												dataSourceL1a.add(new LayoutElement(f));
+												//file_count++;
+											}
 										}
 									}
 								}
+								final long present = System.currentTimeMillis();
+								if (present - prevUpdate > 1000 && !busyNoti) {
+									prevUpdate = present;
+									Log.d(TAG, "publishProgress 1 " + currentPathTitle + " " + dataSourceL1a.size());
+									publishProgress(dataSourceL1a);
+									dataSourceL1a = new ArrayList<>(1024);
+								}
 							}
-							final long present = System.currentTimeMillis();
-							if (present - prevUpdate > 1000 && !busyNoti) {
-								prevUpdate = present;
-								publishProgress(dataSourceL1a);
-								dataSourceL1a = new ArrayList<>(1024);
-							}
+							Log.d(TAG, "publishProgress 2 " + currentPathTitle + " " + dataSourceL1a.size());
+							publishProgress(dataSourceL1a);
+						} catch (RootNotPermittedException e) {
+							publishProgress(activity.getString(R.string.rootfailure));
+							e.printStackTrace();
+							return null;//dataSourceL1a;
 						}
-						publishProgress(dataSourceL1a);
-					} catch (RootNotPermittedException e) {
-						publishProgress(activity.getString(R.string.rootfailure));
-						e.printStackTrace();
-						return dataSourceL1a;
-					}
-					break;
-			}
-			//if (dataSourceL1a != null) //} && !(openMode == OpenMode.CUSTOM && ((currentPathTitle).equals("5") || (currentPathTitle).equals("6"))))
-			
+						break;
+				}
+				//if (dataSourceL1a != null) //} && !(openMode == OpenMode.CUSTOM && ((currentPathTitle).equals("5") || (currentPathTitle).equals("6"))))
+
 //			if (openMode != OpenMode.CUSTOM)
 //				DataUtils.addHistoryFile(currentPathTitle);
-			return dataSourceL1a;
+				return null;//dataSourceL1a;
+			}
 		}
 
 		@Override
-		protected void onPostExecute(List<LayoutElement> dataSourceL1a) {
+		protected void onPostExecute(Void v) {//}List<LayoutElement> dataSourceL1a) {
 			//Log.d(TAG, "LoadFiles.onPostExecute.dataSourceL1a=" + Util.collectionToString(dataSourceL1a, false, "\n"));
 			if (currentPathTitle != null) {
 				if (currentPathTitle.startsWith("/")) {
@@ -2548,9 +2584,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			updateStatusLayout();
 
 			if (multiFiles) {
-				boolean allInclude = (dataSourceL2 != null && dataSourceL1a.size() > 0) ? true : false;
+				boolean allInclude = (dataSourceL2 != null && dataSourceL1.size() > 0) ? true : false;
 				if (allInclude) {
-					for (LayoutElement st : dataSourceL1a) {
+					for (LayoutElement st : dataSourceL1) {
 						if (!dataSourceL2.contains(st)) {
 							allInclude = false;
 							break;
@@ -2598,6 +2634,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				nofilelayout.setVisibility(View.GONE);
 				mSwipeRefreshLayout.setVisibility(View.VISIBLE);
 			}
+			tempOriDataSourceL1.clear();
+			tempOriDataSourceL1.addAll(dataSourceL1);
 		}
 
 		public volatile long prevUpdate = 0;
@@ -2611,15 +2649,15 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		public void onProgressUpdate(final Object... message) {
 			if (message != null) {
 				if (message[0] instanceof String) {
-					Log.d(TAG, "onProgressUpdate " + message[0]);
+					Log.d(TAG, "onProgressUpdate " + message[0] + " " + currentPathTitle);
 					showToast("" + message[0]);
 				} else {
 					busyNoti = true;
 					if (openMode != OpenMode.SMB && openMode != OpenMode.FILE && openMode != OpenMode.ROOT) {
-						Log.d(TAG, "onProgressUpdate addTo BaseFile");
+						Log.d(TAG, "onProgressUpdate addTo BaseFile " + currentPathTitle);
 						addTo(dataSourceL1, (ArrayList<BaseFile>)message[0]);
 					} else {
-						Log.d(TAG, "onProgressUpdate addAll element");
+						Log.d(TAG, "onProgressUpdate addAll element " + currentPathTitle);
 						dataSourceL1.addAll((ArrayList<LayoutElement>)message[0]);
 					}
 					srcAdapter.notifyDataSetChanged();

@@ -47,7 +47,7 @@ public class GenericCopyUtil {
     private DataUtils dataUtils = DataUtils.getInstance();
     public static final String PATH_FILE_DESCRIPTOR = "/proc/self/fd/";
 
-    public static final int DEFAULT_BUFFER_SIZE =  262144;
+    public static final int DEFAULT_BUFFER_SIZE = 65536;
 	public static final String TAG = "GenericCopyUtil";
 	
     public GenericCopyUtil(Context context) {
@@ -333,23 +333,21 @@ public class GenericCopyUtil {
 		return true;
     }
 
-    private boolean copyFile(FileChannel inChannel, BufferedOutputStream bufferedOutputStream)
+    private boolean copyFile(final FileChannel inChannel, final BufferedOutputStream bufferedOutputStream)
 	throws IOException {
-        MappedByteBuffer inBuffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, mSourceFile.size);
+        final MappedByteBuffer inBuffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, mSourceFile.size);
 
         int count = -1;
-        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+        final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         while (inBuffer.hasRemaining() && count != 0) {
 			if (progressHandler.isCancelled) {
 				bufferedOutputStream.close();
 				return false;
 			}
-            int tempPosition = inBuffer.position();
-
+            final int tempPosition = inBuffer.position();
             try {
-
                 // try normal way of getting bytes
-                ByteBuffer tempByteBuffer = inBuffer.get(buffer);
+                final ByteBuffer tempByteBuffer = inBuffer.get(buffer);
                 count = tempByteBuffer.position() - tempPosition;
             } catch (BufferUnderflowException exception) {
                 exception.printStackTrace();
@@ -359,7 +357,8 @@ public class GenericCopyUtil {
 
                 // reset the counter bytes
                 count = 0;
-                for (int i=0; i < buffer.length && inBuffer.hasRemaining(); i++) {
+                final int length = buffer.length;
+				for (int i=0; i < length && inBuffer.hasRemaining(); i++) {
                     buffer[i] = inBuffer.get();
                     count++;
                 }

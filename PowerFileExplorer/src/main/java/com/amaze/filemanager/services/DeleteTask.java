@@ -164,7 +164,8 @@ public class DeleteTask extends AsyncTask<ArrayList<BaseFile>, String, Boolean> 
     @Override
     public void onPostExecute(Boolean b) {
         Intent intent = new Intent("loadlist");
-        ctx.sendBroadcast(intent);
+        intent.putExtra("targetPath", files.get(0).getParent());
+		ctx.sendBroadcast(intent);
 
         if (!b) {
             Toast.makeText(ctx, ctx.getResources().getString(R.string.error), Toast.LENGTH_SHORT).show();

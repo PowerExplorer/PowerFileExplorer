@@ -72,7 +72,7 @@ public class ZipTask extends Service {
     public static final String KEY_COMPRESS_PATH = "zip_path";
     public static final String KEY_COMPRESS_FILES = "zip_files";
     public static final String KEY_COMPRESS_BROADCAST_CANCEL = "zip_cancel";
-
+	private String path;
     @Override
     public void onCreate() {
         c = getApplicationContext();
@@ -82,7 +82,7 @@ public class ZipTask extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
         Bundle b = new Bundle();
-        String path = intent.getStringExtra(KEY_COMPRESS_PATH);
+        path = intent.getStringExtra(KEY_COMPRESS_PATH);
 
         ArrayList<BaseFile> baseFiles = intent.getParcelableArrayListExtra(KEY_COMPRESS_FILES);
 
@@ -194,6 +194,7 @@ public class ZipTask extends Service {
 
             watcherUtil.stopWatch();
             Intent intent = new Intent("loadlist");
+            intent.putExtra("targetPath", path);
             sendBroadcast(intent);
             stopSelf();
         }
