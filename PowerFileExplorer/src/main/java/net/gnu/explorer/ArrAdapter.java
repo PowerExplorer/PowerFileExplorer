@@ -913,8 +913,12 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		} else if (FileUtil.muPdfPattern.matcher(ele.name).matches()) {
 			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.PDF);
 			if (tabIndex2 >= 0) {
-				pagerAdapter.getItem(tabIndex2).load(fPath);
-				slidingTabsFragment.setCurrentItem(tabIndex2, true);
+				try {
+					pagerAdapter.getItem(tabIndex2).load(fPath);
+					slidingTabsFragment.setCurrentItem(tabIndex2, true);
+				} catch (Throwable t) {
+					contentFrag.activity.showToast(t.getMessage());
+				}
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.PDF, fPath);
 			}
