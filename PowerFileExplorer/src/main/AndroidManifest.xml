@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gnu.explorer"
     android:versionCode="2"
-    android:versionName="1.0.4"
+    android:versionName="1.0.5"
 >
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle 
@@ -534,19 +534,14 @@
                 <action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.SEND"/>
 				<action android:name="android.intent.action.SEND_MULTIPLE"/>
-				<action android:name="org.openintents.action.PICK_FILE" />
-				<action android:name="org.openintents.action.PICK_DIRECTORY" />
-				<action android:name="android.intent.action.PICK" />
+				
                 <category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.BROWSABLE"/>
 				<category android:name="android.intent.category.OPENABLE"/>
-                <!--<data android:mimeType="*/*"/>-->
+                
 				<data android:mimeType="image/*" />
 				<data android:mimeType="video/*" />
-				<data android:scheme="content" />
-				<data android:scheme="file"/>
-                <data android:scheme="folder"/>
-                <data android:scheme="directory"/>
+				
             </intent-filter>
 
         </activity>

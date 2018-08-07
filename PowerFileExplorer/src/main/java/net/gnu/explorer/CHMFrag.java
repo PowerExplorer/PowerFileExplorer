@@ -88,7 +88,7 @@ public class CHMFrag extends Frag {
 			final Uri data = intent.getData();
 			Log.d(TAG, "data " + data);
 			if (data != null) {
-				File f = new File(data.getPath());
+				File f = new File(Uri.decode(data.getPath()));
 				if (f.exists()) {
 					load(f.getAbsolutePath());
 				} else {

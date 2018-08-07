@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import net.gnu.explorer.R;
 import org.florescu.android.rangeseekbar.RangeSeekBar;
+import net.gnu.util.Util;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -260,11 +261,11 @@ public class MainActivity extends AppCompatActivity {
 								MainActivity.this.tv3.setText("");
 								MainActivity.this.tv3.append(String.format("time: %s",
 																		   TimeUtils.secsToTimeCode(Double.valueOf((progress.secs + progress.us / 100)))  + " / " + TimeUtils.secsToTimeCode(MainActivity.this.duration)));
-								MainActivity.this.tv3.append(String.format("\nspeed: %s", String.valueOf(percentFormat2D.format(progress.speed)) + "x"));
-								MainActivity.this.tv3.append(String.format("\nfps: %s", String.valueOf(percentFormat2D.format(progress.fps))));
-								MainActivity.this.tv3.append(String.format("\nbitrate: %s", String.valueOf(percentFormat2D.format(progress.bitrate)) + " Kbps"));
-								MainActivity.this.tv3.append(String.format("\nframe: %s", String.valueOf(progress.frame)));
-								MainActivity.this.tv3.append(String.format("\nsize: %s", Formatter.formatFileSize(MainActivity.this, (long)progress.size)));
+								MainActivity.this.tv3.append(String.format("\nspeed: %sx", Util.nf.format(progress.speed)));
+								MainActivity.this.tv3.append(String.format("\nfps: %s", Util.nf.format(progress.fps)));
+								MainActivity.this.tv3.append(String.format("\nbitrate: %s Kbps", Util.nf.format(progress.bitrate)));
+								MainActivity.this.tv3.append(String.format("\nframe: %s", Util.nf.format(progress.frame)));
+								MainActivity.this.tv3.append(String.format("\nsize: %s KiB", Util.nf.format(progress.size))); //Formatter.formatFileSize(MainActivity.this, 
 								MainActivity.this.progressCircle.setTitle(percentFormat1D.format(percent * 100) + "%");
 							}
 						});
@@ -1049,7 +1050,8 @@ public class MainActivity extends AppCompatActivity {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        final String scheme = uri.getScheme();
+		if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -1089,10 +1091,10 @@ public class MainActivity extends AppCompatActivity {
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("content".equalsIgnoreCase(scheme)) {
             return getDataColumn(context, uri, null, null);
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
+        } else if ("file".equalsIgnoreCase(scheme)) {
+            return Uri.decode(uri.getPath());
         }
 
         return null;

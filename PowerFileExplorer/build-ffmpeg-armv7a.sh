@@ -28,12 +28,14 @@
 # --enable-lto \
 # --enable-protocols \ 
 # --pkg-config=/usr/local/bin/pkg-config
+# -mfloat-abi=softfp
 #cd $FFMPEG_EXT_PATH/jni/ffmpeg
 #HOST_PLATFORM="linux-x86_64"
 pwd
 ls -l ${NDK_PATH}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86/bin/
 chmod 777 ./configure
 #mkdir ./android-libs/armeabi-v7a
+#obj/local/
 ls -l .
 LAMEDIR=/data/data/com.pdaxrom.cctools/root/cctools/home/ffmpeg-3.3.7/libmp3lame
 ARMEABI=armeabi-v7a
@@ -44,14 +46,15 @@ ARMEABI=armeabi-v7a
  --cross-prefix="${NDK_PATH}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86/bin/arm-linux-androideabi-" \
  --target-os=android \
  --sysroot="${NDK_PATH}/platforms/android-9/arch-arm/" \
- --extra-ldflags="-Wl,--fix-cortex-a8 -L$LAMEDIR/obj/local/$ARMEABI" \
- --extra-cflags="-O2 -fpic  -I$LAMEDIR/jni/lame-3.100/libmp3lame -I$LAMEDIR/jni/lame-3.100/include -marm -march=armv7-a  -Wno-multichar -fno-exceptions -mfloat-abi=softfp" \
+ --extra-ldflags="-Wl,--fix-cortex-a8 -L$LAMEDIR/libs/$ARMEABI" \
+ --extra-cflags="-O2 -fpic  -I$LAMEDIR/jni/lame-3.100/libmp3lame -I$LAMEDIR/jni/lame-3.100/include -marm -march=armv7-a  -Wno-multichar -fno-exceptions" \
  --extra-libs="-lc -lm -ldl -llog -lgcc -lz" \
  --extra-ldexeflags=-pie \
+ --enable-neon \
  --enable-cross-compile \
  --disable-static \
  --enable-shared \
- --disable-asm \
+ --enable-asm \
  --enable-optimizations \
  --enable-decoders \
  --enable-encoders \
@@ -64,9 +67,10 @@ ARMEABI=armeabi-v7a
  --enable-indevs \
  --enable-outdevs \
  --enable-filters \
- --disable-doc \
- --disable-htmlpages \
+ --enable-doc \
+ --enable-htmlpages \
  --disable-debug \
+ --enable-stripping \
  --enable-gpl \
  --enable-version3 \
  --disable-programs \
@@ -93,7 +97,7 @@ ARMEABI=armeabi-v7a
  --enable-mediacodec \
  --enable-network \
  --enable-libmp3lame \
- --enable-encoder=mp3 \
+ --enable-encoder=libmp3lame \
  --enable-decoder=mp3 \
  --enable-decoder=vorbis \
  --enable-decoder=opus \
@@ -102,4 +106,6 @@ ARMEABI=armeabi-v7a
    && \
 make clean && \
 make -j4 && \
-make install-libs 
+make install-libs
+
+

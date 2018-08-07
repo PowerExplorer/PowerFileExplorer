@@ -686,7 +686,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			slideFrag = SlidingTabsFragment.newInstance(SlidingTabsFragment.Side.LEFT);
 			
 			final Uri data = intent.getData();
-			dir = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : intent.getStringExtra(EXTRA_ABSOLUTE_PATH) ;
+			dir = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : Uri.decode(data.getPath()) : intent.getStringExtra(EXTRA_ABSOLUTE_PATH) ;
 			if (dir != null) {
 				Log.d(TAG, "slideFrag.addTab(dir, suffix, mimes, multiFiles)");
 				File file = new File(dir);
@@ -2690,7 +2690,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			@Override
 			public void run() {
 				final Uri data = newIntent.getData();
-				final String path = newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : data.getPath() : newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH);
+				final String path = newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : Uri.decode(data.getPath()) : newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH);
 				final String action = newIntent.getAction();
 				Log.i(TAG, "onNewIntent 2 path " + path + ", " + newIntent + ", " + newIntent.getExtras());
 				if (path != null) {

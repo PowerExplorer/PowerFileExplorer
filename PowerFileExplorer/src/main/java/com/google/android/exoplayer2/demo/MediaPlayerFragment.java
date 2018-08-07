@@ -258,7 +258,7 @@ PlaybackControlView.VisibilityListener {
 		if (intent != null) {
 			Uri extras = intent.getData();
 			if (extras != null) {
-				currentPathTitle = extras.getPath();
+				currentPathTitle = Uri.decode(extras.getPath());
 				Log.d(TAG, "intent.getData() " + currentPathTitle);
 			}
 		}

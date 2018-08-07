@@ -326,7 +326,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				spanCount = AndroidUtils.getSharedPreference(activity, "ContentFrag2.SPAN_COUNTL", 1);
 			}
 		}
-		Log.d(TAG, "onViewCreated index " + fragIndex + ", dataSourceL1 " + dataSourceL1.size() + ", " + toString() + ", " + ", savedInstanceState=" + savedInstanceState + "args=" + args);
+		Log.d(TAG, "onViewCreated index " + fragIndex + ", dataSourceL1 " + dataSourceL1.size() + ", " + toString() + ", args=" + args);//", savedInstanceState=" + savedInstanceState + 
 		//Log.d(TAG, "sharedPreference " + fragIndex + ", " + order);
 
 		SHOW_HIDDEN = sharedPref.getBoolean("showHidden", true);
@@ -608,7 +608,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			suffixSpliter = ".*?(" + suffixSpliter + ")";
 			suffixPattern = Pattern.compile(suffixSpliter);
 		}
-		Log.d(TAG, "onViewCreated suffixSpliter " + suffixPattern + ", " + toString() + ", " + ", savedInstanceState=" + savedInstanceState + "args=" + args);
+		Log.d(TAG, "onViewCreated suffixSpliter " + suffixPattern + ", " + toString() + ", args=" + args);//", savedInstanceState=" + savedInstanceState + 
 		if (!multiFiles) {
 			allCbx.setVisibility(View.GONE);
 		}
@@ -738,7 +738,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		super.onSaveInstanceState(outState);
 	}
 
-	Map<String, Object> onSaveInstanceState() {
+	private Map<String, Object> onSaveInstanceState() {
 		Map<String, Object> outState = new TreeMap<>();
 		//Log.d(TAG, "Map onSaveInstanceState " + dir + ", " + outState);
 		outState.put(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
@@ -769,8 +769,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
         return outState;
 	}
 
-	void reload(Map<String, Object> savedInstanceState) {
-		Log.d(TAG, "reload currentPathTitle " + currentPathTitle + ", "  + savedInstanceState);
+	private void reload(Map<String, Object> savedInstanceState) {
+		//Log.d(TAG, "reload currentPathTitle " + currentPathTitle + ", "  + savedInstanceState);
 		currentPathTitle = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 		suffix = (String) savedInstanceState.get(ExplorerActivity.EXTRA_FILTER_FILETYPE);
 		mimes = (String) savedInstanceState.get(ExplorerActivity.EXTRA_FILTER_MIMETYPE);

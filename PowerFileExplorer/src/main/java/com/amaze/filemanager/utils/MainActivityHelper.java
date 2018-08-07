@@ -48,6 +48,7 @@ import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
 import net.gnu.explorer.ContentFragment;
 import android.util.Log;
+import android.net.Uri;
 
 /**
  * Created by root on 11/22/15, modified by Emmanuel Messulam<emmanuelbendavid@gmail.com>
@@ -95,7 +96,7 @@ public class MainActivityHelper {
             if (intent != null) {
                 if (intent.getAction().equals(Intent.ACTION_MEDIA_MOUNTED)) {
                     Toast.makeText(mainActivity, "Media Mounted", Toast.LENGTH_SHORT).show();
-                    String a = intent.getData().getPath();
+                    String a = Uri.decode(intent.getData().getPath());
                     if (a != null && a.trim().length() != 0 && new File(a).exists() && new File(a).canExecute()) {
                         dataUtils.getStorages().add(a);
                         mainActivity.refreshDrawer();

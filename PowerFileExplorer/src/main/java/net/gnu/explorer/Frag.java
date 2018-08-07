@@ -234,7 +234,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
         sortBarLayout = (ViewGroup)view.findViewById(R.id.sortBarLayout);
 		
 		if (activity != null && slidingTabsFragment != null) {
-			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//type == Frag.TYPE.EXPLORER && 
+			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
 				slidingTabsFragment.width = activity.balance;
 			} else {
 				slidingTabsFragment.width = -activity.balance;

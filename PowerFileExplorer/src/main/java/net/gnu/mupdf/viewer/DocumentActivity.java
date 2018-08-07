@@ -122,7 +122,7 @@ public class DocumentActivity extends Activity {
 				Uri uri = intent.getData();
 				System.out.println("URI to open is: " + uri);
 				if (uri.getScheme().equals("file")) {
-					String path = uri.getPath();
+					String path = Uri.decode(uri.getPath());
 					core = openFile(path);
 				} else {
 					try {
