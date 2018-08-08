@@ -440,13 +440,13 @@ dependencies{
 	//compile 'com.github.PhilJay:MPAndroidChart:v3.0.3+'
 	//compile 'com.github.isacan:Andzu:0.65+'
 	//compile 'com.github.mukeshsolanki:photofilter:1.0.2+'
-	//compile 'org.apache.mina:mina-core:2.0.17'
-    //compile 'org.apache.mina:mina-filter-compression:2.0.17'
+	//compile 'org.apache.mina:mina-core:2.0.19'
+    //compile 'org.apache.mina:mina-filter-compression:2.0.19'
 	
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    //compile 'org.slf4j:slf4j-api:1.7.21+'
+    //compile 'org.slf4j:slf4j-api:1.7.25+'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
-    //compile 'org.slf4j:slf4j-simple:1.7.21+'
+    //compile 'org.slf4j:slf4j-simple:1.7.25+'
 	//compile 'de.mrmaffen:libvlc-android:2.1.12'
 	//compile 'com.jaredrummler:android-processes:+'
     //compile 'com.github.mjdev:libaums:+'
