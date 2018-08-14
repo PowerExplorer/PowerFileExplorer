@@ -16,6 +16,7 @@ import com.amaze.filemanager.utils.theme.AppTheme;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.util.Log;
 
 /**
  * Created by Arpit on 01-07-2015.
@@ -53,7 +54,7 @@ public class ShareTask extends AsyncTask<String, String, Void> {
                 arrayList1.add(resInfo.loadLabel(packageManager).toString());
                 if (packageName.contains("android.bluetooth")) bluetooth_present = true;
                 Intent intent = new Intent();
-                System.out.println(resInfo.activityInfo.packageName + "\t" + resInfo.activityInfo.name);
+                //Log.d("ShareTask", resInfo.activityInfo.packageName + resInfo.activityInfo.name);
                 intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
                 intent.setAction(Intent.ACTION_SEND_MULTIPLE);
                 intent.setType(mime);

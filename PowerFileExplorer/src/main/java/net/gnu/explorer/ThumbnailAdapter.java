@@ -26,22 +26,34 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     private static final String TAG = "ThumbnailAdapter";
 
     private final List<Uri> mDataSet;
-	//private final List<String> mimes;
 	private final Context ctx;
 	private final OnClickListener thumbnailOnClickListener;
 	private final int thumbnailSize;
-	//private final String parentPath;
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public ViewHolder(View v) {
-            super(v);
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+//        final ImageView thumbnail;
+		public ViewHolder(View frameLayout) {
+            super(frameLayout);
+//			thumbnail = new ImageView(frameLayout.getContext());
+//			thumbnail.setPadding(3, 3, 3, 3);
+//			thumbnail.setBackgroundColor(0x80808080);
+//			thumbnail.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//			thumbnail.setOnClickListener(thumbnailOnClickListener);
+//			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(thumbnailSize, thumbnailSize, Gravity.CENTER);
+//			//thumbnail.setLayoutParams(lp);
+//			//lp.setMargins(2, 2, 2, 2);
+//			((FrameLayout)frameLayout).addView(thumbnail, lp);
         }
+//		
+//		private void bind(final int position) {
+//			thumbnail.setContentDescription(position + "");
+//			GlideImageLoader.loadMedia(mDataSet.get(position), ctx, thumbnail, DiskCacheStrategy.RESULT);//, thumbnailSize);// , callback, mimes.get(position)new File(parentPath, 
+//			Log.d(TAG, "onBindViewHolder viewHolder.itemView " + thumbnail + ", " + thumbnail.getContentDescription());
+//		}
     }
 
     public ThumbnailAdapter(final Context ctx, final List<Uri> dataSet, final OnClickListener thumbnailOnClickListener, final int thumbnailSize) {//final List<String> mimes, final String parentPath, 
         mDataSet = dataSet;
-		//this.parentPath = parentPath;
-		//this.mimes = mimes;
 		this.ctx = ctx;
 		this.thumbnailOnClickListener = thumbnailOnClickListener;
 		this.thumbnailSize = thumbnailSize;
@@ -50,30 +62,31 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int viewType) {
-
+		Log.d(TAG, "onCreateViewHolder viewGroup " + viewGroup);
 		//final long start= System.currentTimeMillis();
-
+		//final FrameLayout frameLayout= new FrameLayout(viewGroup.getContext());
 		final ImageView thumbnail = new ImageView(ctx);
-		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(thumbnailSize, thumbnailSize, Gravity.CENTER);
-        //lp.setMargins(2, 2, 2, 2);
-		thumbnail.setLayoutParams(lp);
-		thumbnail.setPadding(1, 1, 1, 1);
+		thumbnail.setPadding(3, 3, 3, 3);
 		thumbnail.setBackgroundColor(0x80808080);
-        thumbnail.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		thumbnail.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 		thumbnail.setOnClickListener(thumbnailOnClickListener);
-        //Log.d(TAG, "onCreateViewHolder " + Util.nf.format(System.currentTimeMillis() - start));
+		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(thumbnailSize, thumbnailSize, Gravity.CENTER);
+		thumbnail.setLayoutParams(lp);
+		//lp.setMargins(2, 2, 2, 2);
+		//Log.d(TAG, "onCreateViewHolder " + Util.nf.format(System.currentTimeMillis() - start));
 		return new ViewHolder(thumbnail);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
-        //final long start= System.currentTimeMillis();
-		Log.d(TAG, "onBindViewHolder viewHolder.itemView " + viewHolder.itemView + ", " + viewHolder.itemView.getContentDescription());
+//        //final long start= System.currentTimeMillis();
+//		Log.d(TAG, "onBindViewHolder viewHolder.itemView " + viewHolder.itemView + ", " + viewHolder.itemView.getContentDescription());
         viewHolder.itemView.setContentDescription(position + "");
-		
+
 		GlideImageLoader.loadMedia(mDataSet.get(position), ctx, (ImageView)viewHolder.itemView, DiskCacheStrategy.RESULT);//, thumbnailSize);// , callback, mimes.get(position)new File(parentPath, 
         Log.d(TAG, "onBindViewHolder viewHolder.itemView " + viewHolder.itemView + ", " + viewHolder.itemView.getContentDescription());
         //Log.d(TAG, "onBindViewHolder " + Util.nf.format(System.currentTimeMillis() - start));
+		//viewHolder.bind(position);
 	}
 
     @Override

@@ -402,7 +402,7 @@ Devam etmek istiyor musunuz?\"</string>
   <string name="domain">Alan Adı</string>
   <string name="invalid">Geçersiz %s</string>
   <string name="ftp_notif_starting">FTP Sunucu başlatılıyor</string>
-  <string name="ftp_notif_title">Amaze FTP Sunucu çalışıyor</string>
+	<string name="ftp_notif_title">Power FTP Sunucu çalışıyor</string>
   <string name="ftp_notif_text">%s adresinde</string>
   <string name="ftp_notif_stop_server">DUR</string>
   <string name="ftp_port_edit_menu_title">FTP bağlantı noktası seçin</string>

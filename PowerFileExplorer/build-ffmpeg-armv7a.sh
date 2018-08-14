@@ -36,6 +36,7 @@ ls -l ${NDK_PATH}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86/bin/
 chmod 777 ./configure
 #mkdir ./android-libs/armeabi-v7a
 #obj/local/
+#NDK_PATH=/data/data/com.pdaxrom.cctools/root/cctools/home/android-ndk-aide
 ls -l .
 LAMEDIR=/data/data/com.pdaxrom.cctools/root/cctools/home/ffmpeg-3.3.7/libmp3lame
 ARMEABI=armeabi-v7a

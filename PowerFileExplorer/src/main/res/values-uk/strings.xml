@@ -401,7 +401,7 @@
   <string name="domain">Домен</string>
   <string name="invalid">Неприпустимий %s</string>
   <string name="ftp_notif_starting">FTP Server запускається</string>
-  <string name="ftp_notif_title">Amaze FTP Сервер працює</string>
+	<string name="ftp_notif_title">Power FTP Сервер працює</string>
   <string name="ftp_notif_text">на %s</string>
   <string name="ftp_notif_stop_server">ЗУПИНИТИ</string>
   <string name="ftp_port_edit_menu_title">Вибрати порт FTP</string>

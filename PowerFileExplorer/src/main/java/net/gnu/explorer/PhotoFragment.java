@@ -191,8 +191,6 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		Bundle args = getArguments();
 		Log.d(TAG, "onViewCreated " + currentPathTitle + ", " + "args=" + args + ", " + savedInstanceState);
 
-		//placeholderImage = (ImageView) view.findViewById(R.id.placeholder_image);
-
         viewPager = (ViewPager) view.findViewById(R.id.photoViewPager);
         thumbnailsRecyclerView = (RecyclerView) view.findViewById(R.id.thumbnails_container);
 		infoLayout = (LinearLayout) view.findViewById(R.id.info);
@@ -268,7 +266,8 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		updateColor(view);
 		Log.d(TAG, "currentPathTitle " + currentPathTitle);
         final Intent intent = fragActivity.getIntent();
-		if (intent != null) {
+		Log.d(TAG, "currentPathTitle " + currentPathTitle + ", intent " + intent);
+        if (intent != null) {
 			final Uri uri = intent.getData();
 			Log.d(TAG, "data " + uri);
 			if (uri != null) {
@@ -287,19 +286,20 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 				final ArrayList<Uri> arrList = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 				if (arrList != null) {
 					final int size = arrList.size();
-					if (size == 1) {
-						final Uri uri2 = arrList.get(0);
-						if (ContentResolver.SCHEME_FILE.equals(uri2.getScheme())) {
-							final File f = new File(Uri.decode(uri.getPath()));
-							if (f.exists()) {
-								load(f.getAbsolutePath());
-							} else {
-								Toast.makeText(fragActivity, f.getAbsolutePath() + " is not existed", Toast.LENGTH_LONG).show();
-							}
-						} else {
-							load(uri2);
-						}
-					} else if (size > 1) {
+//					if (size == 1) {
+//						final Uri uri2 = arrList.get(0);
+//						if (ContentResolver.SCHEME_FILE.equals(uri2.getScheme())) {
+//							final File f = new File(Uri.decode(uri2.getPath()));
+//							if (f.exists()) {
+//								load(f.getAbsolutePath());
+//							} else {
+//								Toast.makeText(fragActivity, f.getAbsolutePath() + " is not existed", Toast.LENGTH_LONG).show();
+//							}
+//						} else {
+//							load(uri2);
+//						}
+//					} else 
+					if (size >= 1) {
 						final String[] arr = new String[arrList.size()];
 						final Uri uri2 = arrList.get(0);
 						if (ContentResolver.SCHEME_FILE.equals(uri2.getScheme())) {
@@ -332,7 +332,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 						if (get instanceof Uri) {
 							final Uri uri2 = (Uri)get;
 							if (ContentResolver.SCHEME_FILE.equals(uri2.getScheme())) {
-								final File f = new File(Uri.decode(uri.getPath()));
+								final File f = new File(Uri.decode(uri2.getPath()));
 								if (f.exists()) {
 									load(f.getAbsolutePath());
 								} else {
@@ -350,7 +350,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 
 	@Override
 	public void open(final int curPos, final List<LayoutElement> paths) {
-		Log.d(TAG, "open list " + curPos);// + ", " + paths);
+		Log.d(TAG, "open list curPos " + curPos + ", paths.size() " + paths.size());
 		if (paths != null) {
 			File f;
 			infos = new ArrayList<>(paths.size());
@@ -415,75 +415,6 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 					}
 				}, 10);
 			infos.trimToSize();
-		}
-	}
-
-	//@Override
-	public void load(final Uri uri) {
-		Log.d(TAG, "path " + uri);
-		if (uri != null) {
-			final String scheme = uri.getScheme();
-			//InputStream is = null;
-			try {
-				if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-					final ArrayList<Uri> arrayList = new ArrayList<Uri>(1);
-					arrayList.add(uri);
-					setUriMedia(arrayList);
-//					final ContentResolver cr = fragActivity.getContentResolver();
-//					is = cr.openInputStream(uri);
-					detailInfoLayout.setVisibility(View.GONE);
-					toolbarSV.setVisibility(View.GONE);
-				} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
-					detailInfoLayout.setVisibility(View.VISIBLE);
-					toolbarSV.setVisibility(View.VISIBLE);
-					load(Uri.decode(uri.getPath()));
-				}
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		}
-    }
-
-    private void setMedia(final List<File> infos) {//, final List<String> mimes, final String parentPath
-		if (infos == null) {
-            throw new NullPointerException("Infos may not be null!");
-        }
-		final List<Uri> uriInfos = new ArrayList<>(infos.size());
-		for (File f : infos) {
-			uriInfos.add(Uri.fromFile(f));
-		}
-		setUriMedia(uriInfos);
-		infoLayout.setVisibility(View.VISIBLE);
-		thumbnailsRecyclerView.setVisibility(View.VISIBLE);
-	}
-
-    private void setUriMedia(final List<Uri> infos) {
-		if (infos == null) {
-            throw new NullPointerException("Infos may not be null!");
-        }
-		setThumbnailSize(AndroidUtils.dpToPx(56, fragActivity));
-		SLIDESHOW = false;
-		mListOfMedia = infos;
-		sizeMediaFiles = mListOfMedia.size();
-		if (sizeMediaFiles == 1) {
-			pageSelected = 0;
-		} else {
-			pageSelected = 1;
-		}
-		initializeViewPager();
-	}
-
-    private void initializeViewPager() {
-		if (fragmentManager == null) {
-			fragmentManager = fragActivity.getSupportFragmentManager();
-		}
-        viewPagerAdapter = new ScreenSlidePagerAdapter(fragmentManager, viewPager, mListOfMedia, this);
-        viewPager.setAdapter(viewPagerAdapter);
-		viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
-		recyclerAdapter = new ThumbnailAdapter(fragActivity, mListOfMedia, thumbnailOnClickListener, thumbnailSize);//mimes, parentPath, 
-        thumbnailsRecyclerView.setAdapter(recyclerAdapter);
-		if (sizeMediaFiles == 1) {
-			thumbnailsRecyclerView.setPadding((infoLayout.getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
 		}
 	}
 
@@ -560,6 +491,75 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		}
     }
 
+	//@Override
+	public void load(final Uri uri) {
+		Log.d(TAG, "path " + uri);
+		if (uri != null) {
+			final String scheme = uri.getScheme();
+			//InputStream is = null;
+			try {
+				if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+					final ArrayList<Uri> arrayList = new ArrayList<Uri>(1);
+					arrayList.add(uri);
+					setUriMedia(arrayList);
+//					final ContentResolver cr = fragActivity.getContentResolver();
+//					is = cr.openInputStream(uri);
+					detailInfoLayout.setVisibility(View.GONE);
+					toolbarSV.setVisibility(View.GONE);
+				} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+					detailInfoLayout.setVisibility(View.VISIBLE);
+					toolbarSV.setVisibility(View.VISIBLE);
+					load(Uri.decode(uri.getPath()));
+				}
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+    }
+
+    private void setMedia(final List<File> infos) {
+		if (infos == null) {
+            throw new NullPointerException("Infos may not be null!");
+        }
+		final List<Uri> uriInfos = new ArrayList<>(infos.size());
+		for (File f : infos) {
+			uriInfos.add(Uri.fromFile(f));
+		}
+		setUriMedia(uriInfos);
+		infoLayout.setVisibility(View.VISIBLE);
+		thumbnailsRecyclerView.setVisibility(View.VISIBLE);
+	}
+
+    private void setUriMedia(final List<Uri> infos) {
+		if (infos == null) {
+            throw new NullPointerException("Infos may not be null!");
+        }
+		setThumbnailSize(AndroidUtils.dpToPx(60, fragActivity));
+		SLIDESHOW = false;
+		mListOfMedia = infos;
+		sizeMediaFiles = mListOfMedia.size();
+		if (sizeMediaFiles == 1) {
+			pageSelected = 0;
+		} else {
+			pageSelected = 1;
+		}
+		initializeViewPager();
+	}
+
+    private void initializeViewPager() {
+		if (fragmentManager == null) {
+			fragmentManager = fragActivity.getSupportFragmentManager();
+		}
+        viewPagerAdapter = new ScreenSlidePagerAdapter(fragmentManager, viewPager, mListOfMedia, this);
+        viewPager.setAdapter(viewPagerAdapter);
+		viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
+		recyclerAdapter = new ThumbnailAdapter(fragActivity, mListOfMedia, thumbnailOnClickListener, thumbnailSize);//mimes, parentPath, 
+        thumbnailsRecyclerView.setAdapter(recyclerAdapter);
+		if (sizeMediaFiles == 1) {
+			thumbnailsRecyclerView.setPadding((infoLayout.getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
+		}
+	}
+
 	public void updateColor(final View rootView) {
 		getView().setBackgroundColor(0xff000000);
 	};
@@ -574,10 +574,10 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 	private Runnable runUpdateInfo = new Runnable() {
 		@Override
 		public void run() {
-			final int newpos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
-			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
-			scroll(newpos, childAt);
-			setupBar(newpos);
+			final int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
+			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
+			recyclerScroll(mediaPos, childAt);
+			setupBar(mediaPos);
 		}
 	};
 
@@ -609,17 +609,17 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		}
 
 		@Override 
-		public void onPageSelected(int position) {
+		public void onPageSelected(final int pagerPos) {
 			scrolledByViewPager = true;
-			final int newpos = position == 0 ? (sizeMediaFiles - 1) : position == (sizeMediaFiles + 1) ? 0 : (position - 1);
+			final int mediaPos = pagerPos == 0 ? (sizeMediaFiles - 1) : pagerPos == (sizeMediaFiles + 1) ? 0 : (pagerPos - 1);
 			final int childCount = thumbnailsRecyclerView.getLayoutManager().getChildCount();
 			final int measuredWidth = infoLayout.getMeasuredWidth();
 			final int mid = (measuredWidth - thumbnailSize) / 2;
-			Log.d(TAG, "onPageSelected position " + position + ", newpos " + newpos + ", mid " + mid + ", childCount " + childCount + ", measuredWidth " + measuredWidth);
-			if ((newpos) <= childCount / 2 || sizeMediaFiles == 1) {
-				thumbnailsRecyclerView.setPadding(Math.max(mid - (newpos) * thumbnailSize, 0), 0, 0, 0);
-			} else if ((sizeMediaFiles - 1 - (newpos)) <= childCount / 2) {
-				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (sizeMediaFiles - 1 - (newpos)) * thumbnailSize, 0), 0);
+			Log.d(TAG, "onPageSelected pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", mid " + mid + ", childCount " + childCount + ", measuredWidth " + measuredWidth);
+			if ((mediaPos) <= childCount / 2 || sizeMediaFiles == 1) {
+				thumbnailsRecyclerView.setPadding(Math.max(mid - (mediaPos) * thumbnailSize, 0), 0, 0, 0);
+			} else if ((sizeMediaFiles - 1 - (mediaPos)) <= childCount / 2) {
+				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (sizeMediaFiles - 1 - (mediaPos)) * thumbnailSize, 0), 0);
 			} else {
 				thumbnailsRecyclerView.setPadding(0, 0, 0, 0);
 			}
@@ -635,17 +635,17 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 //				//thumbnailsRecyclerView.startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
 //				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (size - (newpos + 1)) * thumbnailSize, 0), 0);
 //			}
-			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
-			scroll(newpos, childAt);
-			setupBar(newpos);
-			pageSelected = position;
+			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
+			recyclerScroll(mediaPos, childAt);
+			setupBar(mediaPos);
+			pageSelected = pagerPos;
 		}
 
 		@Override 
-		public void onPageScrollStateChanged(int state) {
-			Log.d(TAG, "onPageScrollStateChanged state " + state + ", pageSelected " + pageSelected);
-			int newpos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
-			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
+		public void onPageScrollStateChanged(final int state) {
+			int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
+			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
+			Log.d(TAG, "onPageScrollStateChanged state " + state + ", pageSelected " + pageSelected + ", mediaPos " + mediaPos);
 			if (state == 2) {
 				if (childAt != null) {
 					childAt.setBackgroundColor(0x80808080);
@@ -679,11 +679,15 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + dl + ", measuredWidth " + measuredWidth + ", thumbnailSize " + thumbnailSize + ", pageSelected " + pageSelected + ", childCount " + childCount);
 			if (dl > 0) {
 				thumbnailsRecyclerView.setPadding(Math.min(Math.max(dl - dx, 0), (measuredWidth - thumbnailSize) / 2), 0, 0, 0);
+				final int dr = thumbnailsRecyclerView.getPaddingRight();
+				if (dr > 0) {
+					
+				}
 //			} else {
 //				if (dx < 0) {
 //					thumbnailsRecyclerView.setPadding(Math.min(Math.max(-dx/thumbnailSize*thumbnailSize+((measuredWidth - thumbnailSize) / 2)%thumbnailSize, 0), (measuredWidth - thumbnailSize) / 2), 0, 0, 0);
 //				}
-			}
+			} else {
 			dl = thumbnailsRecyclerView.getPaddingRight();
 			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingRight " + dl + ", pageSelected " + pageSelected);
 			if (dl > 0) {
@@ -691,38 +695,38 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 				///Log.d(TAG, "Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2) " + Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2));
 				thumbnailsRecyclerView.setPadding(0, 0, Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2), 0);
 			}
-			dl = thumbnailsRecyclerView.getPaddingLeft();
-			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + dl + ", PaddingRight " + thumbnailsRecyclerView.getPaddingRight());
-			final int mid;
-			if (dl > thumbnailSize / 2) {
-				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;//
-			} else {
-				//if (dx < 0) {
-				mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else if (dx > 0) {
-//					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else {
-//					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-				//}
-			}
+//			dl = thumbnailsRecyclerView.getPaddingLeft();
+//			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + dl + ", PaddingRight " + thumbnailsRecyclerView.getPaddingRight());
+//			final int mid;
 //			if (dl > thumbnailSize / 2) {
-//				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
+//				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;//
 //			} else {
-//				if (dx > 0) {
-//					mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else if (dx < 0) {
-//					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else {
-//					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-//				}
+//				//if (dx < 0) {
+//				mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
+////				} else if (dx > 0) {
+////					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
+////				} else {
+////					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
+//				//}
 //			}
-			ImageView childAt = (ImageView) mLayoutManager.getChildAt(mid);
-			if (childAt == null) {
-				Log.d(TAG, "onScrolled childAt == null, pageSelected " + pageSelected + ", mid " + mid + ", ChildCount " + mLayoutManager.getChildCount());
-				thumbnailsRecyclerView.setPadding(measuredWidth / 2 - (sizeMediaFiles - 1 - pageSelected) * thumbnailSize / 2, 0, 0, 0);
-				childAt = (ImageView) mLayoutManager.getChildAt(mid - 1);
-			}
-			int targetPos = Integer.valueOf(childAt.getContentDescription() + "");
+////			if (dl > thumbnailSize / 2) {
+////				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
+////			} else {
+////				if (dx > 0) {
+////					mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
+////				} else if (dx < 0) {
+////					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
+////				} else {
+////					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
+////				}
+////			}
+//			ImageView childAt = (ImageView) mLayoutManager.getChildAt(mid);
+//			if (childAt == null) {
+//				Log.d(TAG, "onScrolled childAt == null, pageSelected " + pageSelected + ", mid " + mid + ", ChildCount " + mLayoutManager.getChildCount());
+//				thumbnailsRecyclerView.setPadding(measuredWidth / 2 - (sizeMediaFiles - 1 - pageSelected) * thumbnailSize / 2, 0, 0, 0);
+//				//childAt = (ImageView) mLayoutManager.getChildAt(mid - 1);
+//			}
+			//int targetPos = Integer.valueOf(childAt.getContentDescription() + "");
 //			if (dx != 0) {
 //				if (targetPos <= (childCount) / 2) {
 //					thumbnailsRecyclerView.setPadding(Math.max((measuredWidth - thumbnailSize) / 2 - (targetPos * thumbnailSize), 0), 0, 0, 0);
@@ -730,7 +734,8 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 //					thumbnailsRecyclerView.setPadding(0, 0, Math.max((measuredWidth + thumbnailSize) / 2 - ((size - targetPos) * thumbnailSize), 0), 0);
 //				}
 //			}
-			Log.d(TAG, "onScrolled dl " + dl + ", mid  " + mid + ", pos " + targetPos + ", childAt " + childAt);
+			}
+			//Log.d(TAG, "onScrolled dl " + dl + ", mid  " + mid + ", pos " + targetPos + ", childAt " + childAt);
 			//scroll(pos, childAt);
 			//if (pageSelected > mid) {//  && pageSelected < size - mid + 1
 				//setCurrentItem(targetPos + 1, false);//pos + 1
@@ -756,11 +761,11 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 					final int mid = (infoLayout.getMeasuredWidth() + thumbnailSize) / 2;//
 					final ImageView childAt = (ImageView) mLayoutManager.getChildAt(mid / thumbnailSize);
 					if (childAt != null) {
-						final int pos = Integer.valueOf(childAt.getContentDescription() + "");
-						Log.d(TAG, "onScrollStateChanged newState " + newState + ", mid  " + mid + ", thumbnailSize " + thumbnailSize + ", pos " + pos);
-						scroll(pos, childAt);
-						setCurrentItem(pos + 1, false);
-						setupBar(pos);
+						final int mediaPos = Integer.valueOf(childAt.getContentDescription() + "");
+						Log.d(TAG, "onScrollStateChanged newState " + newState + ", mid  " + mid + ", thumbnailSize " + thumbnailSize + ", mediaPos " + mediaPos);
+						recyclerScroll(mediaPos, childAt);
+						setCurrentItem(mediaPos + 1, false);
+						setupBar(mediaPos);
 					}
 					break;
 //				case RecyclerView.SCROLL_STATE_SETTLING:
@@ -771,12 +776,14 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 
     private final OnClickListener thumbnailOnClickListener = new OnClickListener() {
         @Override public void onClick(final View v) {
-            final int pos = Integer.valueOf(v.getContentDescription() + "");
-			Log.d(TAG, "thumbnailOnClickListener pos " + pos + ", pageSelected " + pageSelected);
+            final int mediaPos = Integer.valueOf(v.getContentDescription() + "");
+			Log.d(TAG, "thumbnailOnClickListener mediaPos " + mediaPos + ", cur pageSelected " + pageSelected);
             scrolledByViewPager = false;
-			scroll(pos, v);
-            setCurrentItem(pos + 1, false);
-			setupBar(pos);
+			recyclerScroll(mediaPos, v);
+            viewPager.setPageTransformer(true, null);
+			setCurrentItem(mediaPos + 1, false);
+			setupBar(mediaPos);
+			viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
         }
     };
 
@@ -839,20 +846,20 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
         return false;
     }
 
-    public void setCurrentItem(final int position, boolean smoothScroll) {
+    private void setCurrentItem(final int newPagerPos, boolean smoothScroll) {
 		if (sizeMediaFiles < 1) {
 			return;
 		}
-		Log.d(TAG, pageSelected + " setCurrentItem to " + position);
-		int newpos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
-		ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
+		Log.d(TAG, "setCurrentItem curPagerPos " + pageSelected + " to newPagerPos " + newPagerPos);
+		int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
+		ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
 		if (childAt != null) {
 			childAt.setBackgroundColor(0x80808080);
 		}
-		viewPager.setCurrentItem(position, smoothScroll);
+		viewPager.setCurrentItem(newPagerPos, smoothScroll);
 
-		newpos = position == 0 ? (sizeMediaFiles - 1) : position == (sizeMediaFiles + 1) ? 0 : (position - 1);
-		childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
+		mediaPos = newPagerPos == 0 ? (sizeMediaFiles - 1) : newPagerPos == (sizeMediaFiles + 1) ? 0 : (newPagerPos - 1);
+		childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
 		if (childAt != null) {
 			childAt.setBackgroundColor((0xc0ffffff));
 		}
@@ -874,19 +881,19 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		}
     }
 
-    private void scroll(final int pos, final View thumbnail) {
-        Log.d(TAG, "scroll pos " + pos + ", thumbnailSize " + thumbnailSize + ", paddingLeft " + thumbnailsRecyclerView.getPaddingLeft() + ", paddingRight " + thumbnailsRecyclerView.getPaddingRight() + ", thumbnail " + thumbnail);
+    private void recyclerScroll(final int mediaPos, final View thumbnail) {
+        Log.d(TAG, "scroll Recycler mediaPos " + mediaPos + ", thumbnailSize " + thumbnailSize + ", paddingLeft " + thumbnailsRecyclerView.getPaddingLeft() + ", paddingRight " + thumbnailsRecyclerView.getPaddingRight() + ", thumbnail " + thumbnail);
 		//mLayoutManager.scrollToPositionWithOffset(pos, (getMeasuredWidth() - thumbnailSize) / 2);
 		//int itemLength = thumbnailSize;//thumbnailsRecyclerView.getLayoutManager().getChildAt(0).getMeasuredWidth();
 		int length = infoLayout.getMeasuredWidth();
-		mLayoutManager.scrollToPositionWithOffset(pos, (pos * thumbnailSize < (length - thumbnailSize) / 2) ? pos * thumbnailSize : (length - thumbnailSize) / 2);
+		mLayoutManager.scrollToPositionWithOffset(mediaPos, (mediaPos * thumbnailSize < (length - thumbnailSize) / 2) ? mediaPos * thumbnailSize : (length - thumbnailSize) / 2);
 		if (thumbnail != null) {
 			thumbnail.setBackgroundColor(0xc0ffffff);
 		} else {
 			infoLayout.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						final View findViewByPosition = mLayoutManager.findViewByPosition(pos);
+						final View findViewByPosition = mLayoutManager.findViewByPosition(mediaPos);
 						if 	(findViewByPosition != null) {
 							findViewByPosition.setBackgroundColor(0xc0ffffff);
 						}
@@ -895,9 +902,9 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		}
     }
 
-	private void setupBar(final int pos) {
+	private void setupBar(final int mediaPos) {
 		if (infoLayout.getVisibility() == View.VISIBLE) {
-			final Uri uri = mListOfMedia.get(pos);
+			final Uri uri = mListOfMedia.get(mediaPos);
 			if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
 				final File file = new File(Uri.decode(uri.getPath()));
 				fileNameTV.setText((orderType.equals("Name") ? asc : "") + file.getName());
@@ -911,20 +918,20 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 				fileSizeTV.setText("");
 				fileDateTV.setText("");
 			}
-			fileOrderTV.setText((pos + 1) + "/" + sizeMediaFiles);
+			fileOrderTV.setText((mediaPos + 1) + "/" + sizeMediaFiles);
 
 		}
 	}
 
 	@Override
 	public void onClick(final View p1) {
-		final int newpos = pageSelected == 0 ? sizeMediaFiles - 1 : pageSelected == sizeMediaFiles + 1 ? 0 : pageSelected - 1;
-		final Uri uri = mListOfMedia.get(newpos);
+		final int mediaPos = pageSelected == 0 ? sizeMediaFiles - 1 : pageSelected == sizeMediaFiles + 1 ? 0 : pageSelected - 1;
+		final Uri uri = mListOfMedia.get(mediaPos);
 		if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
 			return;
 		}
 		final File f = new File(Uri.decode(uri.getPath()));
-		Log.d(TAG, "onClick pageSelected " + pageSelected + ", newpos " + newpos + ", ContentDescription " + p1.getContentDescription());// + ", " + viewPager.getCurrentItem());// + ", " + pagerAdapter.getItem(pageSelected));
+		Log.d(TAG, "onClick pageSelected " + pageSelected + ", mediaPos " + mediaPos + ", contentDescription " + p1.getContentDescription());// + ", " + viewPager.getCurrentItem());// + ", " + pagerAdapter.getItem(pageSelected));
 		if (f.exists()) {
 			switch (p1.getId()) {
 				case R.id.shareButton:
@@ -1029,8 +1036,8 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 								final String newName = f.getParent() + "/" + name;
 								MainActivityHelper.rename(OpenMode.FILE, f.getAbsolutePath(),//mListOfMedia.get(pageSelected).getAbsolutePath(),
 														  newName, (ThemedActivity)fragActivity, ThemedActivity.rootMode);
-								mListOfMedia.remove(newpos);
-								mListOfMedia.add(newpos, Uri.fromFile(new File(newName)));
+								mListOfMedia.remove(mediaPos);
+								mListOfMedia.add(mediaPos, Uri.fromFile(new File(newName)));
 								fileNameTV.setText(name);
 								viewPagerAdapter.notifyDataSetChanged();
 								recyclerAdapter.notifyDataSetChanged();

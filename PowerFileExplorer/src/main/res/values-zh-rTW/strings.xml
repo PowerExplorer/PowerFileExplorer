@@ -400,7 +400,7 @@
   <string name="domain">網域名稱</string>
   <string name="invalid">不正確 %s</string>
   <string name="ftp_notif_starting">FTP 伺服器啟動中</string>
-  <string name="ftp_notif_title">Amaze FTP 伺服器執行中</string>
+  <string name="ftp_notif_title">Power FTP 伺服器執行中</string>
   <string name="ftp_notif_text">在 %s</string>
   <string name="ftp_notif_stop_server">停止</string>
   <string name="ftp_port_edit_menu_title">選擇 FTP 通訊埠</string>

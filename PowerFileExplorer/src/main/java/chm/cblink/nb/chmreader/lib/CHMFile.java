@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import android.util.Log;
 
 /**
  * @author Rui Shen
@@ -599,7 +600,7 @@ public class CHMFile implements Closeable {
 		CHMFile chm = new CHMFile(argv[0]);
 		if (argv.length == 1) {
 			for (String file : chm.list()) {
-				System.out.println(file);
+				Log.d("CHMFile", file + "");
 			}
 		} else {
 			byte[] buf = new byte[1024];
@@ -607,7 +608,7 @@ public class CHMFile implements Closeable {
 				InputStream in = chm.getResourceAsStream(argv[i]);
 				int c = 0;
 				while ((c = in.read(buf)) >= 0) {
-					System.out.print(new String(buf, 0, c));
+					Log.d("CHMFile", new String(buf, 0, c));
 				}
 			}
 		}

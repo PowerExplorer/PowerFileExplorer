@@ -176,7 +176,7 @@ public class Futils {
     }
 
     public static void scanFile(String path, Context c) {
-        System.out.println(path + " " + Build.VERSION.SDK_INT);
+        Log.d(TAG, path + " " + Build.VERSION.SDK_INT);
         if (Build.VERSION.SDK_INT >= 19) {
             MediaScannerConnection.scanFile(c, new String[]{path}, null, new MediaScannerConnection.OnScanCompletedListener() {
 

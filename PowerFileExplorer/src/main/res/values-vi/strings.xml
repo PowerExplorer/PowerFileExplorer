@@ -385,7 +385,7 @@
   <string name="domain">Tên miền</string>
   <string name="invalid">Không hợp lệ %s</string>
   <string name="ftp_notif_starting">FTP Server đang bắt đầu</string>
-  <string name="ftp_notif_title">Amaze FTP Server đang chạy</string>
+	<string name="ftp_notif_title">Power FTP Server đang chạy</string>
   <string name="ftp_notif_text">tại %s</string>
   <string name="ftp_notif_stop_server">Ngừng</string>
   <string name="ftp_port_edit_menu_title">Chọn công FTP</string>

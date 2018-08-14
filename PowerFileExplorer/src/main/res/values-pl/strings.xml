@@ -400,7 +400,7 @@
   <string name="domain">Domena</string>
   <string name="invalid">Nieprawidłowa %s</string>
   <string name="ftp_notif_starting">Uruchamianie serwera FTP</string>
-  <string name="ftp_notif_title">Serwer Amaze FTP jest uruchomiony</string>
+	<string name="ftp_notif_title">Serwer Power FTP jest uruchomiony</string>
   <string name="ftp_notif_text">pod adresem: %s</string>
   <string name="ftp_notif_stop_server">ZATRZYMAJ</string>
   <string name="ftp_port_edit_menu_title">Wybierz port FTP</string>

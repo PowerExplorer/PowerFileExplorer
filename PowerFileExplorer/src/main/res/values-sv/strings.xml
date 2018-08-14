@@ -318,7 +318,7 @@
   <string name="domain">Domän</string>
   <string name="invalid">Ogiltig %s</string>
   <string name="ftp_notif_starting">FTP-server startar</string>
-  <string name="ftp_notif_title">Amaze FTP-server körs</string>
+	<string name="ftp_notif_title">Power FTP-server körs</string>
   <string name="ftp_notif_stop_server">STOPP</string>
   <string name="ftp_port_edit_menu_title">Välj FTP-port</string>
   <string name="ftp_port_change_success">FTP-port ändrad</string>

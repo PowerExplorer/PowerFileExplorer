@@ -39,31 +39,31 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter implement
     }
 
 	@Override
-    public Fragment getItem(final int positionOri) {
+    public Fragment getItem(final int pagerPos) {
 		ImageFragment fragment = null;
         final int size = mListOfMedia.size();
-		int position = positionOri;
-		Log.d(TAG, "getItem positionOri " + positionOri + ", size " + size + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem() + ", " + fragMap.get(viewPager.getCurrentItem()));
-		if (position == 0) {
-			position = size - 1;
-		} else if (position == size + 1) {
-			position = 0;
+		int mediaPos = pagerPos;
+		if (mediaPos == 0) {
+			mediaPos = size - 1;
+		} else if (mediaPos == size + 1) {
+			mediaPos = 0;
 		} else {
-			position--;
+			mediaPos--;
 		}
-        if (position < size) {
-            fragment = loadImageFragment(mListOfMedia.get(position));//, mimes.get(position)new File(parentPath, 
-			fragMap.put(Integer.valueOf(positionOri), fragment);
-        }
-		Log.d(TAG, "getItem mListOfMedia.get(position) " + mListOfMedia.get(position) + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem() + ", " + fragMap.get(viewPager.getCurrentItem()));
+        Log.d(TAG, "getItem pagerPos " + pagerPos + ", mListOfMedia.get(" + mediaPos + ") " + mListOfMedia.get(mediaPos) + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem() + ", size " + size + ", " + fragMap);
+		//if (mediaPos < size) {
+            fragment = loadImageFragment(mListOfMedia.get(mediaPos));//, mimes.get(position)new File(parentPath, 
+			fragMap.put(Integer.valueOf(pagerPos), fragment);
+        //}
 		return fragment;
     }
 
     private ImageFragment loadImageFragment(final Uri mediaInfo) {//, final String mime
+		Log.d(TAG, "loadImageFragment " + mediaInfo);
         final ImageFragment fragment = new ImageFragment();
         fragment.setMediaInfo(mediaInfo);
 		fragment.setOnDoubleTapListener(photoFragment);
-		fragment.setCallback(this);
+		fragment.setPostScaleCallback(this);
         return fragment;
     }
 
@@ -74,7 +74,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter implement
 		if (count > 1) {
 			ImageFragment img;
 			if (currentItem == 0) {
-				for (int i = currentItem; i < Math.min(count - 2, numOfPages); i++) {
+				for (int i = currentItem; i < Math.min(count - 2, currentItem + numOfPages); i++) {
 					Log.d(TAG, "setZoom " + (i+1));
 					img = fragMap.get(i + 1);
 					if (img != null) {

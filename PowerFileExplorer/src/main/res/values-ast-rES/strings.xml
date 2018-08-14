@@ -392,7 +392,7 @@ inestable\'l preséu.\\n¿Siguir?</string>
   <string name="domain">Dominiu</string>
   <string name="invalid">%s non válidu</string>
   <string name="ftp_notif_starting">Aniciándose\'l sirvidor FTP</string>
-  <string name="ftp_notif_title">Sirvidor Amaze FTP n\'execución</string>
+	<string name="ftp_notif_title">Sirvidor Power FTP n\'execución</string>
   <string name="ftp_notif_text">en %s</string>
   <string name="ftp_notif_stop_server">PARAR</string>
   <string name="primary_two_title">Color primariu (llingüeta drecha)</string>

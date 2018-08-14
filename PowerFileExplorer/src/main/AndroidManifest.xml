@@ -88,8 +88,87 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
-
-            <intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.EDIT" />
+				<action android:name="android.intent.action.PICK" />
+                <action android:name="org.openintents.action.PICK_FILE"/>
+                <action android:name="org.openintents.action.PICK_DIRECTORY"/>
+				<action android:name="android.intent.action.SEND" />
+				<action android:name="android.intent.action.SENDTO" />
+				<action android:name="android.intent.action.SEND_MULTIPLE" />
+                <action android:name="org.openintents.action.MULTI_SELECT"/>
+				<action android:name="com.google.android.gm.action.AUTO_SEND" />
+				<action android:name="android.intent.action.GET_CONTENT" />
+				<action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+				<action android:name="android.intent.action.INSERT" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.OPENABLE"/>
+				<data android:mimeType="*/*" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.EDIT" />
+				<action android:name="android.intent.action.PICK" />
+                <action android:name="org.openintents.action.PICK_FILE"/>
+                <action android:name="org.openintents.action.PICK_DIRECTORY"/>
+				<action android:name="android.intent.action.SEND" />
+				<action android:name="android.intent.action.SENDTO" />
+				<action android:name="android.intent.action.SEND_MULTIPLE" />
+                <action android:name="org.openintents.action.MULTI_SELECT"/>
+				<action android:name="com.google.android.gm.action.AUTO_SEND" />
+				<action android:name="android.intent.action.GET_CONTENT" />
+				<action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+				<action android:name="android.intent.action.INSERT" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.OPENABLE"/>
+                <data android:scheme="file"/>
+				<data android:scheme="http" />
+				<data android:scheme="https" />
+				<data android:scheme="ftp" />
+				<data android:scheme="ftps" />
+				<data android:scheme="about" />
+				<data android:scheme="javascript" />
+				<data android:scheme="mailto" />
+				<data android:scheme="sms" />
+				<data android:scheme="smsto" />
+				<data android:scheme="geo" />
+                <data android:scheme="folder"/>
+                <data android:scheme="directory"/>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.EDIT" />
+				<action android:name="android.intent.action.PICK" />
+                <action android:name="org.openintents.action.PICK_FILE"/>
+                <action android:name="org.openintents.action.PICK_DIRECTORY"/>
+				<action android:name="android.intent.action.SEND" />
+				<action android:name="android.intent.action.SENDTO" />
+				<action android:name="android.intent.action.SEND_MULTIPLE" />
+                <action android:name="org.openintents.action.MULTI_SELECT"/>
+				<action android:name="com.google.android.gm.action.AUTO_SEND" />
+				<action android:name="android.intent.action.GET_CONTENT" />
+				<action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+				<action android:name="android.intent.action.INSERT" />
+				<action android:name="android.intent.action.SEARCH" />
+				<action android:name="android.intent.action.WEB_SEARCH" />
+				<action android:name="android.intent.action.ASSIST" />
+				<action android:name="com.google.zxing.client.android.SCAN" />
+                <action android:name="android.intent.action.SEARCH_LONG_PRESS"/>
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.OPENABLE"/>
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="zxing" android:host="scan" android:path="/" />
+			</intent-filter>
+			
+            <!--<intent-filter>
                 <action android:name="android.intent.action.PICK"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -146,10 +225,10 @@
                 <action android:name="android.intent.action.GET_CONTENT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.OPENABLE"/>
-            </intent-filter>
+            </intent-filter>-->
 
             <!-- Filter for multi select feature -->
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="org.openintents.action.MULTI_SELECT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
@@ -188,41 +267,59 @@
                 <category android:name="android.intent.category.OPENABLE"/>
                 <data android:mimeType="*/*" android:scheme="content"/>
             </intent-filter>
-            <intent-filter>
+			<intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:mimeType="application/x-zip-compressed" />
                 <data android:mimeType="application/zip" />
                 <data android:pathPattern=".*\.zip" />
-			</intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH_LONG_PRESS"/>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
+			</intent-filter>-->
 			<intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 				<action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
                 <category android:name="android.intent.category.DEFAULT"/>
 				<category android:name="android.intent.category.OPENABLE"/>
 				<category android:name="android.intent.category.BROWSABLE"/>
+                <data android:mimeType="application/zip"/>
+                <data android:mimeType="application/rar"/>
+                <data android:mimeType="application/octet-stream"/>
 				<data android:mimeType="application/x-7z"/>
                 <data android:mimeType="application/x-7z-compressed"/>
                 <data android:mimeType="application/x-bzip2"/>
                 <data android:mimeType="application/x-gzip"/>
                 <data android:mimeType="application/x-xz"/>
-                <data android:mimeType="application/x-compress"/>
+                <data android:mimeType="application/x-zip-compressed" />
                 <data android:mimeType="application/x-rar-compressed"/>
                 <data android:mimeType="application/x-gtar"/>
-                <data android:mimeType="application/zip"/>
-                <data android:mimeType="application/rar"/>
                 <data android:mimeType="application/x-zip"/>
                 <data android:mimeType="application/x-compressed"/>
-                <data android:mimeType="application/octet-stream"/>
                 <data android:mimeType="application/x-tar"/>
 				<data android:mimeType="application/x-zpaq"/>
                 <data android:mimeType="application/x-lzh"/>
+
+				<data android:mimeType="application/pdf"/>
+				<data android:mimeType="application/msword"/>
+                <data android:mimeType="application/vnd.ms-excel"/>
+				<data android:mimeType="application/vnd.ms-powerpoint"/>
+				<data android:mimeType="application/vnd.ms-word"/>
+				<data android:mimeType="application/vnd.oasis.opendocument.formula"/>
+				<data android:mimeType="application/vnd.oasis.opendocument.presentation"/>
+				<data android:mimeType="application/vnd.oasis.opendocument.spreadsheet"/>
+				<data android:mimeType="application/vnd.oasis.opendocument.text"/>
+				<data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+				<data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation"/>
+				<data android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>
+				<data android:mimeType="text/rtf"/>
+				<data android:mimeType="text/x-csrc"/>
+				<data android:mimeType="text/x-chdr"/>
+				<data android:mimeType="text/x-c++src"/>
+				<data android:mimeType="text/x-c++hdr"/>
+				<data android:mimeType="text/html"/>
+				<data android:mimeType="text/plain"/>
+
+                <data android:mimeType="text/*"/>
+                <data android:mimeType="*/*"/>
 
                 <data android:pathPattern=".*\.zip"/>
                 <data android:pathPattern=".*\.zip.001"/>
@@ -242,31 +339,9 @@
 				<data android:pathPattern=".*\.html"/>
 				<data android:pathPattern=".*\.aze"/>
 				<data android:pathPattern=".*\.zpaq"/>
-				
-				<data android:mimeType="application/pdf"/>
-                <data android:mimeType="application/vnd.ms-excel"/>
-				<data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
-				<data android:mimeType="text/rtf"/>
-				<data android:mimeType="text/x-csrc"/>
-				<data android:mimeType="text/x-chdr"/>
-				<data android:mimeType="text/x-c++src"/>
-				<data android:mimeType="text/x-c++hdr"/>
-				<data android:mimeType="application/msword"/>
-				<data android:mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>
-				<data android:mimeType="application/vnd.oasis.opendocument.formula"/>
-				<data android:mimeType="application/vnd.oasis.opendocument.presentation"/>
-				<data android:mimeType="application/vnd.oasis.opendocument.spreadsheet"/>
-				<data android:mimeType="application/vnd.oasis.opendocument.text"/>
-				<data android:mimeType="application/vnd.ms-powerpoint"/>
-				<data android:mimeType="application/vnd.openxmlformats-officedocument.presentationml.presentation"/>
-				<data android:mimeType="text/html"/>
-				<data android:mimeType="text/plain"/>
-
-                <data android:mimeType="text/*"/>
-                <data android:mimeType="*/*"/>
             </intent-filter>
 
-			<intent-filter>
+			<!--<intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
 				<category android:name="android.intent.category.BROWSABLE"/>
@@ -292,7 +367,7 @@
                 <data android:scheme="directory"/>
 				<data android:mimeType="resource/folder" />
 				<data android:mimeType="inode/directory" />
-            </intent-filter>
+            </intent-filter>-->
 
         </activity>
 		
@@ -612,8 +687,8 @@
             android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER" />
-                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER" />
+                <action android:name="net.gnu.explorer.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER" />
+                <action android:name="net.gnu.explorer.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER" />
             </intent-filter>
         </receiver>
 
@@ -621,8 +696,8 @@
             android:name="com.amaze.filemanager.ui.notifications.FTPNotification"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.FTPSERVER_STARTED" />
-                <action android:name="com.amaze.filemanager.services.ftpservice.FTPReceiver.FTPSERVER_STOPPED" />
+                <action android:name="net.gnu.explorer.services.ftpservice.FTPReceiver.FTPSERVER_STARTED" />
+                <action android:name="net.gnu.explorer.services.ftpservice.FTPReceiver.FTPSERVER_STOPPED" />
             </intent-filter>
         </receiver>
 

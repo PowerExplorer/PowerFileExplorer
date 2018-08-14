@@ -401,7 +401,7 @@
   <string name="domain">Toimialue</string>
   <string name="invalid">Virheellinen %s</string>
   <string name="ftp_notif_starting">FTP-palvelin käynnistyy</string>
-  <string name="ftp_notif_title">Amaze FTP-palvelin on käynnissä</string>
+	<string name="ftp_notif_title">Power FTP-palvelin on käynnissä</string>
   <string name="ftp_notif_text">%s</string>
   <string name="ftp_notif_stop_server">LOPETA</string>
   <string name="ftp_port_edit_menu_title">FTP-portti</string>

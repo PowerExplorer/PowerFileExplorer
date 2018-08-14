@@ -343,7 +343,7 @@
   <string name="domain">Домейн</string>
   <string name="invalid">Невалиден %s</string>
   <string name="ftp_notif_starting">FTP сървърът стартира</string>
-  <string name="ftp_notif_title">Amaze FTP сървърът работи</string>
+  <string name="ftp_notif_title">Power FTP сървърът работи</string>
   <string name="ftp_notif_text">в %s</string>
   <string name="ftp_notif_stop_server">Стоп</string>
   <string name="ftp_port_edit_menu_title">FTP порт</string>

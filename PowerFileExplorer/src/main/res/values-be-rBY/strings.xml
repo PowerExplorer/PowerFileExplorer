@@ -400,7 +400,7 @@
   <string name="domain">Дамен</string>
   <string name="invalid">Несапраўдны %s</string>
   <string name="ftp_notif_starting">FTP сервер запушчаны</string>
-  <string name="ftp_notif_title">Amaze FTP сервер запушчаны</string>
+	<string name="ftp_notif_title">Power FTP сервер запушчаны</string>
   <string name="ftp_notif_text">на %s</string>
   <string name="ftp_notif_stop_server">СПЫНІЦЬ</string>
   <string name="ftp_port_edit_menu_title">Выбраць порт FTP</string>

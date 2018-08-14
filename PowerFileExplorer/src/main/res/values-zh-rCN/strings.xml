@@ -400,7 +400,7 @@
   <string name="domain">域名</string>
   <string name="invalid">无效%s</string>
   <string name="ftp_notif_starting">FTP 服务器已启动</string>
-  <string name="ftp_notif_title">Amaze FTP 服务器已启动</string>
+	<string name="ftp_notif_title">Power FTP 服务器已启动</string>
   <string name="ftp_notif_text">位于 %s</string>
   <string name="ftp_notif_stop_server">停止</string>
   <string name="ftp_port_edit_menu_title">选择 FTP 端口</string>

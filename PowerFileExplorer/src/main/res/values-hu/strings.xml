@@ -403,7 +403,7 @@ egyébként az előfordulásokra fog rákeresni.</string>
   <string name="domain">Tartomány</string>
   <string name="invalid">Érvénytelen: %s</string>
   <string name="ftp_notif_starting">FTP-kiszolgáló indítása</string>
-  <string name="ftp_notif_title">Az Amaze FTP-kiszolgáló fut</string>
+	<string name="ftp_notif_title">Az Power FTP-kiszolgáló fut</string>
   <string name="ftp_notif_text">%s</string>
   <string name="ftp_notif_stop_server">LEÁLLÍTÁS</string>
   <string name="ftp_port_edit_menu_title">Válasszon FTP portot</string>

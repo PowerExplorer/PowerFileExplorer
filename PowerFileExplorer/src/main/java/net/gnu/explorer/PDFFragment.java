@@ -97,11 +97,11 @@ public class PDFFragment extends Frag {
 		try {
 			core = new MuPDFCore(path);
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			return null;
 		} catch (java.lang.OutOfMemoryError e) {
 			//  out of memory is not an Exception, so we catch it separately.
-			System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 		return core;
@@ -112,7 +112,7 @@ public class PDFFragment extends Frag {
 		try {
 			core = new MuPDFCore(buffer, magic);
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			return null;
 		}
 		return core;

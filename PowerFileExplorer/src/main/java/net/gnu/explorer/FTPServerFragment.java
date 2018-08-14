@@ -193,7 +193,9 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
 					timeoutTV.setText("Time out: " + getFTPTimeout());
 				}
 			});
-		timeoutBuilder.positiveText(getResources().getString(R.string.set).toUpperCase())
+		timeoutBuilder
+			.inputType(InputType.TYPE_CLASS_NUMBER)
+			.positiveText(getResources().getString(R.string.set).toUpperCase())
 			.negativeText(getResources().getString(R.string.cancel))
 			.build()
 			.show();
@@ -339,7 +341,9 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
 
 					if (mSecureCheckBox.isChecked()) {
 						setSecurePreference(true);
-					} else setSecurePreference(false);
+					} else {
+						setSecurePreference(false);
+					}
 
 					// TODO: Fix secure connection certification
 					mSecureCheckBox.setEnabled(false);
@@ -493,7 +497,7 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
         ftpPasswordVisibleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_visibility_black_48dp));
 
         if (passwordDecrypted.equals("")) {
-            ftpPasswordVisibleButton.setVisibility(View.GONE);
+            ftpPasswordVisibleButton.setVisibility(View.INVISIBLE);
         } else {
             ftpPasswordVisibleButton.setVisibility(View.VISIBLE);
         }

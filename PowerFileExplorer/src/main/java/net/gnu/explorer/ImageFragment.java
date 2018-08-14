@@ -53,7 +53,7 @@ public class ImageFragment extends Fragment {
 
     private TouchImageView touchImageView;
     private ImageView videoPlayImage;
-    private Runnable zoomCallback;
+    private Runnable postScaleCallback;
 
 	private PhotoFragment photoFragment;
 	private GestureDetector mGestureDetector;
@@ -103,7 +103,8 @@ public class ImageFragment extends Fragment {
 		touchImageView.setZoom(curZoom);
         //viewPager = (ViewPager) photoFragment.getView().findViewById(R.id.photoViewPager);
 		//scrollGalleryView = (ScrollGalleryView) activity.findViewById(R.id.scroll_gallery_view);
-
+		touchImageView.setPostScaleCallback(postScaleCallback);
+		
 		mGestureDetector = new GestureDetector(getContext(), new SimpleOnGestureListener() {
 				@Override
 				public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -421,8 +422,8 @@ public class ImageFragment extends Fragment {
 		this.photoFragment = onDoubleTapListener;
 	}
 
-    public void setCallback(final Runnable callback) {
-		this.zoomCallback = callback;
+    public void setPostScaleCallback(final Runnable postScaleCallback) {
+		this.postScaleCallback = postScaleCallback;
 	}
 
 	private void loadImageToView() {

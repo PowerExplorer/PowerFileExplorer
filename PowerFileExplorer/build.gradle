@@ -132,6 +132,8 @@ dependencies{
 	//compile 'com.android.support:support-dynamic-animation:27.1.1'
 	
 	
+	
+	//compile 'com.newtronlabs.easypermissions:easypermissions:2.2.0'
 	//compile 'org.apache.james:apache-mime4j-core:+'
 	//compile 'org.apache.james:apache-mime4j-dom:+'
 	//compile 'edu.stanford.nlp:stanford-parser:+'//3.9.1'

@@ -400,7 +400,7 @@
   <string name="domain">Doména</string>
   <string name="invalid">Neplatné %s</string>
   <string name="ftp_notif_starting">FTP Server sa spúšťa</string>
-  <string name="ftp_notif_title">Amaze FTP Server beží</string>
+	<string name="ftp_notif_title">Power FTP Server beží</string>
   <string name="ftp_notif_text">na %s</string>
   <string name="ftp_notif_stop_server">STOP</string>
   <string name="ftp_port_edit_menu_title">FTP port</string>

@@ -238,7 +238,7 @@ public class AndroidUtils {
 		ActivityManager manager  = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 		if (pid <= 0) { return false; }
 		if (pid == android.os.Process.myPid()) {
-			System.out.println("Killing own process");
+			Log.d(TAG, "Killing own process");
 			android.os.Process.killProcess(pid);
 			return true;
 		}
@@ -262,7 +262,7 @@ public class AndroidUtils {
 		if (method != null) {
 			try {
 				method.invoke(manager, packageName);
-				System.out.println("kill method  " + method.getName() + " invoked " + packageName);
+				Log.d(TAG, "kill method  " + method.getName() + " invoked " + packageName);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1084,10 +1084,10 @@ public class AndroidUtils {
 				FileUtil.is2OS(new FileInputStream(packagePath), out); //read the apk content and write it to out
 				session.fsync(out);
 				out.close();
-				System.out.println("installing...");
+				Log.d(TAG, "installing...");
 				session.commit(PendingIntent.getBroadcast(context, sessionId,
 														  new Intent("android.intent.action.MAIN"), 0).getIntentSender());
-				System.out.println("install request sent");
+				Log.d(TAG, "install request sent");
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1134,12 +1134,12 @@ public class AndroidUtils {
 
 			File f = new File(sourceDir);
 			sb.append("\nSize: " + Util.nf.format(f.length()) + " byte(s) can read " + f.canRead() + ", can write " + f.canWrite());
-			System.out.println("Package Name :" + applicationInfo.packageName);
+			Log.d(TAG, "Package Name :" + applicationInfo.packageName);
 
-			System.out.println("Launch Intent For Package :"   +  
+			Log.d(TAG, "Launch Intent For Package :"   +  
 							   pm.getLaunchIntentForPackage(applicationInfo.packageName));
 
-			System.out.println("Application Label :"   + pm.getApplicationLabel(applicationInfo));
+			Log.d(TAG, "Application Label :"   + pm.getApplicationLabel(applicationInfo));
 
 //			try {
 //				System.out.println("Application Label :"   + 
@@ -1181,11 +1181,11 @@ public class AndroidUtils {
                 Resources res = packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo);
                 if (ri.activityInfo.labelRes != 0) {
                     name = res.getString(ri.activityInfo.labelRes);
-					System.out.println("has res " + name);
+					Log.d(TAG, "has res " + name);
                 } else {
                     name = ri.activityInfo.applicationInfo.loadLabel(
 						packageManager).toString();
-					System.out.println("no res " + name);
+					Log.d(TAG, "no res " + name);
                 }
 
                 componentList.add(name);

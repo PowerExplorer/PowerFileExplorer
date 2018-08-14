@@ -97,7 +97,8 @@ public class TouchImageView extends ImageView {
     private GestureDetector.OnDoubleTapListener doubleTapListener = null;
     private OnTouchListener userTouchListener = null;
     private OnTouchImageViewListener touchImageViewListener = null;
-
+	private Runnable postScaleCallback = null;
+	
     public TouchImageView(Context context) {
         super(context);
         sharedConstructing(context);
@@ -148,6 +149,10 @@ public class TouchImageView extends ImageView {
     public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener l) {
         doubleTapListener = l;
     }
+
+    public void setPostScaleCallback(Runnable postScaleCallback) {
+		this.postScaleCallback = postScaleCallback;
+	}
 
     @Override
     public void setImageResource(int resId) {
@@ -922,9 +927,12 @@ public class TouchImageView extends ImageView {
 	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, viewWidth / 2, viewHeight / 2, true);
 	        	compatPostOnAnimation(doubleTap);
         	}
+			if (postScaleCallback != null) {
+				postScaleCallback.run();
+			}
         }
     }
-    
+	
     private void scaleImage(double deltaScale, float focusX, float focusY, boolean stretchImageToSuper) {
     	
     	float lowerScale, upperScale;

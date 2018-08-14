@@ -53,7 +53,7 @@ import net.gnu.util.FileUtil;
 
 public class FTPService extends Service implements Runnable {
 
-    public static final int DEFAULT_PORT = 2211;
+    public static final int DEFAULT_PORT = 2222;
     public static final String DEFAULT_USERNAME = "";
     public static final int DEFAULT_TIMEOUT = 600;   // default timeout, in sec
     public static final boolean DEFAULT_SECURE = false;
@@ -69,16 +69,16 @@ public class FTPService extends Service implements Runnable {
 
     private static final String TAG = FTPService.class.getSimpleName();
 
-    private static final String WIFI_AP_ADDRESS = "192.168.43.1";
+    private static final String WIFI_AP_ADDRESS = "192.168.1.1";
 
     // Service will (global) broadcast when server start/stop
-    static public final String ACTION_STARTED = "com.amaze.filemanager.services.ftpservice.FTPReceiver.FTPSERVER_STARTED";
-    static public final String ACTION_STOPPED = "com.amaze.filemanager.services.ftpservice.FTPReceiver.FTPSERVER_STOPPED";
-    static public final String ACTION_FAILEDTOSTART = "com.amaze.filemanager.services.ftpservice.FTPReceiver.FTPSERVER_FAILEDTOSTART";
+    static public final String ACTION_STARTED = "net.gnu.explorer.services.ftpservice.FTPReceiver.FTPSERVER_STARTED";
+    static public final String ACTION_STOPPED = "net.gnu.explorer.services.ftpservice.FTPReceiver.FTPSERVER_STOPPED";
+    static public final String ACTION_FAILEDTOSTART = "net.gnu.explorer.services.ftpservice.FTPReceiver.FTPSERVER_FAILEDTOSTART";
 
     // RequestStartStopReceiver listens for these actions to start/stop this server
-    static public final String ACTION_START_FTPSERVER = "com.amaze.filemanager.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER";
-    static public final String ACTION_STOP_FTPSERVER = "com.amaze.filemanager.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER";
+    static public final String ACTION_START_FTPSERVER = "net.gnu.explorer.services.ftpservice.FTPReceiver.ACTION_START_FTPSERVER";
+    static public final String ACTION_STOP_FTPSERVER = "net.gnu.explorer.services.ftpservice.FTPReceiver.ACTION_STOP_FTPSERVER";
 
     private String username, password;
     private boolean isPasswordProtected = false;
@@ -206,6 +206,7 @@ public class FTPService extends Service implements Runnable {
         try {
             serverThread.join(10000); // wait 10 sec for server thread to finish
         } catch (InterruptedException e) {
+			e.printStackTrace();
         }
         if (serverThread.isAlive()) {
             Log.w(TAG, "Server thread failed to exit");
@@ -253,6 +254,7 @@ public class FTPService extends Service implements Runnable {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException ignored) {
+			ignored.printStackTrace();
         }
     }
 

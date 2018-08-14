@@ -407,7 +407,7 @@ kommer annars att söka efter förekomster.</string>
     <string name="domain">Domän</string>
     <string name="invalid">Ogiltig %s</string>
     <string name="ftp_notif_starting">FTP-server startar</string>
-    <string name="ftp_notif_title">Amaze FTP-server kör</string>
+    <string name="ftp_notif_title">Power FTP-server kör</string>
     <string name="ftp_notif_text">vid %s</string>
     <string name="ftp_notif_stop_server">STANNA</string>
     <string name="ftp_port_edit_menu_title">Välj FTP-port</string>

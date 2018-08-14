@@ -831,7 +831,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			return vh;
 		}
 
-		class ViewHolder extends RecyclerView.ViewHolder {
+		private class ViewHolder extends RecyclerView.ViewHolder {
 			final View ll;
 			final TextView name;
 			final TextView items;
@@ -842,7 +842,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			final ImageView image;
 			final ImageButton more;
 
-			ViewHolder(View convertView) {
+			private ViewHolder(View convertView) {
 				super(convertView);
 				name = (TextView) convertView.findViewById(R.id.name);
 				items = (TextView) convertView.findViewById(R.id.items);
