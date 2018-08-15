@@ -54,7 +54,7 @@ public class GlideImageLoader {
 						.asGif()
 						.skipMemoryCache(true)
 						.diskCacheStrategy(strategy)
-						.placeholder(R.drawable.ic_doc_image);
+						.placeholder(R.drawable.transparent_256);
 					if (strategy != DiskCacheStrategy.NONE) {
 						req.signature(new StringSignature(f.lastModified() + " " + f.length()));//file.getAbsolute()
 					}
@@ -69,7 +69,7 @@ public class GlideImageLoader {
 						.sourceEncoder(new StreamEncoder())
 						.cacheDecoder(new FileToStreamDecoder<SVG>(new SvgDecoder()))
 						.decoder(new SvgDecoder())
-						.placeholder(R.drawable.image_loading)
+						.placeholder(R.drawable.transparent_256)
 						.error(ImageThreadLoader.xml64)
 						//.animate(android.R.anim.fade_in)
 						.dontAnimate()
@@ -91,7 +91,7 @@ public class GlideImageLoader {
 						.diskCacheStrategy(strategy)
 						//.fitCenter()
 						//.crossFade()
-						.placeholder(R.drawable.ic_doc_image);
+						.placeholder(R.drawable.transparent_256);
 					//.error(R.drawable.image_error)
 					//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					if (strategy != DiskCacheStrategy.NONE) {
@@ -128,7 +128,7 @@ public class GlideImageLoader {
 					.diskCacheStrategy(DiskCacheStrategy.NONE)
 					//.fitCenter()
 					//.crossFade()
-					.placeholder(R.drawable.ic_doc_image)
+					.placeholder(R.drawable.transparent_256)
 					//.error(R.drawable.image_error)
 					//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					.into(imageView);

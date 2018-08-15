@@ -313,16 +313,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 							detailInfoLayout.setVisibility(View.GONE);
 							toolbarSV.setVisibility(View.GONE);
 							setUriMedia(arrList);
-							infoLayout.postDelayed(new Runnable() {
-									@Override
-									public void run() {
-										if (infos.size() > 1) {
-											setCurrentItem(1, true);
-										} else {
-											setCurrentItem(0, true);
-										}
-									}
-								}, 10);
+							infoLayout.postDelayed(runShowCurPageSelected, 10);
 						}
 					}
 				} else {
@@ -372,17 +363,12 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 			final int foundFinal = found;
 			//showWait();
 			setMedia(infos);
-			infoLayout.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						if (infos.size() > 1) {
-							setCurrentItem(foundFinal + 1, true);
-						} else {
-							setCurrentItem(0, true);
-						}
-						//hideWait();
-					}
-				}, 10);
+			if (infos.size() > 1) {
+				pageSelected = foundFinal + 1;
+			} else {
+				pageSelected = 0;
+			}
+			infoLayout.postDelayed(runShowCurPageSelected, 10);
 			infos.trimToSize();
 		}
 	}
@@ -403,17 +389,12 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 			}
 			//showWait();
 			setMedia(infos);
-			infoLayout.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						if (infos.size() > 1) {
-							setCurrentItem(curPos + 1, true);
-						} else {
-							setCurrentItem(0, true);
-						}
-						//hideWait();
-					}
-				}, 10);
+			if (infos.size() > 1) {
+				pageSelected = curPos + 1;
+			} else {
+				pageSelected = 0;
+			}
+			infoLayout.postDelayed(runShowCurPageSelected, 10);
 			infos.trimToSize();
 		}
 	}
@@ -458,17 +439,12 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 				if (fs.length > 0) {
 					//showWait();
 					setMedia(infos);
-					infoLayout.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								if (infos.size() > 1) {
-									setCurrentItem(cur + 1, true);
-								} else {
-									setCurrentItem(0, true);
-								}
-								//hideWait();
-							}
-						}, 10);
+					if (infos.size() > 1) {
+						pageSelected = cur + 1;
+					} else {
+						pageSelected = 0;
+					}
+					infoLayout.postDelayed(runShowCurPageSelected, 10);
 				} else {
 					Toast.makeText(fragActivity, "No image or video file", Toast.LENGTH_LONG).show();
 				}
@@ -564,10 +540,10 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		getView().setBackgroundColor(0xff000000);
 	};
 
-	private Runnable runNoti = new Runnable() {
+	private Runnable runShowCurPageSelected = new Runnable() {
 		@Override
 		public void run() {
-			setCurrentItem(pageSelected, false);
+			setCurrentItem(pageSelected, true);
 		}
 	};
 
@@ -581,7 +557,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		}
 	};
 
-	private Runnable run = new Runnable() {
+	private Runnable runSlideShow = new Runnable() {
 		@Override
 		public void run() {
 			if (SLIDESHOW) {
@@ -596,8 +572,8 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 	};
 
 	public void resetDelay() {
-		infoLayout.removeCallbacks(run);
-		infoLayout.postDelayed(run, ImageFragment.curDelay);
+		infoLayout.removeCallbacks(runSlideShow);
+		infoLayout.postDelayed(runSlideShow, ImageFragment.curDelay);
 	}
 
     private final ViewPager.SimpleOnPageChangeListener viewPagerChangeListener = new ViewPager.SimpleOnPageChangeListener() {
@@ -645,20 +621,20 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		public void onPageScrollStateChanged(final int state) {
 			int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
 			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
-			Log.d(TAG, "onPageScrollStateChanged state " + state + ", pageSelected " + pageSelected + ", mediaPos " + mediaPos);
+			Log.d(TAG, "onPageScrollStateChanged state " + state + ", scrolledByViewPager " + scrolledByViewPager + ", pageSelected " + pageSelected + ", mediaPos " + mediaPos);
 			if (state == 2) {
 				if (childAt != null) {
 					childAt.setBackgroundColor(0x80808080);
 				}
-			} else if (state == 0) {
+			} else if (state == 0) {// && scrolledByViewPager
 				if (pageSelected == 0) {
-					viewPager.setPageTransformer(true, null);
-					setCurrentItem(sizeMediaFiles, false);
+					viewPager.setPageTransformer(false, null);
+					viewPager.setCurrentItem(sizeMediaFiles, false);
 					pageSelected = sizeMediaFiles;
 					viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
 				} else if (pageSelected == sizeMediaFiles + 1) {
-					viewPager.setPageTransformer(true, null);
-					setCurrentItem(1, false);
+					viewPager.setPageTransformer(false, null);
+					viewPager.setCurrentItem(1, false);
 					pageSelected = 1;
 					viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
 				}
@@ -1001,7 +977,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 					if (sizeMediaFiles > 1) {
 						SLIDESHOW = true;
 						hideThumbnails(true);
-						infoLayout.postDelayed(run, ImageFragment.curDelay);
+						infoLayout.postDelayed(runSlideShow, ImageFragment.curDelay);
 					}
 					break;
 				case R.id.wallpaperButton:
@@ -1117,7 +1093,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 					int t = pageSelected;
 					setUriMedia(mListOfMedia);
 					pageSelected = t;
-					infoLayout.postDelayed(runNoti, 20);
+					infoLayout.postDelayed(runShowCurPageSelected, 20);
 					break;
 				case R.id.fileSize:
 					if (orderType.equals("Size")) {
@@ -1136,7 +1112,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 					t = pageSelected;
 					setUriMedia(mListOfMedia);
 					pageSelected = t;
-					infoLayout.postDelayed(runNoti, 20);
+					infoLayout.postDelayed(runShowCurPageSelected, 20);
 					break;
 				case R.id.fileDate:
 					if (orderType.equals("Date")) {
@@ -1155,7 +1131,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 					t = pageSelected;
 					setUriMedia(mListOfMedia);
 					pageSelected = t;
-					infoLayout.postDelayed(runNoti, 20);
+					infoLayout.postDelayed(runShowCurPageSelected, 20);
 					break;
 				case R.id.addshortcut:
 					AndroidUtils.addShortcut(fragActivity, f);
