@@ -352,7 +352,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		mSlidingHorizontalScroll.setCustomTabColorizer(new SlidingHorizontalScroll.TabColorizer() {
 				@Override
 				public int getIndicatorColor(int position) {
-					return 0xffff0000;
+					return 0xFF039BE5;
 				}
 				@Override
 				public int getDividerColor(int position) {

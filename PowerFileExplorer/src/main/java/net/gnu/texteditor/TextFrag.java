@@ -255,15 +255,17 @@ OnFileLoadListener {
 				actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 				actionBar.setCustomView(mToolbarBase);
 				//actionBar.setBackgroundDrawable(getResources().getDrawable((R.drawable.list_item_background_normal)));
-				if (!(mToolbarBase.getChildAt(0) instanceof ImageView)) {
-					final ImageView iv = new ImageView(fragActivity);
-					iv.setImageResource(R.drawable.textpng);
-					iv.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-					mToolbarBase.addView(iv, 0);
-					
-					final Toolbar parent =(Toolbar) mToolbarBase.getParent();
-					parent.setContentInsetsAbsolute(0, 0);
-				}
+//				if (!(mToolbarBase.getChildAt(0) instanceof ImageView)) {
+//					final ImageView iv = new ImageView(fragActivity);
+//					iv.setImageResource(R.drawable.textpng);
+//					iv.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//					mToolbarBase.addView(iv, 0);
+//					
+//					final Toolbar parent =(Toolbar) mToolbarBase.getParent();
+//					parent.setContentInsetsAbsolute(0, 0);
+//				}
+				final Toolbar parent =(Toolbar) mToolbarBase.getParent();
+				parent.setContentInsetsAbsolute(0, 0);
 			}
 			view.findViewById(R.id.horizontalDivider).setVisibility(View.GONE);
 		} else {
@@ -2822,6 +2824,7 @@ OnFileLoadListener {
 		final int density = (int)getResources().getDisplayMetrics().density;
 		final LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		lp.gravity = Gravity.CENTER;
+		lp.width = 44 * density;
 		final Context ctx = getContext();
 		for( Integer function : toolbars ){
             if ( bigButton ){
@@ -2836,54 +2839,48 @@ OnFileLoadListener {
 				//button.setPadding(0, 5 * density, 0, 0);
 			}
 			button.setMinWidth(72 * density);
+			iv = new ImageView(fragActivity);
+			iv.setBackgroundResource(R.drawable.ripple);
 			if (!(fragActivity instanceof TextEditorActivity)) {
-				final String toolname = SettingsShortcutActivity.TBL_TOOLNAME[function];
-				iv = new ImageView(fragActivity);
-				iv.setBackgroundResource(R.drawable.ripple);
 				iv.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-				if ("Select All".equals(toolname)) {
-					lp.width = 60 * density;
-					iv.setImageResource(R.drawable.ic_select_all_36dp);
+			} else {
+				iv.setColorFilter(0xff404040, PorterDuff.Mode.SRC_IN);
+			}
+				if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_SELECT_ALL) {//}"Select All".equals(toolname)) {
+					iv.setImageResource(R.drawable.ic_select_all_white_36dp);
 					button = null;
-				} else if ("Undo".equals(toolname)) {
-					lp.width = 60 * density;
+				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_UNDO) {//"Undo".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_undo);
 					button = null;
-				} else if ("Copy".equals(toolname)) {
-					lp.width = 60 * density;;
+				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_COPY) {//"Copy".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_copy);
 					button = null;
-				} else if (" Cut ".equals(toolname)) {
-					lp.width = 60 * density;
+				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_CUT) {//" Cut ".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_cut);
 					button = null;
-				} else if ("Paste".equals(toolname)) {
-					lp.width = 60 * density;
+				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_PASTE) {//"Paste".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_paste);
 					button = null;
-				} else if ("Save".equals(toolname)) {
-					lp.width = 60 * density;
+				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_SAVE) {//"Save".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_save);
 					button = null;
-				} else if ("Search".equals(toolname)) {
-					lp.width = 60 * density;
+				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_SEARCH) {//"Search".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_search);
 					button = null;
-				} else if ("Redo".equals(toolname)) {
-					lp.width = 60 * density;
+				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_REDO) {//"Redo".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_redo);
 					button = null;
 				} else {
-					button.setTextColor(ExplorerActivity.TEXT_COLOR);
 					button.setText(getToolbarLabel(function));
+					button.setTextColor(ExplorerActivity.TEXT_COLOR);
 					iv = null;
 				}
-			} else {
-				button.setText(getToolbarLabel(function));
-				button.setTextColor(0xff404040);
-			}
+//			} else {
+//				button.setText(getToolbarLabel(function));
+//				button.setTextColor(0xff404040);
+//			}
 			final View v = button != null ? button : iv;
-			//v.setMinimumWidth(60 * density);
+			v.setMinimumWidth(44 * density);
             v.setTag(function);
             v.setOnClickListener(mOnClickToolbar);
             v.setFocusable(false);

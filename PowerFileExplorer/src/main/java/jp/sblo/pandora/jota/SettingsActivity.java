@@ -1961,7 +1961,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 
         ret.hideTitleBar = sp.getBoolean(KEY_HIDETITLEBAR , false);
         ret.hideSoftkeyIS01 = sp.getBoolean(KEY_HIDESOFTKEY_IS01 , true);
-        ret.viewerMode = sp.getBoolean(KEY_VIEWER_MODE, false);
+        ret.viewerMode = sp.getBoolean(KEY_VIEWER_MODE, true);
         ret.autoCapitalize = sp.getBoolean(KEY_AUTO_CAPITALIZE, true);
         ret.screenOrientation = sp.getString(KEY_ORIENTATION, ORI_AUTO);
         sBootSettings = ret;
@@ -1979,7 +1979,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 		    String pkgname = ctx.getApplicationInfo().packageName;
 			versioncode = ctx.getPackageManager().getPackageInfo(pkgname, 0).versionCode;
 			hasNew = (lastversion != versioncode);
-			//Log.d(TAG, "sLastVersion " + sLastVersion + ", hasNew " + hasNew + ", versioncode " + versioncode);
+			Log.d(TAG, "sLastVersion " + sLastVersion + ", hasNew " + hasNew + ", versioncode " + versioncode);
 			if ( !hasNew ){
 			    sLastVersion = -1;
 			}
@@ -1997,7 +1997,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 				}
                 if ( lastversion < 2 ){
                     editor.putString(KEY_FONT, "NORMAL");
-                    editor.putString(KEY_FONT_SIZE, "18");
+                    editor.putString(KEY_FONT_SIZE, "14");
                     editor.putString(KEY_DEFAULT_FOLDER, Environment.getExternalStorageDirectory().getPath());
 				}
                 if ( lastversion < 3 ){
@@ -2028,8 +2028,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                     editor.putBoolean(KEY_HIDETITLEBAR, false);
                     editor.putBoolean(KEY_HIDESOFTKEY_IS01, false);
                 }
-                if ( lastversion < 9 ){
-                    editor.putBoolean(KEY_VIEWER_MODE, false);
+				if ( lastversion < 9 ){
+                    editor.putBoolean(KEY_VIEWER_MODE, true);
                     editor.putBoolean(KEY_SHORTCUT_CTRL_LTN, false);
                 }
                 if ( lastversion < 10 ){

@@ -43,11 +43,11 @@ public class SettingsToolbarActivity extends Activity  {
 
     final private static int[] DEFAULT_TOOLBAR = {
         jp.sblo.pandora.jota.text.TextView.FUNCTION_SAVE,
-        jp.sblo.pandora.jota.text.TextView.FUNCTION_UNDO,
-        jp.sblo.pandora.jota.text.TextView.FUNCTION_REDO,
         jp.sblo.pandora.jota.text.TextView.FUNCTION_COPY,
         jp.sblo.pandora.jota.text.TextView.FUNCTION_CUT,
         jp.sblo.pandora.jota.text.TextView.FUNCTION_PASTE,
+        jp.sblo.pandora.jota.text.TextView.FUNCTION_UNDO,
+        jp.sblo.pandora.jota.text.TextView.FUNCTION_REDO,
         jp.sblo.pandora.jota.text.TextView.FUNCTION_SEARCH,
 		jp.sblo.pandora.jota.text.TextView.FUNCTION_SELECT_ALL,
     };
