@@ -655,7 +655,6 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		int min = Integer.MAX_VALUE, max = -1;
 		int cur = -3;
 		tempSelectedInList1.clear();
-		tempSelectedInList1.addAll(selectedInList1);
 		for (String s : selectedInList1) {
 			//cur = lpinfo.indexOf(s);
 			int i = 0;
@@ -664,6 +663,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 					cur = i;
 				} else {
 					i++;
+					tempSelectedInList1.add(pi);
 				}
 			}
 			if (cur > max) {
@@ -683,7 +683,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 	void inversion() {
 		tempSelectedInList1.clear();
 		//tempSelectedInList1.addAll(selectedInList1);
-		final ArrayList listTemp = new ArrayList<>(4096);
+		final ArrayList<ProcessInfo> listTemp = new ArrayList<>(4096);
 		for (ProcessInfo f : lpinfo) {
 			if (!selectedInList1.contains(f.packageName)) {
 				listTemp.add(f);

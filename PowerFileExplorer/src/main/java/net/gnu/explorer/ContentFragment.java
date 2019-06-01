@@ -1886,6 +1886,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode, activity.callback)
 							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
 						activity.MOVE_PATH = null;
+						activity.COPY_PATH = null;
 						activity.callback = null;
 					} else if (activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {
 						final List<String> stList = activity.EXTRACT_PATH != null ? activity.EXTRACT_PATH: activity.EXTRACT_MOVE_PATH;
