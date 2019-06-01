@@ -1674,56 +1674,137 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				break;
 			case R.id.dirMore:
 				MenuBuilder menuBuilder = new MenuBuilder(activity);
-				MenuInflater inflater = new MenuInflater(activity);
-				inflater.inflate(R.menu.storage, menuBuilder);
-				MenuPopupHelper optionsMenu = new MenuPopupHelper(activity , menuBuilder, dirMore);
-				optionsMenu.setForceShowIcon(true);
-				MenuItem mi = menuBuilder.findItem(R.id.otg);
-				if (true) {
-					mi.setEnabled(true);
-				} else {
-					mi.setEnabled(false);
+				final List<String> storages = dataUtils.getStorages();
+				if (storages != null) {
+					for (String s : storages) {
+						menuBuilder.add(s);
+					}
 				}
+				if (activity.multiFiles) {
+					//menuBuilder.add("Hide");
+					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.right.getVisibility() == View.VISIBLE
+						|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.left.getVisibility() == View.VISIBLE) {
+						menuBuilder.add("Hide");
+					} else {
+						menuBuilder.add("2 panels");
+					}
+					menuBuilder.add("Swap panels");
+					//menuBuilder.add("Wider panel");
+					if (activity.left.getVisibility() == View.VISIBLE && activity.right.getVisibility() == View.VISIBLE) {
+						if (slidingTabsFragment.width <= 0) {
+							menuBuilder.add("Wider panel");
+						} else {
+							menuBuilder.add("2 panels equal");
+						}
+					}
+					menuBuilder.add("Same Folder");
+					//menuBuilder.add("Clear Clipboard");
+					if (activity.COPY_PATH != null || activity.MOVE_PATH != null || activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {
+						menuBuilder.add("Clear Clipboard");
+					}
+				}
+				menuBuilder.add("History");
+				menuBuilder.add("Hidden Files");
 				
-				mi = menuBuilder.findItem(R.id.microsd);
-				if (new File("/storage/MicroSD").exists()) {
-					mi.setEnabled(true);
-				} else {
-					mi.setEnabled(false);
-				}
+//				MenuInflater inflater = new MenuInflater(activity);
+//				inflater.inflate(R.menu.storage, menuBuilder);
+				MenuPopupHelper optionsMenu = new MenuPopupHelper(activity , menuBuilder, dirMore);
+				//optionsMenu.setForceShowIcon(true);
+//				MenuItem mi = menuBuilder.findItem(R.id.otg);
+//				if (true) {
+//					mi.setEnabled(true);
+//				} else {
+//					mi.setEnabled(false);
+//				}
+				
+//				mi = menuBuilder.findItem(R.id.microsd);
+//				if (new File("/storage/MicroSD").exists()) {
+//					mi.setEnabled(true);
+//				} else {
+//					mi.setEnabled(false);
+//				}
 				
 				if (openMode == OpenMode.CUSTOM) {
-					menuBuilder.findItem(R.id.newFolder).setVisible(false);
-					menuBuilder.findItem(R.id.newFile).setVisible(false);
+					//menuBuilder.findItem(R.id.newFolder).setVisible(false);
+					//menuBuilder.findItem(R.id.newFile).setVisible(false);
+				} else {
+					menuBuilder.add("New File");
+					menuBuilder.add("New Folder");
 				}
 
-				final int size = menuBuilder.size();
-				for (int i = 0; i < size;i++) {
-					final Drawable icon = menuBuilder.getItem(i).getIcon();
-					icon.setFilterBitmap(true);
-					icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-				}
+				//final int size = menuBuilder.size();
+//				for (int i = 0; i < size;i++) {
+//					final Drawable icon = menuBuilder.getItem(i).getIcon();
+//					icon.setFilterBitmap(true);
+//					icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+//				}
 				
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
 							Log.d(TAG, item.getTitle() + ".");
-							switch (item.getItemId())  {
-								case R.id.sdcard:
-									openMode = OpenMode.FILE;
-									changeDir("/sdcard", true);
-									break;
-								case R.id.microsd:
-									openMode = OpenMode.FILE;
-									changeDir("/storage/MicroSD", true);
-									break;
-								case R.id.newFolder:
-									activity.mainActivityHelper.add(MainActivityHelper.NEW_FOLDER);
-									break;
-								case R.id.newFile:
-									activity.mainActivityHelper.add(MainActivityHelper.NEW_FILE);
-									break;
+							if ("New File".equals(item.getTitle())) {
+								activity.mainActivityHelper.add(MainActivityHelper.NEW_FILE);
+							} else if ("New Folder".equals(item.getTitle())) {
+								activity.mainActivityHelper.add(MainActivityHelper.NEW_FOLDER);
+							} else if ("Hide".equals(item.getTitle()) || "2 panels".equals(item.getTitle())) {
+								hide();
+							} else if ("Wider panel".equals(item.getTitle()) || "2 panels equal".equals(item.getTitle())) {
+								biggerequalpanel();
+							} else if ("Swap panels".equals(item.getTitle())) {
+								swap(v);
+							} else if ("Same Folder".equals(item.getTitle())) {
+								if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+									changeDir(activity.curExplorerFrag.currentPathTitle, true);
+								} else {
+									changeDir(activity.curContentFrag.currentPathTitle, true);
 								}
+							} else if ("Clear Clipboard".equals(item.getTitle())) {
+								activity.COPY_PATH = null;
+								activity.MOVE_PATH = null;
+								activity.EXTRACT_PATH = null;
+								activity.EXTRACT_MOVE_PATH = null;
+								if (activity.curExplorerFrag.selectedInList1.size() == 0 && activity.curExplorerFrag.commands.getVisibility() == View.VISIBLE) {
+									activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+									activity.curExplorerFrag.commands.setVisibility(View.GONE);
+									activity.curExplorerFrag.horizontalDivider6.setVisibility(View.GONE);
+									activity.curExplorerFrag.updateDelPaste();
+								} 
+								if (activity.curContentFrag.selectedInList1.size() == 0 && activity.curContentFrag.commands.getVisibility() == View.VISIBLE) {
+									activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+									activity.curContentFrag.commands.setVisibility(View.GONE);
+									activity.curContentFrag.horizontalDivider6.setVisibility(View.GONE);
+									activity.curContentFrag.updateDelPaste();
+								}
+							} else if ("History".equals(item.getTitle())) {
+								GeneralDialogCreation.showHistoryDialog(dataUtils, activity.getFutils(), ContentFragment.this, activity.getAppTheme());
+							} else if ("Hidden Files".equals(item.getTitle())) {
+								if (dataUtils.getHiddenfiles().size() == 0) {
+									showToast("There is no hidden file/folder");
+								} else {
+									GeneralDialogCreation.showHiddenDialog(activity.dataUtils, activity.getFutils(), ContentFragment.this, activity.getAppTheme());
+								}
+							} else {
+								openMode = OpenMode.FILE;
+								changeDir(item.getTitle() + "", true);
+							}
+							
+//							switch (item.getItemId())  {
+//								case R.id.sdcard:
+//									openMode = OpenMode.FILE;
+//									changeDir("/sdcard", true);
+//									break;
+//								case R.id.microsd:
+//									openMode = OpenMode.FILE;
+//									changeDir("/storage/MicroSD", true);
+//									break;
+//								case R.id.newFolder:
+//									activity.mainActivityHelper.add(MainActivityHelper.NEW_FOLDER);
+//									break;
+//								case R.id.newFile:
+//									activity.mainActivityHelper.add(MainActivityHelper.NEW_FILE);
+//									break;
+//								}
 							return true;
 						}
 						@Override
@@ -1898,6 +1979,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			case R.id.moreLeft:
 			case R.id.moreRight:
 				menuBuilder = new MenuBuilder(fragActivity);
+				MenuInflater inflater = new MenuInflater(activity);
 				inflater = new MenuInflater(fragActivity);
 				inflater.inflate(R.menu.more_commands, menuBuilder);
 				optionsMenu = new MenuPopupHelper(fragActivity , menuBuilder, v);
@@ -3096,15 +3178,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		final PopupMenu popup = new PopupMenu(v.getContext(), v);
         popup.inflate(R.menu.explorer_commands);
 		final Menu menu = popup.getMenu();
-		if (!activity.multiFiles) {
-			menu.findItem(R.id.hide).setVisible(false);
-			menu.findItem(R.id.swap).setVisible(false);
-			menu.findItem(R.id.biggerequalpanel).setVisible(false);
-			menu.findItem(R.id.sameFolder).setVisible(false);
-			menu.findItem(R.id.hideToolbar).setVisible(false);
-		} else {
-			menu.findItem(R.id.sameFolder).setVisible(true);
-		}
+
 		MenuItem mi = menu.findItem(R.id.clearSelection);
 		if (selectedInList1.size() == 0) {
 			mi.setVisible(false);
@@ -3117,48 +3191,16 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		} else {
 			mi.setVisible(false);
 		}
-		mi = menu.findItem(R.id.undoClearSelection);
-		if (tempSelectedInList1.size() > 0) {
-			mi.setVisible(true);
-		} else {
+		if (firstSelection) {
+			mi = menu.findItem(R.id.undoClearSelection);
 			mi.setVisible(false);
-		}
-        mi = menu.findItem(R.id.hide);
-		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.right.getVisibility() == View.VISIBLE
-			|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.left.getVisibility() == View.VISIBLE) {
-			mi.setTitle("Hide");
-		} else {
-			mi.setTitle("2 panels");
-		}
-        mi = menu.findItem(R.id.biggerequalpanel);
-		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
-			mi.setVisible(false);
-		} else {
-			mi.setVisible(true);
-			if (slidingTabsFragment.width <= 0) {
-				mi.setTitle("Wider panel");
-			} else {
-				mi.setTitle("2 panels equal");
-			}
-		}
-        if (activity.COPY_PATH == null && activity.MOVE_PATH == null && activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null) {
-			menu.findItem(R.id.hideToolbar).setVisible(false);
-		}
+			firstSelection = false;
+		} 
+		
 		popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					Log.d(TAG, item.getTitle() + ".");
 					switch (item.getItemId())  {
-						case R.id.history:
-							//if (ma != null)
-							GeneralDialogCreation.showHistoryDialog(activity.dataUtils, activity.getFutils(), ContentFragment.this, activity.getAppTheme());
-							break;
-						case (R.id.hiddenfiles):
-							if (dataUtils.getHiddenfiles().size() == 0) {
-								showToast("There is no hidden file/folder");
-							} else {
-								GeneralDialogCreation.showHiddenDialog(activity.dataUtils, activity.getFutils(), ContentFragment.this, activity.getAppTheme());
-							}
-							break;
 						case R.id.rangeSelection:
 							rangeSelection();
 							break;
@@ -3169,42 +3211,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							clearSelection();
 							break;
 						case R.id.undoClearSelection:
-							undoClearSelection();
+							undoSelection();
 							break;
-						case R.id.swap:
-							swap(v);
-							break;
-						case R.id.hide: 
-							hide();
-							break;
-						case R.id.biggerequalpanel:
-							biggerequalpanel();
-							break;
-						case R.id.sameFolder:
-							if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-								changeDir(activity.curExplorerFrag.currentPathTitle, true);
-							} else {
-								changeDir(activity.curContentFrag.currentPathTitle, true);
-							}
-							break;
-						case R.id.hideToolbar:
-							activity.COPY_PATH = null;
-							activity.MOVE_PATH = null;
-							activity.EXTRACT_PATH = null;
-							activity.EXTRACT_MOVE_PATH = null;
-							if (activity.curExplorerFrag.selectedInList1.size() == 0 && activity.curExplorerFrag.commands.getVisibility() == View.VISIBLE) {
-								activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-								activity.curExplorerFrag.commands.setVisibility(View.GONE);
-								activity.curExplorerFrag.horizontalDivider6.setVisibility(View.GONE);
-								activity.curExplorerFrag.updateDelPaste();
-							} 
-							if (activity.curContentFrag.selectedInList1.size() == 0 && activity.curContentFrag.commands.getVisibility() == View.VISIBLE) {
-								activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
-								activity.curContentFrag.commands.setVisibility(View.GONE);
-								activity.curContentFrag.horizontalDivider6.setVisibility(View.GONE);
-								activity.curContentFrag.updateDelPaste();
-							}
-							break;
+						
 					}
 					return true;
 				}
@@ -3221,11 +3230,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			commands.setVisibility(View.GONE);
 			horizontalDivider6.setVisibility(View.GONE);
 		}
+		srcAdapter.notifyDataSetChanged();
 	}
 
 	void rangeSelection() {
 		int min = Integer.MAX_VALUE, max = -1;
 		int cur = -3;
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
 		for (LayoutElement s : selectedInList1) {
 			cur = dataSourceL1.indexOf(s);
 			if (cur > max) {
@@ -3239,36 +3251,36 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		for (cur = min; cur <= max; cur++) {
 			selectedInList1.add(dataSourceL1.get(cur));
 		}
-		srcAdapter.notifyDataSetChanged();
 		updateStatus();
 	}
 
 	void inversion() {
 		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
+		final ArrayList<LayoutElement> listTemp = new ArrayList<>(4096);
 		for (LayoutElement f : dataSourceL1) {
 			if (!selectedInList1.contains(f)) {
-				tempSelectedInList1.add(f);
+				listTemp.add(f);
 			}
 		}
 		selectedInList1.clear();
-		selectedInList1.addAll(tempSelectedInList1);
-		srcAdapter.notifyDataSetChanged();
+		selectedInList1.addAll(listTemp);
 		updateStatus();
 	}
 
-	void clearSelection() {
-		tempSelectedInList1.clear();
-		tempSelectedInList1.addAll(selectedInList1);
-		selectedInList1.clear();
-		srcAdapter.notifyDataSetChanged();
-		updateStatus();
-	}
-
-	void undoClearSelection() {
-		selectedInList1.clear();
-		selectedInList1.addAll(tempSelectedInList1);
-		tempSelectedInList1.clear();
-		srcAdapter.notifyDataSetChanged();
-		updateStatus();
-	}
+//	void clearSelection() {
+//		tempSelectedInList1.clear();
+//		tempSelectedInList1.addAll(selectedInList1);
+//		selectedInList1.clear();
+//		updateStatus();
+//	}
+//
+//	void undoSelection() {
+//		final ArrayList<LayoutElement> listTemp = new ArrayList<>(selectedInList1);
+//		selectedInList1.clear();
+//		selectedInList1.addAll(tempSelectedInList1);
+//		tempSelectedInList1.clear();
+//		tempSelectedInList1.addAll(listTemp);
+//		updateStatus();
+//	}
 }

@@ -126,15 +126,15 @@ public class ImageThreadLoader {
 		loaderThread.start();
 	}
 
-	public Drawable getFolderIcon(final String fPath) {
-		if (fPath.equals("/sdcard")) {
-			return sdcard_72;
-//		} else if (fPath.equals("/system")) {
-//			return system72;
-		} else {
-			return myfolder72;
-		}
-	}
+//	public Drawable getFolderIcon(final String fPath) {
+//		if (fPath.equals("/sdcard")) {
+//			return sdcard_72;
+////		} else if (fPath.equals("/system")) {
+////			return system72;
+//		} else {
+//			return myfolder72;
+//		}
+//	}
 
 	public static int getResId(final File f) {
 		final String mimeType = MimeTypes.getMimeType(f);
@@ -257,7 +257,7 @@ public class ImageThreadLoader {
 			} else {
 				imageView.setScaleType(ImageView.ScaleType.CENTER);
 			}
-			imageView.setImageDrawable(getFolderIcon(fPath));
+			imageView.setImageDrawable(myfolder72);//getFolderIcon(fPath));
 		} else {
 			final Bitmap b = bc.getBitmapFromCache(fPath + file.length() + file.lastModified());
 			if (b != null) {

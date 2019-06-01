@@ -62,7 +62,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int viewType) {
-		Log.d(TAG, "onCreateViewHolder viewGroup " + viewGroup);
+		//Log.d(TAG, "onCreateViewHolder viewGroup " + viewGroup);
 		//final long start= System.currentTimeMillis();
 		//final FrameLayout frameLayout= new FrameLayout(viewGroup.getContext());
 		final ImageView thumbnail = new ImageView(ctx);
@@ -84,7 +84,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         viewHolder.itemView.setContentDescription(position + "");
 
 		GlideImageLoader.loadMedia(mDataSet.get(position), ctx, (ImageView)viewHolder.itemView, DiskCacheStrategy.RESULT);//, thumbnailSize);// , callback, mimes.get(position)new File(parentPath, 
-        Log.d(TAG, "onBindViewHolder viewHolder.itemView " + viewHolder.itemView + ", " + viewHolder.itemView.getContentDescription());
+        //Log.d(TAG, "onBindViewHolder viewHolder.itemView " + viewHolder.itemView + ", " + viewHolder.itemView.getContentDescription());
         //Log.d(TAG, "onBindViewHolder " + Util.nf.format(System.currentTimeMillis() - start));
 		//viewHolder.bind(position);
 	}

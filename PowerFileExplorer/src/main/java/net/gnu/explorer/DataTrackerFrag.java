@@ -1031,11 +1031,14 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 
 	void updateStatus() {
 		selectionStatusTV.setText(myChecked.size()  + "/" + appStatsList.size());
+		appStatAdapter.notifyDataSetChanged();
 	}
 
 	void rangeSelection() {
 		int min = Integer.MAX_VALUE, max = -1;
 		int cur = -3;
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(myChecked);
 		for (AppStats s : myChecked) {
 			cur = appStatsList.indexOf(s);
 			if (cur > max) {
@@ -1049,20 +1052,20 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		for (cur = min; cur <= max; cur++) {
 			myChecked.add(appStatsList.get(cur));
 		}
-		appStatAdapter.notifyDataSetChanged();
 		updateStatus();
 	}
 
 	void inversion() {
 		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(myChecked);
+		final ArrayList<AppStats> listTemp = new ArrayList<>(4096);
 		for (AppStats f : appStatsList) {
 			if (!myChecked.contains(f)) {
-				tempSelectedInList1.add(f);
+				listTemp.add(f);
 			}
 		}
 		myChecked.clear();
-		myChecked.addAll(tempSelectedInList1);
-		appStatAdapter.notifyDataSetChanged();
+		myChecked.addAll(listTemp);
 		updateStatus();
 	}
 
@@ -1070,15 +1073,15 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		tempSelectedInList1.clear();
 		tempSelectedInList1.addAll(myChecked);
 		myChecked.clear();
-		appStatAdapter.notifyDataSetChanged();
 		updateStatus();
 	}
 
-	void undoClearSelection() {
+	void undoSelection() {
+		final ArrayList listTemp = new ArrayList<>(myChecked);
 		myChecked.clear();
 		myChecked.addAll(tempSelectedInList1);
 		tempSelectedInList1.clear();
-		appStatAdapter.notifyDataSetChanged();
+		tempSelectedInList1.addAll(listTemp);
 		updateStatus();
 	}
 }

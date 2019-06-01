@@ -95,6 +95,7 @@ import com.amaze.filemanager.ui.dialogs.GeneralDialogCreation;
 import java.io.IOException;
 import com.amaze.filemanager.utils.color.ColorUsage;
 import android.widget.HorizontalScrollView;
+import android.view.Gravity;
 
 public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickListener {
 	private static final String TAG = "PhotoFragment";
@@ -122,6 +123,9 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 	private LinearLayout infoLayout;
 	private LinearLayout detailInfoLayout;
 	private HorizontalScrollView toolbarSV;
+	private HorizontalScrollView thumbRecyclerScrollView;
+	private View leftRecycler;
+	private View rightRecycler;
 	
 	private TextView fileNameTV;
 	private TextView fileOrderTV;
@@ -182,7 +186,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
 							 final Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView " + currentPathTitle + ", " + savedInstanceState);
-		return inflater.inflate(R.layout.imageview, container, false);
+		return inflater.inflate(R.layout.photo_frag, container, false);
     }
 
 	@Override
@@ -196,6 +200,9 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		infoLayout = (LinearLayout) view.findViewById(R.id.info);
 		detailInfoLayout = (LinearLayout) view.findViewById(R.id.detailInfo);
 		toolbarSV = (HorizontalScrollView) view.findViewById(R.id.toolbar);
+		thumbRecyclerScrollView = (HorizontalScrollView) view.findViewById(R.id.thumbRecyclerScrollView);
+		leftRecycler = view.findViewById(R.id.leftRecycler);
+		rightRecycler = view.findViewById(R.id.rightRecycler);
 		
 		fileNameTV = (TextView) view.findViewById(R.id.fileName);
 		fileOrderTV = (TextView) view.findViewById(R.id.fileOrder);
@@ -311,7 +318,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 						} else {
 							infoLayout.setVisibility(View.VISIBLE);
 							detailInfoLayout.setVisibility(View.GONE);
-							toolbarSV.setVisibility(View.GONE);
+							toolbarSV.setVisibility(View.INVISIBLE);
 							setUriMedia(arrList);
 							infoLayout.postDelayed(runShowCurPageSelected, 10);
 						}
@@ -481,7 +488,7 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 //					final ContentResolver cr = fragActivity.getContentResolver();
 //					is = cr.openInputStream(uri);
 					detailInfoLayout.setVisibility(View.GONE);
-					toolbarSV.setVisibility(View.GONE);
+					toolbarSV.setVisibility(View.INVISIBLE);
 				} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
 					detailInfoLayout.setVisibility(View.VISIBLE);
 					toolbarSV.setVisibility(View.VISIBLE);
@@ -531,9 +538,9 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
 		recyclerAdapter = new ThumbnailAdapter(fragActivity, mListOfMedia, thumbnailOnClickListener, thumbnailSize);//mimes, parentPath, 
         thumbnailsRecyclerView.setAdapter(recyclerAdapter);
-		if (sizeMediaFiles == 1) {
-			thumbnailsRecyclerView.setPadding((infoLayout.getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
-		}
+		final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(((infoLayout.getMeasuredWidth() - thumbnailSize) / 2), ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+		leftRecycler.setLayoutParams(lp);
+		rightRecycler.setLayoutParams(lp);
 	}
 
 	public void updateColor(final View rootView) {
@@ -588,29 +595,29 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 		public void onPageSelected(final int pagerPos) {
 			scrolledByViewPager = true;
 			final int mediaPos = pagerPos == 0 ? (sizeMediaFiles - 1) : pagerPos == (sizeMediaFiles + 1) ? 0 : (pagerPos - 1);
-			final int childCount = thumbnailsRecyclerView.getLayoutManager().getChildCount();
 			final int measuredWidth = infoLayout.getMeasuredWidth();
 			final int mid = (measuredWidth - thumbnailSize) / 2;
-			Log.d(TAG, "onPageSelected pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", mid " + mid + ", childCount " + childCount + ", measuredWidth " + measuredWidth);
-			if ((mediaPos) <= childCount / 2 || sizeMediaFiles == 1) {
-				thumbnailsRecyclerView.setPadding(Math.max(mid - (mediaPos) * thumbnailSize, 0), 0, 0, 0);
-			} else if ((sizeMediaFiles - 1 - (mediaPos)) <= childCount / 2) {
-				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (sizeMediaFiles - 1 - (mediaPos)) * thumbnailSize, 0), 0);
-			} else {
-				thumbnailsRecyclerView.setPadding(0, 0, 0, 0);
+			//Log.d(TAG, "onPageSelected pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", mid " + mid + ", childCount " + childCount + ", measuredWidth " + measuredWidth);
+			final int lenl = mid - mediaPos * thumbnailSize;
+			leftRecycler.setLayoutParams(new LinearLayout.LayoutParams(Math.max(lenl, 0), ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+			if (lenl > 0) {
+				thumbRecyclerScrollView.postDelayed(new Runnable() {
+						public void run() {
+							thumbRecyclerScrollView.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+						}
+					}, 1L);
 			}
-//			if (targetPos <= (childCount) / 2) {
-//				mRecyclerView.setPadding(Math.max((mLength - itemLength) / 2 - (targetPos * itemLength), 0), 0, 0, 0);
-//			} else if ((itemCount - 1 - targetPos) <= (childCount) / 2) {
-//				mRecyclerView.setPadding(0, 0, Math.max((mLength + itemLength) / 2 - ((itemCount - targetPos) * itemLength), 0), 0);
-//			}
-//			if ((newpos - 1) * thumbnailSize < mid) {
-//				//thumbnailsRecyclerView.startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
-//				thumbnailsRecyclerView.setPadding(Math.max(mid - (newpos) * thumbnailSize, 0), 0, 0, 0);
-//			} else if (thumbnailSize * (size - 1 - (newpos + 1)) < mid) {
-//				//thumbnailsRecyclerView.startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
-//				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (size - (newpos + 1)) * thumbnailSize, 0), 0);
-//			}
+			//Log.d(TAG, "(sizeMediaFiles - 1 - (mediaPos)) <= childCount / 2 " + ((sizeMediaFiles - 1 - (mediaPos)) <= childCount / 2));
+			//Log.d(TAG, "Math.max(mid - (sizeMediaFiles - 1 - mediaPos) * thumbnailSize, 0) " + Math.max(mid - (sizeMediaFiles - 1 - mediaPos) * thumbnailSize, 0));
+			final int lenr = mid - (sizeMediaFiles - 1 - mediaPos) * thumbnailSize;
+			rightRecycler.setLayoutParams(new LinearLayout.LayoutParams(Math.max(lenr, 0), ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+			if (lenr > 0) {
+				thumbRecyclerScrollView.postDelayed(new Runnable() {
+						public void run() {
+							thumbRecyclerScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+						}
+					}, 1L);
+			}
 			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
 			recyclerScroll(mediaPos, childAt);
 			setupBar(mediaPos);
@@ -628,12 +635,12 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 				}
 			} else if (state == 0) {// && scrolledByViewPager
 				if (pageSelected == 0) {
-					viewPager.setPageTransformer(false, null);
+					viewPager.setPageTransformer(true, null);
 					viewPager.setCurrentItem(sizeMediaFiles, false);
 					pageSelected = sizeMediaFiles;
 					viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
 				} else if (pageSelected == sizeMediaFiles + 1) {
-					viewPager.setPageTransformer(false, null);
+					viewPager.setPageTransformer(true, null);
 					viewPager.setCurrentItem(1, false);
 					pageSelected = 1;
 					viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
@@ -649,81 +656,18 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
 				scrolledByViewPager = false;
 				return;
 			}
-            int dl = thumbnailsRecyclerView.getPaddingLeft();
+            int dl = leftRecycler.getMeasuredWidth();
 			final int measuredWidth = infoLayout.getMeasuredWidth();
 			final int childCount = thumbnailsRecyclerView.getLayoutManager().getChildCount();
 			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + dl + ", measuredWidth " + measuredWidth + ", thumbnailSize " + thumbnailSize + ", pageSelected " + pageSelected + ", childCount " + childCount);
-			if (dl > 0) {
-				thumbnailsRecyclerView.setPadding(Math.min(Math.max(dl - dx, 0), (measuredWidth - thumbnailSize) / 2), 0, 0, 0);
-				final int dr = thumbnailsRecyclerView.getPaddingRight();
-				if (dr > 0) {
-					
-				}
-//			} else {
-//				if (dx < 0) {
-//					thumbnailsRecyclerView.setPadding(Math.min(Math.max(-dx/thumbnailSize*thumbnailSize+((measuredWidth - thumbnailSize) / 2)%thumbnailSize, 0), (measuredWidth - thumbnailSize) / 2), 0, 0, 0);
-//				}
-			} else {
-			dl = thumbnailsRecyclerView.getPaddingRight();
+			if (dl >= 0) {
+				leftRecycler.setLayoutParams(new LinearLayout.LayoutParams(Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2), ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+			}
+			dl = rightRecycler.getMeasuredWidth();
 			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingRight " + dl + ", pageSelected " + pageSelected);
-			if (dl > 0) {
-				//Log.d(TAG, "(measuredWidth - thumbnailSize) / 2) " + (measuredWidth - thumbnailSize) / 2);
-				///Log.d(TAG, "Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2) " + Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2));
-				thumbnailsRecyclerView.setPadding(0, 0, Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2), 0);
+			if (dl >= 0) {
+				rightRecycler.setLayoutParams(new LinearLayout.LayoutParams(Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2), ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
 			}
-//			dl = thumbnailsRecyclerView.getPaddingLeft();
-//			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + dl + ", PaddingRight " + thumbnailsRecyclerView.getPaddingRight());
-//			final int mid;
-//			if (dl > thumbnailSize / 2) {
-//				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;//
-//			} else {
-//				//if (dx < 0) {
-//				mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
-////				} else if (dx > 0) {
-////					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
-////				} else {
-////					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-//				//}
-//			}
-////			if (dl > thumbnailSize / 2) {
-////				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-////			} else {
-////				if (dx > 0) {
-////					mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
-////				} else if (dx < 0) {
-////					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
-////				} else {
-////					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-////				}
-////			}
-//			ImageView childAt = (ImageView) mLayoutManager.getChildAt(mid);
-//			if (childAt == null) {
-//				Log.d(TAG, "onScrolled childAt == null, pageSelected " + pageSelected + ", mid " + mid + ", ChildCount " + mLayoutManager.getChildCount());
-//				thumbnailsRecyclerView.setPadding(measuredWidth / 2 - (sizeMediaFiles - 1 - pageSelected) * thumbnailSize / 2, 0, 0, 0);
-//				//childAt = (ImageView) mLayoutManager.getChildAt(mid - 1);
-//			}
-			//int targetPos = Integer.valueOf(childAt.getContentDescription() + "");
-//			if (dx != 0) {
-//				if (targetPos <= (childCount) / 2) {
-//					thumbnailsRecyclerView.setPadding(Math.max((measuredWidth - thumbnailSize) / 2 - (targetPos * thumbnailSize), 0), 0, 0, 0);
-//				} else if ((size - 1 - targetPos) <= (childCount) / 2) {
-//					thumbnailsRecyclerView.setPadding(0, 0, Math.max((measuredWidth + thumbnailSize) / 2 - ((size - targetPos) * thumbnailSize), 0), 0);
-//				}
-//			}
-			}
-			//Log.d(TAG, "onScrolled dl " + dl + ", mid  " + mid + ", pos " + targetPos + ", childAt " + childAt);
-			//scroll(pos, childAt);
-			//if (pageSelected > mid) {//  && pageSelected < size - mid + 1
-				//setCurrentItem(targetPos + 1, false);//pos + 1
-			//pageSelected = pos + 1;
-			//setupBar(pos);
-//			} else {
-//				childAt = (ImageView) mLayoutManager.getChildAt(dl/thumbnailSize);
-//				pos = Integer.valueOf(childAt.getContentDescription() + "");
-//				setCurrentItem(pos + 1, true);
-////				pageSelected = pos + 1;
-////				setupBar(pos);
-//			} 
         }
 
         @Override
@@ -858,11 +802,11 @@ public class PhotoFragment extends Frag implements OnDoubleTapListener, OnClickL
     }
 
     private void recyclerScroll(final int mediaPos, final View thumbnail) {
-        Log.d(TAG, "scroll Recycler mediaPos " + mediaPos + ", thumbnailSize " + thumbnailSize + ", paddingLeft " + thumbnailsRecyclerView.getPaddingLeft() + ", paddingRight " + thumbnailsRecyclerView.getPaddingRight() + ", thumbnail " + thumbnail);
+        Log.d(TAG, "scroll Recycler mediaPos " + mediaPos + ", thumbnailSize " + thumbnailSize + ", paddingLeft " + thumbnailsRecyclerView.getPaddingLeft() + ", paddingRight " + thumbnailsRecyclerView.getPaddingRight());
 		//mLayoutManager.scrollToPositionWithOffset(pos, (getMeasuredWidth() - thumbnailSize) / 2);
 		//int itemLength = thumbnailSize;//thumbnailsRecyclerView.getLayoutManager().getChildAt(0).getMeasuredWidth();
 		int length = infoLayout.getMeasuredWidth();
-		mLayoutManager.scrollToPositionWithOffset(mediaPos, (mediaPos * thumbnailSize < (length - thumbnailSize) / 2) ? mediaPos * thumbnailSize : (length - thumbnailSize) / 2);
+		mLayoutManager.scrollToPositionWithOffset(mediaPos, (length - thumbnailSize) / 2);//(mediaPos * thumbnailSize < (length - thumbnailSize) / 2) ? mediaPos * thumbnailSize : (length - thumbnailSize) / 2);
 		if (thumbnail != null) {
 			thumbnail.setBackgroundColor(0xc0ffffff);
 		} else {

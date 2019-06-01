@@ -2662,19 +2662,21 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 					File cacheDir = Glide.getPhotoCacheDir(ExplorerActivity.this);
 					Log.d(TAG, "cacheDir " + cacheDir.getAbsolutePath());
 					new File(
-						"/storage/sdcard0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/resources.ap_")
+						"/storage/emulated/0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/resources.ap_")
 						.delete();
 					new File(
-						"/storage/sdcard0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/classes.dex")
+						"/storage/emulated/0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/classes.dex")
 						.delete();
 					new File(
-						"/storage/sdcard0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/PowerFileExplorer.apk")
+						"/sdcard/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/PowerFileExplorer.apk")
 						.delete();
 					File ff = new File("/storage/emulated/0/.aide/enginecache");
 					if (ff.exists()) {
 						File[] fs = ff.listFiles();
-						for (File f : fs) {
-							f.delete();
+						if (fs != null) {
+							for (File f : fs) {
+								f.delete();
+							}
 						}
 					}
 				}

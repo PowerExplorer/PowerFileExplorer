@@ -162,6 +162,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 	List tempOriDataSourceL1 = new LinkedList();
 	List selectedInList1 = new LinkedList();
 	List tempSelectedInList1 = new LinkedList();
+	protected boolean firstSelection = true;
 	public ViewGroup commands;
 	public View horizontalDivider6;
 
@@ -429,8 +430,23 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 
 	abstract void rangeSelection();
 	abstract void inversion();
-	abstract void clearSelection();
-	abstract void undoClearSelection();
+//	abstract void clearSelection();
+//	abstract void undoSelection();
+	void clearSelection() {
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
+		selectedInList1.clear();
+		updateStatus();
+	}
+
+	void undoSelection() {
+		final ArrayList listTemp = new ArrayList<>(selectedInList1);
+		selectedInList1.clear();
+		selectedInList1.addAll(tempSelectedInList1);
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(listTemp);
+		updateStatus();
+	}
 	abstract void updateStatus();
 	void setRecyclerViewLayoutManager() {}
 
@@ -553,12 +569,12 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		} else {
 			mi.setEnabled(false);
 		}
-		mi = menu.findItem(R.id.undoClearSelection);
-		if (tempSelectedInList1.size() > 0) {
-			mi.setEnabled(true);
-		} else {
-			mi.setEnabled(false);
-		}
+		if (firstSelection) {
+			mi = menu.findItem(R.id.undoClearSelection);
+			mi.setVisible(false);
+			firstSelection = false;
+		} 
+		
         mi = menu.findItem(R.id.hide);
 		if (activity.left.getVisibility() == View.VISIBLE) {
 			mi.setTitle("Hide");
@@ -590,7 +606,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 							clearSelection();
 							break;
 						case R.id.undoClearSelection:
-							undoClearSelection();
+							undoSelection();
 							break;
 						case R.id.swap:
 							swap(v);

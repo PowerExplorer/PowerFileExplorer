@@ -173,7 +173,8 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
     public static final String STARTUP_HISTORY  ="startup_history";
     public static final String STARTUP_LASTFILE ="startup_lastfile";
 
-    private static final String BACKUP_FILE     = Environment.getExternalStorageDirectory() + "/.jota/prefs/";
+	public static final String JOTA = "/.net.gnu.explorer";
+    private static final String BACKUP_FILE     = Environment.getExternalStorageDirectory() + JOTA + "/prefs/";
 
     private static int sLastVersion=0;
 

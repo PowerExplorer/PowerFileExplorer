@@ -208,6 +208,10 @@ class FastScroller {
     }
 
     void onSizeChanged(int w, int h, int oldw, int oldh) {
+        if(oldh!=0){
+            //adjust mThumbY
+            mThumbY = (int) ((mThumbY * (long) (h - mThumbH)) / (oldh - mThumbH));
+        }
         if (mThumbDrawable != null) {
             mThumbDrawable.setBounds(w - mThumbW, 0, w, mThumbH);
         }
@@ -239,8 +243,9 @@ class FastScroller {
             return;
         }
         if (totalItemCount - visibleItemCount > 0 && mState != STATE_DRAGGING ) {
-            mThumbY = ((mList.getHeight() - mThumbH) * firstVisibleItem)// Jota Text Editor
-                    / (totalItemCount - visibleItemCount);
+            //fix int overflow
+            mThumbY = (int)(((mList.getHeight() - mThumbH) * (long)firstVisibleItem)// Jota Text Editor
+                    / (totalItemCount - visibleItemCount));
             if (mChangedBounds) {
                 resetThumbPos();
                 mChangedBounds = false;

@@ -21,11 +21,12 @@ import android.content.res.AssetManager;
 import android.os.Environment;
 import android.text.Spannable;
 import android.text.TextUtils;
+import java.io.*;
 
 public class KeywordHighlght {
 
-    private static final String PATH     = Environment.getExternalStorageDirectory() + "/.jota/keyword/";
-    private static final String USERPATH     = Environment.getExternalStorageDirectory() + "/.jota/keyword/user/";
+    private static final String PATH     = Environment.getExternalStorageDirectory() + SettingsActivity.JOTA + "/keyword/";
+    private static final String USERPATH     = Environment.getExternalStorageDirectory() + SettingsActivity.JOTA + "/keyword/user/";
     private static final String EXT      = "conf";
     private static final String ASSET_PATH     = "keyword";
     private static final String COLOR_PATH     = "colorsetting."+EXT;
@@ -283,20 +284,23 @@ public class KeywordHighlght {
                 }
             }
             // extarct files from assets.
-            String[] list = am.list(ASSET_PATH);
+            final String[] list = am.list(ASSET_PATH);
             for( String filename : list ){
-                File ofile = new File(PATH  + filename);
-                InputStream in = am.open(ASSET_PATH + "/"+ filename);
-                OutputStream out = new FileOutputStream(ofile);
+                final File ofile = new File(PATH  + filename);
+                final InputStream in = new BufferedInputStream(am.open(ASSET_PATH + "/"+ filename));
+                final OutputStream out = new BufferedOutputStream(new FileOutputStream(ofile));
                 try{
                     int len;
                     while( (len = in.read(buf))>0 ){
                         out.write(buf, 0, len);
                     }
-                }
-                catch(Exception e){}
-                in.close();
-                out.close();
+                } catch(Exception e) {
+				} finally {
+					in.close();
+					out.flush();
+					out.close();
+				}
+                
             }
         } catch (IOException e) {
             e.printStackTrace();

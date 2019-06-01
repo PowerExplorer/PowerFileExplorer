@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gnu.explorer"
     android:versionCode="2"
-    android:versionName="1.0.5"
+    android:versionName="1.0.6"
 >
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle 
@@ -11,7 +11,9 @@
 	android:testOnly="false" 
 		android:debuggable="true" 
 		-->
-	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23"/>
+	<uses-sdk 
+		android:minSdkVersion="16" 
+		android:targetSdkVersion="24"/>
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
@@ -83,6 +85,14 @@
             android:launchMode="singleTop"
 			android:windowSoftInputMode="adjustPan"
 		>
+			<!--
+			android:resizableActivity="true"
+			android:supportsPictureInPicture="true"
+			<layout android:defaultHeight="480dp"
+				android:defaultWidth="640dp"
+				android:gravity="top|end"
+				android:minimalSize="360dp" />
+			-->
 			<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -412,7 +422,8 @@
 		</activity>
 
 		<activity android:name="com.tuarua.avane.android.libavaneexample.MainActivity"
-			android:label="FFMpeg Utilities">
+			android:label="FFMpeg Command Line"
+			android:icon="@drawable/ic_action_video">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

@@ -2,10 +2,6 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<item android:id="@+id/hideToolbar"
-		android:title="Clear Clipboard" 
-		android:icon="@drawable/delete"/>
-
     <item android:id="@+id/clearSelection"
 		android:title="Clear Selection" />
 
@@ -16,31 +12,6 @@
 		android:title="Range Selection" />
 
     <item android:id="@+id/undoClearSelection"
-		android:title="Undo Clear Selection" />
-
-	<item android:id="@+id/swap"
-		android:title="Swap panels" />
-
-	<item android:id="@+id/hide"
-		android:title="Hide" />
-
-	<item android:id="@+id/biggerequalpanel"
-		android:title="Wider panel"
-	/>
-
-	<item android:id="@+id/sameFolder"
-		android:title="Same Folder"
-		android:visible="false"
-	/>
-
-	<item android:id="@+id/hiddenfiles"
-		android:icon="@drawable/ic_visibility_off_black_48dp"
-		android:showAsAction="always"
-		android:title="Hidden Files"/>
-
-	<item android:id="@+id/history"
-		android:title="History" 
-		android:showAsAction="always"
-		android:icon="@drawable/ic_history_black_36dp"/>
+		android:title="Undo" />
 
 </menu>

@@ -493,9 +493,10 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 	void rangeSelection() {
 		int min = Integer.MAX_VALUE, max = -1;
 		int cur = -3;
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
 		for (AppInfo s : selectedInList1) {
 			cur = appList.indexOf(s);
-
 			if (cur > max) {
 				max = cur;
 			}
@@ -512,29 +513,31 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 
 	void inversion() {
 		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
+		final ArrayList<AppInfo> listTemp = new ArrayList<>(4096);
 		for (AppInfo f : appList) {
 			if (!selectedInList1.contains(f)) {
-				tempSelectedInList1.add(f);
+				listTemp.add(f);
 			}
 		}
 		selectedInList1.clear();
-		selectedInList1.addAll(tempSelectedInList1);
+		selectedInList1.addAll(listTemp);
 		updateStatus();
 	}
 
-	void clearSelection() {
-		tempSelectedInList1.clear();
-		tempSelectedInList1.addAll(selectedInList1);
-		selectedInList1.clear();
-		updateStatus();
-	}
-
-	void undoClearSelection() {
-		selectedInList1.clear();
-		selectedInList1.addAll(tempSelectedInList1);
-		tempSelectedInList1.clear();
-		updateStatus();
-	}
+//	void clearSelection() {
+//		tempSelectedInList1.clear();
+//		tempSelectedInList1.addAll(selectedInList1);
+//		selectedInList1.clear();
+//		updateStatus();
+//	}
+//
+//	void undoSelection() {
+//		selectedInList1.clear();
+//		selectedInList1.addAll(tempSelectedInList1);
+//		tempSelectedInList1.clear();
+//		updateStatus();
+//	}
 
 	@Override
 	public void onClick(View p1) {

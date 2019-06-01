@@ -7,7 +7,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.signature.StringSignature;
+import com.bumptech.glide.request.RequestListener;
 import java.io.File;
 import com.bumptech.glide.GenericRequestBuilder;
 import java.io.InputStream;
@@ -41,7 +43,7 @@ public class GlideImageLoader {
 	public static final Pattern GIF_PATTERN = Pattern.compile("^[^/]*?\\.gif$", Pattern.CASE_INSENSITIVE);
 	public static final Pattern SVG_PATTERN = Pattern.compile("^[^/]*?\\.svg$", Pattern.CASE_INSENSITIVE);
 
-	public static void loadMedia(final Uri uri, final Context context, final ImageView imageView, DiskCacheStrategy strategy) {//, final SuccessCallback callback) {
+	public static void loadMedia(final Uri uri, final Context context, final ImageView imageView, final DiskCacheStrategy strategy) {//, final SuccessCallback callback) {
 		//final long start= System.currentTimeMillis();
 		try {
 			if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
@@ -49,19 +51,52 @@ public class GlideImageLoader {
 				//Log.d("GlideImageLoader", "loadMedia " + f.getAbsolutePath());
 				final String name = f.getName();
 				if (GIF_PATTERN.matcher(name).matches()) {
-					GifRequestBuilder req = Glide.with(context)
+					RequestListener<File, GifDrawable> listener = new RequestListener<File, GifDrawable>() {
+						@Override
+						public boolean onException(final Exception p1, final File p2, final Target<GifDrawable> p3, final boolean p4) {
+							if (p1 != null) {
+								p1.printStackTrace();
+							}
+							final BitmapRequestBuilder req = Glide.with(context)
+								.load(uri)
+								//.apply(RequestOptions.bitmapTransform(mBitmapTransformation))
+								//.bitmapTransform(new CenterCrop(context))
+								.asBitmap()
+								.dontAnimate()
+								.skipMemoryCache(true)
+								.diskCacheStrategy(strategy)
+								//.fitCenter()
+								//.crossFade()
+								.placeholder(R.drawable.transparent_256)
+								.error(R.drawable.image_error);
+							//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+							if (strategy != DiskCacheStrategy.NONE) {
+								req.signature(new StringSignature(f.lastModified() + " " + f.length()));//file.getAbsolute()
+							}
+							req.into(imageView);//(sMain = new Simple(imageView, callback)));
+							return true;
+						}
+						@Override
+						public boolean onResourceReady(final GifDrawable p1, final File p2, final Target<GifDrawable> p3, final boolean p4, final boolean p5) {
+							return false;
+						}
+					};
+					final GifRequestBuilder req = Glide.with(context)
 						.load(f)
 						.asGif()
+						.dontAnimate()
 						.skipMemoryCache(true)
 						.diskCacheStrategy(strategy)
-						.placeholder(R.drawable.transparent_256);
+						.placeholder(R.drawable.transparent_256)
+						.listener(listener)
+						.error(R.drawable.image_error);
 					if (strategy != DiskCacheStrategy.NONE) {
 						req.signature(new StringSignature(f.lastModified() + " " + f.length()));//file.getAbsolute()
 					}
 					req.into(imageView);//(sMain = new Simple(imageView, callback)));
 				} else if (SVG_PATTERN.matcher(name).matches()) {
 					Glide.clear(imageView);
-					GenericRequestBuilder<File, InputStream, SVG, PictureDrawable> requestBuilder = Glide.with(context)
+					final GenericRequestBuilder<File, InputStream, SVG, PictureDrawable> requestBuilder = Glide.with(context)
 						.using(Glide.buildStreamModelLoader(File.class, context), InputStream.class)
 						.from(File.class)
 						.as(SVG.class)
@@ -82,17 +117,18 @@ public class GlideImageLoader {
 						.into(imageView);
 					//Log.d(TAG, requestBuilder + ", " + fPath + ", " + file.getAbsolutePath());
 				} else {
-					BitmapRequestBuilder req = Glide.with(context)
+					final BitmapRequestBuilder req = Glide.with(context)
 						.load(uri)
 						//.apply(RequestOptions.bitmapTransform(mBitmapTransformation))
 						//.bitmapTransform(new CenterCrop(context))
 						.asBitmap()
+						.dontAnimate()
 						.skipMemoryCache(true)
 						.diskCacheStrategy(strategy)
 						//.fitCenter()
 						//.crossFade()
-						.placeholder(R.drawable.transparent_256);
-					//.error(R.drawable.image_error)
+						.placeholder(R.drawable.transparent_256)
+						.error(R.drawable.image_error);
 					//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					if (strategy != DiskCacheStrategy.NONE) {
 						req.signature(new StringSignature(f.lastModified() + " " + f.length()));//file.getAbsolute()
@@ -129,7 +165,7 @@ public class GlideImageLoader {
 					//.fitCenter()
 					//.crossFade()
 					.placeholder(R.drawable.transparent_256)
-					//.error(R.drawable.image_error)
+					.error(R.drawable.image_error)
 					//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					.into(imageView);
 			}

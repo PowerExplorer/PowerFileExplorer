@@ -23,7 +23,7 @@ repositories {
 		url 'https://mvnrepository.com'
 		url 'https://dl.google.com/dl/android/maven2/'
 		//url 'http://maven.ghostscript.com'
-		
+		url "https://s3.amazonaws.com/repo.commonsware.com"
 		//url 'https://maven.google.com'
 		//https://dl-ssl.google.com/android/repository/repository-12.xml
 		//sources-25_r01.zip
@@ -482,8 +482,8 @@ dependencies{
 	//compile 'com.mikepenz:materialize:+'
 	//compile 'com.mikepenz:fastadapter-extensions:3.2.5'
 
-	
-	
+	//compile 'com.commonsware.cwac:wakeful:1.1.+'
+	//compile 'com.nanohttpd:nanohttpd:+'
 	
 	
 	
@@ -511,15 +511,15 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 24
         multiDexEnabled true
     }
     
     buildTypes {
     
     debug {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             useProguard false
             zipAlignEnabled true
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard/proguard-project.pro', 'proguard/proguard-google-play-services.pro'
@@ -549,6 +549,18 @@ android {
         androidTest.setRoot('tests')
         androidTest.java.srcDirs = ['tests/src']
     }
+	
+	configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            // Skip multidex because it follows a different versioning pattern.
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '24.1.1'
+            }
+        }
+    }
+}
 }
 
 

@@ -1698,7 +1698,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 							clearSelection();
 							break;
 						case R.id.undoClearSelection:
-							undoClearSelection();
+							undoSelection();
 							break;
 						case R.id.swap:
 							swap(v);
@@ -1718,11 +1718,14 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 	void updateStatus() {
 		selectionStatusTV.setText(selectedInList1.size()  + "/" + dataSourceL1.size());
+		srcAdapter.notifyDataSetChanged();
 	}
 
 	void rangeSelection() {
 		int min = Integer.MAX_VALUE, max = -1;
 		int cur = -3;
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
 		for (ZipEntry s : selectedInList1) {
 			cur = dataSourceL1.indexOf(s);
 			if (cur > max) {
@@ -1736,38 +1739,36 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		for (cur = min; cur <= max; cur++) {
 			selectedInList1.add(dataSourceL1.get(cur));
 		}
-		srcAdapter.notifyDataSetChanged();
 		updateStatus();
 	}
 
 	void inversion() {
 		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
+		final ArrayList<ZipEntry> listTemp = new ArrayList<>(4096);
 		for (ZipEntry f : dataSourceL1) {
 			if (!selectedInList1.contains(f)) {
-				tempSelectedInList1.add(f);
+				listTemp.add(f);
 			}
 		}
 		selectedInList1.clear();
-		selectedInList1.addAll(tempSelectedInList1);
-		srcAdapter.notifyDataSetChanged();
+		selectedInList1.addAll(listTemp);
 		updateStatus();
 	}
 
-	void clearSelection() {
-		tempSelectedInList1.clear();
-		tempSelectedInList1.addAll(selectedInList1);
-		selectedInList1.clear();
-		srcAdapter.notifyDataSetChanged();
-		updateStatus();
-	}
-
-	void undoClearSelection() {
-		selectedInList1.clear();
-		selectedInList1.addAll(tempSelectedInList1);
-		tempSelectedInList1.clear();
-		srcAdapter.notifyDataSetChanged();
-		updateStatus();
-	}
+//	void clearSelection() {
+//		tempSelectedInList1.clear();
+//		tempSelectedInList1.addAll(selectedInList1);
+//		selectedInList1.clear();
+//		updateStatus();
+//	}
+//
+//	void undoSelection() {
+//		selectedInList1.clear();
+//		selectedInList1.addAll(tempSelectedInList1);
+//		tempSelectedInList1.clear();
+//		updateStatus();
+//	}
 }
 
 	

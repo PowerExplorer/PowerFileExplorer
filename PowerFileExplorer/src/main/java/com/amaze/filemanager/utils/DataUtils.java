@@ -35,7 +35,7 @@ public class DataUtils {
 
     private static DataUtils sDataUtils;
 
-    public static DataUtils getInstance() {
+    public static synchronized DataUtils getInstance() {
         if (sDataUtils == null) {
             sDataUtils = new DataUtils();
         }

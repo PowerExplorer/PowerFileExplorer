@@ -654,6 +654,8 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 	void rangeSelection() {
 		int min = Integer.MAX_VALUE, max = -1;
 		int cur = -3;
+		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(selectedInList1);
 		for (String s : selectedInList1) {
 			//cur = lpinfo.indexOf(s);
 			int i = 0;
@@ -680,13 +682,17 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 
 	void inversion() {
 		tempSelectedInList1.clear();
+		//tempSelectedInList1.addAll(selectedInList1);
+		final ArrayList listTemp = new ArrayList<>(4096);
 		for (ProcessInfo f : lpinfo) {
 			if (!selectedInList1.contains(f.packageName)) {
+				listTemp.add(f);
+			} else {
 				tempSelectedInList1.add(f);
 			}
 		}
 		selectedInList1.clear();
-		for (ProcessInfo f : tempSelectedInList1) {
+		for (ProcessInfo f : listTemp) {
 			selectedInList1.add(f.packageName);
 		}
 		updateStatus();
@@ -717,12 +723,14 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		updateStatus();
 	}
 
-	void undoClearSelection() {
+	void undoSelection() {
+		final ArrayList listTemp = new ArrayList<>(selectedInList1);
 		selectedInList1.clear();
 		for (ProcessInfo f : tempSelectedInList1) {
 			selectedInList1.add(f.packageName);
 		}
 		tempSelectedInList1.clear();
+		tempSelectedInList1.addAll(listTemp);
 		updateStatus();
 	}
 
