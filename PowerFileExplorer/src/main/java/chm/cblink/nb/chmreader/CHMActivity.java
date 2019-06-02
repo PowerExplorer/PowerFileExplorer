@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import net.gnu.explorer.R;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import java.net.*;
 
 public class CHMActivity extends AppCompatActivity {
     WebView webview;
@@ -57,7 +58,7 @@ public class CHMActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chm);
         Intent revIntent = getIntent();
-        chmFilePath = revIntent.getDataString().substring("file://".length());//.getStringExtra("fileName");
+        chmFilePath = URLDecoder.decode(revIntent.getDataString()).substring("file://".length());//.getStringExtra("fileName");
 		Log.d(TAG, "chmFilePath " + chmFilePath);
         Utils.chm = null;
         listSite = new ArrayList<>();
@@ -148,7 +149,7 @@ public class CHMActivity extends AppCompatActivity {
             } catch (Exception ignored) {
             }
         } else {
-			chmFilePath = intent.getDataString().substring("file://".length());//.getStringExtra("fileName");
+			chmFilePath = URLDecoder.decode(intent.getDataString()).substring("file://".length());//.getStringExtra("fileName");
 			Log.d(TAG, "chmFilePath " + chmFilePath);
 			Utils.chm = null;
 			listSite = new ArrayList<>();
@@ -168,7 +169,7 @@ public class CHMActivity extends AppCompatActivity {
                 webview.loadUrl("file://" + extractPath + "/" + listSite.get(0));
                 break;
             case R.id.menu_back_page:
-                temp = webview.getUrl().replaceAll("%20", " ").substring(("file://" + extractPath).length() + 1);
+                temp = URLDecoder.decode(webview.getUrl()).substring(("file://" + extractPath).length() + 1);
                 if (temp.contains("#")) {
                     temp = temp.substring(0, temp.indexOf("#"));
                 }
@@ -183,7 +184,7 @@ public class CHMActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.menu_next_page:
-                temp = webview.getUrl().replaceAll("%20", " ").substring(("file://" + extractPath).length() + 1);
+                temp = URLDecoder.decode(webview.getUrl()).substring(("file://" + extractPath).length() + 1);
                 if (temp.contains("#")) {
                     temp = temp.substring(0, temp.indexOf("#"));
                 }
@@ -279,9 +280,9 @@ public class CHMActivity extends AppCompatActivity {
 							insideFileName = insideFileName.substring(0, insideFileName.indexOf("?"));
 						}
 						if (insideFileName.contains("%20")) {
-							insideFileName = insideFileName.replaceAll("%20", " ");
+							insideFileName = URLDecoder.decode(insideFileName);
 						}
-						if (url.endsWith(".gif") || url.endsWith(".jpg") || url.endsWith(".png")) {
+						if (url.endsWith(".gif") || url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".bmp") || url.endsWith(".ico") || url.endsWith(".png")) {
 							try {
 								return new WebResourceResponse("image/*", "", Utils.chm.getResourceAsStream(insideFileName));
 							} catch (IOException e) {
@@ -398,8 +399,12 @@ public class CHMActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         try {
+			if (progress != null) { 
+				progress.dismiss(); 
+				progress = null;
+			}
             Utils.saveBookmark(extractPath, md5File, listBookmark);
-            String url = webview.getUrl().replaceAll("%20", " ").substring(("file://" + extractPath).length() + 1);
+            String url = URLDecoder.decode(webview.getUrl()).substring(("file://" + extractPath).length() + 1);
             int index = listSite.indexOf(url);
             if (index != -1) {
                 Utils.saveHistory(extractPath, md5File, index);
@@ -447,7 +452,7 @@ public class CHMActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.btn_addbookmark:
-                    String url = webview.getUrl().replaceAll("%20", " ").substring(("file://" + extractPath).length() + 1);
+                    String url = URLDecoder.decode(webview.getUrl()).substring(("file://" + extractPath).length() + 1);
                     if (listBookmark.indexOf(url) == -1) {
                         listBookmark.add(url);
                         adapter.notifyDataSetChanged();

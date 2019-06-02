@@ -353,7 +353,9 @@ public class Utils {
             byte[] hash = md.digest();
             checksum = new BigInteger(1, hash).toString(16); //don't use this, truncates leading zero
         } catch (IOException ex) {
+			ex.printStackTrace();
         } catch (NoSuchAlgorithmException ex) {
+			ex.printStackTrace();
         }
         return checksum.trim();
     }
