@@ -848,7 +848,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 					//return null;
 				}
 			}.execute();
-		cleanFiles();
+		//cleanFiles();
 	}
 
 	public ExplorerActivity() {
@@ -2560,33 +2560,33 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
         }
     }
 	
-	private void cleanFiles() {
-		new Thread(new Runnable() {
-				@Override
-				public void run() {
-					File cacheDir = Glide.getPhotoCacheDir(ExplorerActivity.this);
-					Log.d(TAG, "cacheDir " + cacheDir.getAbsolutePath());
-					new File(
-						"/storage/emulated/0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/resources.ap_")
-						.delete();
-					new File(
-						"/storage/emulated/0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/classes.dex")
-						.delete();
-					new File(
-						"/sdcard/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/PowerFileExplorer.apk")
-						.delete();
-					File ff = new File("/storage/emulated/0/.aide/enginecache");
-					if (ff.exists()) {
-						File[] fs = ff.listFiles();
-						if (fs != null) {
-							for (File f : fs) {
-								f.delete();
-							}
-						}
-					}
-				}
-			}).start();
-	}
+//	private void cleanFiles() {
+//		new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					File cacheDir = Glide.getPhotoCacheDir(ExplorerActivity.this);
+//					Log.d(TAG, "cacheDir " + cacheDir.getAbsolutePath());
+//					new File(
+//						"/storage/emulated/0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/resources.ap_")
+//						.delete();
+//					new File(
+//						"/storage/emulated/0/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/classes.dex")
+//						.delete();
+//					new File(
+//						"/sdcard/AppProjects/PowerFileExplorer/PowerFileExplorer/build/bin/PowerFileExplorer.apk")
+//						.delete();
+//					File ff = new File("/storage/emulated/0/.aide/enginecache");
+//					if (ff.exists()) {
+//						File[] fs = ff.listFiles();
+//						if (fs != null) {
+//							for (File f : fs) {
+//								f.delete();
+//							}
+//						}
+//					}
+//				}
+//			}).start();
+//	}
 
 	private Runnable onNewIntent;
 	@Override

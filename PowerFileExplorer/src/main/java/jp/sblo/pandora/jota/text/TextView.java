@@ -368,8 +368,9 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
 
 		// Jota Text Editor
         mLineNumberPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mLineNumberPaint.setTextSize(10);
-        mLineNumberPaint.setTypeface(Typeface.MONOSPACE);
+        mLineNumberPaint.setTextSize(36);
+        //mLineNumberPaint.setTypeface(Typeface.MONOSPACE);
+		//mLineNumberPaint.setTextAlign(Paint.Align.RIGHT);
         mLineNumberPaint.setStrokeWidth(1);
 
         // Jota Text Editor
@@ -5569,7 +5570,7 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
         }
         // Jota Text Editor
         if ( mShowLineNumber ){
-            mLineNumberWidth = (int)mLineNumberPaint.measureText("888888|");
+            mLineNumberWidth = (int)mLineNumberPaint.measureText("88888|");
         }else{
             mLineNumberWidth = 0;
         }

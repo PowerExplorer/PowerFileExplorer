@@ -1917,7 +1917,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
         ret.highlightcolor = sp.getInt(KEY_HIGHLIGHT_COLOR,0);
         ret.backgroundcolor = sp.getInt(KEY_BACKGROUND, 0);
         ret.underlinecolor =  sp.getInt(KEY_UNDERLINE_COLOR, 0);
-        ret.underline = sp.getBoolean(KEY_UNDERLINE, true);
+        ret.underline = sp.getBoolean(KEY_UNDERLINE, false);
         ret.createbackup = sp.getBoolean(KEY_CRETAE_BACKUP, true);
         ret.shortcuts = SettingsShortcutActivity.loadShortcuts(ctx);
         ret.CharsetOpen = sp.getString(KEY_CHARSET_OPEN, "");
@@ -1997,7 +1997,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 				}
                 if ( lastversion < 2 ){
                     editor.putString(KEY_FONT, "NORMAL");
-                    editor.putString(KEY_FONT_SIZE, "14");
+                    editor.putString(KEY_FONT_SIZE, "16");
                     editor.putString(KEY_DEFAULT_FOLDER, Environment.getExternalStorageDirectory().getPath());
 				}
                 if ( lastversion < 3 ){
@@ -2011,7 +2011,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                     editor.putInt(KEY_TEXT_COLOR, COLOR_DEFAULT);
                     editor.putInt(KEY_HIGHLIGHT_COLOR , getTextColorHighlight(ctx) );
                     editor.putInt( KEY_BACKGROUND , BACKGROUND_DEFAULT );
-                    editor.putBoolean(KEY_UNDERLINE, true);
+                    editor.putBoolean(KEY_UNDERLINE, false);
                     editor.putInt( KEY_UNDERLINE_COLOR, UNDERLINE_COLOR );
                 }
                 if ( lastversion < 5 ){
@@ -2046,7 +2046,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
                     editor.putBoolean(KEY_SHOW_LINENUMBERS, false );
                 }
                 if ( lastversion < 15 ){
-                    editor.putBoolean(KEY_AUTO_INDENT, false );
+                    editor.putBoolean(KEY_AUTO_INDENT, true );
                     editor.putBoolean(KEY_AUTO_SAVE, false );
                     editor.putInt(KEY_LINE_SPACE, 0 );
                 }
