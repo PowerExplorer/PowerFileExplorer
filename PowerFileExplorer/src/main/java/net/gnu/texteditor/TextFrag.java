@@ -83,7 +83,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 
-
 public class TextFrag extends Frag implements JotaDocumentWatcher, ShortcutListener,
 OnFileLoadListener {
     private static final String TAG = "TextFrag";
@@ -2702,8 +2701,7 @@ OnFileLoadListener {
             } else {
                 fragActivity.setTheme(R.style.Theme_AppCompat_NoActionBar);
             }
-        }
-
+        } 
 //        if ( SettingsActivity.checkDonate(this) ){
 //            Toast.makeText(this, R.string.summary_wallpaper, Toast.LENGTH_LONG ).show();
 //        }

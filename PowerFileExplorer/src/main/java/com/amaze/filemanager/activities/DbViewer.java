@@ -52,11 +52,12 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static android.os.Build.VERSION.SDK_INT;
+import net.gnu.explorer.*;
 
 /**
  * Created by Vishal on 02-02-2015.
  */
-public class DbViewer extends ThemedActivity {
+public class DbViewer extends StorageCheckActivity {
 
     private String path;
     private ListView listView;

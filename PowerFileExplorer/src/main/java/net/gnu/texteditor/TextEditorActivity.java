@@ -12,8 +12,13 @@ import net.gnu.explorer.SlidingTabsFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import net.gnu.explorer.*;
+import com.amaze.filemanager.utils.theme.*;
+import android.content.*;
+import android.preference.*;
+import jp.sblo.pandora.jota.*;
 
-public class TextEditorActivity extends AppCompatActivity {//
+public class TextEditorActivity extends StorageCheckActivity {//
 
     private static final String TAG = "TextEditorActivity";
 
@@ -23,8 +28,20 @@ public class TextEditorActivity extends AppCompatActivity {//
 	
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-		super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean hideTitleBar = sp.getBoolean(SettingsActivity.KEY_HIDETITLEBAR , false);
+        //Log.d(TAG, hideTitleBar + " hideTitleBar");
+		if (hideTitleBar) {
+			if ( JotaTextEditor.sIceCreamSandwich ){
+                setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar);
+            } else {
+                setTheme(R.style.Theme_AppCompat_NoActionBar);
+            }
+		} else {
+			setTheme(R.style.Theme_AppCompat_DayNight);
+		}
         setContentView(R.layout.player);
 
 		supportFragmentManager = getSupportFragmentManager();

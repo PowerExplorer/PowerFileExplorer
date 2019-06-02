@@ -264,18 +264,18 @@ public class KeywordHighlght {
         return true;
     }
 
-    static public void extractFromAssets( Context context)
+    static public void extractFromAssets( final Context context)
     {
-        AssetManager am = context.getAssets();
-        byte[] buf = new byte[4096];
+        final AssetManager am = context.getAssets();
+        final byte[] buf = new byte[4096];
 
         try {
             // create direcotry
             new File(USERPATH).mkdirs();
 
             // remove all files except directory..
-            File dir = new File(PATH);
-            File[] files = dir.listFiles();
+            final File dir = new File(PATH);
+            final File[] files = dir.listFiles();
             if ( files != null ){
                 for( File f : files ){
                     if ( f.isFile() ){
@@ -287,18 +287,24 @@ public class KeywordHighlght {
             final String[] list = am.list(ASSET_PATH);
             for( String filename : list ){
                 final File ofile = new File(PATH  + filename);
-                final InputStream in = new BufferedInputStream(am.open(ASSET_PATH + "/"+ filename));
-                final OutputStream out = new BufferedOutputStream(new FileOutputStream(ofile));
+                InputStream in = null;
+                OutputStream out = null;
                 try{
+					in = new BufferedInputStream(am.open(ASSET_PATH + "/"+ filename));
+					out = new BufferedOutputStream(new FileOutputStream(ofile));
                     int len;
                     while( (len = in.read(buf))>0 ){
                         out.write(buf, 0, len);
                     }
                 } catch(Exception e) {
 				} finally {
-					in.close();
-					out.flush();
-					out.close();
+					if (in != null) {
+						in.close();
+					}
+					if (out != null) {
+						out.flush();
+						out.close();
+					}
 				}
                 
             }

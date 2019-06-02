@@ -133,7 +133,7 @@ import net.gnu.util.CommandUtils;
 import android.widget.ArrayAdapter;
 
 
-public class ExplorerActivity extends ThemedActivity implements OnRequestPermissionsResultCallback,
+public class ExplorerActivity extends StorageCheckActivity implements OnRequestPermissionsResultCallback,
 SmbConnectionListener, DataChangeListener, BookmarkCallback,
 CloudConnectionCallbacks, //SearchWorkerFragment.HelperCallbacks, 
 LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClickListener {
@@ -319,31 +319,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	boolean configurationChanged = false;
 	private Handler scheduleHandler = new Handler();
 	private Runnable runSchedule = new Schedule(new int[] {6, 19}, new int[] {0, 0}, new int[] {0, 0});
-	
-	private static final int REQUEST_WRITE_EXTERNAL = 0;
-
-    private static final int REQUEST_CAMERA = 1;
-
-    private static String[] PERMISSIONS_STORAGE = {
-		Manifest.permission.WRITE_EXTERNAL_STORAGE,
-		Manifest.permission.WRITE_MEDIA_STORAGE,
-//		Manifest.permission.ACCESS_WIFI_STATE,
-//		Manifest.permission.CHANGE_WIFI_STATE,
-//		Manifest.permission.ACCESS_NETWORK_STATE,
-//		Manifest.permission.CHANGE_NETWORK_STATE,
-//		Manifest.permission.INTERNET,
-//		Manifest.permission.BLUETOOTH,
-//		Manifest.permission.BLUETOOTH_ADMIN,
-//		Manifest.permission.RECORD_AUDIO,
-//		Manifest.permission.CAMERA,
-//		Manifest.permission.INSTALL_SHORTCUT,
-//		Manifest.permission.UNINSTALL_SHORTCUT,
-//		Manifest.permission.SET_WALLPAPER,
-//		Manifest.permission.GET_TASKS,
-//		Manifest.permission.REORDER_TASKS,
-//		Manifest.permission.KILL_BACKGROUND_PROCESSES,
-//		Manifest.permission.WAKE_LOCK,
-	};
 	
 	static int density;// = (int)(4 * getResources().getDisplayMetrics().density);
 //	LinkedList<String> historyList = new LinkedList<>();
@@ -2573,78 +2548,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-
-        if (requestCode == REQUEST_CAMERA) {
-            // BEGIN_INCLUDE(permission_result)
-            // Received permission result for camera permission.
-            Log.d(TAG, "Received response for Camera permission request.");
-
-            // Check if the only required permission has been granted
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Camera permission has been granted, preview can be displayed
-                Log.d(TAG, "CAMERA permission has now been granted. Showing preview.");
-                Snackbar.make(left, R.string.permision_available_camera,
-							  Snackbar.LENGTH_SHORT).show();
-            } else {
-                Log.d(TAG, "CAMERA permission was NOT granted.");
-                Snackbar.make(left, R.string.permissions_not_granted,
-							  Snackbar.LENGTH_SHORT).show();
-
-            }
-            // END_INCLUDE(permission_result)
-
-        } else if (requestCode == REQUEST_WRITE_EXTERNAL) {
-            Log.d(TAG, "Received response for WRITE EXTERNAL STORAGE permissions request.");
-
-            // We have requested multiple permissions for contacts, so all of them need to be
-            // checked.
-            if (AndroidUtils.verifyPermissions(grantResults)) {
-                Log.d(TAG, "All required permissions have been granted, display contacts fragment.");
-                Snackbar.make(left, "WRITE EXTERNAL STORAGE Permission has been granted.",
-							  Snackbar.LENGTH_SHORT)
-					.show();
-            } else {
-                Log.d(TAG, "WRITE EXTERNAL STORAGE permissions were NOT granted.");
-                Snackbar.make(left, R.string.permissions_not_granted, Snackbar.LENGTH_SHORT)
-					.show();
-            }
-        } else if (requestCode == 77) {
+		if (requestCode == REQUEST_WRITE_EXTERNAL) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 refreshDrawer();
-//                TabFragment tabFragment = getTabFragment();
-//                boolean b = sharedPref.getBoolean("needtosethome", true);
-//                //reset home and current paths according to new storages
-//                if (b) {
-//                    tabHandler.clear();
-//                    if (storage_count > 1)
-//                        tabHandler.addTab(new Tab(1, "", ((EntryItem) dataUtils.getList().get(1)).getPath(), "/"));
-//                    else
-//                        tabHandler.addTab(new Tab(1, "", "/", "/"));
-//                    if (!dataUtils.getList().get(0).isSection()) {
-//                        String pa = ((EntryItem) dataUtils.getList().get(0)).getPath();
-//                        tabHandler.addTab(new Tab(2, "", pa, pa));
-//                    } else
-//                        tabHandler.addTab(new Tab(2, "", ((EntryItem) dataUtils.getList().get(1)).getPath(), "/"));
-//                    if (tabFragment != null) {
-//                        Fragment main = tabFragment.getFragmentAtIndex(0);
-//                        if (main != null)
-//                            ((MainFragment) main).updateTabWithDb(tabHandler.findTab(1));
-//                        Fragment main1 = tabFragment.getFragmentAtIndex(1);
-//                        if (main1 != null)
-//                            ((MainFragment) main1).updateTabWithDb(tabHandler.findTab(2));
-//                    }
-//                    sharedPref.edit().putBoolean("needtosethome", false).commit();
-//                } else {
-//                    //just refresh list
-//                    if (tabFragment != null) {
-//                        Fragment main = tabFragment.getFragmentAtIndex(0);
-//                        if (main != null)
-//                            ((MainFragment) main).updateList();
-//                        Fragment main1 = tabFragment.getFragmentAtIndex(1);
-//                        if (main1 != null)
-//                            ((MainFragment) main1).updateList();
-//                    }
-//                }
             } else {
                 Toast.makeText(this, R.string.grantfailed, Toast.LENGTH_SHORT).show();
                 requestStoragePermission();
@@ -2652,7 +2558,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
     }
 	
 	private void cleanFiles() {

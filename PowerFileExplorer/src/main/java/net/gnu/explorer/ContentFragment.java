@@ -98,11 +98,8 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
     private static final String TAG = "ContentFragment";
 	
-	private static final int REQUEST_CODE_STORAGE_PERMISSION = 101;
-    	
 	private ScaleGestureDetector mScaleGestureDetector;
 	private ImageButton dirMore;
-	//private TextView mMessageView;
 	
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
 	private TextSearch textSearch = new TextSearch();
@@ -843,54 +840,54 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
         }
     }
 
-	private boolean hasPermissions() {
-        return checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED;
-    }
+//	private boolean hasPermissions() {
+//        return checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED;
+//    }
 
-    private void requestPermissions() {
-        //setLoading(true);
-        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
-    }
+//    private void requestPermissions() {
+//        //setLoading(true);
+//        requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
+//    }
 
     /**
      * Switch to permission request mode.
      */
-    private void showPermissionDenied() {
-        //setLoading(false);
-        Toast.makeText(getActivity(), R.string.details_permissions, Toast.LENGTH_SHORT).show();
-    }
+//    private void showPermissionDenied() {
+//        //setLoading(false);
+//        Toast.makeText(getActivity(), R.string.details_permissions, Toast.LENGTH_SHORT).show();
+//    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_STORAGE_PERMISSION:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
-                    refresh();
-                } else {
-                    showPermissionDenied();
-                }
-                break;
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                                           int[] grantResults) {
+//        switch (requestCode) {
+//            case REQUEST_CODE_STORAGE_PERMISSION:
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+//                    refresh();
+//                } else {
+//                    showPermissionDenied();
+//                }
+//                break;
+//        }
+//    }
 	
-	public void refresh() {
-        if (hasPermissions()) {
-            // Cancel and GC previous scanner so that it doesn't load on top of the
-            // new list.
-            // Race condition seen if a long list is requested, and a short list is
-            // requested before the long one loads.
-//            mScanner.cancel();
-//            mScanner = null;
-
-            // Indicate loading and start scanning.
-//            setLoading(true);
-//            renewScanner().start();
-        } else {
-            requestPermissions();
-        }
-    }
+//	void refresh() {
+//        if (hasPermissions()) {
+//            // Cancel and GC previous scanner so that it doesn't load on top of the
+//            // new list.
+//            // Race condition seen if a long list is requested, and a short list is
+//            // requested before the long one loads.
+////            mScanner.cancel();
+////            mScanner = null;
+//
+//            // Indicate loading and start scanning.
+////            setLoading(true);
+////            renewScanner().start();
+//        } else {
+//            requestPermissions();
+//        }
+//    }
 
 	private long lastUpdateList = System.currentTimeMillis();
     private long curUpdateList = 0;

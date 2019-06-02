@@ -81,7 +81,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
     private static final String KEY_CHARSET_OPEN            = "CHARSET_OPEN";
     private static final String KEY_CHARSET_SAVE            = "CHARSET_SAVE";
     private static final String KEY_LINEBREAK_SAVE          = "LINEBREAK_SAVE";
-    private static final String KEY_HIDETITLEBAR            = "HIDETITLEBAR";
+    public static final String KEY_HIDETITLEBAR            = "HIDETITLEBAR";
     private static final String KEY_HIDESOFTKEY_IS01        = "HIDESOFTKEY_IS01";
     private static final String KEY_VIEWER_MODE             = "VIEWER_MODE";
     private static final String KEY_USE_VOLUMEKEY           = "USE_VOLUMEKEY";

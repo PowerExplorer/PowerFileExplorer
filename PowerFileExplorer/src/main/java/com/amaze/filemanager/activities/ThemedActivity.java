@@ -36,7 +36,7 @@ public class ThemedActivity extends BasicActivity {
     public SharedPreferences sharedPref;
 
     public static boolean rootMode;
-    boolean checkStorage = true;
+    //boolean checkStorage = true;
 
     // oppathe - the path at which certain operation needs to be performed
     // oppathe1 - the new path which user wants to create/modify
@@ -66,11 +66,6 @@ public class ThemedActivity extends BasicActivity {
         setTheme();
 
         rootMode = sharedPref.getBoolean(PreferenceUtils.KEY_ROOT, false);
-
-        //requesting storage permissions
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkStorage)
-            if (!checkStoragePermission())
-                requestStoragePermission();
     }
 
 
@@ -111,49 +106,6 @@ public class ThemedActivity extends BasicActivity {
 			operation = -1;
         } 
 	}
-
-    public boolean checkStoragePermission() {
-
-        // Verify that all required contact permissions have been granted.
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-			== PackageManager.PERMISSION_GRANTED;
-    }
-
-    protected void requestStoragePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-																Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-            // Provide an additional rationale to the user if the permission was not granted
-            // and the user would benefit from additional context for the use of the permission.
-            // For example, if the request has been denied previously.
-            final MaterialDialog materialDialog = GeneralDialogCreation.showBasicDialog(this,
-																						new String[]{getString(R.string.granttext),
-																							getString(R.string.grantper),
-																							getString(R.string.grant),
-																							getString(R.string.cancel),
-																							null});
-            materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						ActivityCompat
-                            .requestPermissions(ThemedActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 77);
-						materialDialog.dismiss();
-					}
-				});
-            materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						finish();
-					}
-				});
-            materialDialog.setCancelable(false);
-            materialDialog.show();
-
-        } else {
-            // Contact permissions have not been granted yet. Request them directly.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 77);
-        }
-    }
 
     void setTheme() {
         AppTheme theme = getAppTheme().getSimpleTheme();
