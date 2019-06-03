@@ -93,10 +93,9 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				}
 			}
 
-			Log.d(TAG, "onViewCreated " + mTabs);
 			pagerAdapter = new PagerAdapter(childFragmentManager);
 			mViewPager.setAdapter(pagerAdapter);
-			Log.d(TAG, "mViewPager " + mViewPager);
+			Log.d(TAG, "onViewCreated mViewPager " + mViewPager + ", mTabs " + mTabs);
 			if (args != null) {
 				mViewPager.setCurrentItem(args.getInt("pos", pageSelected), true);
 			} else {
@@ -454,24 +453,41 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		return true;
 	}
 
+	@Override
+	public void onResume() {
+		Log.d(TAG, "onResume pagerAdapter=" + pagerAdapter + ", mTabs=" + mTabs + ", newIntent " + newIntent);
+		super.onResume();
+		if (newIntent) {
+			newIntent = false;
+			addFrag(main, pagerItem);
+		}
+	}
+	
+	private boolean newIntent = false;
+	private TextFrag main = null;
+	private PagerItem pagerItem = null;
 	public void addTextTab(final Intent intent, String title) {
 		if (title == null || title.length() == 0) {
 			title = "Untitled " + ++TextFrag.no + ".txt";
 		}
-		Log.d(TAG, "addTab1 pagerAdapter=" + pagerAdapter + ", filename=" + title + ", mTabs=" + mTabs);
-		final TextFrag main = TextFrag.newInstance(intent, title, null);
-		final PagerItem pagerItem = new PagerItem(main);
+		Log.d(TAG, "addTextTab1 mViewPager=" + mViewPager + ", pagerAdapter=" + pagerAdapter + ", filename=" + title + ", mTabs=" + mTabs);
+		main = TextFrag.newInstance(intent, title, null);
+		pagerItem = new PagerItem(main);
 		main.slidingTabsFragment = this;
 
-		mTabs.add(mTabs.size() > 1 ? pageSelected : 0, pagerItem);
-		if (mViewPager != null) {
+		if (mViewPager != null && mTabs.size() == 0) {
+			mTabs.add(pagerItem);
 			//addFrag(main, pagerItem);
 			pagerAdapter.notifyDataSetChanged();
 			mViewPager.setCurrentItem(pagerAdapter.getCount() - 1);
 			notifyTitleChange();
 			//main.onPrepareOptionsMenu(((MainActivity)getActivity()).menu);
+		} else if (mTabs.size() >= 1) {
+			newIntent = true;
+		} else {
+			mTabs.add(pagerItem);
 		}
-		Log.d(TAG, "addTab2 " + title + ", " + mTabs);
+		Log.d(TAG, "addTextTab2 " + title + ", " + mTabs);
 	}
 
 	public void addTab(final OpenMode openmode, final String path) {
@@ -512,7 +528,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		final int size = mTabs.size();
 		if (size > 1) {
 			int currentItem = mViewPager.getCurrentItem();
-			Log.d(TAG, "addTab1 currentItem " + currentItem + ", dir=" + frag.currentPathTitle + ", mTabs=" + mTabs);
+			Log.d(TAG, "addFrag1 currentItem " + currentItem + ", dir=" + frag.currentPathTitle + ", mTabs=" + mTabs);
 
 			PagerItem pi = mTabs.get(0);
 			ft.remove(pi.fakeFrag);
@@ -545,7 +561,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			mViewPager.setCurrentItem(mTabs.size());
 		}
 		notifyTitleChange();
-		Log.d(TAG, "addTab2 " + frag.currentPathTitle + ", mViewPager.getCurrentItem() " + mViewPager.getCurrentItem() + ", " + mTabs);
+		Log.d(TAG, "addFrag2 " + frag.currentPathTitle + ", mViewPager.getCurrentItem() " + mViewPager.getCurrentItem() + ", " + mTabs);
 	}
 
 	public int realFragCount() {

@@ -2731,6 +2731,7 @@ OnFileLoadListener {
 	@Override
     public void onResume() {
         Log.d(TAG, "onResume " + toString());
+		try {
         super.onResume();
 		fragActivity =  this.getActivity();
 		if (mSharedPreferenceChanged ){
@@ -2739,6 +2740,9 @@ OnFileLoadListener {
         if (mBootSettings.hideSoftkeyIS01) {
             IS01FullScreen.setFullScreenOnIS01();//fragActivity
         }
+		} catch (Throwable re) {
+			re.printStackTrace();
+		}
     }
 
     private OnClickListener mOnClickSave = new OnClickListener() {

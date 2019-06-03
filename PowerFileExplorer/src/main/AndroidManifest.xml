@@ -391,7 +391,7 @@
 			android:icon="@drawable/textpng"
 			android:label="Text Editor"
 			android:theme="@style/AppTheme"
-			android:launchMode="standard"
+			android:launchMode="singleInstance"
 		>
 			<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
