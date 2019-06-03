@@ -58,8 +58,10 @@ public class CHMActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chm);
         Intent revIntent = getIntent();
-        chmFilePath = URLDecoder.decode(revIntent.getDataString()).substring("file://".length());//.getStringExtra("fileName");
-		Log.d(TAG, "chmFilePath " + chmFilePath);
+        String dataString = revIntent.getData().getPath();
+		chmFilePath = URLDecoder.decode(dataString);//.getStringExtra("fileName");
+		
+		Log.d(TAG, "chmFilePath1 " + chmFilePath + ", intent " + revIntent + ", " + revIntent.getDataString());
         Utils.chm = null;
         listSite = new ArrayList<>();
         initView();
@@ -149,8 +151,8 @@ public class CHMActivity extends AppCompatActivity {
             } catch (Exception ignored) {
             }
         } else {
-			chmFilePath = URLDecoder.decode(intent.getDataString()).substring("file://".length());//.getStringExtra("fileName");
-			Log.d(TAG, "chmFilePath " + chmFilePath);
+			chmFilePath = URLDecoder.decode(intent.getData().getPath());//.getStringExtra("fileName");
+			Log.d(TAG, "chmFilePath2 " + chmFilePath + ", intent " + intent);
 			Utils.chm = null;
 			listSite = new ArrayList<>();
 			initView();

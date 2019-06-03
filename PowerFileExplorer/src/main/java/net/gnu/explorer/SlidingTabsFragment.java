@@ -465,6 +465,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 		mTabs.add(mTabs.size() > 1 ? pageSelected : 0, pagerItem);
 		if (mViewPager != null) {
+			//addFrag(main, pagerItem);
 			pagerAdapter.notifyDataSetChanged();
 			mViewPager.setCurrentItem(pagerAdapter.getCount() - 1);
 			notifyTitleChange();

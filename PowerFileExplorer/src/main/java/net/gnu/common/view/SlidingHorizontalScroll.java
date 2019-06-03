@@ -195,7 +195,8 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
         final PagerAdapter adapter = mViewPager.getAdapter();
         final View.OnClickListener tabClickListener = new TabClickListener();
 
-        final int count = adapter.getCount();
+        final boolean explorerActivity = fra.getActivity() instanceof ExplorerActivity;
+		final int count = adapter.getCount();
 		for (int i = 0; i < count; i++) {
             View tabView = null;
             TextView tabTitleView = null;
@@ -227,11 +228,15 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
 			tabTitleView.setSingleLine(true);
             tabView.setOnClickListener(tabClickListener);
 
-			tabTitleView.setTextColor(ExplorerActivity.TEXT_COLOR);
-
+			if (explorerActivity) {
+				tabTitleView.setTextColor(ExplorerActivity.TEXT_COLOR);
+			}
+			
             mTabStripLinearLayout.addView(tabView);
         }
-		mTabStripLinearLayout.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		if (explorerActivity) {
+			mTabStripLinearLayout.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		}
     }
 
     @Override

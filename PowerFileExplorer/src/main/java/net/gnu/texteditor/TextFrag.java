@@ -2709,12 +2709,22 @@ OnFileLoadListener {
 
 	@Override
     public void updateColor(View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		mEditor.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		mEditor.setTextColor(ExplorerActivity.TEXT_COLOR);
 		if (!(fragActivity instanceof TextEditorActivity)) {
+			getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			mEditor.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			mEditor.setTextColor(ExplorerActivity.TEXT_COLOR);
 			mToolbarBase.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 			mToolbar.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+	
+			int n = mToolbar.getChildCount();
+			for (int i = 0; i < n; i++) {
+				View childAt = mToolbar.getChildAt(i);
+				if (childAt instanceof ImageView) {
+					((ImageView)childAt).setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				} else if (childAt instanceof Button) {
+					((Button)childAt).setTextColor(ExplorerActivity.TEXT_COLOR);
+				}
+			}
 		}
 	}
 
