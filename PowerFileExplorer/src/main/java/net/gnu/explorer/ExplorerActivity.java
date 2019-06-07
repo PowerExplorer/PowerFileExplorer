@@ -199,10 +199,14 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	
 	public static int SELECTED_IN_LIST = 0xFFFEF8BA;//0xFFFFF0A0
 	public static int BASE_BACKGROUND = 0xFFFFFFE8;
+	public static int TEXT_COLOR = 0xff404040;
+	public static int BASE_BACKGROUND_LIGHT = 0xFFFFFFE8;
+	public static int TEXT_COLOR_DARK = 0xff404040;
+	public static int BASE_BACKGROUND_DARK = 0xff303030;
+	public static int TEXT_COLOR_LIGHT = 0xfff0f0f0;
 	public static int IN_DATA_SOURCE_2 = 0xFFFFF8D9;
 	public static int IS_PARTIAL = 0xFFFFF0CF;
 	public static final int LIGHT_GREY = 0xff909090;
-	public static int TEXT_COLOR = 0xff404040;
 	public static int DIR_COLOR = Color.BLACK;
 	public static int DOT = 0xffa0a0a0;
 	public static int FILE_COLOR = Color.BLACK;
@@ -671,10 +675,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 														  suffix, multiFiles, mimes, previousSelectedStr, intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false));
 				} else if (FileUtil.extractiblePattern.matcher(file.getName()).matches()) {
 					slideFrag.addZip(Frag.TYPE.ZIP, dir);
-					slideFrag.addTab(file.getParent(), suffix, mimes, multiFiles);
+					slideFrag.addContentFragTab(file.getParent(), suffix, mimes, multiFiles);
 					curContentFragIndex = 2;
 				} else {
-					slideFrag.addTab(file.getParent(), suffix, mimes, multiFiles);
+					slideFrag.addContentFragTab(file.getParent(), suffix, mimes, multiFiles);
 					getFutils().openFile(file, this);
 				}
 			} else {
@@ -746,11 +750,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				if (intent.getStringExtra(EXTRA_ABSOLUTE_PATH) != null ||
 					!"*".equals(suffix) || mimes != null || previousSelectedStr != null) {
 					Log.d(TAG, "slideFrag2.addTab(previousSelectedStr) " + dir + ", " + suffix + ", " + mimes + ", " + multiFiles);
-					slideFrag2.addTab(previousSelectedStr);
+					slideFrag2.addSelectionTab(previousSelectedStr);
 				} else {
 					Log.d(TAG, "slideFrag2.addTab(\"/storage\", suffix, mimes, multiFiles)");
-					slideFrag2.addTab(AndroidUtils.getSharedPreference(this, "curExplorerFragPath", "/storage"), suffix, mimes, multiFiles);
-					slideFrag2.addTab(null);
+					slideFrag2.addContentFragTab(AndroidUtils.getSharedPreference(this, "curExplorerFragPath", "/storage"), suffix, mimes, multiFiles);
+					slideFrag2.addSelectionTab(null);
 				}
 			} else {
 				slideFrag2 = (SlidingTabsFragment) supportFragmentManager.findFragmentByTag("slideFrag2");
@@ -2473,8 +2477,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				if (theme == 1) {
 					mCurTheme = android.R.style.Theme_Material_Wallpaper;
 					
-					TEXT_COLOR = 0xfff0f0f0;
-					BASE_BACKGROUND = 0xff303030;
+					TEXT_COLOR = TEXT_COLOR_LIGHT;
+					BASE_BACKGROUND = BASE_BACKGROUND_DARK;
 					DIVIDER_COLOR = Color.DKGRAY;
 					DIR_COLOR = Color.WHITE;
 					FILE_COLOR = Color.WHITE;
@@ -2485,20 +2489,20 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 					mCurTheme = android.R.style.Theme_Material_Light;//AndroidUtils.getSharedPreference(this, "theme", android.R.style.Theme_Material_Light);
 					
 					SELECTED_IN_LIST = 0xFFFEF8BA;
-					BASE_BACKGROUND = 0xFFFFFFE8;
+					BASE_BACKGROUND = BASE_BACKGROUND_LIGHT;
 					DIVIDER_COLOR = Color.LTGRAY;
 					IN_DATA_SOURCE_2 = 0xFFFFF8D9;
 					IS_PARTIAL = 0xFFFFF0CF;
-					TEXT_COLOR = 0xff404040;
-					DIR_COLOR = 0xff404040;
-					FILE_COLOR = 0xff404040;
+					TEXT_COLOR = TEXT_COLOR_DARK;
+					DIR_COLOR = TEXT_COLOR_DARK;
+					FILE_COLOR = TEXT_COLOR_DARK;
 				}
 			} else {
 				if (theme == 1) {
 					mCurTheme = android.R.style.Theme_Wallpaper;
 					
-					TEXT_COLOR = 0xfff0f0f0;
-					BASE_BACKGROUND = 0xff303030;
+					TEXT_COLOR = TEXT_COLOR_LIGHT;
+					BASE_BACKGROUND = BASE_BACKGROUND_DARK;
 					DIVIDER_COLOR = Color.DKGRAY;
 					DIR_COLOR = Color.WHITE;
 					FILE_COLOR = Color.WHITE;
@@ -2509,13 +2513,13 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 					mCurTheme = android.R.style.Theme_Holo_Light;
 					
 					SELECTED_IN_LIST = 0xFFFEF8BA;
-					BASE_BACKGROUND = 0xFFFFFFE8;
+					BASE_BACKGROUND = BASE_BACKGROUND_LIGHT;
 					DIVIDER_COLOR = Color.LTGRAY;
 					IN_DATA_SOURCE_2 = 0xFFFFF8D9;
 					IS_PARTIAL = 0xFFFFF0CF;
-					TEXT_COLOR = 0xff404040;
-					DIR_COLOR = 0xff404040;
-					FILE_COLOR = 0xff404040;
+					TEXT_COLOR = TEXT_COLOR_DARK;
+					DIR_COLOR = TEXT_COLOR_DARK;
+					FILE_COLOR = TEXT_COLOR_DARK;
 				}
 			}
 			

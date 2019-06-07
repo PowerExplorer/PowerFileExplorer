@@ -97,7 +97,7 @@ OnFileLoadListener {
     private static final String EXTRA_SCRIPT_PATH = "com.googlecode.android_scripting.extra.SCRIPT_PATH";
     private static final String EXTRA_SCRIPT_CONTENT = "com.googlecode.android_scripting.extra.SCRIPT_CONTENT";
     private static final String ACTION_EDIT_SCRIPT = "com.googlecode.android_scripting.action.EDIT_SCRIPT";
-    protected jp.sblo.pandora.jota.text.EditText mEditor;
+    public jp.sblo.pandora.jota.text.EditText mEditor;
     private LinearLayout mLlSearch;
     private jp.sblo.pandora.jota.text.EditText mEdtSearchWord;
     private ImageButton mBtnForward;
@@ -130,7 +130,7 @@ OnFileLoadListener {
     private View mTransparency;
     private Bitmap mWallpaperBmp;
     private LinearLayout mToolbar;
-    private LinearLayout mToolbarBase;
+    public LinearLayout mToolbarBase;
     private Handler mHandler = new Handler();
     protected boolean mRotationControl=false;
     private Button mMenuButton;
@@ -271,10 +271,10 @@ OnFileLoadListener {
 			view.findViewById(R.id.horizontalDivider).setVisibility(View.VISIBLE);
 		}
 		
-		if ( savedInstanceState == null ){
-        } else {
-            onRestoreInstanceState(savedInstanceState);
-        }
+		//if ( savedInstanceState == null ){
+        //} else {
+        //    onRestoreInstanceState(savedInstanceState);
+        //}
 		
         if (mBootSettings.screenOrientation.equals(SettingsActivity.ORI_AUTO) || mRotationControl){
             // Do nothing
@@ -653,7 +653,7 @@ OnFileLoadListener {
             mEditor.setText(ss);
             mEditor.setChanged(false);
 
-            SharedPreferences sp = fragActivity.getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
+            SharedPreferences sp = getActivity().getSharedPreferences(SettingsActivity.PREF_HISTORY, Activity.MODE_PRIVATE);
             String sel = sp.getString(filename, "-1,-1");
 
             if (offset != -1) {
@@ -763,7 +763,21 @@ OnFileLoadListener {
     public void onViewStateRestored(Bundle savedInstanceState) {
         Log.d(TAG, "onViewStateRestored " + currentPathTitle + ", " + savedInstanceState);
 		super.onViewStateRestored(savedInstanceState);
-        
+        if ( savedInstanceState !=  null ) {
+        mInstanceState.filename = savedInstanceState.getString("filename");
+        mInstanceState.charset = savedInstanceState.getString("charset");
+        // mInstanceState.text = savedInstanceState.getString("text" );
+        mInstanceState.linebreak = savedInstanceState.getInt("linebreak");
+        // mInstanceState.selstart = savedInstanceState.getInt("selstart" );
+        // mInstanceState.selend = savedInstanceState.getInt("selend" );
+        mInstanceState.changed = savedInstanceState.getBoolean("changed");
+        mInstanceState.nameCandidate = savedInstanceState.getString("nameCandidate");
+		
+		title = savedInstanceState.getString("title");
+		
+        // mEditor.setText(mInstanceState.text);
+        // mEditor.setSelection(mInstanceState.selstart, mInstanceState.selend);
+        }
         mEditor.setChanged(mInstanceState.changed);
 		//Log.d(TAG, "onViewStateRestored " + mEditor.isChanged());
     }

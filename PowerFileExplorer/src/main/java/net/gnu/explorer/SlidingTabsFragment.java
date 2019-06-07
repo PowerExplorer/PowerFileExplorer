@@ -31,6 +31,7 @@ import net.gnu.util.Util;
 import com.amaze.filemanager.utils.OpenMode;
 import android.widget.ImageView;
 import android.view.ViewGroup.LayoutParams;
+import android.support.v7.app.*;
 
 public class SlidingTabsFragment extends Fragment implements TabAction {
 
@@ -75,7 +76,9 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		setRetainInstance(true);
 		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
 		childFragmentManager = getChildFragmentManager();
-
+		final Activity activ = getActivity();
+		activ.getWindow().getDecorView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND_LIGHT);
+		
 		if (savedInstanceState == null) {
 			if (args == null) {
 				//initContentFragmentTabs();
@@ -110,10 +113,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			PagerItem pagerItem;
 			Frag frag;
 			final int size = fragments.size();
-			FragmentTransaction ft = null;
-			if (side == null) {
-				ft = childFragmentManager.beginTransaction();
-			}
 			for (int i = 0; i < size; i++) {
 				tag = savedInstanceState.getString(i + "");
 				frag = (Frag) childFragmentManager.findFragmentByTag(tag);
@@ -121,9 +120,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					pagerItem = new PagerItem(frag);
 					//Log.d(TAG, "onViewCreated frag " + i + ", " + tag + ", " + frag.getTag() + ", " + pagerItem.dir + ", " + frag);
 					mTabs.add(pagerItem);
-					if (side == null) {
-						ft.remove(frag);
-					}
 				}
 			}
 			if (firstTag != null) {
@@ -133,18 +129,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				final SlidingTabsFragment.PagerItem last = mTabs.get((mTabs.size() - 1));
 				last.fakeFrag = (Frag) childFragmentManager.findFragmentByTag(lastTag);
 				last.fakeFrag.slidingTabsFragment = this;
-				if (side == null) {
-					ft.remove(get0.fakeFrag);
-					ft.remove(last.fakeFrag);
-				}
 			}
-			if (side == null) {
-				ft.commitNow();
-				final int s  = savedInstanceState.getInt("side", 0);
-				side = (s == Side.LEFT.ordinal()) ? Side.LEFT : ((s == Side.RIGHT.ordinal()) ? Side.RIGHT : Side.MONO);
-				width = savedInstanceState.getInt("width", 0);
-			}
-			
 			//Log.d(TAG, "mTabs=" + mTabs);
 			//Log.d(TAG, "fragments=" + fragments);
 			pagerAdapter = new PagerAdapter(childFragmentManager);
@@ -157,12 +142,15 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		// ViewPager has had it's PagerAdapter set.
 		mSlidingHorizontalScroll = (SlidingHorizontalScroll) view.findViewById(R.id.sliding_tabs);
 		
-		final Activity activ = getActivity();
+		final TextEditorActivity textActivity;
 		if (activ instanceof TextEditorActivity) {
+			textActivity = (TextEditorActivity)activ;
 			final View v = mSlidingHorizontalScroll.getChildAt(0);
 			final ViewGroup.LayoutParams lp = v.getLayoutParams();
 			lp.height = (int)(30 * getResources().getDisplayMetrics().density);
 			v.setLayoutParams(lp);
+		} else {
+			textActivity = null;
 		}
 		
 		mSlidingHorizontalScroll.fra = SlidingTabsFragment.this;
@@ -193,9 +181,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				public void onPageSelected(final int position) {
 					final int size = mTabs.size();
 					Log.d(TAG, "onPageSelected: " + position + ", mTabs.size() " + size + ", side " + side);
-//					if (position==3) {
-//						throw new RuntimeException("here");
-//					}
 					pageSelected = position;
 					if (size > 1) {
 						if (position == 1 || position == size) {
@@ -204,50 +189,31 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 							Log.d(TAG, "onPageSelected: " + position + ", side " + side + ", pi.frag " + pi.frag + ", pi.fakeFrag " + pi.fakeFrag);
 							if (pi.fakeFrag != null) {
 								pi.fakeFrag.clone(pi.frag, true);
-//								if (pi.fakeFrag.status != null) {
-//									pi.fakeFrag.status.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
-//								}
-//								if (pi.frag instanceof FileFrag && ((FileFrag)pi.frag).gridLayoutManager != null) {
-//									final FileFrag fileFrag = (FileFrag)pi.frag;
-//									FileFrag fakeFrag = (FileFrag)pi.fakeFrag;
-//									fakeFrag.selectedInList1 = fileFrag.selectedInList1;
-//									fakeFrag.tempOriDataSourceL1 = fileFrag.tempOriDataSourceL1;
-//									fakeFrag.tempSelectedInList1 = fileFrag.tempSelectedInList1;
-//									fakeFrag.status.setVisibility(fileFrag.status.getVisibility());
-//									fakeFrag.commands.setVisibility(fileFrag.commands.getVisibility());
-//									if (fileFrag.selStatus != null) {
-//										fakeFrag.selStatus.setVisibility(fileFrag.selStatus.getVisibility());
-//										fakeFrag.rightStatus.setVisibility(fileFrag.rightStatus.getVisibility());
-//										fakeFrag.rightStatus.setText(fileFrag.rightStatus.getText());
-//									}
-//									fakeFrag.selectionStatus.setVisibility(fileFrag.selectionStatus.getVisibility());
-//									fakeFrag.selectionStatus.setText(fileFrag.selectionStatus.getText());
-//									
-//									final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
-//									final View vi = fileFrag.listView.getChildAt(0); 
-//									final int top = (vi == null) ? 0 : vi.getTop();
-//									fakeFrag.gridLayoutManager.scrollToPositionWithOffset(index, top);
-//								}
 							} else {
 								pi.createFakeFragment();
 							}
 						}
+						if (textActivity != null) {
+							final ActionBar actionBar = textActivity.getSupportActionBar();
+							if (actionBar != null) {
+								final TextFrag textFrag = (TextFrag)pagerAdapter.getItem(position);
+								actionBar.setCustomView(textFrag.mToolbarBase);
+								textFrag.mEditor.requestFocus();
+							}
+						}
 					}
 					final Frag createFragment = pagerAdapter.getItem(position);
-					//final Activity activ = getActivity();
+					
 					if (activ instanceof ExplorerActivity) {
 						final ExplorerActivity activity = (ExplorerActivity) activ;
-						
 						createFragment.select(true);
 						if (side == Side.LEFT) {
 							createFragment.slidingTabsFragment.width = activity.balance;
 						} else {
 							createFragment.slidingTabsFragment.width = -activity.balance;
 						}
-						
 						if (createFragment.type == Frag.TYPE.EXPLORER && ((ContentFragment)createFragment).openMode == OpenMode.FILE) {
 							activity.dir = ((ContentFragment) createFragment).currentPathTitle;
-
 							if (side == Side.LEFT) {
 								activity.curContentFrag = (ContentFragment) createFragment;
 								activity.curContentFragIndex = mTabs.size() == 1 ? 0 : indexOfMTabs(activity.curContentFrag) + 1;
@@ -258,10 +224,8 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						} else if (createFragment.type == Frag.TYPE.SELECTION) {
 							if (side == Side.LEFT) {
 								activity.curSelectionFrag = (ContentFragment) createFragment;
-								//activity.curSelectionFragIndex = getFragIndex(Frag.TYPE.SELECTION);
 							} else {
 								activity.curSelectionFrag2 = (ContentFragment) createFragment;
-								//activity.curSelectionFragIndex2 = getFragIndex(Frag.TYPE.SELECTION);
 							}
 						}
 						
@@ -296,15 +260,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 										((ContentFragment)fileFrag).moreLeft.setVisibility(View.GONE);
 										((ContentFragment)fileFrag).moreRight.setVisibility(View.VISIBLE);
 									}
-
 									View findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.book);
 									findViewById.setVisibility(View.GONE);
 
 									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
 									findViewById.setVisibility(View.GONE);
-
-//			findViewById = ((ContentFragment)fileFrag).findViewById(R.id.encrypts);
-//			findViewById.setVisibility(View.GONE);
 
 									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
 									findViewById.setVisibility(View.GONE);
@@ -318,17 +278,12 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
 									findViewById.setVisibility(View.VISIBLE);
 
-//			findViewById = ((ContentFragment)fileFrag).findViewById(R.id.encrypts);
-//			findViewById.setVisibility(View.VISIBLE);
-
 									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
 									findViewById.setVisibility(View.VISIBLE);
 								}
 							} 
 						} 
-					} else {
-
-					}
+					} // end if (activ instanceof ExplorerActivity) 
 				}
 
 				@Override
@@ -337,11 +292,19 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					if (state == 0) {
 						final int size = mTabs.size();
 						if (pageSelected == 0) {
-							mViewPager.setCurrentItem(size, false);
 							pageSelected = size;
+							mViewPager.setCurrentItem(pageSelected, false);
 						} else if (pageSelected == size + 1) {
-							mViewPager.setCurrentItem(1, false);
 							pageSelected = 1;
+							mViewPager.setCurrentItem(pageSelected, false);
+						}
+						if (textActivity != null) {
+							final ActionBar actionBar = textActivity.getSupportActionBar();
+							if (actionBar != null) {
+								final TextFrag textFrag = (TextFrag)pagerAdapter.getItem(pageSelected);
+								actionBar.setCustomView(textFrag.mToolbarBase);
+								textFrag.mEditor.requestFocus();
+							}
 						}
 					}
 					Log.d(TAG, "onPageScrollStateChanged2 state " + state + ", pageSelected " + pageSelected + ", " + side);
@@ -370,11 +333,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		
 		ContentFragment contentFrag;
 
-//		final Bundle bundle = new Bundle();
-//		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, prevPath);//EXTRA_DIR_PATH
-//		bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-//		bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-
 		contentFrag = new ContentFragment();
 		contentFrag.type = Frag.TYPE.EXPLORER;
 		
@@ -393,11 +351,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			f = fs[i];
 			Log.d(TAG, f + ".");
 			if (f.canWrite()) {
-//				bundle = new Bundle();
-//				bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, f.getAbsolutePath());//EXTRA_DIR_PATH
-//				bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-//				bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-
 				contentFrag = new ContentFragment();
 				contentFrag.type = Frag.TYPE.EXPLORER;
 				
@@ -406,18 +359,17 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				contentFrag.multiFiles = true;
 				contentFrag.mimes = "*/*";
 
-				//contentFrag.setArguments(bundle);
 				contentFrag.slidingTabsFragment = this;
 				mTabs.add(new PagerItem(contentFrag));//f.getAbsolutePath(), ".*", true, null));
 			}
 		}
 	}
 
-	void addTab(final String[] previousSelectedStr) {
+	void addSelectionTab(final String[] previousSelectedStr) {
 		mTabs.add(new PagerItem(Frag.getFrag(this, Frag.TYPE.SELECTION, Util.arrayToString(previousSelectedStr, false, "|"))));
 	}
 
-	Fragment addTab(final String path, final String suffix, final String mimes, final boolean multi) {
+	Fragment addContentFragTab(final String path, final String suffix, final String mimes, final boolean multi) {
 
 		final Frag fragment = new ContentFragment();
 		fragment.type = Frag.TYPE.EXPLORER;
@@ -439,7 +391,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 		final Frag fragment = new ZipFragment();
 		fragment.type = Frag.TYPE.ZIP;
-		fragment.currentPathTitle = path;
+		
 		final Bundle bundle = new Bundle();
 		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, path);
 		fragment.setArguments(bundle);
@@ -460,6 +412,8 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		if (newIntent) {
 			newIntent = false;
 			addFrag(main, pagerItem);
+			main = null;
+			pagerItem = null;
 		}
 	}
 	
@@ -477,11 +431,9 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 		if (mViewPager != null && mTabs.size() == 0) {
 			mTabs.add(pagerItem);
-			//addFrag(main, pagerItem);
 			pagerAdapter.notifyDataSetChanged();
 			mViewPager.setCurrentItem(pagerAdapter.getCount() - 1);
 			notifyTitleChange();
-			//main.onPrepareOptionsMenu(((MainActivity)getActivity()).menu);
 		} else if (mTabs.size() >= 1) {
 			newIntent = true;
 		} else {
@@ -500,7 +452,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	public void addTab(final Frag.TYPE t, final String path) {
 		Log.d(TAG, "addTab TYPE " + t + ", path=" + path + ", mTabs=" + mTabs);
 		final PagerItem pagerItem;
-		Frag frag = null;
+		final Frag frag;
 		if (t == null) {
 			frag = getCurrentFragment();
 			if (getActivity() instanceof TextEditorActivity) {
@@ -526,8 +478,9 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		final FragmentTransaction ft = childFragmentManager.beginTransaction();
 		final ArrayList<PagerItem> mTabs2 = new ArrayList<PagerItem>(mTabs);
 		final int size = mTabs.size();
+		int currentItem = 0;
 		if (size > 1) {
-			int currentItem = mViewPager.getCurrentItem();
+			currentItem = mViewPager.getCurrentItem();
 			Log.d(TAG, "addFrag1 currentItem " + currentItem + ", dir=" + frag.currentPathTitle + ", mTabs=" + mTabs);
 
 			PagerItem pi = mTabs.get(0);
@@ -551,16 +504,26 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			mViewPager.setAdapter(pagerAdapter);
 			mViewPager.setCurrentItem(currentItem, false);
 		} else {
-			PagerItem remove = mTabs.remove(0);
+			final PagerItem remove = mTabs.remove(0);
 			ft.remove(remove.frag);
 			pagerAdapter.notifyDataSetChanged();
 			ft.commitNow();
 			mTabs.add(remove);
 			mTabs.add(pagerItem);
 			pagerAdapter.notifyDataSetChanged();
-			mViewPager.setCurrentItem(mTabs.size());
+			currentItem = 2;
+			mViewPager.setCurrentItem(currentItem);
 		}
 		notifyTitleChange();
+		final FragmentActivity activity = getActivity();
+		if (activity instanceof TextEditorActivity) {
+			final ActionBar actionBar = ((TextEditorActivity)activity).getSupportActionBar();
+			if (actionBar != null) {
+				final TextFrag textFrag = ((TextFrag)pagerAdapter.getItem(currentItem));
+				actionBar.setCustomView(textFrag.mToolbarBase);
+				textFrag.mEditor.requestFocus();
+			}
+		}
 		Log.d(TAG, "addFrag2 " + frag.currentPathTitle + ", mViewPager.getCurrentItem() " + mViewPager.getCurrentItem() + ", " + mTabs);
 	}
 
@@ -612,7 +575,17 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		pagerAdapter.notifyDataSetChanged();
 		mTabs2.clear();
 		notifyTitleChange();
-		mViewPager.setCurrentItem(i <= mTabs.size() - 1 && mTabs.size() > 1 ? i + 1: mTabs.size() == 1 ? 0 : i);
+		final int currentItem = i <= mTabs.size() - 1 && mTabs.size() > 1 ? i + 1: mTabs.size() == 1 ? 0 : i;
+		mViewPager.setCurrentItem(currentItem);
+		final FragmentActivity activity = getActivity();
+		if (activity instanceof TextEditorActivity) {
+			final ActionBar actionBar = ((TextEditorActivity)activity).getSupportActionBar();
+			if (actionBar != null) {
+				final TextFrag textFrag = (TextFrag)pagerAdapter.getItem(currentItem);
+				actionBar.setCustomView(textFrag.mToolbarBase);
+				textFrag.mEditor.requestFocus();
+			}
+		}
 	}
 
 	public void closeCurTab() {
@@ -621,10 +594,8 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 		if (main.activity != null) {
 			if (main == main.activity.curSelectionFrag) {
-				//main.activity.curSelectionFragIndex = -1;
 				main.activity.curSelectionFrag = null;
 			} else if (main == main.activity.curSelectionFrag2) {
-				//main.activity.curSelectionFragIndex2 = -1;
 				main.activity.curSelectionFrag2 = null;
 			}
 		}
@@ -677,6 +648,15 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		pagerAdapter.notifyDataSetChanged();
 		notifyTitleChange();
 		mViewPager.setCurrentItem(0);
+		final FragmentActivity activity = getActivity();
+		if (activity instanceof TextEditorActivity) {
+			final ActionBar actionBar = ((TextEditorActivity)activity).getSupportActionBar();
+			if (actionBar != null) {
+				final TextFrag textFrag = (TextFrag)pagerAdapter.getItem(0);
+				actionBar.setCustomView(textFrag.mToolbarBase);
+				textFrag.mEditor.requestFocus();
+			}
+		}
 	}
 
 	public Frag getCurrentFragment() {
@@ -802,13 +782,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		}
 	}
 
-//	@Override
-//	public void onResume() {
-//		Log.d(TAG, "onResume");
-//		super.onResume();
-//		notifyTitleChange();
-//	}
-
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -851,10 +824,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 	public void setCurrentItem(final int pos, final boolean smooth) {
 		mViewPager.setCurrentItem(pos, smooth);
-	}
-
-	void addPagerItem(final Frag frag1) {
-		mTabs.add(new PagerItem(frag1));
 	}
 
 	private class PagerItem implements Parcelable {

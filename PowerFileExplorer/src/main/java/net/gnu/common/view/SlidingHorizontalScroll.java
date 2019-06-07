@@ -55,7 +55,7 @@ import net.gnu.explorer.Frag.TYPE;
  */
 public class SlidingHorizontalScroll extends HorizontalScrollView {
 
-	//private static final String TAG = "SlidingHorizontalScroll";
+	private static final String TAG = "SlidingHorizontalScroll";
 
 	public SlidingTabsFragment fra;
 
@@ -196,6 +196,7 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
         final View.OnClickListener tabClickListener = new TabClickListener();
 
         final boolean explorerActivity = fra.getActivity() instanceof ExplorerActivity;
+		//Log.d(TAG, "explorerActivity " + explorerActivity);
 		final int count = adapter.getCount();
 		for (int i = 0; i < count; i++) {
             View tabView = null;
@@ -230,6 +231,8 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
 
 			if (explorerActivity) {
 				tabTitleView.setTextColor(ExplorerActivity.TEXT_COLOR);
+			} else {
+				tabTitleView.setTextColor(ExplorerActivity.TEXT_COLOR_DARK);
 			}
 			
             mTabStripLinearLayout.addView(tabView);

@@ -1,53 +1,31 @@
 package net.gnu.explorer;
 
-import android.support.v7.app.AppCompatActivity;
-
-import com.amaze.filemanager.utils.AppConfig;
-import com.amaze.filemanager.utils.color.ColorPreference;
-import com.amaze.filemanager.utils.files.Futils;
-import com.amaze.filemanager.utils.provider.UtilitiesProviderInterface;
-import com.amaze.filemanager.utils.theme.AppTheme;
-import com.amaze.filemanager.utils.theme.AppThemeManager;
+import android.app.*;
 import android.os.*;
-import com.amaze.filemanager.activities.*;
 import android.support.v4.app.*;
-import com.afollestad.materialdialogs.*;
-import android.view.*;
-import android.*;
-import com.amaze.filemanager.ui.dialogs.*;
-import android.content.pm.*;
-import android.util.*;
-import android.support.design.widget.*;
-import android.widget.*;
 import android.support.annotation.*;
-import net.gnu.androidutil.*;
+import android.content.pm.*;
+import android.widget.*;
+import android.view.*;
+import net.gnu.explorer.R;
+import android.*;
+import com.afollestad.materialdialogs.*;
+import android.support.v7.app.*;
+import com.amaze.filemanager.activities.*;
+import com.amaze.filemanager.ui.dialogs.*;
 
 public class StorageCheckActivity extends ThemedActivity {
 	
 	protected static final int REQUEST_WRITE_EXTERNAL = 77;
-
+	protected static final int REQUEST_WRITE_MEDIA = 78;
+	
     protected static String[] PERMISSIONS_STORAGE = {
 		Manifest.permission.WRITE_EXTERNAL_STORAGE,
 		Manifest.permission.WRITE_MEDIA_STORAGE,
-//		Manifest.permission.ACCESS_WIFI_STATE,
-//		Manifest.permission.CHANGE_WIFI_STATE,
-//		Manifest.permission.ACCESS_NETWORK_STATE,
-//		Manifest.permission.CHANGE_NETWORK_STATE,
-//		Manifest.permission.INTERNET,
-//		Manifest.permission.BLUETOOTH,
-//		Manifest.permission.BLUETOOTH_ADMIN,
-//		Manifest.permission.RECORD_AUDIO,
-//		Manifest.permission.CAMERA,
-//		Manifest.permission.INSTALL_SHORTCUT,
-//		Manifest.permission.UNINSTALL_SHORTCUT,
-//		Manifest.permission.SET_WALLPAPER,
-//		Manifest.permission.GET_TASKS,
-//		Manifest.permission.REORDER_TASKS,
-//		Manifest.permission.KILL_BACKGROUND_PROCESSES,
-//		Manifest.permission.WAKE_LOCK,
 	};
 	
     protected boolean checkStorage = true;
+	private MaterialDialog materialDialog;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,16 +49,18 @@ public class StorageCheckActivity extends ThemedActivity {
             // Provide an additional rationale to the user if the permission was not granted
             // and the user would benefit from additional context for the use of the permission.
             // For example, if the request has been denied previously.
-            final MaterialDialog materialDialog = GeneralDialogCreation.showBasicDialog(this,
-																						new String[]{getString(R.string.granttext),
-																							getString(R.string.grantper),
-																							getString(R.string.grant),
-																							getString(R.string.cancel),
-																							null});
+            materialDialog = GeneralDialogCreation.showBasicDialog(this,
+											 new String[]{getString(R.string.granttext),
+												 getString(R.string.grantper),
+												 getString(R.string.grant),
+												 getString(R.string.cancel),
+												 null});
             materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						ActivityCompat.requestPermissions(StorageCheckActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL);
+						ActivityCompat.requestPermissions(StorageCheckActivity.this, 
+														  PERMISSIONS_STORAGE, 
+														  REQUEST_WRITE_EXTERNAL);
 						materialDialog.dismiss();
 					}
 				});
@@ -92,7 +72,6 @@ public class StorageCheckActivity extends ThemedActivity {
 				});
             materialDialog.setCancelable(false);
             materialDialog.show();
-
         } else {
             // Contact permissions have not been granted yet. Request them directly.
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL);
@@ -112,6 +91,16 @@ public class StorageCheckActivity extends ThemedActivity {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
     }
+
+	@Override
+	protected void onDestroy() {
+		//Log.d("StorageCheckActivity", "onDestroy");
+		super.onDestroy();
+		if (materialDialog != null) {
+			materialDialog.dismiss();
+			materialDialog = null;
+		}
+	}
+	
 }
