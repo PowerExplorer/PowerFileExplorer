@@ -322,7 +322,7 @@ public class EditText extends TextView{
 
         Integer ss = mShortcuts.get(keycode);
 
-        if (ss!=null && ss != EditText.FUNCTION_NONE ) {
+        if (ss!=null && ss.intValue() != EditText.FUNCTION_NONE ) {
             return doFunction( ss.intValue() );
         }
         return false;
@@ -332,7 +332,7 @@ public class EditText extends TextView{
 
         Integer ss = mShortcuts.get(keycode);
 
-        if (ss!=null && ss != EditText.FUNCTION_NONE ) {
+        if (ss!=null && ss.intValue() != EditText.FUNCTION_NONE ) {
             return true;
         }
         return false;

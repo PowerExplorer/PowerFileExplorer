@@ -89,7 +89,7 @@ public class SettingsToolbarActivity extends Activity  {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								mData.add(mFunctions[which]);
+								mData.add(Integer.valueOf(mFunctions[which]));
 								mAdapter.notifyDataSetChanged();
 								writeToolbarSettings();
 								checkAddButton();
@@ -144,7 +144,8 @@ public class SettingsToolbarActivity extends Activity  {
             String key = String.format(KEY_TOOLBAR, i);
             editor.remove(key);
         }
-        for (int i=0;i < mData.size();i++) {
+        final int size = mData.size();
+		for (int i=0;i < size;i++) {
             String key = String.format(KEY_TOOLBAR, i);
             editor.putInt(key, mData.get(i).intValue());
         }
@@ -181,7 +182,7 @@ public class SettingsToolbarActivity extends Activity  {
             int f = sp.getInt(key, jp.sblo.pandora.jota.text.TextView.FUNCTION_NONE);
             if (f != jp.sblo.pandora.jota.text.TextView.FUNCTION_NONE) {
 				//if (context instanceof Main) {
-				result.add(f);
+				result.add(Integer.valueOf(f));
 				//} else if (f != jp.sblo.pandora.jota.text.TextView.FUNCTION_QUIT) {
 				//result.add(f);
 				//}

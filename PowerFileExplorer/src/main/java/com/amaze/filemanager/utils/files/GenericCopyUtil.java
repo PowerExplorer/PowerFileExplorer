@@ -213,9 +213,9 @@ public class GenericCopyUtil {
 				
 				///
 				try {
+					//Log.d(TAG, "mTargetFile.delete " + mTargetFile);
 					mTargetFile.delete(mContext, mTargetFile.isRoot());
-				}
-				catch (RootNotPermittedException e) {
+				} catch (RootNotPermittedException e) {
 					e.printStackTrace();
 				}
 				///
@@ -250,13 +250,13 @@ public class GenericCopyUtil {
                 else if (outChannel != null)  
 					success = copyFile(inChannel, outChannel);
             }
-			if (!success) {
-				if (documentTargetFile != null) {
-					documentTargetFile.delete();
-				} else if (targetFile != null) {
-					targetFile.delete();
-				}
-			}
+//			if (!success) {
+//				if (documentTargetFile != null) {
+//					documentTargetFile.delete();
+//				} else if (targetFile != null) {
+//					targetFile.delete();
+//				}
+//			}
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
             throw e;

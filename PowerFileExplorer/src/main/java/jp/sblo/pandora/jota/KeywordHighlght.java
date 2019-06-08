@@ -156,7 +156,7 @@ public class KeywordHighlght {
 
                     try{
                         int color = Integer.parseInt(body, 16);
-                        sColorMap.put(head , color );
+                        sColorMap.put(head , Integer.valueOf(color) );
                     }
                     catch(Exception e){}
                 }

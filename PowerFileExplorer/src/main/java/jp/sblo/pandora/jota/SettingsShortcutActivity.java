@@ -307,7 +307,7 @@ public class SettingsShortcutActivity extends PreferenceActivity implements OnSh
             String key = KEY_SHORTCUT + sd.key;
             String strfunction = sp.getString(key, "0" );
             int function = Integer.parseInt(strfunction);
-            result.put(sd.key, function);
+            result.put(Integer.valueOf(sd.key), Integer.valueOf(function));
         }
         return result;
     }

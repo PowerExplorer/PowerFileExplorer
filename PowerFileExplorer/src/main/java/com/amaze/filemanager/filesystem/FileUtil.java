@@ -48,6 +48,7 @@ import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import android.os.AsyncTask;
 import net.gnu.explorer.ExplorerActivity;
+import java.util.*;
 
 /**
  * Utility class for helping parsing file systems.
@@ -313,14 +314,14 @@ public abstract class FileUtil {
      */
     static boolean deleteFile(@NonNull final File file, Context context) {
         // First try the normal deletion.
-        if (file == null || !file.exists()) return true;
-        boolean fileDelete = deleteFilesInFolder(file, context);
-        if (file.delete() || fileDelete)
+        if (file == null || !file.exists()) 
+			return true;
+        if (file.delete() || deleteFilesInFolder(file, context))
             return true;
 
         // Try with Storage Access Framework.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && FileUtil.isOnExtSdCard(file, context)) {
-            DocumentFile document = getDocumentFile(file, false, context);
+            final DocumentFile document = getDocumentFile(file, false, context);
 			if (document != null) {
 				return document.delete();
 			}
@@ -328,10 +329,10 @@ public abstract class FileUtil {
 
         // Try the Kitkat workaround.
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            ContentResolver resolver = context.getContentResolver();
+            final ContentResolver resolver = context.getContentResolver();
 
             try {
-                Uri uri = MediaStoreHack.getUriFromFile(file.getAbsolutePath(), context);
+                final Uri uri = MediaStoreHack.getUriFromFile(file.getAbsolutePath(), context);
                 resolver.delete(uri, null, null);
                 return !file.exists();
             } catch (Exception e) {
@@ -600,20 +601,40 @@ public abstract class FileUtil {
      * @return true if successful.
      */
     private static final boolean deleteFilesInFolder(final File folder, Context context) {
-        boolean totalSuccess = true;
         if (folder == null)
             return false;
+        final boolean totalSuccess;
         if (folder.isDirectory()) {//TODO remove recursive
-            for (File child : folder.listFiles()) {
-                deleteFilesInFolder(child, context);
-            }
-
-            if (!folder.delete())
-                totalSuccess = false;
+            final LinkedList<File> folderQueue = new LinkedList<File>();
+			folderQueue.add(folder);
+			final LinkedList<File> allFolders = new LinkedList<File>();
+			File fi = null;
+			File[] fs;
+			while (folderQueue.size() > 0) {
+				fi = folderQueue.pop();
+				allFolders.add(fi);
+				fs = fi.listFiles();
+				if (fs != null)
+					for (File f2 : fs) {
+						if (f2.isDirectory()) {
+							folderQueue.push(f2);
+						} else {
+							f2.delete();
+						}
+					}
+			}
+			final int size = allFolders.size();
+			for (int i = 0; i < size - 1; i++) {
+				allFolders.pop().delete();
+			}
+			totalSuccess = allFolders.pop().delete();
+//			for (File child : listFiles) {
+//                deleteFilesInFolder(child, context);
+//            }
+//            if (!folder.delete())
+//                totalSuccess = false;
         } else {
-
-            if (!folder.delete())
-                totalSuccess = false;
+            totalSuccess = folder.delete();
         }
         return totalSuccess;
     }

@@ -2784,7 +2784,7 @@ OnFileLoadListener {
         public void onClick(View v) {
 
             Integer function = (Integer)v.getTag();
-            switch( function ){
+            switch( function.intValue() ){
                 case jp.sblo.pandora.jota.text.TextView.FUNCTION_UNDO:
                 case jp.sblo.pandora.jota.text.TextView.FUNCTION_COPY:
                 case jp.sblo.pandora.jota.text.TextView.FUNCTION_CUT:
@@ -2853,6 +2853,7 @@ OnFileLoadListener {
 		lp.width = 44 * density;
 		final Context ctx = getContext();
 		for( Integer function : toolbars ){
+			final int func = function.intValue();
             if ( bigButton ){
                 button = new Button(ctx);//, null, R.style.Widget_AppCompat_Button);
                 button.setTextSize(16);
@@ -2872,32 +2873,32 @@ OnFileLoadListener {
 			} else {
 				iv.setColorFilter(0xff404040, PorterDuff.Mode.SRC_IN);
 			}
-				if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_SELECT_ALL) {//}"Select All".equals(toolname)) {
+			if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_SELECT_ALL) {//}"Select All".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_select_all_white_36dp);
 					button = null;
-				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_UNDO) {//"Undo".equals(toolname)) {
+				} else if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_UNDO) {//"Undo".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_undo);
 					button = null;
-				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_COPY) {//"Copy".equals(toolname)) {
+				} else if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_COPY) {//"Copy".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_copy);
 					button = null;
-				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_CUT) {//" Cut ".equals(toolname)) {
+				} else if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_CUT) {//" Cut ".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_cut);
 					button = null;
-				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_PASTE) {//"Paste".equals(toolname)) {
+				} else if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_PASTE) {//"Paste".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_paste);
 					button = null;
-				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_SAVE) {//"Save".equals(toolname)) {
+				} else if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_SAVE) {//"Save".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_save);
 					button = null;
-				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_SEARCH) {//"Search".equals(toolname)) {
+				} else if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_SEARCH) {//"Search".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_search);
 					button = null;
-				} else if (function == jp.sblo.pandora.jota.text.TextView.FUNCTION_REDO) {//"Redo".equals(toolname)) {
+				} else if (func == jp.sblo.pandora.jota.text.TextView.FUNCTION_REDO) {//"Redo".equals(toolname)) {
 					iv.setImageResource(R.drawable.ic_action_redo);
 					button = null;
 				} else {
-					button.setText(getToolbarLabel(function));
+					button.setText(getToolbarLabel(func));
 					button.setTextColor(ExplorerActivity.TEXT_COLOR);
 					iv = null;
 				}

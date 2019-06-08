@@ -309,8 +309,7 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
             final HFile destination = new HFile(openMode, path);
             conflictingFiles = checkConflicts(filesToCopy, destination);
 
-            final int size = conflictingFiles.size();
-			for (int i = 0; i < size; i++) {
+            for (int i = 0; i < conflictingFiles.size(); i++) {
                 if (conflictingFiles.get(i).isDirectory()) {
                     if (deleteCopiedFolder == null)
                         deleteCopiedFolder = new ArrayList<>();
