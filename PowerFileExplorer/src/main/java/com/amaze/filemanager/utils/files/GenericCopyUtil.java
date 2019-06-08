@@ -32,6 +32,7 @@ import java.nio.channels.ReadableByteChannel;
 import com.amaze.filemanager.utils.ProgressHandler;
 import com.amaze.filemanager.services.DeleteTask;
 import java.util.ArrayList;
+import com.amaze.filemanager.exceptions.*;
 
 /**
  * Created by vishal on 26/10/16.
@@ -209,6 +210,16 @@ public class GenericCopyUtil {
             } else {
                 // copying normal file, target not in OTG
                 targetFile = new File(mTargetFile.getPath());
+				
+				///
+				try {
+					mTargetFile.delete(mContext, mTargetFile.isRoot());
+				}
+				catch (RootNotPermittedException e) {
+					e.printStackTrace();
+				}
+				///
+				
                 if (FileUtil.isWritable(targetFile)) {
 
                     if (lowOnMemory) {

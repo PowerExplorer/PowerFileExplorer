@@ -302,14 +302,15 @@ public class CopyFileCheck extends AsyncTask<ArrayList<BaseFile>, String, CopyFi
         private ArrayList<BaseFile> filesToCopy, conflictingFiles;
         private ArrayList<CopyNode> nextNodes = new ArrayList<>();
 
-        CopyNode(String p, ArrayList<BaseFile> filesToCopy) {
+        CopyNode(final String p, final ArrayList<BaseFile> filesToCopy) {
             path = p;
             this.filesToCopy = filesToCopy;
 
-            HFile destination = new HFile(openMode, path);
+            final HFile destination = new HFile(openMode, path);
             conflictingFiles = checkConflicts(filesToCopy, destination);
 
-            for (int i = 0; i < conflictingFiles.size(); i++) {
+            final int size = conflictingFiles.size();
+			for (int i = 0; i < size; i++) {
                 if (conflictingFiles.get(i).isDirectory()) {
                     if (deleteCopiedFolder == null)
                         deleteCopiedFolder = new ArrayList<>();

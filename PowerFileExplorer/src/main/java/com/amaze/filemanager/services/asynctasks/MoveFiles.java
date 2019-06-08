@@ -73,15 +73,17 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, Void, Boolean> {
     protected Boolean doInBackground(ArrayList<String>... strings) {
         paths = strings[0];
 
-        if (files.size() == 0) return true;
-
+        if (files.size() == 0) 
+			return true;
+		
+		final int size = paths.size();
         switch (mode) {
             case SMB:
-                for (int i = 0; i < paths.size(); i++) {
+                for (int i = 0; i < size; i++) {
                     for (BaseFile f : files.get(i)) {
                         try {
-                            SmbFile source = new SmbFile(f.getPath());
-                            SmbFile dest = new SmbFile(paths.get(i) + "/" + f.getName());
+                            final SmbFile source = new SmbFile(f.getPath());
+                            final SmbFile dest = new SmbFile(paths.get(i) + "/" + f.getName());
                             source.renameTo(dest);
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
@@ -94,10 +96,10 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, Void, Boolean> {
                 }
                 break;
             case FILE:
-                for (int i = 0; i < paths.size(); i++) {
+                for (int i = 0; i < size; i++) {
                     for (BaseFile f : files.get(i)) {
-                        File dest = new File(paths.get(i) + "/" + f.getName());
-                        File source = new File(f.getPath());
+                        final File dest = new File(paths.get(i) + "/" + f.getName());
+                        final File source = new File(f.getPath());
                         if (!source.renameTo(dest)) {
 
                             // check if we have root
@@ -118,7 +120,7 @@ public class MoveFiles extends AsyncTask<ArrayList<String>, Void, Boolean> {
             case BOX:
             case ONEDRIVE:
             case GDRIVE:
-                for (int i=0; i<paths.size(); i++) {
+                for (int i=0; i < size; i++) {
                     for (BaseFile baseFile : files.get(i)) {
 
                         DataUtils dataUtils = DataUtils.getInstance();
