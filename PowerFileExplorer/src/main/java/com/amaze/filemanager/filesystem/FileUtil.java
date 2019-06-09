@@ -603,28 +603,29 @@ public abstract class FileUtil {
     private static final boolean deleteFilesInFolder(final File folder, Context context) {
         if (folder == null)
             return false;
-        final boolean totalSuccess;
-        if (folder.isDirectory()) {//TODO remove recursive
+        boolean totalSuccess = folder.delete();
+        if (!totalSuccess && folder.isDirectory()) {//TODO remove recursive
             final LinkedList<File> folderQueue = new LinkedList<File>();
-			folderQueue.add(folder);
+			folderQueue.push(folder);
 			final LinkedList<File> allFolders = new LinkedList<File>();
 			File fi = null;
 			File[] fs;
-			while (folderQueue.size() > 0) {
+			int size = 1;
+			while (size > 0) {
 				fi = folderQueue.pop();
-				allFolders.add(fi);
+				size--;
+				allFolders.push(fi);
 				fs = fi.listFiles();
 				if (fs != null)
 					for (File f2 : fs) {
-						if (f2.isDirectory()) {
+						if (!f2.delete()) {
 							folderQueue.push(f2);
-						} else {
-							f2.delete();
-						}
+							size++;
+						} 
 					}
 			}
-			final int size = allFolders.size();
-			for (int i = 0; i < size - 1; i++) {
+			size = allFolders.size() - 1;
+			while (size-- > 0) {
 				allFolders.pop().delete();
 			}
 			totalSuccess = allFolders.pop().delete();
@@ -633,9 +634,7 @@ public abstract class FileUtil {
 //            }
 //            if (!folder.delete())
 //                totalSuccess = false;
-        } else {
-            totalSuccess = folder.delete();
-        }
+        } 
         return totalSuccess;
     }
 

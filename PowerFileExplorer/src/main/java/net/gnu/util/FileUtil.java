@@ -64,6 +64,8 @@ import android.os.Build;
 import com.amaze.filemanager.ui.LayoutElement;
 import com.amaze.filemanager.utils.OnProgressUpdate;
 import net.gnu.explorer.ContentFragment;
+import com.amaze.filemanager.filesystem.*;
+import com.amaze.filemanager.utils.*;
 
 public class FileUtil {
 
@@ -1486,58 +1488,134 @@ public class FileUtil {
 		return ret;
 	}
 
-	/**
-	 0: total length
-	 1: number of files
-	 2: number of directories
-	 */
+	public static long[] getFolderSize(final List<BaseFile> fList, Context ctx, boolean isRoot, final OnProgressUpdate3<Long> updateState) {
+		final long[] ret = new long[] {0, 0, 0};
+		for (BaseFile st : fList) {
+			final long[] folderSize = getFolderSize(st, ctx, isRoot, updateState);
+			ret[0] += folderSize[0];
+			ret[1] += folderSize[1];
+			ret[2] += folderSize[2];
+		}
+		return ret;
+	}
+
 	public static long getFolderSize(final File f, final OnProgressUpdate<Long> updateState) {
 		Log.d("getFolderSize f", f.getAbsolutePath());
-		//long size = 0;
-		long ret = 0;//new long[] {0, 0, 0};
+		
+		long ret = 0;
 		long start = System.currentTimeMillis();
 		if (f != null && f.exists()) {
 			final LinkedList<File> folderQueue = new LinkedList<File>();
 			if (f.isDirectory()) {
 				folderQueue.push(f);
+				int size = 1;
+				File fi = null;
+				File[] fs;
+				if (updateState != null) {
+					while (size > 0) {
+						fi = folderQueue.removeFirst();
+						size--;
+						fs = fi.listFiles();
+						if (fs != null) {
+							for (File f2 : fs) {
+								if (f2.isDirectory()) {
+									folderQueue.push(f2);
+									size++;
+								} else {
+									ret += f2.length();
+								}
+								updateState.onUpdate(ret);
+							}
+						}
+					}
+				} else {
+					while (size > 0) {
+						fi = folderQueue.removeFirst();
+						size--;
+						fs = fi.listFiles();
+						if (fs != null) {
+							for (File f2 : fs) {
+								if (f2.isDirectory()) {
+									folderQueue.push(f2);
+									size++;
+								} else {
+									ret += f2.length();
+								}
+							}
+						}
+					}
+				}
 			} else {
-				ret += f.length();
+				ret = f.length();
 			}
-			File fi = null;
-			File[] fs;
-			if (updateState != null) {
-				while (folderQueue.size() > 0) {
-					fi = folderQueue.removeFirst();
-					fs = fi.listFiles();
-					if (fs != null) {
-						for (File f2 : fs) {
-							if (f2.isDirectory()) {
-								folderQueue.push(f2);
-							} else {
-								ret += f2.length();
+		}
+		Log.d("getFolderSize f", f.getAbsolutePath() + ": " + Util.nf.format(ret) + ", took " + (System.currentTimeMillis() - start));
+		return ret;
+	}
+
+	/**
+	 0: total length
+	 1: number of files
+	 2: number of directories
+	 */
+	public static long[] getFolderSize(final BaseFile f, Context ctx, boolean isRoot, final OnProgressUpdate3<Long> updateState) {
+		Log.d("getFolderSize f", f + "");
+		//long size = 0;
+		long[] ret = new long[] {0, 0, 0};
+		long start = System.currentTimeMillis();
+		if (f != null && f.exists()) {
+			if (f.isDirectory()) {
+				final LinkedList<BaseFile> folderQueue = new LinkedList<>();
+				folderQueue.push(f);
+				int size = 1;
+				ret[2]++;
+				BaseFile fi = null;
+				ArrayList<BaseFile> fs;
+				if (updateState != null) {
+					while (size > 0) {
+						fi = folderQueue.removeFirst();
+						size--;
+						fs = fi.listFiles(ctx, isRoot);
+						if (fs != null) {
+							for (BaseFile f2 : fs) {
+								if (f2.isDirectory()) {
+									folderQueue.push(f2);
+									size++;
+									ret[2]++;
+								} else {
+									ret[0] += f2.length();
+									ret[1]++;
+								}
+								updateState.onUpdate(new Long[]{Long.valueOf(ret[2]), Long.valueOf(ret[2]), Long.valueOf(ret[2])});
 							}
-							updateState.onUpdate(ret);
+						}
+					}
+				} else {
+					while (size > 0) {
+						fi = folderQueue.removeFirst();
+						size--;
+						fs = fi.listFiles(ctx, isRoot);
+						if (fs != null) {
+							for (BaseFile f2 : fs) {
+								if (f2.isDirectory()) {
+									folderQueue.push(f2);
+									size++;
+									ret[2]++;
+								} else {
+									ret[0] += f2.length();
+									ret[1]++;
+								}
+							}
 						}
 					}
 				}
 			} else {
-				while (folderQueue.size() > 0) {
-					fi = folderQueue.removeFirst();
-					fs = fi.listFiles();
-					if (fs != null) {
-						for (File f2 : fs) {
-							if (f2.isDirectory()) {
-								folderQueue.push(f2);
-							} else {
-								ret += f2.length();
-							}
-						}
-					}
-				}
+				ret[0] += f.length();
+				ret[1]++;
 			}
 
 		}
-		Log.d("getFolderSize f", f.getAbsolutePath() + ": " + Util.nf.format(ret) + ", took " + (System.currentTimeMillis() - start));
+		Log.d("getFolderSize f", f + ": " + ret + ", took " + (System.currentTimeMillis() - start));
 		return ret;
 	}
 	

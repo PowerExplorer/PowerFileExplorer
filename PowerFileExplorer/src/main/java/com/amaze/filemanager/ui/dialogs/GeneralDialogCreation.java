@@ -541,6 +541,220 @@ public class GeneralDialogCreation {
         dialog.show();
     }
 
+    public static void showPropertiesDialogWithPermissions(List<BaseFile> baseFile, final String permissions,
+                                                           ThemedActivity activity, boolean isRoot, AppTheme appTheme) {
+        showPropertiesDialog(baseFile, permissions, activity, isRoot, appTheme, true, false);
+    }
+
+    private static void showPropertiesDialog(final List<BaseFile> baseFiles, final String permissions,
+                                             ThemedActivity base, boolean isRoot, AppTheme appTheme,
+                                             boolean showPermissions, boolean forStorage) {
+        final ExecutorService executor = Executors.newFixedThreadPool(3);
+        final Context ctx = base.getApplicationContext();
+        int accentColor = base.getColorPreference().getColor(ColorUsage.ACCENT);
+        //long last = baseFile.date;
+        //final String date = Utils.getDate(last),
+		final String items = ctx.getString(R.string.calculating),
+			//name  = baseFile.getName(),
+			parent = baseFiles.get(0).getReadablePath(baseFiles.get(0).getParent(ctx));
+
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(base);
+        builder.title(ctx.getString(R.string.properties));
+        builder.theme(appTheme.getMaterialDialogTheme());
+
+        View view = base.getLayoutInflater().inflate(R.layout.properties_dialog, null);
+        TextView itemsText = (TextView) view.findViewById(R.id.size);
+
+        /*View setup*/ {
+            TextView mNameTitle = (TextView) view.findViewById(R.id.title_name);
+            mNameTitle.setTextColor(accentColor);
+			mNameTitle.setVisibility(View.GONE);
+
+            TextView mDateTitle = (TextView) view.findViewById(R.id.title_date);
+            mDateTitle.setTextColor(accentColor);
+			mDateTitle.setVisibility(View.GONE);
+
+            TextView mSizeTitle = (TextView) view.findViewById(R.id.title_size);
+            mSizeTitle.setTextColor(accentColor);
+
+            TextView mLocationTitle = (TextView) view.findViewById(R.id.title_location);
+            mLocationTitle.setTextColor(accentColor);
+
+            TextView md5Title = (TextView) view.findViewById(R.id.title_md5);
+            md5Title.setTextColor(accentColor);
+			md5Title.setVisibility(View.GONE);
+
+            TextView sha256Title = (TextView) view.findViewById(R.id.title_sha256);
+            sha256Title.setTextColor(accentColor);
+			sha256Title.setVisibility(View.GONE);
+
+            ((TextView) view.findViewById(R.id.name)).setVisibility(View.GONE);//.setText(name);
+            ((TextView) view.findViewById(R.id.location)).setText(parent);
+            itemsText.setText(items);
+            ((TextView) view.findViewById(R.id.date)).setVisibility(View.GONE);//.setText(date);
+
+            LinearLayout mNameLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_name);
+			mNameLinearLayout.setVisibility(View.GONE);
+            LinearLayout mLocationLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_location);
+            LinearLayout mSizeLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_size);
+            LinearLayout mDateLinearLayout = (LinearLayout) view.findViewById(R.id.properties_dialog_date);
+			mDateLinearLayout.setVisibility(View.GONE);
+			view.findViewById(R.id.properties_dialog_md5).setVisibility(View.GONE);
+            view.findViewById(R.id.properties_dialog_sha256).setVisibility(View.GONE);
+            // setting click listeners for long press
+//            mNameLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+//					@Override
+//					public boolean onLongClick(View v) {
+//						Futils.copyToClipboard(ctx, name);
+//						Toast.makeText(ctx, ctx.getResources().getString(R.string.name)+" "+
+//									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+//						return false;
+//					}
+//				});
+            mLocationLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						Futils.copyToClipboard(ctx, parent);
+						Toast.makeText(ctx, ctx.getResources().getString(R.string.location)+" "+
+									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						return false;
+					}
+				});
+            mSizeLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						Futils.copyToClipboard(ctx, items);
+						Toast.makeText(ctx, ctx.getResources().getString(R.string.size)+" "+
+									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+						return false;
+					}
+				});
+//            mDateLinearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+//					@Override
+//					public boolean onLongClick(View v) {
+//						Futils.copyToClipboard(ctx, date);
+//						Toast.makeText(ctx, ctx.getResources().getString(R.string.date)+" "+
+//									   ctx.getResources().getString(R.string.properties_copied_clipboard), Toast.LENGTH_SHORT).show();
+//						return false;
+//					}
+//				});
+        }
+
+        CountItemsOrAndSize countItemsOrAndSize = new CountItemsOrAndSize(ctx, itemsText, baseFiles, forStorage);
+        countItemsOrAndSize.executeOnExecutor(executor);
+
+
+        //GenerateHashes hashGen = new GenerateHashes(baseFile, ctx, view);
+        //hashGen.executeOnExecutor(executor);
+
+        /*Chart creation and data loading*/ {
+//            boolean isRightToLeft = ctx.getResources().getBoolean(R.bool.is_right_to_left);
+//            boolean isDarkTheme = appTheme.getMaterialDialogTheme()==Theme.DARK;
+            PieChart chart = (PieChart) view.findViewById(R.id.chart);
+			chart.setVisibility(View.GONE);
+//            chart.setTouchEnabled(false);
+//            chart.setDrawEntryLabels(false);
+//            chart.setDescription(null);
+//            chart.setNoDataText(ctx.getString(R.string.loading));
+//            chart.setRotationAngle(!isRightToLeft? 0f:180f);
+//            chart.setHoleColor(Color.TRANSPARENT);
+//            chart.setCenterTextColor(isDarkTheme? Color.WHITE:Color.BLACK);
+//
+//            chart.getLegend().setEnabled(true);
+//            chart.getLegend().setForm(Legend.LegendForm.CIRCLE);
+//            chart.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+//            chart.getLegend().setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+//            chart.getLegend().setTextColor(isDarkTheme? Color.WHITE:Color.BLACK);
+//
+//            chart.animateY(1000);
+//
+//            if (forStorage) {
+//                final String[] LEGENDS = new String[]{ctx.getString(R.string.used), ctx.getString(R.string.free)};
+//                final int[] COLORS = {Utils.getColor(ctx, R.color.piechart_red), Utils.getColor(ctx, R.color.piechart_green)};
+//
+//                long totalSpace = baseFiles.get(0).getTotal(ctx),
+//					freeSpace = baseFiles.get(0).getUsableSpace(),
+//					usedSpace = totalSpace-freeSpace;
+//
+//                List<PieEntry> entries = new ArrayList<>();
+//                entries.add(new PieEntry(usedSpace, LEGENDS[0]));
+//                entries.add(new PieEntry(freeSpace, LEGENDS[1]));
+//
+//                PieDataSet set = new PieDataSet(entries, null);
+//                set.setColors(COLORS);
+//                set.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+//                set.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+//                set.setSliceSpace(5f);
+//                set.setAutomaticallyDisableSliceSpacing(true);
+//                set.setValueLinePart2Length(1.05f);
+//                set.setSelectionShift(0f);
+//
+//                PieData pieData = new PieData(set);
+//                pieData.setValueFormatter(new SizeFormatter(ctx));
+//                pieData.setValueTextColor(isDarkTheme? Color.WHITE:Color.BLACK);
+//
+//                String totalSpaceFormatted = Formatter.formatFileSize(ctx, totalSpace);
+//
+//                chart.setCenterText(new SpannableString(ctx.getString(R.string.total)+"\n"+totalSpaceFormatted));
+//                chart.setData(pieData);
+//            } else {
+//                LoadFolderSpaceData loadFolderSpaceData = new LoadFolderSpaceData(ctx, appTheme, chart, baseFiles);
+//                loadFolderSpaceData.executeOnExecutor(executor);
+//            }
+//
+//            chart.invalidate();
+        }
+
+//        if (!forStorage&&showPermissions) {
+//            //final Frag main = ((MainActivity) base).mainFragment;
+//            ExplorerActivity ma = (ExplorerActivity) base;
+//            final Frag main = ma.slideFrag1Selected? ma.curContentFrag :ma.curExplorerFrag;//ma.mainFragment;
+//            AppCompatButton appCompatButton = (AppCompatButton) view.findViewById(R.id.permissionsButton);
+//            appCompatButton.setAllCaps(true);
+//
+//            final View permissionsTable = view.findViewById(R.id.permtable);
+//            final View button = view.findViewById(R.id.set);
+//            if (isRoot&&permissions.length()>6) {
+//                appCompatButton.setVisibility(View.VISIBLE);
+//                appCompatButton.setOnClickListener(new View.OnClickListener() {
+//						@Override
+//						public void onClick(View v) {
+//							if (permissionsTable.getVisibility()==View.GONE) {
+//								permissionsTable.setVisibility(View.VISIBLE);
+//								button.setVisibility(View.VISIBLE);
+//								setPermissionsDialog(permissionsTable, button, baseFiles, permissions, ctx,
+//													 main);
+//							} else {
+//								button.setVisibility(View.GONE);
+//								permissionsTable.setVisibility(View.GONE);
+//							}
+//						}
+//					});
+//            }
+//        }
+
+        builder.customView(view, true);
+        builder.positiveText(base.getResources().getString(R.string.ok));
+        builder.positiveColor(accentColor);
+        builder.dismissListener(new DialogInterface.OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					executor.shutdown();
+				}
+			});
+
+        MaterialDialog materialDialog = builder.build();
+        materialDialog.show();
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+
+        /*
+		 View bottomSheet = c.findViewById(R.id.design_bottom_sheet);
+		 BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+		 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+		 bottomSheetBehavior.setPeekHeight(BottomSheetBehavior.STATE_DRAGGING);
+		 */
+    }
+
     public static void showPropertiesDialogWithPermissions(BaseFile baseFile, final String permissions,
                                                            ThemedActivity activity, boolean isRoot, AppTheme appTheme) {
         showPropertiesDialog(baseFile, permissions, activity, isRoot, appTheme, true, false);

@@ -12,68 +12,77 @@ import com.amaze.filemanager.utils.files.Futils;
 import com.amaze.filemanager.utils.OnProgressUpdate;
 import net.gnu.util.FileUtil;
 import net.gnu.util.Util;
+import java.util.*;
+import com.amaze.filemanager.utils.*;
 
 /**
  * @author Emmanuel
  *         on 12/5/2017, at 19:40.
  */
 
-public class CountItemsOrAndSize extends AsyncTask<Void, Pair<Integer, Long>, String> {
+public class CountItemsOrAndSize extends AsyncTask<Void, Long, String> {
 
     private Context context;
     private TextView itemsText;
-    private BaseFile file;
+    private List<BaseFile> files;
     private boolean isStorage;
 
     public CountItemsOrAndSize(Context c, TextView itemsText, BaseFile f, boolean storage) {
         this.context = c;
         this.itemsText = itemsText;
-        file = f;
+        files = new LinkedList<>();
+		files.add(f);
+        isStorage = storage;
+    }
+	
+    public CountItemsOrAndSize(Context c, TextView itemsText, List<BaseFile> f, boolean storage) {
+        this.context = c;
+        this.itemsText = itemsText;
+        files = f;
         isStorage = storage;
     }
 
     @Override
     protected String doInBackground(Void[] params) {
         String items = "";
-        long fileLength = file.length(context);
+		
+		if (isStorage) {
+			long folderSize = files.get(0).getUsableSpace();
+			items = Formatter.formatFileSize(context, folderSize) + (" (" + net.gnu.util.Util.nf.format(folderSize) + " "
+				+ context.getResources().getQuantityString(R.plurals.bytes, (int) folderSize) //truncation is insignificant
+					+ ")");
+		} else {
+			long[] folderSize = FileUtil.getFolderSize(files, context, false, new OnProgressUpdate3<Long>() {
+						@Override
+						public void onUpdate(Long[] data) {
+							publishProgress(data);
+						}
+					});
 
-        if (file.isDirectory(context)) {
-            final int x = file.listFiles(context, false).size();
-            long folderSize;
 
-            if(isStorage) {
-                folderSize = file.getUsableSpace();
-            } else {
-                folderSize = FileUtil.getFolderSize(file.f, new OnProgressUpdate<Long>() {
-                    @Override
-                    public void onUpdate(Long data) {
-                        publishProgress(new Pair<Integer, Long>(x, data));
-                    }
-                });
-            }
-
-            items = getText(x, folderSize, false);
-        } else {
-            items = Formatter.formatFileSize(context, fileLength) + (" (" + net.gnu.util.Util.nf.format(fileLength) + " "
-                    + context.getResources().getQuantityString(R.plurals.bytes, (int) fileLength) //truncation is insignificant
-                    + ")");
+			items = getText(new Long[]{Long.valueOf(folderSize[0]), Long.valueOf(folderSize[1]), Long.valueOf(folderSize[2])}, false);
+//			} else {
+//				fileLength = file.length(context);
+//				items = Formatter.formatFileSize(context, fileLength) + (" (" + net.gnu.util.Util.nf.format(fileLength) + " "
+//					+ context.getResources().getQuantityString(R.plurals.bytes, (int) fileLength) //truncation is insignificant
+//					+ ")");
+//			}
         }
 
         return items;
     }
 
     @Override
-    protected void onProgressUpdate(Pair<Integer, Long>[] dataArr) {
-        Pair<Integer, Long> data = dataArr[0];
-
-        itemsText.setText(getText(data.first.intValue(), data.second.longValue(), true));
+    protected void onProgressUpdate(Long... dataArr) {
+        itemsText.setText(getText(dataArr, true));
     }
 
-    private String getText(int filesInFolder, long length, boolean loading) {
-        String numOfItems = (filesInFolder != 0? net.gnu.util.Util.nf.format(filesInFolder) + " " : "")
-                + context.getResources().getQuantityString(R.plurals.items, filesInFolder) ;
+    private String getText(Long[] filesInFolder, boolean loading) {
+        String numOfItems = net.gnu.util.Util.nf.format(filesInFolder[2]) + " folder, " 
+			+ net.gnu.util.Util.nf.format(filesInFolder[1]) + " files, " 
+			+ net.gnu.util.Util.nf.format(filesInFolder[0]) + " bytes";
 
-        return numOfItems + "; " + (loading? ">":"") + Formatter.formatFileSize(context, length);
+        return numOfItems + " " + (loading? ">":"");
     }
 
     protected void onPostExecute(String items) {

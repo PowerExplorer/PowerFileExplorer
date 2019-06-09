@@ -1677,6 +1677,14 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 						menuBuilder.add(s);
 					}
 				}
+				if (openMode == OpenMode.CUSTOM) {
+					//menuBuilder.findItem(R.id.newFolder).setVisible(false);
+					//menuBuilder.findItem(R.id.newFile).setVisible(false);
+				} else {
+					menuBuilder.add("New File");
+					menuBuilder.add("New Folder");
+				}
+				
 				if (activity.multiFiles) {
 					//menuBuilder.add("Hide");
 					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.right.getVisibility() == View.VISIBLE
@@ -1721,14 +1729,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //					mi.setEnabled(false);
 //				}
 				
-				if (openMode == OpenMode.CUSTOM) {
-					//menuBuilder.findItem(R.id.newFolder).setVisible(false);
-					//menuBuilder.findItem(R.id.newFile).setVisible(false);
-				} else {
-					menuBuilder.add("New File");
-					menuBuilder.add("New Folder");
-				}
-
 				//final int size = menuBuilder.size();
 //				for (int i = 0; i < size;i++) {
 //					final Drawable icon = menuBuilder.getItem(i).getIcon();
@@ -2100,10 +2100,18 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				updateList();
 				break;
 			case R.id.infos:
-				if (selectedInList1.size() > 0) {
+				if (selectedInList1.size() == 1) {
 					LayoutElement le = (LayoutElement) selectedInList1.get(0);
 					GeneralDialogCreation.showPropertiesDialogWithPermissions(le.generateBaseFile(),
 																			  le.permissions, activity, ThemedActivity.rootMode,
+																			  activity.getAppTheme());
+				} else {
+					ArrayList<BaseFile> copie = new ArrayList<>();
+					for (LayoutElement le : selectedInList1) {//int i3 = 0; i3 < plist.size(); i3++
+						copie.add(le.generateBaseFile());//dataSourceL1.get(plist.get(i3))
+					}
+					GeneralDialogCreation.showPropertiesDialogWithPermissions(copie,
+																			  null, activity, ThemedActivity.rootMode,
 																			  activity.getAppTheme());
 				}
 				break;
