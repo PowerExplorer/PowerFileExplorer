@@ -1818,16 +1818,21 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 					}
 					activity.COPY_PATH = copies;
 					activity.callback = null;
+					selectedInList1.clear();
+					selectionStatusTV.setText(0 + "/" + dataSourceL1.size());
+					srcAdapter.notifyDataSetChanged();
 					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {//type == -1
 						activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 						activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
 						activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 						activity.curExplorerFrag.updateDelPaste();
+						activity.curContentFrag.updateDelPaste();
 					} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {//type != -1
 						activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 						activity.curContentFrag.commands.setVisibility(View.VISIBLE);
 						activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 						activity.curContentFrag.updateDelPaste();
+						activity.curExplorerFrag.updateDelPaste();
 					}
 				}
 				break;
@@ -1848,16 +1853,21 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 							srcAdapter.notifyDataSetChanged();
 						}
 					};
+					selectedInList1.clear();
+					selectionStatusTV.setText(0 + "/" + dataSourceL1.size());
+					srcAdapter.notifyDataSetChanged();
 					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {
 						activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 						activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
 						activity.curExplorerFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 						activity.curExplorerFrag.updateDelPaste();
+						activity.curContentFrag.updateDelPaste();
 					} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.GONE) {
 						activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 						activity.curContentFrag.commands.setVisibility(View.VISIBLE);
 						activity.curContentFrag.horizontalDivider6.setVisibility(View.VISIBLE);
 						activity.curContentFrag.updateDelPaste();
+						activity.curExplorerFrag.updateDelPaste();
 					}
 				}
 				break;
