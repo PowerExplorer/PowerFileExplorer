@@ -317,10 +317,14 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 
 	@Override
 	protected void onCancelled(String result) {
-		Log.i(TAG, "onCancelled");
+		Log.d(TAG, "onCancelled zpaq.command " + zpaq.command + ", andro7za.command " + andro7za.command);
 		mNotifyMgr.cancel(mNotificationId);
-		zpaq.command.stopAll();
-		andro7za.command.stopAll();
+		if (zpaq.command != null) {
+			zpaq.command.stopAll();
+		}
+		if (andro7za.command != null) {
+			andro7za.command.stopAll();
+		}
 		if (wl != null && wl.isHeld()) {
 			wl.release();
 		}
