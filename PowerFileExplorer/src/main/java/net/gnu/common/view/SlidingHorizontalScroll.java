@@ -36,6 +36,7 @@ import android.widget.*;
 import android.view.*;
 import net.gnu.texteditor.*;
 import net.gnu.explorer.Frag.TYPE;
+import net.gnu.common.*;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -230,15 +231,15 @@ public class SlidingHorizontalScroll extends HorizontalScrollView {
             tabView.setOnClickListener(tabClickListener);
 
 			if (explorerActivity) {
-				tabTitleView.setTextColor(ExplorerActivity.TEXT_COLOR);
+				tabTitleView.setTextColor(Constants.TEXT_COLOR);
 			} else {
-				tabTitleView.setTextColor(ExplorerActivity.TEXT_COLOR_DARK);
+				tabTitleView.setTextColor(Constants.TEXT_COLOR_DARK);
 			}
 			
             mTabStripLinearLayout.addView(tabView);
         }
 		if (explorerActivity) {
-			mTabStripLinearLayout.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			mTabStripLinearLayout.setBackgroundColor(Constants.BASE_BACKGROUND);
 		}
     }
 

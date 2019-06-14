@@ -32,6 +32,7 @@ import com.amaze.filemanager.utils.OpenMode;
 import android.widget.ImageView;
 import android.view.ViewGroup.LayoutParams;
 import android.support.v7.app.*;
+import net.gnu.common.*;
 
 public class SlidingTabsFragment extends Fragment implements TabAction {
 
@@ -77,7 +78,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
 		childFragmentManager = getChildFragmentManager();
 		final Activity activ = getActivity();
-		activ.getWindow().getDecorView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND_LIGHT);
+		activ.getWindow().getDecorView().setBackgroundColor(Constants.BASE_BACKGROUND_LIGHT);
 		
 		if (savedInstanceState == null) {
 			if (args == null) {
@@ -85,12 +86,12 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			} else {
 				final int no = args.getInt("no");
 				for (int i = 0; i < no; i++) {
-					Log.d(TAG, no + " onViewCreated args.getString(ExplorerActivity.EXTRA_DIR_PATH" + i + ")=" + args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH + i));
+					Log.d(TAG, no + " onViewCreated args.getString(Constants.EXTRA_DIR_PATH" + i + ")=" + args.getString(Constants.EXTRA_ABSOLUTE_PATH + i));
 					ContentFragment cf = ContentFragment.newInstance(SlidingTabsFragment.this, 
-																	 args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH + i),
-																	 args.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE + i),
-																	 args.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE + i),
-																	 args.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT + i),
+																	 args.getString(Constants.EXTRA_ABSOLUTE_PATH + i),
+																	 args.getString(Constants.EXTRA_FILTER_FILETYPE + i),
+																	 args.getString(Constants.EXTRA_FILTER_MIMETYPE + i),
+																	 args.getBoolean(Constants.EXTRA_MULTI_SELECT + i),
 																	 args.getBundle("frag" + i));
 					mTabs.add(new PagerItem(cf));
 				}
@@ -375,10 +376,10 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		fragment.type = Frag.TYPE.EXPLORER;
 
 		final Bundle bundle = new Bundle();
-		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, path == null ? "/storage" : path);//EXTRA_DIR_PATH
-		bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, suffix);
-		bundle.putString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, mimes);
-		bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, multi);
+		bundle.putString(Constants.EXTRA_ABSOLUTE_PATH, path == null ? "/storage" : path);//EXTRA_DIR_PATH
+		bundle.putString(Constants.EXTRA_FILTER_FILETYPE, suffix);
+		bundle.putString(Constants.EXTRA_FILTER_MIMETYPE, mimes);
+		bundle.putBoolean(Constants.EXTRA_MULTI_SELECT, multi);
 		//bundle.putStringArray(ExplorerActivity.PREVIOUS_SELECTED_FILES, previousSelectedStr);
 		fragment.setArguments(bundle);
 
@@ -393,7 +394,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		fragment.type = Frag.TYPE.ZIP;
 		
 		final Bundle bundle = new Bundle();
-		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, path);
+		bundle.putString(Constants.EXTRA_ABSOLUTE_PATH, path);
 		fragment.setArguments(bundle);
 
 		fragment.slidingTabsFragment = this;
@@ -474,7 +475,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		addFrag(frag, pagerItem);
 	}
 
-	private void addFrag(Frag frag, PagerItem pagerItem) {
+	private void addFrag(final Frag frag, final PagerItem pagerItem) {
 		final FragmentTransaction ft = childFragmentManager.beginTransaction();
 		final ArrayList<PagerItem> mTabs2 = new ArrayList<PagerItem>(mTabs);
 		final int size = mTabs.size();
@@ -764,11 +765,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 						final View childAt = frag.commands.getChildAt(i);
 						if (childAt instanceof Button) {
 							b = (Button) childAt;
-							b.setTextColor(ExplorerActivity.TEXT_COLOR);
+							b.setTextColor(Constants.TEXT_COLOR);
 							b.getCompoundDrawables()[1].setAlpha(0xff);
-							b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+							b.getCompoundDrawables()[1].setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 						} else {
-							((ImageView)childAt).setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+							((ImageView)childAt).setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 						}
 					}
 				}

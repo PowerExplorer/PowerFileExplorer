@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+>
+
+	<!--com.veinhorn.scrollgalleryview.HackyViewPager-->
+
+    <android.support.v4.view.ViewPager
+		android:id="@+id/photoViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+	/>
+
+	<LinearLayout
+		android:id="@+id/info"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="#80303030"
+		android:orientation="horizontal"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:visibility="visible"
+	>
+
+		<LinearLayout 
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+		>
+			<TextView 
+				android:id="@+id/fileName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingLeft="4dp"
+				android:paddingRight="4dp"
+				android:textSize="16sp"
+				android:textColor="#ffffffff"
+			/>
+			<LinearLayout 
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:orientation="horizontal"
+				android:paddingTop="4dp"
+				android:paddingBottom="4dp">
+
+				<TextView 
+					android:id="@+id/fileOrder"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
+					android:textSize="12sp"
+					android:textColor="#ffffffff"
+				/>
+				<TextView 
+					android:id="@+id/fileDimension"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
+					android:textSize="12sp"
+					android:textColor="#ffffffff"
+				/>
+
+				<TextView 
+					android:id="@+id/fileSize"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
+					android:textSize="12sp"
+					android:textColor="#ffffffff"
+				/>
+				<TextView 
+					android:id="@+id/fileDate"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
+					android:textSize="12sp"
+					android:textColor="#ffffffff"
+				/>
+			</LinearLayout>
+			<HorizontalScrollView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_toEndOf="@+id/right"
+				android:scrollbars="none">
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+				>
+
+					<ImageButton android:id="@+id/slideshowButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_slideshow"
+					/>
+					<ImageButton android:id="@+id/shareButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_action_share"
+					/>
+					<ImageButton android:id="@+id/counterClockwiseButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_counterclockwise_white_48dp"
+					/>
+					<ImageButton android:id="@+id/clockwiseButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_clockwise_white_48dp"
+					/>
+					<ImageButton android:id="@+id/wallpaperButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_important_devices_white_48dp"
+					/>
+					<ImageButton android:id="@+id/addshortcut"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_action_create_shortcut"
+					/>
+					<!--<ImageButton android:id="@+id/chromecastButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
+					android:paddingTop="4dp"
+					android:paddingBottom="4dp"
+					android:background="@drawable/ripple"
+					android:src="@drawable/ic_notification_cast_2"
+					/>-->
+					<ImageButton android:id="@+id/editButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/icon_dark_edit"
+					/>
+					<ImageButton android:id="@+id/scanButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_menu_scan_include"
+					/>
+					<ImageButton android:id="@+id/renameButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_action_rename_white"
+					/>
+					<ImageButton android:id="@+id/copyButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_content_copy_white_36dp"
+					/>
+					<ImageButton android:id="@+id/cutButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_content_cut_white_36dp"
+					/>
+					<ImageButton android:id="@+id/removeButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:paddingLeft="8dp"
+						android:paddingRight="8dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="4dp"
+						android:background="@drawable/ripple"
+						android:src="@drawable/ic_delete_white_36dp"
+					/>
+				</LinearLayout>
+			</HorizontalScrollView>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+    <!--<HorizontalScrollView
+	android:id="@+id/thumbnails_scroll_view"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_alignParentBottom="true"
+	android:layout_alignParentLeft="true"
+	android:layout_alignParentRight="true"
+	android:layout_gravity="bottom"
+	android:scrollbars="none">-->
+
+	<!--<FrameLayout
+	android:id="@+id/thumbnails_scroll_view"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_alignParentBottom="true"
+	android:layout_alignParentLeft="true"
+	android:layout_alignParentRight="true"
+	android:layout_gravity="bottom"
+	android:orientation="horizontal"
+	>-->
+
+	<com.l4digital.fastscroll.FastScrollRecyclerView
+		android:id="@+id/thumbnails_container"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:bubbleColor="#80ff0000"
+		app:bubbleTextColor="#ffffffff"
+		app:handleColor="#ff808080"
+		app:trackColor="#ffbbbbbb"
+		app:hideScrollbar="true"
+		app:showTrack="true" 
+		app:center="true"
+		app:vertical="false"
+		android:orientation="horizontal"
+		android:layout_gravity="bottom"
+
+	/>
+
+
+	<!--</FrameLayout>-->
+    <!--</HorizontalScrollView>-->
+
+</FrameLayout>

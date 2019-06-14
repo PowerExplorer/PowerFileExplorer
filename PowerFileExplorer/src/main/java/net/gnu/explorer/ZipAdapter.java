@@ -33,6 +33,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.DialogAction;
 import android.widget.Toast;
 import net.gnu.p7zip.ZipEntry;
+import net.gnu.common.*;
 
 public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder> {
 
@@ -77,14 +78,14 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 			image = (ImageView)convertView.findViewById(R.id.icon);
 			more = (ImageButton)convertView.findViewById(R.id.more);
 
-			more.setColorFilter(ExplorerActivity.TEXT_COLOR);
+			more.setColorFilter(Constants.TEXT_COLOR);
 
-			name.setTextColor(ExplorerActivity.DIR_COLOR);
-			size.setTextColor(ExplorerActivity.TEXT_COLOR);
-			//attr.setTextColor(ExplorerActivity.TEXT_COLOR);
-			lastModified.setTextColor(ExplorerActivity.TEXT_COLOR);
+			name.setTextColor(Constants.DIR_COLOR);
+			size.setTextColor(Constants.TEXT_COLOR);
+			//attr.setTextColor(Constants.TEXT_COLOR);
+			lastModified.setTextColor(Constants.TEXT_COLOR);
 			if (type != null) {
-				type.setTextColor(ExplorerActivity.TEXT_COLOR);
+				type.setTextColor(Constants.TEXT_COLOR);
 			}
 			image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 			convertView.setTag(this);
@@ -175,7 +176,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 		//Log.d("f.getAbsolutePath()", f.getAbsolutePath());
 		//Log.d("curSelectedFiles", curSelectedFiles.toString());
 		if (zipFrag.selectedInList1.contains(le)) {
-			convertedView.setBackgroundColor(ExplorerActivity.SELECTED_IN_LIST);
+			convertedView.setBackgroundColor(Constants.SELECTED_IN_LIST);
 			cbx.setImageResource(R.drawable.ic_accept);
 			cbx.setSelected(true);
 			cbx.setEnabled(true);
@@ -198,7 +199,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 			zipFrag.allCbx.setSelected(false);
 		}
 		if (zipFrag.tempPreviewL2 != null && zipFrag.tempPreviewL2.equals(le)) {
-			convertedView.setBackgroundColor(ExplorerActivity.LIGHT_GREY);
+			convertedView.setBackgroundColor(Constants.LIGHT_GREY);
 		}
 
 		final int viewType = getItemViewType(position);
@@ -269,7 +270,7 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 				for (int i = 0; i < num; i++) {
 					Drawable icon = menuBuilder.getItem(i).getIcon();
 					if (icon != null) {
-						icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+						icon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 					}
 				}
 
@@ -557,12 +558,11 @@ public class ZipAdapter extends RecyclerAdapter<ZipEntry, ZipAdapter.ViewHolder>
 		final SlidingTabsFragment.PagerAdapter pagerAdapter;
 		final SlidingTabsFragment slidingTabsFragment;
 		if (zipFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-			pagerAdapter = zipFrag.activity.slideFrag2.pagerAdapter;
 			slidingTabsFragment = zipFrag.activity.slideFrag2;
 		} else {
-			pagerAdapter = zipFrag.activity.slideFrag.pagerAdapter;
 			slidingTabsFragment = zipFrag.activity.slideFrag;
 		}
+		pagerAdapter = slidingTabsFragment.pagerAdapter;
 		if (mime.startsWith("text/html") || mime.startsWith("text/xhtml")) {
 			tabIndex1 = SlidingTabsFragment.getFragTypeIndex(zipFrag, Frag.TYPE.TEXT);
 			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(zipFrag, Frag.TYPE.WEB);

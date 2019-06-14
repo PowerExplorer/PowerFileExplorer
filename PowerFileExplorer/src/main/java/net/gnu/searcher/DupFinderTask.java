@@ -23,6 +23,7 @@ import net.gnu.util.FileSorter;
 import android.app.Activity;
 import android.widget.Toast;
 import android.widget.TextView;
+import net.gnu.common.*;
 
 class DupFinderTask extends AsyncTask<Void, String, String> {
 
@@ -40,9 +41,9 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 	File fret;
 
 	private static final String DUP_TITLE = 
-	ExplorerActivity.HTML_STYLE
+	Constants.HTML_STYLE
 	+ "<title>Duplicate Finding Result</title>\r\n" 
-	+ ExplorerActivity.HEAD_TABLE;
+	+ Constants.HEAD_TABLE;
 
 	private Activity activity;
 	private boolean nameOrder = true;
@@ -319,25 +320,25 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 		if (lset != null && lset.size() > 0) {
 			//String findRet = new File(SearchFragment.SearchFragment.PRIVATE_DIR + "/" + "Duplicate finder result.html").toURI().toURL().toString();
 			sb.append("<tr bgcolor=\"#FCCC74\">\r\n")
-				.append(ExplorerActivity.TD1_CENTER)
+				.append(Constants.TD1_CENTER)
 				.append("<b>No.</b></td>\n")
-				.append(ExplorerActivity.TD1_CENTER)
+				.append(Constants.TD1_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewGroup\">")
 				.append("<b>Group</b></a>\n</td>\n")
-				.append(ExplorerActivity.TD2_CENTER)
+				.append(Constants.TD2_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewName\">")
 				.append("<b>File Name</b></a>\n</td>\n")
-				.append(ExplorerActivity.TD2_CENTER)
+				.append(Constants.TD2_CENTER)
 				.append("<b>Size (bytes)</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete?</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete Group</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete Folder</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete Sub Folder</b></td>\n")
 				.append("</tr>");
 			List<List<FileInfo>> newGroupList = new LinkedList<List<FileInfo>>();
@@ -382,49 +383,49 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 							dupSize += ff.length;
 							noDup++;
 						}
-						sb.append(ExplorerActivity.TD1_LEFT).append(++counter).append("</td>\n")
-							.append(ExplorerActivity.TD1_LEFT).append(ff.group).append("</td>\n")
-							.append(ExplorerActivity.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
+						sb.append(Constants.TD1_LEFT).append(++counter).append("</td>\n")
+							.append(Constants.TD1_LEFT).append(ff.group).append("</td>\n")
+							.append(Constants.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
 							.append(ff.path).append("</a>\n</td>\n")
-							.append(ExplorerActivity.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
-							.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+							.append(Constants.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
+							.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteFile=").append(ff.path).append("\">Delete</a>\n</td>\n");
 						if (dupInGroup > 1) {
-							sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+							sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 								.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 						} else {
-							sb.append(ExplorerActivity.TD3_LEFT).append("&nbsp;\n</td>\n");
+							sb.append(Constants.TD3_LEFT).append("&nbsp;\n</td>\n");
 						}
-						sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-							.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+							.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 							.append("</tr>\n")
 							;
 
 					} else {
-						sb.append(ExplorerActivity.TD1_LEFT).append(++counter).append("</td>\n")
-							.append(ExplorerActivity.TD1_LEFT).append(ff.group).append("</td>\n")
-							.append(ExplorerActivity.TD2_LEFT)
+						sb.append(Constants.TD1_LEFT).append(++counter).append("</td>\n")
+							.append(Constants.TD1_LEFT).append(ff.group).append("</td>\n")
+							.append(Constants.TD2_LEFT)
 							//.append("<a href=\"").append(ff.toURI().toURL().toString()).append("\">")
 							.append("<font color='red'><strike>")
 							.append(ff.path)
 							.append("</strike></font>")
 							.append("\n</td>\n")
-							.append(ExplorerActivity.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
-							.append(ExplorerActivity.TD3_LEFT)
+							.append(Constants.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
+							.append(Constants.TD3_LEFT)
 							//.append("<a href=\"").append(findRet).append("?delete=").append(ff.getAbsolutePath())
 							//.append("\">Delete</a>\n")
 							.append("&nbsp;</td>\n");
 						if (dupInGroup > 1) {
-							sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+							sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 								.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 						} else {
-							sb.append(ExplorerActivity.TD3_LEFT).append("&nbsp;\n</td>\n");
+							sb.append(Constants.TD3_LEFT).append("&nbsp;\n</td>\n");
 						}
-						sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-							.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+							.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 							.append("</tr>\n")
 							;
@@ -492,25 +493,25 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 		if (lset != null && lset.size() > 0) {
 
 			sb.append("<tr bgcolor=\"#FCCC74\">\r\n")
-				.append(ExplorerActivity.TD1_CENTER)
+				.append(Constants.TD1_CENTER)
 				.append("<b>No.</b></td>\n")
-				.append(ExplorerActivity.TD1_CENTER)
+				.append(Constants.TD1_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewGroup\">")
 				.append("<b>Group</b></a>\n</td>\n")
-				.append(ExplorerActivity.TD2_CENTER)
+				.append(Constants.TD2_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewName\">")
 				.append("<b>File Name</b></a>\n</td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Size (bytes)</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete?</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete Group</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete Folder</b></td>\n")
-				.append(ExplorerActivity.TD3_CENTER)
+				.append(Constants.TD3_CENTER)
 				.append("<b>Delete Sub Folder</b></td>\n")
 				.append("</tr>");
 
@@ -565,48 +566,48 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 						noDup++;
 						dupSize += ff.length;
 					}
-					sb.append(ExplorerActivity.TD1_LEFT).append(++counter).append("</td>\n")
-						.append(ExplorerActivity.TD1_LEFT).append(ff.group).append("</td>\n")
-						.append(ExplorerActivity.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
+					sb.append(Constants.TD1_LEFT).append(++counter).append("</td>\n")
+						.append(Constants.TD1_LEFT).append(ff.group).append("</td>\n")
+						.append(Constants.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
 						.append(ff.path).append("</a>\n</td>\n")
-						.append(ExplorerActivity.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
-						.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+						.append(Constants.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
+						.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteFile=").append(ff.path).append("\">Delete</a>\n</td>\n");
 					if (dupInGroup > 1) {
-						sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 					} else {
-						sb.append(ExplorerActivity.TD3_LEFT).append("&nbsp;\n</td>\n");
+						sb.append(Constants.TD3_LEFT).append("&nbsp;\n</td>\n");
 					}
-					sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+					sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-						.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+						.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 						.append("</tr>\n")
 						;
 				} else {
-					sb.append(ExplorerActivity.TD1_LEFT).append(++counter).append("</td>\n")
-						.append(ExplorerActivity.TD1_LEFT).append(ff.group).append("</td>\n")
-						.append(ExplorerActivity.TD2_LEFT)
+					sb.append(Constants.TD1_LEFT).append(++counter).append("</td>\n")
+						.append(Constants.TD1_LEFT).append(ff.group).append("</td>\n")
+						.append(Constants.TD2_LEFT)
 						//.append("<a href=\"").append(ff.toURI().toURL().toString()).append("\">")
 						.append("<font color='red'><strike>")
 						.append(ff.path)
 						.append("</strike></font>")
 						.append("\n</td>\n")
-						.append(ExplorerActivity.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
-						.append(ExplorerActivity.TD3_LEFT)
+						.append(Constants.TD3_LEFT).append(Util.nf.format(ff.length)).append("</td>")
+						.append(Constants.TD3_LEFT)
 						//.append("<a href=\"").append(findRet).append("?delete=").append(ff.getAbsolutePath())
 						//.append("\">Delete</a>\n")
 						.append("&nbsp;</td>\n");
 					if (dupInGroup > 1) {
-						sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 					} else {
-						sb.append(ExplorerActivity.TD3_LEFT).append("&nbsp;\n</td>\n");
+						sb.append(Constants.TD3_LEFT).append("&nbsp;\n</td>\n");
 					}
-					sb.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+					sb.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-						.append(ExplorerActivity.TD3_LEFT).append("<a href=\"").append(fret)
+						.append(Constants.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 						.append("</tr>\n")
 						;

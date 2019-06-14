@@ -45,6 +45,7 @@ import net.dongliu.apk.parser.ApkParser;
 import net.gnu.androidutil.AndroidUtils;
 import net.gnu.util.FileUtil;
 import net.gnu.util.Util;
+import net.gnu.common.*;
 
 public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHolder> {
 
@@ -89,14 +90,14 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			image = (ImageView)convertView.findViewById(R.id.icon);
 			more = (ImageButton)convertView.findViewById(R.id.more);
 
-			more.setColorFilter(ExplorerActivity.TEXT_COLOR);
+			more.setColorFilter(Constants.TEXT_COLOR);
 
-			name.setTextColor(ExplorerActivity.DIR_COLOR);
-			size.setTextColor(ExplorerActivity.TEXT_COLOR);
-			attr.setTextColor(ExplorerActivity.TEXT_COLOR);
-			lastModified.setTextColor(ExplorerActivity.TEXT_COLOR);
+			name.setTextColor(Constants.DIR_COLOR);
+			size.setTextColor(Constants.TEXT_COLOR);
+			attr.setTextColor(Constants.TEXT_COLOR);
+			lastModified.setTextColor(Constants.TEXT_COLOR);
 			if (type != null) {
-				type.setTextColor(ExplorerActivity.TEXT_COLOR);
+				type.setTextColor(Constants.TEXT_COLOR);
 			}
 			image.setScaleType(ImageView.ScaleType.FIT_CENTER);
 			convertView.setTag(this);
@@ -196,7 +197,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		//Log.d("f.getAbsolutePath()", f.getAbsolutePath());
 		//Log.d("curSelectedFiles", curSelectedFiles.toString());
 		if (contentFrag.selectedInList1.contains(le)) {
-			convertedView.setBackgroundColor(ExplorerActivity.SELECTED_IN_LIST);
+			convertedView.setBackgroundColor(Constants.SELECTED_IN_LIST);
 			cbx.setImageResource(R.drawable.ic_accept);
 			cbx.setSelected(true);
 			cbx.setEnabled(true);
@@ -224,7 +225,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 			//Log.d(TAG, "inDataSource2 " + inDataSource2 + ", " + dir);
 			if (inDataSource2) {
-				convertedView.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+				convertedView.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
 				cbx.setImageResource(R.drawable.ic_accept);
 				cbx.setSelected(true);
 				cbx.setEnabled(false);
@@ -233,7 +234,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 					contentFrag.allCbx.setImageResource(R.drawable.ic_accept);
 				}
 			} else if (isPartial) {
-				convertedView.setBackgroundColor(ExplorerActivity.IS_PARTIAL);
+				convertedView.setBackgroundColor(Constants.IS_PARTIAL);
 				cbx.setImageResource(R.drawable.ready);
 				cbx.setSelected(false);
 				cbx.setEnabled(true);
@@ -259,7 +260,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			}
 		}
 		if (contentFrag.tempPreviewL2 != null && contentFrag.tempPreviewL2.equals(le)) {
-			convertedView.setBackgroundColor(ExplorerActivity.LIGHT_GREY);
+			convertedView.setBackgroundColor(Constants.LIGHT_GREY);
 		}
 
 		final int viewType = getItemViewType(position);
@@ -426,7 +427,7 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				for (int i = 0; i < num; i++) {
 					Drawable icon = menuBuilder.getItem(i).getIcon();
 					if (icon != null) {
-						icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+						icon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 					}
 				}
 
@@ -816,12 +817,11 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 		final SlidingTabsFragment.PagerAdapter pagerAdapter;
 		final SlidingTabsFragment slidingTabsFragment;
 		if (contentFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-			pagerAdapter = contentFrag.activity.slideFrag2.pagerAdapter;
 			slidingTabsFragment = contentFrag.activity.slideFrag2;
 		} else {
-			pagerAdapter = contentFrag.activity.slideFrag.pagerAdapter;
 			slidingTabsFragment = contentFrag.activity.slideFrag;
 		}
+		pagerAdapter = slidingTabsFragment.pagerAdapter;
 		if (mime.startsWith("text/html") || mime.startsWith("text/xhtml")) {
 			tabIndex1 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.TEXT);
 			tabIndex2 = SlidingTabsFragment.getFragTypeIndex(contentFrag, Frag.TYPE.WEB);
@@ -1026,12 +1026,12 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.PHOTO, fPath);
-				contentFrag.listView.postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							pagerAdapter.getItem(slidingTabsFragment.pageSelected).open(pos, mDataset);
-						}
-					}, 100);
+//				contentFrag.listView.postDelayed(new Runnable() {
+//						@Override
+//						public void run() {
+//							pagerAdapter.getItem(slidingTabsFragment.pageSelected).open(pos, mDataset);
+//						}
+//					}, 100);
 			}
 		} else if (mime.startsWith("audio")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.MEDIA.ordinal()).load(fPath);

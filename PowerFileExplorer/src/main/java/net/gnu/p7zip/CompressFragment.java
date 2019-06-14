@@ -37,6 +37,7 @@ import android.content.Intent;
 import net.gnu.androidutil.ForegroundService;
 import java.util.List;
 import java.util.LinkedList;
+import net.gnu.common.*;
 
 public class CompressFragment extends DialogFragment implements Serializable, OnItemSelectedListener, OnCheckedChangeListener, TextWatcher, OnClickListener, android.widget.RadioGroup.OnCheckedChangeListener {
 
@@ -185,7 +186,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		excludeET = (EditText) view.findViewById(R.id.exclude);
 		otherParametersET = (EditText) view.findViewById(R.id.otherParametersET);
 		passwordET = (ShowHidePasswordEditText) view.findViewById(R.id.password);
-		passwordET.setTintColor(ExplorerActivity.TEXT_COLOR);
+		passwordET.setTintColor(Constants.TEXT_COLOR);
 
 		solidArchiveET = (EditText) view.findViewById(R.id.solidArchiveET);
 		//workingDirectoryET = (EditText) view.findViewById(R.id.workingDirectoryET);
@@ -200,11 +201,11 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 		historyBtn = (ImageButton) view.findViewById(R.id.historyBtn);
 		historySaveBtn = (ImageButton) view.findViewById(R.id.historySaveBtn);
 		
-		filesBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		saveToBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		filesBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		saveToBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 		
-		historyBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		historySaveBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		historyBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		historySaveBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 		
 		adapter = new ArrayAdapter<String>(activity, R.layout.textview_item, R.id.outputTV, outputList);
 		statusLV.setAdapter(adapter);
@@ -291,23 +292,23 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 				}
 			});
 
-		filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, ExplorerActivity.ALL_SUFFIX_TITLE, 
-														ExplorerActivity.ALL_SUFFIX, 
+		filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, Constants.ALL_SUFFIX_TITLE, 
+														Constants.ALL_SUFFIX, 
 														"*/*",
 														fileET, 
-														ExplorerActivity.FILES_REQUEST_CODE, 
-														ExplorerActivity.MULTI_FILES));
+														Constants.FILES_REQUEST_CODE, 
+														Constants.MULTI_FILES));
 
 		mBtnOK.setOnClickListener(this);
 
 		mBtnCancel.setOnClickListener(this);
 
-		saveToBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "File/Folder", 
-														 ExplorerActivity.ZIP_SUFFIX, 
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "File/Folder", 
+														 Constants.ZIP_SUFFIX, 
 														 "",
 														 saveToET, 
-														 ExplorerActivity.SAVETO_REQUEST_CODE, 
-														 !ExplorerActivity.MULTI_FILES));
+														 Constants.SAVETO_REQUEST_CODE, 
+														 !Constants.MULTI_FILES));
 
 	}
 

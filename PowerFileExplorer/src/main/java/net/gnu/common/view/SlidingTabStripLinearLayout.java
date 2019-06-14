@@ -29,6 +29,7 @@ import net.gnu.common.view.*;
 import net.gnu.texteditor.*;
 import net.gnu.explorer.*;
 import android.util.*;
+import net.gnu.common.*;
 
 class SlidingTabStripLinearLayout extends LinearLayout {
 
@@ -75,7 +76,7 @@ class SlidingTabStripLinearLayout extends LinearLayout {
 
         mDefaultTabColorizer = new SimpleTabColorizer();
 		mDefaultTabColorizer.setIndicatorColors(DEFAULT_SELECTED_INDICATOR_COLOR);
-        mDefaultTabColorizer.setDividerColors(setColorAlpha(ExplorerActivity.DIVIDER_COLOR, DEFAULT_DIVIDER_COLOR_ALPHA));//ExplorerActivity.DIVIDER_COLOR;//themeForegroundColor //DEFAULT_DIVIDER_COLOR_ALPHA
+        mDefaultTabColorizer.setDividerColors(setColorAlpha(Constants.DIVIDER_COLOR, DEFAULT_DIVIDER_COLOR_ALPHA));//ExplorerActivity.DIVIDER_COLOR;//themeForegroundColor //DEFAULT_DIVIDER_COLOR_ALPHA
 
         final float density = getResources().getDisplayMetrics().density;
 

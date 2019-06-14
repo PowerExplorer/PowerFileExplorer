@@ -22,6 +22,7 @@ import net.gnu.util.DoubleComparableEntry;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.ExplorerApplication;
 import android.app.Activity;
+import net.gnu.common.*;
 
 public class WordListTask extends AsyncTask<String, String, String> {
 
@@ -31,9 +32,9 @@ public class WordListTask extends AsyncTask<String, String, String> {
 	private List<StardictReader> stardictL = null;
 	private static final String TAG = "WordListTask";
 	private List<String> retL = new ArrayList<String>();
-	private static final String WORDLIST_TITLE = ExplorerActivity.HTML_STYLE
+	private static final String WORDLIST_TITLE = Constants.HTML_STYLE
 	+ "<title>Word List</title>\r\n" 
-	+ ExplorerActivity.HEAD_TABLE;
+	+ Constants.HEAD_TABLE;
 	private static final String TD1 = "<td>";// width='3%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\r\n";
 	private int totalWords = 0;
 	private String allPath;

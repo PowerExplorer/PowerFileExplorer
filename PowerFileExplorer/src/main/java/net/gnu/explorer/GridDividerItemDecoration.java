@@ -11,6 +11,7 @@ import android.support.v7.widget.*;
 import android.util.*;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import net.gnu.common.*;
 
 /**
  * @author dgreenhalgh
@@ -54,10 +55,10 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
         final TypedArray ta = context.obtainStyledAttributes(ATTRS);
 		if (horizontal) {
 			mVerticalDivider = ta.getDrawable(2);
-			mVerticalDivider.setColorFilter(ExplorerActivity.DIVIDER_COLOR, PorterDuff.Mode.OVERLAY);
+			mVerticalDivider.setColorFilter(Constants.DIVIDER_COLOR, PorterDuff.Mode.OVERLAY);
 		} else {
 			mHorizontalDivider = ta.getDrawable(2);
-			mHorizontalDivider.setColorFilter(ExplorerActivity.DIVIDER_COLOR, PorterDuff.Mode.OVERLAY);
+			mHorizontalDivider.setColorFilter(Constants.DIVIDER_COLOR, PorterDuff.Mode.OVERLAY);
 		}
         ta.recycle();
     }

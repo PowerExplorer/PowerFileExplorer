@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Arrays;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.util.FileSorter;
+import net.gnu.common.*;
 
 public class IndexTitleTask extends AsyncTask<String, String, String> {
 
@@ -66,11 +67,11 @@ public class IndexTitleTask extends AsyncTask<String, String, String> {
 		File parent = new File(parentFolder);
 		int parentStrLength = parent.getAbsolutePath().length() + 1;
 		Collection<File> lf = FileUtil.getFilesAndFolder(parent);
-		StringBuilder sb = new StringBuilder(ExplorerActivity.HTML_STYLE);
+		StringBuilder sb = new StringBuilder(Constants.HTML_STYLE);
 		if (lf.size() == 0) {
 			sb.append("No files for listing</body>");
 		} else {
-			sb.append(ExplorerActivity.HEAD_TABLE);
+			sb.append(Constants.HEAD_TABLE);
 			File[] fArr = Util.collection2FileArray(lf);
 			Arrays.sort(fArr, new FileSorter(FileSorter.DIR_TOP, FileSorter.NAME, FileSorter.ASCENDING));
 			// System.out.println(Utils.collectionToString(lf, true, "\n"));
@@ -87,8 +88,8 @@ public class IndexTitleTask extends AsyncTask<String, String, String> {
 					if (fs != null && fs.length > 0) {
 						String retHtml = fAbsolutePath + "/" + f.getName() + "-listing.html";
 						File retF = new File(retHtml);
-						StringBuilder sb2 = new StringBuilder(ExplorerActivity.HTML_STYLE);
-						sb2.append(ExplorerActivity.HEAD_TABLE);
+						StringBuilder sb2 = new StringBuilder(Constants.HTML_STYLE);
+						sb2.append(Constants.HEAD_TABLE);
 						int prev = sb2.length();
 						int counter2 = 0;
 						for (File f2 : fs) {

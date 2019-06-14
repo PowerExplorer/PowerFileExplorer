@@ -48,6 +48,7 @@ import android.view.ViewGroup;
 import android.util.Log;
 import java.io.File;
 import com.amaze.filemanager.ui.icons.MimeTypes;
+import net.gnu.common.*;
 
 public class PDFFragment extends Frag {
 	/* The core rendering instance */
@@ -141,11 +142,11 @@ public class PDFFragment extends Frag {
 		Bundle args = this.getArguments();
         if (savedInstanceState != null && savedInstanceState.size() > 0) {
 			title = savedInstanceState.getString("title");
-			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
+			currentPathTitle = savedInstanceState.getString(Constants.EXTRA_ABSOLUTE_PATH);
 		} else if (args != null) {
 			title = args.getString("title");
-			if (args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {
-				currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
+			if (args.getString(Constants.EXTRA_ABSOLUTE_PATH) != null) {
+				currentPathTitle = args.getString(Constants.EXTRA_ABSOLUTE_PATH);
 			}
 		}
 
@@ -227,7 +228,7 @@ public class PDFFragment extends Frag {
 	}
 
 	public void updateColor(View rootView) {
-		rootView.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		rootView.setBackgroundColor(Constants.BASE_BACKGROUND);
 	}
 
 	public void requestPassword(final Bundle savedInstanceState) {
@@ -420,7 +421,7 @@ public class PDFFragment extends Frag {
 							bundle.putInt("POSITION", mDocView.getDisplayedViewIndex());
 							bundle.putSerializable("OUTLINE", mFlatOutline);
 							intent.putExtras(bundle);
-							fragActivity.startActivityForResult(intent, ExplorerActivity.OUTLINE_REQUEST_CODE);
+							fragActivity.startActivityForResult(intent, Constants.OUTLINE_REQUEST_CODE);
 						}
 					}
 				});
@@ -450,7 +451,7 @@ public class PDFFragment extends Frag {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case ExplorerActivity.OUTLINE_REQUEST_CODE:
+			case Constants.OUTLINE_REQUEST_CODE:
 				if (resultCode >= Activity.RESULT_FIRST_USER) {
 					mDocView.pushHistory();
 					mDocView.setDisplayedViewIndex(resultCode - Activity.RESULT_FIRST_USER);

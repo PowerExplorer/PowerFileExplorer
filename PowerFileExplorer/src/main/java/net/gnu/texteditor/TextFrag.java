@@ -82,6 +82,7 @@ import android.graphics.PorterDuff;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import net.gnu.common.*;
 
 public class TextFrag extends Frag implements JotaDocumentWatcher, ShortcutListener,
 OnFileLoadListener {
@@ -2611,8 +2612,8 @@ OnFileLoadListener {
 
         if ( TextUtils.isEmpty(wallpaper) ){
 			if (fragActivity instanceof ExplorerActivity) {
-				editor.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-				editor.setTextColor(ExplorerActivity.TEXT_COLOR);
+				editor.setBackgroundColor(Constants.BASE_BACKGROUND);
+				editor.setTextColor(Constants.TEXT_COLOR);
 			} else if (SettingsActivity.THEME_DEFAULT.equals(mSettings.theme)) {
                 editor.setBackgroundResource(R.drawable.textfield_default);
             } else if (SettingsActivity.THEME_BLACK.equals(mSettings.theme)) {
@@ -2724,19 +2725,19 @@ OnFileLoadListener {
 	@Override
     public void updateColor(View rootView) {
 		if (!(fragActivity instanceof TextEditorActivity)) {
-			getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-			mEditor.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-			mEditor.setTextColor(ExplorerActivity.TEXT_COLOR);
-			mToolbarBase.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-			mToolbar.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			getView().setBackgroundColor(Constants.BASE_BACKGROUND);
+			mEditor.setBackgroundColor(Constants.BASE_BACKGROUND);
+			mEditor.setTextColor(Constants.TEXT_COLOR);
+			mToolbarBase.setBackgroundColor(Constants.BASE_BACKGROUND);
+			mToolbar.setBackgroundColor(Constants.BASE_BACKGROUND);
 	
 			int n = mToolbar.getChildCount();
 			for (int i = 0; i < n; i++) {
 				View childAt = mToolbar.getChildAt(i);
 				if (childAt instanceof ImageView) {
-					((ImageView)childAt).setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					((ImageView)childAt).setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 				} else if (childAt instanceof Button) {
-					((Button)childAt).setTextColor(ExplorerActivity.TEXT_COLOR);
+					((Button)childAt).setTextColor(Constants.TEXT_COLOR);
 				}
 			}
 		}
@@ -2838,8 +2839,8 @@ OnFileLoadListener {
     {
         mToolbar.removeAllViews();
 		if (!(fragActivity instanceof TextEditorActivity)) {
-			mToolbarBase.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-			mToolbar.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			mToolbarBase.setBackgroundColor(Constants.BASE_BACKGROUND);
+			mToolbar.setBackgroundColor(Constants.BASE_BACKGROUND);
 			mMenuButton.setBackgroundResource(R.drawable.ripple);
 		} else {
 			//activity.getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.textfield_default));
@@ -2869,7 +2870,7 @@ OnFileLoadListener {
 			iv = new ImageView(fragActivity);
 			iv.setBackgroundResource(R.drawable.ripple);
 			if (!(fragActivity instanceof TextEditorActivity)) {
-				iv.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				iv.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 			} else {
 				iv.setColorFilter(0xff404040, PorterDuff.Mode.SRC_IN);
 			}
@@ -2899,7 +2900,7 @@ OnFileLoadListener {
 					button = null;
 				} else {
 					button.setText(getToolbarLabel(func));
-					button.setTextColor(ExplorerActivity.TEXT_COLOR);
+					button.setTextColor(Constants.TEXT_COLOR);
 					iv = null;
 				}
 //			} else {

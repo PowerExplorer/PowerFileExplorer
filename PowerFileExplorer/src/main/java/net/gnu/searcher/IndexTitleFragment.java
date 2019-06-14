@@ -19,6 +19,7 @@ import java.io.File;
 import net.gnu.androidutil.ForegroundService;
 import net.gnu.androidutil.AndroidUtils;
 import android.widget.Toast;
+import net.gnu.common.*;
 
 public class IndexTitleFragment extends DialogFragment implements Serializable, View.OnClickListener {
 
@@ -89,12 +90,12 @@ public class IndexTitleFragment extends DialogFragment implements Serializable, 
 		
 		Log.i("IndexTitleFragment files1", files + ".");
 		if (files != null && files.length() > 0) {
-			filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "File/Folder", 
-															ExplorerActivity.ZIP_SUFFIX, 
+			filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "File/Folder", 
+															Constants.ZIP_SUFFIX, 
 															"",
 															fileET, 
-															ExplorerActivity.SAVETO_REQUEST_CODE, 
-															!ExplorerActivity.MULTI_FILES));
+															Constants.SAVETO_REQUEST_CODE, 
+															!Constants.MULTI_FILES));
 		} 
         mBtnConfirm.setOnClickListener(this);
         mBtnCancel.setOnClickListener(this);

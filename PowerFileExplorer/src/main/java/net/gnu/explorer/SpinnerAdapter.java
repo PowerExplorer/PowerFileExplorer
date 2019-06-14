@@ -7,6 +7,7 @@ import android.content.Context;
 import android.widget.TextView;
 import android.util.TypedValue;
 import android.view.Gravity;
+import net.gnu.common.*;
 
 class SpinnerAdapter extends ArrayAdapter<String> {
 	public SpinnerAdapter(Context context, int resource, String[] objects) {
@@ -24,7 +25,7 @@ class SpinnerAdapter extends ArrayAdapter<String> {
 		
 		tv.setText(st);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		tv.setTextColor(ExplorerActivity.TEXT_COLOR);
+		tv.setTextColor(Constants.TEXT_COLOR);
 		tv.setLayoutParams(new ViewGroup.LayoutParams(
 							   ViewGroup.LayoutParams.WRAP_CONTENT,
 							   ViewGroup.LayoutParams.WRAP_CONTENT));

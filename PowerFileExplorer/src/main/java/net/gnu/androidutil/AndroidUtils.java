@@ -45,6 +45,7 @@ import android.media.MediaScannerConnection;
 import javax.crypto.KeyGenerator;
 import java.security.SecureRandom;
 import javax.crypto.SecretKey;
+import net.gnu.common.*;
 
 
 public class AndroidUtils {
@@ -118,12 +119,12 @@ public class AndroidUtils {
         }
         
         shortcutIntent.setData(Uri.fromFile(f));
-        shortcutIntent.putExtra(ExplorerActivity.EXTRA_ABSOLUTE_PATH, absolutePath);
+        shortcutIntent.putExtra(Constants.EXTRA_ABSOLUTE_PATH, absolutePath);
         shortcutIntent.setAction(Intent.ACTION_MAIN);
         shortcutIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		if (f.isDirectory()) {
-			shortcutIntent.putExtra(ExplorerActivity.EXTRA_MULTI_SELECT, true);
-			shortcutIntent.putExtra(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
+			shortcutIntent.putExtra(Constants.EXTRA_MULTI_SELECT, true);
+			shortcutIntent.putExtra(Constants.EXTRA_FILTER_FILETYPE, "*");
 		}
 
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);

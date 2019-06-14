@@ -34,6 +34,7 @@ import net.gnu.util.FileUtil;
 import android.content.Intent;
 import java.util.List;
 import java.util.LinkedList;
+import net.gnu.common.*;
 
 public class DecompressFragment extends DialogFragment implements Serializable, OnItemSelectedListener, 
 OnCheckedChangeListener, OnClickListener {
@@ -159,12 +160,12 @@ OnCheckedChangeListener, OnClickListener {
 		extractWithFullPathsCB = (CheckBox) view.findViewById(R.id.extractWithFullPathsCB);
 		historyBtn = (ImageButton) view.findViewById(R.id.historyBtn);
 		historySaveBtn = (ImageButton) view.findViewById(R.id.historySaveBtn);
-		historyBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		historySaveBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		passwordET.setTintColor(ExplorerActivity.TEXT_COLOR);
+		historyBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		historySaveBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		passwordET.setTintColor(Constants.TEXT_COLOR);
 		
-		filesBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		saveToBtn.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		filesBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		saveToBtn.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 		
 		config = view.findViewById(R.id.config);
 		status = view.findViewById(R.id.status);
@@ -229,24 +230,24 @@ OnCheckedChangeListener, OnClickListener {
 				}
 			});
 
-		filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_PICK_FILE, 
-														ExplorerActivity.ZIP_TITLE, 
-														ExplorerActivity.ZIP_SUFFIX, 
+		filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_PICK_FILE, 
+														Constants.ZIP_TITLE, 
+														Constants.ZIP_SUFFIX, 
 														"",
 														fileET, 
-														ExplorerActivity.FILES_REQUEST_CODE, 
-														ExplorerActivity.MULTI_FILES));
+														Constants.FILES_REQUEST_CODE, 
+														Constants.MULTI_FILES));
 		mBtnOK.setOnClickListener(this);
 
 		mBtnCancel.setOnClickListener(this);
 
-		saveToBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_PICK_DIRECTORY, 
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_PICK_DIRECTORY, 
 														 "Output Folder", 
 														 "", 
 														 "", 
 														 saveToET, 
-														 ExplorerActivity.SAVETO_REQUEST_CODE,
-														 !ExplorerActivity.MULTI_FILES));
+														 Constants.SAVETO_REQUEST_CODE,
+														 !Constants.MULTI_FILES));
 
 	}
 

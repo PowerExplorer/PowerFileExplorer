@@ -74,7 +74,7 @@
         android:icon="@drawable/file_browser"
 		android:allowBackup="true"
 		android:theme="@style/appCompatLight"
-      	android:hardwareAccelerated="true"
+		android:hardwareAccelerated="true"
 		android:largeHeap="true"
 		android:configChanges="keyboardHidden|orientation|screenSize"
 	>

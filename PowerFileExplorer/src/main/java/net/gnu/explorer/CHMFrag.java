@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import android.app.SearchManager;
 import android.content.Context;
 import android.widget.SearchView;
+import net.gnu.common.*;
 
 public class CHMFrag extends Frag {
     private WebView webview;
@@ -124,7 +125,7 @@ public class CHMFrag extends Frag {
     }
 
 	public void updateColor(final View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
 	}
 
 	public boolean back() {

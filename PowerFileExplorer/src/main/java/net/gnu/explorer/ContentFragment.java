@@ -93,6 +93,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Comparator;
 import net.gnu.p7zip.DecompressTask;
+import net.gnu.common.*;
 
 public class ContentFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -155,9 +156,9 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		if (bundle == null) {
 			bundle = new Bundle();
 		}
-		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, dir);//EXTRA_DIR_PATH
-		bundle.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, suffix);
-		bundle.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, multiFiles);
+		bundle.putString(Constants.EXTRA_ABSOLUTE_PATH, dir);//EXTRA_DIR_PATH
+		bundle.putString(Constants.EXTRA_FILTER_FILETYPE, suffix);
+		bundle.putBoolean(Constants.EXTRA_MULTI_SELECT, multiFiles);
 
 		final ContentFragment fragment = new ContentFragment();
 		fragment.setArguments(bundle);
@@ -478,16 +479,16 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 		if (args != null) {
 			if (currentPathTitle.length() == 0) {//"".equals(currentPathTitle) || 
-				currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH);
+				currentPathTitle = args.getString(Constants.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH);
 			} else {
-				args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+				args.putString(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
 			}
 			//Log.d(TAG, "onViewCreated.dir " + dir);
-			suffix = args.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*").trim().toLowerCase();
+			suffix = args.getString(Constants.EXTRA_FILTER_FILETYPE, "*").trim().toLowerCase();
 
-			mimes = args.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
+			mimes = args.getString(Constants.EXTRA_FILTER_MIMETYPE);
 			//Log.d(TAG, "onViewCreated.suffix " + suffix);
-			multiFiles = args.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT);
+			multiFiles = args.getBoolean(Constants.EXTRA_MULTI_SELECT);
 			//Log.d(TAG, "onViewCreated.multiFiles " + multiFiles);
 			if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
 				savedInstanceState = args;
@@ -535,10 +536,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		
 		if (savedInstanceState != null) {//EXTRA_DIR_PATH
 			if (dataSourceL1.size() == 0) {//cannot use currentPathTitle for checking
-				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-				suffix = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_FILETYPE, "*");
-				mimes = savedInstanceState.getString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, "*/*");
-				multiFiles = savedInstanceState.getBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, true);
+				currentPathTitle = savedInstanceState.getString(Constants.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+				suffix = savedInstanceState.getString(Constants.EXTRA_FILTER_FILETYPE, "*");
+				mimes = savedInstanceState.getString(Constants.EXTRA_FILTER_MIMETYPE, "*/*");
+				multiFiles = savedInstanceState.getBoolean(Constants.EXTRA_MULTI_SELECT, true);
 				type = savedInstanceState.getInt("type") == TYPE.EXPLORER.ordinal() ? TYPE.EXPLORER : TYPE.SELECTION;
 				fake = savedInstanceState.getBoolean("fake", false);
 
@@ -706,10 +707,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		}
 		outState.putParcelable("tempPreviewL2", tempPreviewL2);
 		
-		outState.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
-		outState.putString(ExplorerActivity.EXTRA_FILTER_FILETYPE, suffix);
-		outState.putString(ExplorerActivity.EXTRA_FILTER_MIMETYPE, mimes);
-		outState.putBoolean(ExplorerActivity.EXTRA_MULTI_SELECT, multiFiles);
+		outState.putString(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+		outState.putString(Constants.EXTRA_FILTER_FILETYPE, suffix);
+		outState.putString(Constants.EXTRA_FILTER_MIMETYPE, mimes);
+		outState.putBoolean(Constants.EXTRA_MULTI_SELECT, multiFiles);
 		outState.putBoolean("searchMode", searchMode);
 		outState.putString("searchVal", searchET.getText().toString());
 		outState.putBoolean("fake", fake);
@@ -738,10 +739,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	private Map<String, Object> onSaveInstanceState() {
 		Map<String, Object> outState = new TreeMap<>();
 		//Log.d(TAG, "Map onSaveInstanceState " + dir + ", " + outState);
-		outState.put(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
-		outState.put(ExplorerActivity.EXTRA_FILTER_FILETYPE, suffix);
-		outState.put(ExplorerActivity.EXTRA_FILTER_MIMETYPE, mimes);
-		outState.put(ExplorerActivity.EXTRA_MULTI_SELECT, multiFiles);
+		outState.put(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+		outState.put(Constants.EXTRA_FILTER_FILETYPE, suffix);
+		outState.put(Constants.EXTRA_FILTER_MIMETYPE, mimes);
+		outState.put(Constants.EXTRA_MULTI_SELECT, multiFiles);
 		
 		final ArrayList<LayoutElement> dataSource = new ArrayList<>(tempOriDataSourceL1);//dataSourceL1.size());
 		//dataSource.addAll(dataSourceL1);
@@ -768,10 +769,10 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 
 	private void reload(Map<String, Object> savedInstanceState) {
 		//Log.d(TAG, "reload currentPathTitle " + currentPathTitle + ", "  + savedInstanceState);
-		currentPathTitle = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
-		suffix = (String) savedInstanceState.get(ExplorerActivity.EXTRA_FILTER_FILETYPE);
-		mimes = (String) savedInstanceState.get(ExplorerActivity.EXTRA_FILTER_MIMETYPE);
-		multiFiles = savedInstanceState.get(ExplorerActivity.EXTRA_MULTI_SELECT);
+		currentPathTitle = (String) savedInstanceState.get(Constants.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+		suffix = (String) savedInstanceState.get(Constants.EXTRA_FILTER_FILETYPE);
+		mimes = (String) savedInstanceState.get(Constants.EXTRA_FILTER_MIMETYPE);
+		multiFiles = savedInstanceState.get(Constants.EXTRA_MULTI_SELECT);
 		selectedInList1.clear();
 		selectedInList1.addAll((ArrayList<LayoutElement>) savedInstanceState.get("selectedInList1"));
 		dataSourceL1.clear();
@@ -924,7 +925,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			ib.setTag("/");
 			ib.setMinEms(2);
 			ib.setPadding(0, 4, 0, 4);
-			ib.setTextColor(ExplorerActivity.TEXT_COLOR);
+			ib.setTextColor(Constants.TEXT_COLOR);
 			// ib.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 			ib.setGravity(Gravity.CENTER);
 			ib.setOnClickListener(new View.OnClickListener() {
@@ -944,7 +945,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				b = (TextView) v.findViewById(R.id.name);
 				b.setText(parts[i]);
 				b.setTag(folder);
-				b.setTextColor(ExplorerActivity.TEXT_COLOR);
+				b.setTextColor(Constants.TEXT_COLOR);
 				b.setOnClickListener(new View.OnClickListener() {
 						public void onClick(View view) {
 							String dir2 = (String) view.getTag();
@@ -1073,7 +1074,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
             fragActivity.registerReceiver(decryptReceiver, new IntentFilter(EncryptDecryptUtils.DECRYPT_BROADCAST));
         }
 		if (type == Frag.TYPE.EXPLORER) {
-			getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			getView().setBackgroundColor(Constants.BASE_BACKGROUND);
 			if (mFileObserver != null) {
 				mFileObserver.stopWatching();
 			}
@@ -1105,28 +1106,28 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 	}
 
 	public void updateColor(View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		icons.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		allName.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allDate.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allSize.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allType.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
-		rightStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
-		searchET.setTextColor(ExplorerActivity.TEXT_COLOR);
-		clearButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		searchButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		noFileImage.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		noFileText.setTextColor(ExplorerActivity.TEXT_COLOR);
-		dirMore.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
+		icons.setColorFilter(Constants.TEXT_COLOR);
+		allName.setTextColor(Constants.TEXT_COLOR);
+		allDate.setTextColor(Constants.TEXT_COLOR);
+		allSize.setTextColor(Constants.TEXT_COLOR);
+		allType.setTextColor(Constants.TEXT_COLOR);
+		selectionStatusTV.setTextColor(Constants.TEXT_COLOR);
+		rightStatus.setTextColor(Constants.TEXT_COLOR);
+		searchET.setTextColor(Constants.TEXT_COLOR);
+		clearButton.setColorFilter(Constants.TEXT_COLOR);
+		searchButton.setColorFilter(Constants.TEXT_COLOR);
+		noFileImage.setColorFilter(Constants.TEXT_COLOR);
+		noFileText.setTextColor(Constants.TEXT_COLOR);
+		dirMore.setColorFilter(Constants.TEXT_COLOR);
+		horizontalDivider0.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider12.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider7.setBackgroundColor(Constants.DIVIDER_COLOR);
 		if (type == Frag.TYPE.SELECTION) {
-			addBtn.setColorFilter(ExplorerActivity.TEXT_COLOR);
-			addAllBtn.setColorFilter(ExplorerActivity.TEXT_COLOR);
-			removeBtn.setColorFilter(ExplorerActivity.TEXT_COLOR);
-			removeAllBtn.setColorFilter(ExplorerActivity.TEXT_COLOR);
+			addBtn.setColorFilter(Constants.TEXT_COLOR);
+			addAllBtn.setColorFilter(Constants.TEXT_COLOR);
+			removeBtn.setColorFilter(Constants.TEXT_COLOR);
+			removeAllBtn.setColorFilter(Constants.TEXT_COLOR);
 		}
 	}
 
@@ -1221,7 +1222,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 			deletePastesBtn.setCompoundDrawablesWithIntrinsicBounds(null, drawablePaste, null, null);
 			deletePastesBtn.setText("Paste");
 		}
-		deletePastesBtn.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		deletePastesBtn.getCompoundDrawables()[1].setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 	}
 
 
@@ -1733,7 +1734,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 //				for (int i = 0; i < size;i++) {
 //					final Drawable icon = menuBuilder.getItem(i).getIcon();
 //					icon.setFilterBitmap(true);
-//					icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+//					icon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 //				}
 				
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
@@ -2009,7 +2010,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 				for (int i = 0; i < num; i++) {
 					icon = menuBuilder.getItem(i).getIcon();
 					if (icon != null) {
-						icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+						icon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 					}
 				}
 				

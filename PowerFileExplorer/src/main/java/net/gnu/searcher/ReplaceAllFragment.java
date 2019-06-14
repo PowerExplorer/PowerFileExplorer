@@ -25,6 +25,7 @@ import android.widget.Toast;
 import java.util.List;
 import net.gnu.util.FileUtil;
 import java.util.regex.Pattern;
+import net.gnu.common.*;
 
 public class ReplaceAllFragment extends DialogFragment implements  Serializable, View.OnClickListener {
 
@@ -151,30 +152,30 @@ public class ReplaceAllFragment extends DialogFragment implements  Serializable,
 		restore();
 
 		Log.i("ReplaceAllFragment files1", files + ".");
-		filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, ExplorerActivity.ALL_SUFFIX_TITLE, 
-															ExplorerActivity.ALL_SUFFIX, 
+		filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, Constants.ALL_SUFFIX_TITLE, 
+															Constants.ALL_SUFFIX, 
 															"*/*",
 															fileET, 
-															ExplorerActivity.FILES_REQUEST_CODE, 
-															ExplorerActivity.MULTI_FILES));
+														Constants.FILES_REQUEST_CODE, 
+														Constants.MULTI_FILES));
 
         mBtnConfirm.setOnClickListener(this);
 
         mBtnCancel.setOnClickListener(this);
 
-		saveToBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "Otput Folder", 
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "Otput Folder", 
 														 "", 
 														 "",
 														 saveToET, 
-														 ExplorerActivity.SAVETO_REQUEST_CODE, 
-														 !ExplorerActivity.MULTI_FILES));
+														 Constants.SAVETO_REQUEST_CODE, 
+														 !Constants.MULTI_FILES));
 
-		stardictBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "txt file", 
-														   ExplorerActivity.TXT_SUFFIX, 
+		stardictBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "txt file", 
+														   Constants.TXT_SUFFIX, 
 														   "text/txt",
 														   stardictET, 
-														   ExplorerActivity.STARDICT_REQUEST_CODE, 
-														   !ExplorerActivity.MULTI_FILES));
+														   Constants.STARDICT_REQUEST_CODE, 
+														   !Constants.MULTI_FILES));
 
         return view;
     }

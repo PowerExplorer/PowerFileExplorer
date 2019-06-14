@@ -29,6 +29,7 @@ import net.gnu.p7zip.DecompressFragment;
 import net.gnu.p7zip.GetFileListener;
 import net.gnu.util.FileUtil;
 import net.gnu.util.Util;
+import net.gnu.common.*;
 
 /**
  * Activities that contain this fragment must implement the
@@ -184,19 +185,19 @@ public class BatchFragment extends DialogFragment implements Serializable, View.
 
 		restore();
 		Log.i("BatchFragment files1", files + ".");
-		filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, ExplorerActivity.ALL_SUFFIX_TITLE, 
-														ExplorerActivity.ALL_SUFFIX, 
+		filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, Constants.ALL_SUFFIX_TITLE, 
+														Constants.ALL_SUFFIX, 
 														"*/*",
 														fileET, 
-														ExplorerActivity.FILES_REQUEST_CODE, 
-														ExplorerActivity.MULTI_FILES));
+														Constants.FILES_REQUEST_CODE, 
+														Constants.MULTI_FILES));
 
-		saveToBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "Output Folder", 
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "Output Folder", 
 														 "", 
 														 "",
 														 saveToET, 
-														 ExplorerActivity.SAVETO_REQUEST_CODE, 
-														 !ExplorerActivity.MULTI_FILES));
+														 Constants.SAVETO_REQUEST_CODE, 
+														 !Constants.MULTI_FILES));
 
         mBtnConfirm.setOnClickListener(this);
         mBtnCancel.setOnClickListener(this);

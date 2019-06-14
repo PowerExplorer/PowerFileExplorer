@@ -60,6 +60,7 @@ import android.os.AsyncTask.Status;
 import net.gnu.util.Util;
 import java.util.HashSet;
 import android.graphics.PorterDuff;
+import net.gnu.common.*;
 
 public class AppsFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -348,22 +349,22 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 	}
 
 	public void updateColor(View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		icons.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		allName.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allDate.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allSize.setTextColor(ExplorerActivity.TEXT_COLOR);
-		//allType.setTextColor(ExplorerActivity.TEXT_COLOR);
-		searchET.setTextColor(ExplorerActivity.TEXT_COLOR);
-		clearButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		searchButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
+		icons.setColorFilter(Constants.TEXT_COLOR);
+		allName.setTextColor(Constants.TEXT_COLOR);
+		allDate.setTextColor(Constants.TEXT_COLOR);
+		allSize.setTextColor(Constants.TEXT_COLOR);
+		//allType.setTextColor(Constants.TEXT_COLOR);
+		searchET.setTextColor(Constants.TEXT_COLOR);
+		clearButton.setColorFilter(Constants.TEXT_COLOR);
+		searchButton.setColorFilter(Constants.TEXT_COLOR);
+		selectionStatusTV.setTextColor(Constants.TEXT_COLOR);
 
-		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
+		horizontalDivider0.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider12.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider7.setBackgroundColor(Constants.DIVIDER_COLOR);
 
-		if (ExplorerActivity.BASE_BACKGROUND < 0xff808080) {
+		if (Constants.BASE_BACKGROUND < 0xff808080) {
 			appType.setPopupBackgroundResource(R.drawable.textfield_black);
 		} else {
 			appType.setPopupBackgroundResource(R.drawable.textfield_default_old);
@@ -865,12 +866,12 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				cbx.setOnLongClickListener(AppsAdapter.this);
 				more.setOnClickListener(AppsAdapter.this);
 
-				more.setColorFilter(ExplorerActivity.TEXT_COLOR);
-				name.setTextColor(ExplorerActivity.DIR_COLOR);
-				items.setTextColor(ExplorerActivity.TEXT_COLOR);
-				attr.setTextColor(ExplorerActivity.TEXT_COLOR);
-				lastModified.setTextColor(ExplorerActivity.TEXT_COLOR);
-				type.setTextColor(ExplorerActivity.TEXT_COLOR);
+				more.setColorFilter(Constants.TEXT_COLOR);
+				name.setTextColor(Constants.DIR_COLOR);
+				items.setTextColor(Constants.TEXT_COLOR);
+				attr.setTextColor(Constants.TEXT_COLOR);
+				lastModified.setTextColor(Constants.TEXT_COLOR);
+				type.setTextColor(Constants.TEXT_COLOR);
 			}
 
 			private void bind(final int position) {
@@ -895,11 +896,11 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 				final boolean checked = selectedInList1.contains(appInfo);
 				//Log.d(TAG, "selectedInList1.contains(appInfo) " + checked + ", " + appInfo);
 				if (checked) {
-					ll.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+					ll.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
 					cbx.setSelected(true);
 					cbx.setImageResource(R.drawable.ic_accept);
 				} else if (selectedInList1.size() > 0) {
-					ll.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+					ll.setBackgroundColor(Constants.BASE_BACKGROUND);
 					cbx.setSelected(false);
 					cbx.setImageResource(R.drawable.ready);
 				} else {
@@ -965,12 +966,12 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 			optionsMenu.setForceShowIcon(true);
 
 			Drawable icon = menuBuilder.findItem(R.id.shortcut).getIcon();
-			icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+			icon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 			icon = menuBuilder.findItem(R.id.properties).getIcon();
-			icon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+			icon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 			
-			menuBuilder.findItem(R.id.play).getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+			menuBuilder.findItem(R.id.play).getIcon().setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 			menuBuilder.setCallback(new MenuBuilder.Callback() {
 					@Override

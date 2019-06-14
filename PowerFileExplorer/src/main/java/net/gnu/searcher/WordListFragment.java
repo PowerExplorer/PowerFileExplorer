@@ -21,6 +21,7 @@ import java.util.List;
 import net.gnu.util.FileUtil;
 import java.util.regex.Pattern;
 import java.util.Collection;
+import net.gnu.common.*;
 
 public class WordListFragment extends DialogFragment implements  Serializable, View.OnClickListener {
 
@@ -94,30 +95,30 @@ public class WordListFragment extends DialogFragment implements  Serializable, V
 		restore();
 		
 		Log.i("WordListFragment files1", files + ".");
-		filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, ExplorerActivity.ALL_SUFFIX_TITLE, 
-															ExplorerActivity.ALL_SUFFIX, 
+		filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, Constants.ALL_SUFFIX_TITLE, 
+															Constants.ALL_SUFFIX, 
 															"*/*",
 															fileET, 
-															ExplorerActivity.FILES_REQUEST_CODE, 
-															ExplorerActivity.MULTI_FILES));
+														Constants.FILES_REQUEST_CODE, 
+														Constants.MULTI_FILES));
 		
         mBtnConfirm.setOnClickListener(this);
 
         mBtnCancel.setOnClickListener(this);
 
-		saveToBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "Output Folder", 
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "Output Folder", 
 														 "", 
 														 "",
 														 saveToET, 
-														 ExplorerActivity.SAVETO_REQUEST_CODE, 
-														 !ExplorerActivity.MULTI_FILES));
+														 Constants.SAVETO_REQUEST_CODE, 
+														 !Constants.MULTI_FILES));
 
-		stardictBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, ExplorerActivity.IFO_SUFFIX_TITLE, 
-														   ExplorerActivity.IFO_SUFFIX, 
+		stardictBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, Constants.IFO_SUFFIX_TITLE, 
+														   Constants.IFO_SUFFIX, 
 														   "*/*",
 														   stardictET, 
-														   ExplorerActivity.STARDICT_REQUEST_CODE, 
-														   ExplorerActivity.MULTI_FILES));
+														   Constants.STARDICT_REQUEST_CODE, 
+														   Constants.MULTI_FILES));
         return view;
     }
 
@@ -146,7 +147,7 @@ public class WordListFragment extends DialogFragment implements  Serializable, V
 				Log.d(TAG, stringExtra[0] + ".");
 				save();
 				Collection<File> lf = FileUtil.getFiles(stringExtra, 
-												  Pattern.compile(ExplorerActivity.TXT_SUFFIX, Pattern.CASE_INSENSITIVE), 
+														Pattern.compile(Constants.TXT_SUFFIX, Pattern.CASE_INSENSITIVE), 
 												  false);
 				if (saveTo.length() > 0 && !new File(saveTo).exists()) {
 					Toast.makeText(activity, "Invalid \"Save to\" folder", Toast.LENGTH_SHORT).show();

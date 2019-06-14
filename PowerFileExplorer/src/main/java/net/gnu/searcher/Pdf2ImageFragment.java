@@ -15,6 +15,7 @@ import net.gnu.explorer.ExplorerActivity;
 import android.support.v4.app.DialogFragment;
 import java.io.File;
 import android.widget.Toast;
+import net.gnu.common.*;
 
 /**
  * Activities that contain this fragment must implement the
@@ -91,18 +92,18 @@ public class Pdf2ImageFragment extends DialogFragment implements  Serializable, 
 		restore();
 		//}
 
-		filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, ExplorerActivity.ALL_SUFFIX_TITLE, 
+		filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, Constants.ALL_SUFFIX_TITLE, 
 														".pdf", 
 														"application/pdf",
 														oriDocET, 
-														ExplorerActivity.FILES_REQUEST_CODE, 
-														!ExplorerActivity.MULTI_FILES));
-		saveToBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "Otput Folder", 
+														Constants.FILES_REQUEST_CODE, 
+														!Constants.MULTI_FILES));
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "Otput Folder", 
 														 "", 
 														 "",
 														 modifiedDocET, 
-														 ExplorerActivity.SAVETO_REQUEST_CODE, 
-														 !ExplorerActivity.MULTI_FILES));
+														 Constants.SAVETO_REQUEST_CODE, 
+														 !Constants.MULTI_FILES));
 		mBtnConfirm.setOnClickListener(this);
 		mBtnCancel.setOnClickListener(this);
 		return view;

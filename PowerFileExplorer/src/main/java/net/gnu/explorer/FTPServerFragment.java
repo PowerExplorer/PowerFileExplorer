@@ -50,6 +50,7 @@ import com.amaze.filemanager.utils.color.ColorPreference;
 import android.widget.ImageView;
 import android.graphics.PorterDuff;
 import android.util.Log;
+import net.gnu.common.*;
 
 /**
  * Created by yashwanthreddyg on 10-06-2016.
@@ -360,21 +361,21 @@ public class FTPServerFragment extends Frag implements View.OnClickListener {
 
 	@Override
 	public void updateColor(View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		ftpBtn.setTextColor(ExplorerActivity.TEXT_COLOR);
-		changeUser.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		changePassword.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		changeFtpPort.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		changeSharedPath.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		changeTimeOut.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
-		ftpPasswordVisibleButton.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
+		ftpBtn.setTextColor(Constants.TEXT_COLOR);
+		changeUser.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		changePassword.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		changeFtpPort.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		changeSharedPath.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		changeTimeOut.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		ftpPasswordVisibleButton.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 		
-		statusText.setTextColor(ExplorerActivity.TEXT_COLOR);
-        username.setTextColor(ExplorerActivity.TEXT_COLOR);
-        password.setTextColor(ExplorerActivity.TEXT_COLOR);
-        port.setTextColor(ExplorerActivity.TEXT_COLOR);
-        sharedPath.setTextColor(ExplorerActivity.TEXT_COLOR);
-        timeoutTV.setTextColor(ExplorerActivity.TEXT_COLOR);
+		statusText.setTextColor(Constants.TEXT_COLOR);
+        username.setTextColor(Constants.TEXT_COLOR);
+        password.setTextColor(Constants.TEXT_COLOR);
+        port.setTextColor(Constants.TEXT_COLOR);
+        sharedPath.setTextColor(Constants.TEXT_COLOR);
+        timeoutTV.setTextColor(Constants.TEXT_COLOR);
 	}
 
     private BroadcastReceiver mWifiReceiver = new BroadcastReceiver() {

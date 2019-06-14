@@ -66,6 +66,7 @@ import android.support.v4.app.DialogFragment;
 import com.amaze.filemanager.utils.color.ColorPreference;
 import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff;
+import net.gnu.common.*;
 
 public class ProcessViewer extends DialogFragment {
 
@@ -419,7 +420,7 @@ public class ProcessViewer extends DialogFragment {
 //                            .getDrawable(R.drawable.ic_content_copy_white_36dp));
 //                } else {
 				Drawable drawable = getResources().getDrawable(R.drawable.ic_content_copy_white_36dp);
-				drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				drawable.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 				mProgressImage.setImageDrawable(drawable);
                 //}
                 mProgressTypeText.setText(isMove ? getResources().getString(R.string.moving)
@@ -443,7 +444,7 @@ public class ProcessViewer extends DialogFragment {
 
                     drawable = getResources()
 						.getDrawable(R.drawable.ic_zip_box_white_36dp);
-					drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					drawable.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 					mProgressImage.setImageDrawable(drawable);
 //                } else {
 //                    mProgressImage.setImageDrawable(getResources()
@@ -457,7 +458,7 @@ public class ProcessViewer extends DialogFragment {
 
                     drawable = getResources()
 						.getDrawable(R.drawable.ic_folder_lock_white_36dp);
-					drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					drawable.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 					mProgressImage.setImageDrawable(drawable);
 //                } else {
 //                    mProgressImage.setImageDrawable(getResources()
@@ -471,7 +472,7 @@ public class ProcessViewer extends DialogFragment {
 
                     drawable = getResources()
 						.getDrawable(R.drawable.ic_folder_lock_open_white_36dp);
-					drawable.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+					drawable.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 					mProgressImage.setImageDrawable(drawable);
 //                } else {
 //                    mProgressImage.setImageDrawable(getResources()

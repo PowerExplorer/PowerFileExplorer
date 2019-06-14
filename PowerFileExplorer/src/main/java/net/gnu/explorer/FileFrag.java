@@ -110,6 +110,7 @@ import android.graphics.PorterDuff;
 import com.amaze.filemanager.utils.color.ColorPreference;
 import android.view.inputmethod.InputMethodManager;
 import android.support.v7.widget.PopupMenu;
+import net.gnu.common.*;
 
 public abstract class FileFrag extends Frag implements View.OnClickListener {
 
@@ -268,11 +269,11 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 			final View childAt = commands.getChildAt(i);
 			if (childAt instanceof Button) {
 				b = (Button) childAt;
-				b.setTextColor(ExplorerActivity.TEXT_COLOR);
+				b.setTextColor(Constants.TEXT_COLOR);
 				b.getCompoundDrawables()[1].setAlpha(0xff);
-				b.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				b.getCompoundDrawables()[1].setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 			} else {
-				((ImageView)childAt).setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				((ImageView)childAt).setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 			}
 		}
 		imageLoader = new ImageThreadLoader(activity);
@@ -316,7 +317,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 
 				selectionStatusTV.setVisibility(fileFrag.selectionStatusTV.getVisibility());
 				selectionStatusTV.setText(fileFrag.selectionStatusTV.getText());
-				sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+				sortBarLayout.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
 
 				final int index = fileFrag.gridLayoutManager.findFirstVisibleItemPosition();
 				final View vi = fileFrag.listView.getChildAt(0); 
@@ -371,9 +372,9 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 
 	void refreshRecyclerViewLayoutManager() {
 		setRecyclerViewLayoutManager();
-		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
+		horizontalDivider0.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider12.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider7.setBackgroundColor(Constants.DIVIDER_COLOR);
 	}
 
 	void swap(View v) {

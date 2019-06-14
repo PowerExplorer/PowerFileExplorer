@@ -6,6 +6,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import net.gnu.explorer.ExplorerActivity;
 import android.support.v4.app.DialogFragment;
+import net.gnu.common.*;
 
 public class GetFileListener implements OnClickListener {
 
@@ -34,12 +35,12 @@ public class GetFileListener implements OnClickListener {
 		final Intent intent = new Intent(action);
 		final String file = filesET.getText().toString();
 		if (file.length() > 0) {
-			intent.putExtra(ExplorerActivity.PREVIOUS_SELECTED_FILES, file.split("\\|+\\s*"));
+			intent.putExtra(Constants.PREVIOUS_SELECTED_FILES, file.split("\\|+\\s*"));
 		}
-		intent.putExtra(ExplorerActivity.EXTRA_FILTER_FILETYPE, suffix);
-		intent.putExtra(ExplorerActivity.EXTRA_FILTER_MIMETYPE, mimes);
-		intent.putExtra(ExplorerActivity.EXTRA_MULTI_SELECT, multi);
-		intent.putExtra(ExplorerActivity.EXTRA_TITLE, title);
+		intent.putExtra(Constants.EXTRA_FILTER_FILETYPE, suffix);
+		intent.putExtra(Constants.EXTRA_FILTER_MIMETYPE, mimes);
+		intent.putExtra(Constants.EXTRA_MULTI_SELECT, multi);
+		intent.putExtra(Constants.EXTRA_TITLE, title);
 		frag.getActivity().startActivityForResult(intent, requestCode);
 	}
 }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
 import net.gnu.explorer.ContentFragment;
+import net.gnu.common.*;
 
 
 /**
@@ -80,8 +81,8 @@ public class HiddenAdapter extends RecyclerArrayAdapter<HFile, HiddenAdapter.Vie
             image = (ImageButton) view.findViewById(R.id.delete_button);
             txtDesc = (TextView) view.findViewById(R.id.text2);
             row = (LinearLayout) view.findViewById(R.id.bookmarkrow);
-			image.setColorFilter(ExplorerActivity.TEXT_COLOR);
-			txtDesc.setTextColor(ExplorerActivity.TEXT_COLOR);
+			image.setColorFilter(Constants.TEXT_COLOR);
+			txtDesc.setTextColor(Constants.TEXT_COLOR);
 		}
 
         void render(final int position, final HFile file) {

@@ -131,6 +131,7 @@ import net.gnu.androidutil.SystemUtils;
 import android.content.DialogInterface;
 import net.gnu.util.CommandUtils;
 import android.widget.ArrayAdapter;
+import net.gnu.common.*;
 
 
 public class ExplorerActivity extends StorageCheckActivity implements OnRequestPermissionsResultCallback,
@@ -157,107 +158,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public static final String KEY_INTENT_COMPRESS = "showCompressFrag";
 	public static final String KEY_INTENT_DECOMPRESS = "showDecompressFrag";
 	
-	public static final String HEAD_TABLE = 
-	"</head>\n"
-	+ "<body bgcolor=\"#FFFFF0\" text=\"#000000\" link=\"#0000ff\" vlink=\"#0000ff\">\n"
-	+ "<div align=\"center\">\n"
-	+ "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"width:100.0%;border-collapse:collapse\">\n";
-
-	public static final String HTML_STYLE = 
-	"<html>\n"
-	+ "<head>\n"
-	+ "<meta http-equiv=\"Content-Language\" content=\"en-us\" />\n"
-	+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
-
-	+ "<style type=\"text/css\">\n" 
-	+ "@font-face {\n"
-	+ "    font-family: DejaVuSerifCondensed;\n"
-	+ "    src: url(\"file:///android_asset/fonts/DejaVuSerifCondensed.ttf\");\n"
-	+ "}\n"
-	+ "td {\n"
-	+ "		vertical-align: top; border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt;\n" 
-	+ "}\n"
-	+ "body {\n"
-	+ "    font-family: DejaVuSerifCondensed;\n"
-	+ "    font-size: small;\n"
-	// + "    text-align: justify;"
-	+ "}"
-	+ "</style>\n";
-
-	public static final String EMPTY_HEAD = 
-	HTML_STYLE
-	+ "</head>\n"
-	+ "<body bgcolor=\"#FFFFF0\" text=\"#000000\" link=\"#0000ff\" vlink=\"#0000ff\">\n";
-	public static final String TD1_CENTER = "<td width='4%' align='center' valign='middle' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
-	public static final String TD2_CENTER = "<td width='76%' align='center' valign='middle' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
-	public static final String TD3_CENTER = "<td width='4%' align='center' valign='middle' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
-	public static final String TD1_LEFT = "<td>";// width='4%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
-	public static final String TD2_LEFT = "<td>";// width='76%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
-	public static final String TD3_LEFT = "<td>";// width='4%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\n";
-	
 	private static final String TAG = "ExplorerActivity";
 	
-	public static int SELECTED_IN_LIST = 0xFFFEF8BA;//0xFFFFF0A0
-	public static int BASE_BACKGROUND = 0xFFFFFFE8;
-	public static int TEXT_COLOR = 0xff404040;
-	public static int BASE_BACKGROUND_LIGHT = 0xFFFFFFE8;
-	public static int TEXT_COLOR_DARK = 0xff404040;
-	public static int BASE_BACKGROUND_DARK = 0xff303030;
-	public static int TEXT_COLOR_LIGHT = 0xfff0f0f0;
-	public static int IN_DATA_SOURCE_2 = 0xFFFFF8D9;
-	public static int IS_PARTIAL = 0xFFFFF0CF;
-	public static final int LIGHT_GREY = 0xff909090;
-	public static int DIR_COLOR = Color.BLACK;
-	public static int DOT = 0xffa0a0a0;
-	public static int FILE_COLOR = Color.BLACK;
-	public static int DIVIDER_COLOR = 0xff707070;
-	
-	public static final String PREVIOUS_SELECTED_FILES = "net.gnu.explorer.selectedFiles";
-	
-	public static final String ALL_SUFFIX = "*";
-	public static final String ALL_SUFFIX_TITLE = "Select Files/Folders";
-	public static final String ZIP_SUFFIX = ".zpaq; .7z; .bz2; .bzip2; .tbz2; .tbz; .001; .gz; .gzip; .tgz; .tar; .dump; .swm; .xz; .txz; .zip; .zipx; .jar; .apk; .xpi; .odt; .ods; .odp; .docx; .xlsx; .pptx; .epub; .apm; .ar; .a; .deb; .lib; .arj; .cab; .chm; .chw; .chi; .chq; .msi; .msp; .doc; .xls; .ppt; .cpio; .cramfs; .dmg; .ext; .ext2; .ext3; .ext4; .img; .fat; .hfs; .hfsx; .hxs; .hxi; .hxr; .hxq; .hxw; .lit; .ihex; .iso; .lzh; .lha; .lzma; .mbr; .mslz; .mub; .nsis; .ntfs; .rar; .r00; .rpm; .ppmd; .qcow; .qcow2; .qcow2c; .squashfs; .udf; .iso; .scap; .uefif; .vdi; .vhd; .vmdk; .wim; .esd; .xar; .pkg; .z; .taz";
-	public static final String ZIP_TITLE = "Compressed file (" + ZIP_SUFFIX + ")";
-	public static final int FILES_REQUEST_CODE = 13;
-	public static final int SAVETO_REQUEST_CODE = 14;
-	public static final int STARDICT_REQUEST_CODE = 16;
-	public static final boolean MULTI_FILES = true;
-	public static final int OUTLINE_REQUEST_CODE = 15;
-	
-	/**
-	 * Select multi files and folders
-	*/
-	public static final String EXTRA_MULTI_SELECT = "org.openintents.extra.MULTI_SELECT";//"multiFiles";
-	
-    public static final String ACTION_PICK_FILE = "org.openintents.action.PICK_FILE";
-
-    public static final String ACTION_PICK_DIRECTORY = "org.openintents.action.PICK_DIRECTORY";
-
-    public static final String ACTION_MULTI_SELECT = "org.openintents.action.MULTI_SELECT";
-
-    public static final String ACTION_SEARCH_STARTED = "org.openintents.action.SEARCH_STARTED";
-
-    public static final String ACTION_SEARCH_FINISHED = "org.openintens.action.SEARCH_FINISHED";
-
-    public static final String EXTRA_TITLE = "org.openintents.extra.TITLE";
-
-    public static final String EXTRA_BUTTON_TEXT = "org.openintents.extra.BUTTON_TEXT";
-
-    public static final String EXTRA_WRITEABLE_ONLY = "org.openintents.extra.WRITEABLE_ONLY";
-
-    public static final String EXTRA_SEARCH_INIT_PATH = "org.openintents.extra.SEARCH_INIT_PATH";
-
-    public static final String EXTRA_SEARCH_QUERY = "org.openintents.extra.SEARCH_QUERY";
-    //public static final String EXTRA_DIR_PATH = "org.openintents.extra.DIR_PATH";
-    public static final String EXTRA_ABSOLUTE_PATH = "org.openintents.extra.ABSOLUTE_PATH";
-    public static final String EXTRA_FILTER_FILETYPE = "org.openintents.extra.FILTER_FILETYPE";
-    public static final String EXTRA_FILTER_MIMETYPE = "org.openintents.extra.FILTER_MIMETYPE";
-    public static final String EXTRA_DIRECTORIES_ONLY = "org.openintents.extra.DIRECTORIES_ONLY";
-    public static final String EXTRA_DIALOG_FILE_HOLDER = "org.openintents.extra.DIALOG_FILE";
-    public static final String EXTRA_IS_GET_CONTENT_INITIATED = "org.openintents.extra.ENABLE_ACTIONS";
-    public static final String EXTRA_FILENAME = "org.openintents.extra.FILENAME";
-    public static final String EXTRA_FROM_OI_FILEMANAGER = "org.openintents.extra.FROM_OI_FILEMANAGER";
-	//single file, multi files (pick file+multi extra), single dir, multi dir (pick dir + multi extra), files and dirs (Action_MULTI_SELECT), search query
+		//single file, multi files (pick file+multi extra), single dir, multi dir (pick dir + multi extra), files and dirs (Action_MULTI_SELECT), search query
 	//mime, extension
 	boolean multiFiles = false;
 	private String suffix = ""; // ".*" : all file types, "" only folder, "; *"
@@ -266,18 +169,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	private String mimes = "";
 	String dir = "";
 	
-	public static final String DOC_FILES_SUFFIX =
-	".doc; .docx; .txt; .html; .odt; .rtf; .epub; .fb2; .pdf; .pps; .ppt; .pptx; .xls; .xlsx; " +
-	".ods; .odp; .pub; .vsd; .htm; .xml; .xhtml; .java; .c; .cpp; .h; .md; .lua; .sh; bat; .list; .depend; .js; .jsp; .mk; .config; .configure; .machine; .asm; .css; .desktop; .inc; .shtm; .shtml; .i; .plist; .pro; .py; .s; .xpm; .ini";
-	public static final String TRANSLATE_FILES_SUFFIX =
-	".doc; .docx; .txt; .html; .odt; .rtf; .epub; .fb2; .pdf; .pps; .ppt; .pptx; .xls; .xlsx; " +
-	".ods; .odp; .htm; .xhtml; .shtm; .shtml;";
-	public static final String ORI_SUFFIX_TITLE = "Origin Document (" + DOC_FILES_SUFFIX + ")";
-	public static final String MODI_SUFFIX_TITLE = "Modified Document (" + DOC_FILES_SUFFIX + ")";
-	public static final String TXT_SUFFIX = ".txt";
-	public static final String TXT_SUFFIX_TITLE = "Dictionary Text (" + TXT_SUFFIX + ")";
-	public static final String IFO_SUFFIX = ".ifo";
-	public static final String IFO_SUFFIX_TITLE = "Dictionary File (" + IFO_SUFFIX + ")";
 	
 	public final static int REQUEST_CODE_PREFERENCES = 1, REQUEST_CODE_SRV_FORM = 2, REQUEST_CODE_OPEN = 3;
     public final static int FIND_ACT = 1017, SMB_ACT = 2751, FTP_ACT = 4501, SFTP_ACT = 2450;
@@ -626,28 +517,28 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		if (savedInstanceState == null || supportFragmentManager.findFragmentByTag("slideFrag") == null) {
 			density = (int)(resources.getDisplayMetrics().density);
 			
-			final String extraTitle = intent.getStringExtra(EXTRA_TITLE);
-			if (intent.hasExtra(EXTRA_TITLE)) {
+			final String extraTitle = intent.getStringExtra(Constants.EXTRA_TITLE);
+			if (intent.hasExtra(Constants.EXTRA_TITLE)) {
 				setTitle(extraTitle);
 			} else {
 				setTitle(R.string.pick_title);
 			}
 
-			suffix = intent.getStringExtra(EXTRA_FILTER_FILETYPE);
+			suffix = intent.getStringExtra(Constants.EXTRA_FILTER_FILETYPE);
 			suffix = (suffix == null) ? "" : suffix.trim();
 			
-			multiFiles = intent.getBooleanExtra(EXTRA_MULTI_SELECT, true);
+			multiFiles = intent.getBooleanExtra(Constants.EXTRA_MULTI_SELECT, true);
 			
-			mimes = intent.getStringExtra(EXTRA_FILTER_MIMETYPE);
+			mimes = intent.getStringExtra(Constants.EXTRA_FILTER_MIMETYPE);
 			//mimes = (mimes == null) ? "" : mimes;
 
-			if (ACTION_MULTI_SELECT.equals(action)) {//both dir & file
+			if (Constants.ACTION_MULTI_SELECT.equals(action)) {//both dir & file
 				if (suffix.length() == 0) {
 					suffix = "*";
 				}
-			} else if (ACTION_PICK_DIRECTORY.equals(action)) {//dir
+			} else if (Constants.ACTION_PICK_DIRECTORY.equals(action)) {//dir
 				suffix = "";
-			} else if (ACTION_PICK_FILE.equals(action)) {//file
+			} else if (Constants.ACTION_PICK_FILE.equals(action)) {//file
 				if (suffix.length() == 0) {
 					suffix = ".*";
 				}
@@ -659,20 +550,20 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			} else {
 				suffix = "*";
 			}
-			previousSelectedStr = intent.getStringArrayExtra(PREVIOUS_SELECTED_FILES);
+			previousSelectedStr = intent.getStringArrayExtra(Constants.PREVIOUS_SELECTED_FILES);
 			Log.d(TAG, "previousSelectedStr " + Util.arrayToString(previousSelectedStr, true, "\n"));
 			
 			slideFrag = SlidingTabsFragment.newInstance(SlidingTabsFragment.Side.LEFT);
 			
 			final Uri data = intent.getData();
-			dir = intent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : Uri.decode(data.getPath()) : intent.getStringExtra(EXTRA_ABSOLUTE_PATH) ;
+			dir = intent.getStringExtra(Constants.EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : Uri.decode(data.getPath()) : intent.getStringExtra(Constants.EXTRA_ABSOLUTE_PATH) ;
 			if (dir != null) {
 				Log.d(TAG, "slideFrag.addTab(dir, suffix, mimes, multiFiles)");
 				File file = new File(dir);
 				if (file.isDirectory()) {
 					//slideFrag.addTab(dir, suffix, mimes, multiFiles);
 					slideFrag.initLeftContentFragmentTabs(AndroidUtils.getSharedPreference(this, "curContentFragPath", dir), 
-														  suffix, multiFiles, mimes, previousSelectedStr, intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false));
+														  suffix, multiFiles, mimes, previousSelectedStr, intent.getBooleanExtra(Constants.EXTRA_WRITEABLE_ONLY, false));
 				} else if (FileUtil.extractiblePattern.matcher(file.getName()).matches()) {
 					slideFrag.addZip(Frag.TYPE.ZIP, dir);
 					slideFrag.addContentFragTab(file.getParent(), suffix, mimes, multiFiles);
@@ -691,14 +582,14 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				}
 				Log.d(TAG, "slideFrag.initContentFragmentTabs()");
 				slideFrag.initLeftContentFragmentTabs(AndroidUtils.getSharedPreference(this, "curContentFragPath", dir),
-													  suffix, multiFiles, mimes, previousSelectedStr, intent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false));
+													  suffix, multiFiles, mimes, previousSelectedStr, intent.getBooleanExtra(Constants.EXTRA_WRITEABLE_ONLY, false));
 			}
 		} else {
-			suffix = savedInstanceState.getString(EXTRA_FILTER_FILETYPE, "");
-			mimes = savedInstanceState.getString(EXTRA_FILTER_MIMETYPE, "");
-			multiFiles = savedInstanceState.getBoolean(EXTRA_MULTI_SELECT, true);
-			dir = savedInstanceState.getString(EXTRA_ABSOLUTE_PATH);
-			previousSelectedStr = savedInstanceState.getStringArray(PREVIOUS_SELECTED_FILES);
+			suffix = savedInstanceState.getString(Constants.EXTRA_FILTER_FILETYPE, "");
+			mimes = savedInstanceState.getString(Constants.EXTRA_FILTER_MIMETYPE, "");
+			multiFiles = savedInstanceState.getBoolean(Constants.EXTRA_MULTI_SELECT, true);
+			dir = savedInstanceState.getString(Constants.EXTRA_ABSOLUTE_PATH);
+			previousSelectedStr = savedInstanceState.getStringArray(Constants.PREVIOUS_SELECTED_FILES);
 			slideFrag1Selected = savedInstanceState.getBoolean("slideFrag1Selected");
 			slideFrag = (SlidingTabsFragment) supportFragmentManager.findFragmentByTag("slideFrag");
 			curContentFragIndex = savedInstanceState.getInt("curContentFragIndex");
@@ -744,10 +635,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		swap = AndroidUtils.getSharedPreference(this, "swap", false);
 		transaction.replace(R.id.content_fragment, slideFrag, "slideFrag");
 		if (multiFiles) {
-			horizontalDivider5.setBackgroundColor(DIVIDER_COLOR);
+			horizontalDivider5.setBackgroundColor(Constants.DIVIDER_COLOR);
 			if (savedInstanceState == null || supportFragmentManager.findFragmentByTag("slideFrag2") == null) {
 				slideFrag2 = SlidingTabsFragment.newInstance(SlidingTabsFragment.Side.RIGHT);
-				if (intent.getStringExtra(EXTRA_ABSOLUTE_PATH) != null ||
+				if (intent.getStringExtra(Constants.EXTRA_ABSOLUTE_PATH) != null ||
 					!"*".equals(suffix) || mimes != null || previousSelectedStr != null) {
 					Log.d(TAG, "slideFrag2.addTab(previousSelectedStr) " + dir + ", " + suffix + ", " + mimes + ", " + multiFiles);
 					slideFrag2.addSelectionTab(previousSelectedStr);
@@ -782,7 +673,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		//Log.d(TAG, "appTheme " + appTheme);
 //		if (appTheme.equals(AppTheme.LIGHT)) {
 //            //window.setBackgroundDrawableResource(android.R.color.white);
-			mDrawerList.setBackgroundColor(BASE_BACKGROUND);
+			mDrawerList.setBackgroundColor(Constants.BASE_BACKGROUND);
 //        } else {
 //            //window.setBackgroundDrawableResource(R.color.holo_dark_background);
 //			if (appTheme.equals(AppTheme.DARK)) {
@@ -1122,11 +1013,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		Log.d(TAG, "onSaveInstanceState " + outState);
 		super.onSaveInstanceState(outState);
 
-		outState.putString(EXTRA_ABSOLUTE_PATH, dir);//EXTRA_DIR_PATH
-		outState.putString(EXTRA_FILTER_FILETYPE, suffix);
-		outState.putString(EXTRA_FILTER_MIMETYPE, mimes);
-		outState.putBoolean(EXTRA_MULTI_SELECT, multiFiles);
-		outState.putStringArray(PREVIOUS_SELECTED_FILES, previousSelectedStr);
+		outState.putString(Constants.EXTRA_ABSOLUTE_PATH, dir);//EXTRA_DIR_PATH
+		outState.putString(Constants.EXTRA_FILTER_FILETYPE, suffix);
+		outState.putString(Constants.EXTRA_FILTER_MIMETYPE, mimes);
+		outState.putBoolean(Constants.EXTRA_MULTI_SELECT, multiFiles);
+		outState.putStringArray(Constants.PREVIOUS_SELECTED_FILES, previousSelectedStr);
 		AndroidUtils.setSharedPreference(this, "biggerequalpanel", balance);
 		
 		outState.putBoolean("slideFrag1Selected", slideFrag1Selected);
@@ -1192,6 +1083,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
     public void onResume() {
         Log.d(TAG, "onResume");
 		super.onResume();
+		File cacheDir = Glide.getPhotoCacheDir(ExplorerActivity.this);
+		Log.d(TAG, "onResume cacheDir " + cacheDir.getAbsolutePath());
 		curContentFrag = (ContentFragment) slideFrag.getFragmentIndex(curContentFragIndex);
 		curSelectionFrag = (ContentFragment) slideFrag.getFrag(Frag.TYPE.SELECTION);
 		if (slideFrag2 != null) {
@@ -1245,15 +1138,15 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		mOnActivityResultTask = new Runnable() {
 			@Override
 			public void run() {
-				if (requestCode == ExplorerActivity.OUTLINE_REQUEST_CODE) {
+				if (requestCode == Constants.OUTLINE_REQUEST_CODE) {
 					if (slideFrag1Selected) {
 						slideFrag.getCurrentFragment().onActivityResult(requestCode, responseCode, intent);
 					} else {
 						slideFrag2.getCurrentFragment().onActivityResult(requestCode, responseCode, intent);
 					}
-				} else if (requestCode == FILES_REQUEST_CODE) {
+				} else if (requestCode == Constants.FILES_REQUEST_CODE) {
 					if (responseCode == Activity.RESULT_OK) {
-						List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
+						List<String> stringExtra = intent.getStringArrayListExtra(Constants.PREVIOUS_SELECTED_FILES);
 						if (COMPRESS.equals(currentDialog)) {
 							compressFrag.files = Util.collectionToString(stringExtra, false, "| ");
 							if (!compressFrag.isAdded()) {
@@ -1308,9 +1201,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 							}
 						} 
 					}
-				} else if (requestCode == SAVETO_REQUEST_CODE) {
+				} else if (requestCode == Constants.SAVETO_REQUEST_CODE) {
 					if (responseCode == Activity.RESULT_OK) {
-						List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
+						List<String> stringExtra = intent.getStringArrayListExtra(Constants.PREVIOUS_SELECTED_FILES);
 						if (COMPRESS.equals(currentDialog)) {
 							compressFrag.saveTo = stringExtra.get(0);
 							if (!compressFrag.isAdded()) {
@@ -1375,9 +1268,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 							}
 						} 
 					}
-				} else if (requestCode == STARDICT_REQUEST_CODE) {
+				} else if (requestCode == Constants.STARDICT_REQUEST_CODE) {
 					if (responseCode == Activity.RESULT_OK) {
-						List<String> stringExtra = intent.getStringArrayListExtra(PREVIOUS_SELECTED_FILES);
+						List<String> stringExtra = intent.getStringArrayListExtra(Constants.PREVIOUS_SELECTED_FILES);
 						
 						if (REPLACE.equals(currentDialog)) {
 							replaceFrag.stardict = stringExtra.get(0);
@@ -1977,7 +1870,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
         SmbConnectDialog smbConnectDialog = new SmbConnectDialog();
         Bundle bundle = new Bundle();
         bundle.putString("name", name);
-        bundle.putString(EXTRA_ABSOLUTE_PATH, path);
+        bundle.putString(Constants.EXTRA_ABSOLUTE_PATH, path);
         bundle.putBoolean("edit", edit);
         smbConnectDialog.setArguments(bundle);
         smbConnectDialog.show(getFragmentManager(), "smbdailog");
@@ -2477,70 +2370,70 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				if (theme == 1) {
 					mCurTheme = android.R.style.Theme_Material_Wallpaper;
 					
-					TEXT_COLOR = TEXT_COLOR_LIGHT;
-					BASE_BACKGROUND = BASE_BACKGROUND_DARK;
-					DIVIDER_COLOR = Color.DKGRAY;
-					DIR_COLOR = Color.WHITE;
-					FILE_COLOR = Color.WHITE;
-					SELECTED_IN_LIST = 0xffb0b0b0;
-					IN_DATA_SOURCE_2 = 0xff505050;
-					IS_PARTIAL = 0xff707070;
+					Constants.TEXT_COLOR = Constants.TEXT_COLOR_LIGHT;
+					Constants.BASE_BACKGROUND = Constants.BASE_BACKGROUND_DARK;
+					Constants.DIVIDER_COLOR = Color.DKGRAY;
+					Constants.DIR_COLOR = Color.WHITE;
+					Constants.FILE_COLOR = Color.WHITE;
+					Constants.SELECTED_IN_LIST = 0xffb0b0b0;
+					Constants.IN_DATA_SOURCE_2 = 0xff505050;
+					Constants.IS_PARTIAL = 0xff707070;
 				} else {
 					mCurTheme = android.R.style.Theme_Material_Light;//AndroidUtils.getSharedPreference(this, "theme", android.R.style.Theme_Material_Light);
 					
-					SELECTED_IN_LIST = 0xFFFEF8BA;
-					BASE_BACKGROUND = BASE_BACKGROUND_LIGHT;
-					DIVIDER_COLOR = Color.LTGRAY;
-					IN_DATA_SOURCE_2 = 0xFFFFF8D9;
-					IS_PARTIAL = 0xFFFFF0CF;
-					TEXT_COLOR = TEXT_COLOR_DARK;
-					DIR_COLOR = TEXT_COLOR_DARK;
-					FILE_COLOR = TEXT_COLOR_DARK;
+					Constants.SELECTED_IN_LIST = 0xFFFEF8BA;
+					Constants.BASE_BACKGROUND = Constants.BASE_BACKGROUND_LIGHT;
+					Constants.DIVIDER_COLOR = Color.LTGRAY;
+					Constants.IN_DATA_SOURCE_2 = 0xFFFFF8D9;
+					Constants.IS_PARTIAL = 0xFFFFF0CF;
+					Constants.TEXT_COLOR = Constants.TEXT_COLOR_DARK;
+					Constants.DIR_COLOR = Constants.TEXT_COLOR_DARK;
+					Constants.FILE_COLOR = Constants.TEXT_COLOR_DARK;
 				}
 			} else {
 				if (theme == 1) {
 					mCurTheme = android.R.style.Theme_Wallpaper;
 					
-					TEXT_COLOR = TEXT_COLOR_LIGHT;
-					BASE_BACKGROUND = BASE_BACKGROUND_DARK;
-					DIVIDER_COLOR = Color.DKGRAY;
-					DIR_COLOR = Color.WHITE;
-					FILE_COLOR = Color.WHITE;
-					SELECTED_IN_LIST = 0xffb0b0b0;
-					IN_DATA_SOURCE_2 = 0xff505050;
-					IS_PARTIAL = 0xff707070;
+					Constants.TEXT_COLOR = Constants.TEXT_COLOR_LIGHT;
+					Constants.BASE_BACKGROUND = Constants.BASE_BACKGROUND_DARK;
+					Constants.DIVIDER_COLOR = Color.DKGRAY;
+					Constants.DIR_COLOR = Color.WHITE;
+					Constants.FILE_COLOR = Color.WHITE;
+					Constants.SELECTED_IN_LIST = 0xffb0b0b0;
+					Constants.IN_DATA_SOURCE_2 = 0xff505050;
+					Constants.IS_PARTIAL = 0xff707070;
 				} else {
 					mCurTheme = android.R.style.Theme_Holo_Light;
 					
-					SELECTED_IN_LIST = 0xFFFEF8BA;
-					BASE_BACKGROUND = BASE_BACKGROUND_LIGHT;
-					DIVIDER_COLOR = Color.LTGRAY;
-					IN_DATA_SOURCE_2 = 0xFFFFF8D9;
-					IS_PARTIAL = 0xFFFFF0CF;
-					TEXT_COLOR = TEXT_COLOR_DARK;
-					DIR_COLOR = TEXT_COLOR_DARK;
-					FILE_COLOR = TEXT_COLOR_DARK;
+					Constants.SELECTED_IN_LIST = 0xFFFEF8BA;
+					Constants.BASE_BACKGROUND = Constants.BASE_BACKGROUND_LIGHT;
+					Constants.DIVIDER_COLOR = Color.LTGRAY;
+					Constants.IN_DATA_SOURCE_2 = 0xFFFFF8D9;
+					Constants.IS_PARTIAL = 0xFFFFF0CF;
+					Constants.TEXT_COLOR = Constants.TEXT_COLOR_DARK;
+					Constants.DIR_COLOR = Constants.TEXT_COLOR_DARK;
+					Constants.FILE_COLOR = Constants.TEXT_COLOR_DARK;
 				}
 			}
 			
 			if (ImageThreadLoader.compressIcon != null) {
-				ImageThreadLoader.compressIcon.setColorFilter(TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				ImageThreadLoader.compressIcon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 			}
 			
 			setTheme(mCurTheme);
-			window.getDecorView().setBackgroundColor(BASE_BACKGROUND);
+			window.getDecorView().setBackgroundColor(Constants.BASE_BACKGROUND);
 
 			if (configurationChanged) {
 				configurationChanged = false;
 			} else if (slideFrag != null) {
 				prevTheme = theme;
-				slideFrag.getView().setBackgroundColor(BASE_BACKGROUND);
+				slideFrag.getView().setBackgroundColor(Constants.BASE_BACKGROUND);
 				if (curContentFrag != null) {
 					slideFrag.updateLayout(true);
 				}
 				slideFrag.notifyTitleChange();
 				if (curExplorerFrag != null && curExplorerFrag.getContext() != null) {
-					slideFrag2.getView().setBackgroundColor(BASE_BACKGROUND);
+					slideFrag2.getView().setBackgroundColor(Constants.BASE_BACKGROUND);
 					slideFrag2.notifyTitleChange();
 					slideFrag2.updateLayout(true);
 					curContentFrag.select(slideFrag1Selected);
@@ -2601,22 +2494,22 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			@Override
 			public void run() {
 				final Uri data = newIntent.getData();
-				final String path = newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : Uri.decode(data.getPath()) : newIntent.getStringExtra(EXTRA_ABSOLUTE_PATH);
+				final String path = newIntent.getStringExtra(Constants.EXTRA_ABSOLUTE_PATH) == null ? data == null ? null : Uri.decode(data.getPath()) : newIntent.getStringExtra(Constants.EXTRA_ABSOLUTE_PATH);
 				final String action = newIntent.getAction();
 				Log.i(TAG, "onNewIntent 2 path " + path + ", " + newIntent + ", " + newIntent.getExtras());
 				if (path != null) {
 					final File file = new File(path);
 					if (file.isDirectory()) {
 						dir = path;
-						curContentFrag.suffix = newIntent.getStringExtra(EXTRA_FILTER_FILETYPE);
+						curContentFrag.suffix = newIntent.getStringExtra(Constants.EXTRA_FILTER_FILETYPE);
 						curContentFrag.suffix = (curContentFrag.suffix == null) ? "*" : curContentFrag.suffix;
-						curContentFrag.multiFiles = newIntent.getBooleanExtra(EXTRA_MULTI_SELECT, true);
+						curContentFrag.multiFiles = newIntent.getBooleanExtra(Constants.EXTRA_MULTI_SELECT, true);
 
-						curContentFrag.mimes = newIntent.getStringExtra(EXTRA_FILTER_MIMETYPE);
+						curContentFrag.mimes = newIntent.getStringExtra(Constants.EXTRA_FILTER_MIMETYPE);
 						curContentFrag.mimes = curContentFrag.mimes == null ? "*/*" : curContentFrag.mimes.toLowerCase();
 
-						curContentFrag.mWriteableOnly = newIntent.getBooleanExtra(EXTRA_WRITEABLE_ONLY, false);
-						curContentFrag.previousSelectedStr = newIntent.getStringArrayExtra(PREVIOUS_SELECTED_FILES);
+						curContentFrag.mWriteableOnly = newIntent.getBooleanExtra(Constants.EXTRA_WRITEABLE_ONLY, false);
+						curContentFrag.previousSelectedStr = newIntent.getStringArrayExtra(Constants.PREVIOUS_SELECTED_FILES);
 
 						curContentFrag.changeDir(path, true);
 //				slideFrag.addNewTab(path, i.getStringExtra(ExplorerActivity.EXTRA_SUFFIX), i.getBooleanExtra(ExplorerActivity.EXTRA_MULTI_SELECT, true), true);
@@ -2966,8 +2859,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		}
 
 		Intent intent = this.getIntent();
-		intent.putStringArrayListExtra(PREVIOUS_SELECTED_FILES, fileArr);
-		intent.putExtra(EXTRA_MULTI_SELECT, multiFiles);
+		intent.putStringArrayListExtra(Constants.PREVIOUS_SELECTED_FILES, fileArr);
+		intent.putExtra(Constants.EXTRA_MULTI_SELECT, multiFiles);
 		setResult(RESULT_OK, intent);
 		this.finish();
 	}
@@ -2979,8 +2872,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		if (previousSelectedStr != null && previousSelectedStr.length > 0) {
 			Arrays.sort(previousSelectedStr);
 		}
-		intent.putExtra(PREVIOUS_SELECTED_FILES, previousSelectedStr);
-		intent.putExtra(EXTRA_MULTI_SELECT, multiFiles);
+		intent.putExtra(Constants.PREVIOUS_SELECTED_FILES, previousSelectedStr);
+		intent.putExtra(Constants.EXTRA_MULTI_SELECT, multiFiles);
 		setResult(RESULT_CANCELED, intent);
 		this.finish();
 	}

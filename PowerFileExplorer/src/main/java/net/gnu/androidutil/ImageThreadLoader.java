@@ -34,6 +34,7 @@ import net.gnu.explorer.ExplorerApplication;
 import net.gnu.explorer.R;
 import net.gnu.p7zip.ZipEntry;
 import net.gnu.util.FileUtil;
+import net.gnu.common.*;
 //import com.bumptech.glide.*;
 
 public class ImageThreadLoader {
@@ -109,7 +110,7 @@ public class ImageThreadLoader {
 			folderLockDrawable = res.getDrawable(R.drawable.ic_folder_lock_white_36dp);
 			fileLockDrawable = res.getDrawable(R.drawable.ic_file_lock_white_36dp);
 			compressIcon = res.getDrawable(R.drawable.ic_doc_compressed);
-			compressIcon.setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+			compressIcon.setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 			//Find the dir to save cached images
 			final File cacheDir2 = new File(cachePath);

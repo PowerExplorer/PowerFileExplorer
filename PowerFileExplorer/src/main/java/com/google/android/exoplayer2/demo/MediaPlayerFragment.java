@@ -103,6 +103,7 @@ import android.content.BroadcastReceiver;
 import java.util.Calendar;
 import com.amaze.filemanager.ui.LayoutElement;
 import java.util.List;
+import net.gnu.common.*;
 
 /**
  * An activity that plays media using {@link SimpleExoPlayer}.
@@ -321,11 +322,11 @@ PlaybackControlView.VisibilityListener {
 
 	public void updateColor(View rootView) {
 		if (activity != null) {
-			debugTextView.setTextColor(ExplorerActivity.TEXT_COLOR);
-			debugTextView.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-			debugRootView.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-			rootView.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-			simpleExoPlayerView.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+			debugTextView.setTextColor(Constants.TEXT_COLOR);
+			debugTextView.setBackgroundColor(Constants.BASE_BACKGROUND);
+			debugRootView.setBackgroundColor(Constants.BASE_BACKGROUND);
+			rootView.setBackgroundColor(Constants.BASE_BACKGROUND);
+			simpleExoPlayerView.setBackgroundColor(Constants.BASE_BACKGROUND);
 		} else {
 			debugTextView.setTextColor(0xffffffff);
 			debugTextView.setBackgroundColor(0xff808080);

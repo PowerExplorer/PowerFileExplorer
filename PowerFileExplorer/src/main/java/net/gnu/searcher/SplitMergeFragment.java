@@ -17,6 +17,7 @@ import net.gnu.util.Util;
 import net.gnu.explorer.ExplorerActivity;
 import android.support.v4.app.DialogFragment;
 import android.widget.Toast;
+import net.gnu.common.*;
 
 public class SplitMergeFragment extends DialogFragment implements Serializable, View.OnClickListener {
 	
@@ -119,12 +120,12 @@ public class SplitMergeFragment extends DialogFragment implements Serializable, 
 			restore();
 		Log.i("SplitMergeFragment files1", files + ".");
 		if (files != null && files.length() > 0) {
-			filesBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, ExplorerActivity.ALL_SUFFIX_TITLE, 
-															ExplorerActivity.ALL_SUFFIX, 
+			filesBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, Constants.ALL_SUFFIX_TITLE, 
+															Constants.ALL_SUFFIX, 
 															"*/*",
 															fileET, 
-															ExplorerActivity.FILES_REQUEST_CODE, 
-															ExplorerActivity.MULTI_FILES));
+															Constants.FILES_REQUEST_CODE, 
+															Constants.MULTI_FILES));
 		}
         //}
 
@@ -132,12 +133,12 @@ public class SplitMergeFragment extends DialogFragment implements Serializable, 
 
         mBtnCancel.setOnClickListener(this);
 
-		saveToBtn.setOnClickListener(new GetFileListener(this, ExplorerActivity.ACTION_MULTI_SELECT, "File/Folder", 
-														 ExplorerActivity.ZIP_SUFFIX, 
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "File/Folder", 
+														 Constants.ZIP_SUFFIX, 
 														 "",
 														 fileET, 
-														 ExplorerActivity.SAVETO_REQUEST_CODE, 
-														 !ExplorerActivity.MULTI_FILES));
+														 Constants.SAVETO_REQUEST_CODE, 
+														 !Constants.MULTI_FILES));
 		
         return view;
     }

@@ -61,6 +61,7 @@ import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.Frag;
 import java.io.File;
 import android.content.Context;
+import net.gnu.common.*;
 
 //MailTo Imports
 
@@ -310,8 +311,8 @@ View.OnClickListener {
 			url = savedInstanceState.getString("url");
 			Log.d(TAG, "load2 " + url);
 		} else if (args != null) {
-			if (args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH) != null) {
-				currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
+			if (args.getString(Constants.EXTRA_ABSOLUTE_PATH) != null) {
+				currentPathTitle = args.getString(Constants.EXTRA_ABSOLUTE_PATH);
 				url = Uri.fromFile(new File(currentPathTitle)).toString();
 			} else if (args.getString("url") != null) {
 				url = args.getString("url");
@@ -385,7 +386,7 @@ View.OnClickListener {
 
 	@Override
 	public void updateColor(View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
 //		status.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
 //        status.setTextColor(ExplorerActivity.TEXT_COLOR);
 //        wv.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);

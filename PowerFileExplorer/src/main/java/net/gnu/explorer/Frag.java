@@ -46,6 +46,7 @@ import android.view.MotionEvent;
 import com.thefinestartist.finestwebview.WebFragment;
 import android.app.Activity;
 import com.google.android.exoplayer2.demo.MediaPlayerFragment;
+import net.gnu.common.*;
 //import org.geometerplus.android.fbreader.FBReader;
 
 public abstract class Frag extends Fragment implements View.OnTouchListener, Cloneable, Serializable {
@@ -150,7 +151,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	public void onSaveInstanceState(final Bundle outState) {
 		//Log.d(TAG, "onSaveInstanceState" + path + ", " + outState);
 		super.onSaveInstanceState(outState);
-		outState.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);
+		outState.putString(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);
 		outState.putString("title", title);
 	}
 
@@ -167,35 +168,35 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		ViewGroup sortBarLayoutOther;
 		if (sel) {
 			if (sortBarLayout != null) {
-				sortBarLayout.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+				sortBarLayout.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
 			}
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
 				activity.dir = activity.curContentFrag.currentPathTitle;
 				if (activity.slideFrag2 != null && (sortBarLayoutOther = activity.slideFrag2.getCurrentFragment().sortBarLayout) != null) {
-					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+					sortBarLayoutOther.setBackgroundColor(Constants.BASE_BACKGROUND);
 				}
 				activity.slideFrag1Selected = sel;
 			} else {
 				activity.dir = activity.curExplorerFrag.currentPathTitle;
 				if ((sortBarLayoutOther = activity.slideFrag.getCurrentFragment().sortBarLayout) != null) {
-					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+					sortBarLayoutOther.setBackgroundColor(Constants.BASE_BACKGROUND);
 				}
 				activity.slideFrag1Selected = !sel;
 			}
 		} else {
 			if (sortBarLayout != null) {
-				sortBarLayout.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+				sortBarLayout.setBackgroundColor(Constants.BASE_BACKGROUND);
 			}
 			if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
 				activity.dir = activity.curExplorerFrag.currentPathTitle;
 				if ((sortBarLayoutOther = activity.slideFrag2.getCurrentFragment().sortBarLayout) != null) {
-					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+					sortBarLayoutOther.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
 				}
 				activity.slideFrag1Selected = sel;
 			} else {
 				activity.dir = activity.curContentFrag.currentPathTitle;
 				if ((sortBarLayoutOther = activity.slideFrag.getCurrentFragment().sortBarLayout) != null) {
-					sortBarLayoutOther.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+					sortBarLayoutOther.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
 				}
 				activity.slideFrag1Selected = !sel;
 			}
@@ -225,11 +226,11 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 		final Bundle args = getArguments();
 		if ((currentPathTitle == null || currentPathTitle.length() == 0) && args != null) {
 			title = args.getString("title");
-			currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
+			currentPathTitle = args.getString(Constants.EXTRA_ABSOLUTE_PATH);
 		}
 		if (savedInstanceState != null) {
 			title = savedInstanceState.getString("title");
-			currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
+			currentPathTitle = savedInstanceState.getString(Constants.EXTRA_ABSOLUTE_PATH);
 		}
         sortBarLayout = (ViewGroup)view.findViewById(R.id.sortBarLayout);
 		

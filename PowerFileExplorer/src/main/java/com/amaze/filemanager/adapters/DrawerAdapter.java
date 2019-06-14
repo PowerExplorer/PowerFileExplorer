@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import net.gnu.explorer.ExplorerActivity;
 import net.gnu.explorer.R;
 import android.content.res.TypedArray;
+import net.gnu.common.*;
 
 public class DrawerAdapter extends ArrayAdapter<Item> {
     private final Context context;
@@ -106,7 +107,7 @@ public class DrawerAdapter extends ArrayAdapter<Item> {
                 view.setImageResource(R.color.divider_dark);
 				//view.setBackgroundResource(R.color.background_material_dark);
 			}
-			view.setBackgroundColor(ExplorerActivity.TEXT_COLOR);
+			view.setBackgroundColor(Constants.TEXT_COLOR);
             view.setClickable(false);
             view.setFocusable(false);
 
@@ -188,7 +189,7 @@ public class DrawerAdapter extends ArrayAdapter<Item> {
             if (myChecked.get(position)) {
                 final int accentColor = m.getColorPreference().getColor(ColorUsage.ACCENT);
                 //if (utilsProvider.getAppTheme().equals(AppTheme.LIGHT)) {
-				convertView.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+				convertView.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
                 //} else {
 				//convertView.setBackgroundColor(Color.parseColor("#ff424242"));
                 //}
@@ -196,9 +197,9 @@ public class DrawerAdapter extends ArrayAdapter<Item> {
                 txtTitle.setTextColor(accentColor);
             } else {
                 //if (utilsProvider.getAppTheme().equals(AppTheme.LIGHT)) {
-				imageView.setColorFilter(ExplorerActivity.TEXT_COLOR);
-				txtTitle.setTextColor(ExplorerActivity.TEXT_COLOR);
-				convertView.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+				imageView.setColorFilter(Constants.TEXT_COLOR);
+				txtTitle.setTextColor(Constants.TEXT_COLOR);
+				convertView.setBackgroundColor(Constants.BASE_BACKGROUND);
                 //} else {
 				//imageView.setColorFilter(Color.WHITE);
 				//txtTitle.setTextColor(Utils.getColor(m, android.R.color.white));

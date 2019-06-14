@@ -103,6 +103,7 @@ import net.gnu.zpaq.Zpaq;
 import net.gnu.p7zip.DecompressTask;
 import net.gnu.p7zip.ZipEntry;
 import net.gnu.p7zip.ZipEntrySorter;
+import net.gnu.common.*;
 
 public class ZipFragment extends FileFrag implements View.OnClickListener {
 
@@ -164,7 +165,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		if (bundle == null) {
 			bundle = new Bundle();
 		}
-		bundle.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, zipPath);
+		bundle.putString(Constants.EXTRA_ABSOLUTE_PATH, zipPath);
 		
 		final ZipFragment zipFragment = new ZipFragment();
 		zipFragment.setArguments(bundle);
@@ -420,9 +421,9 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			});
 		if (args != null) {
 			if (currentPathTitle == null) {
-				currentPathTitle = args.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);
+				currentPathTitle = args.getString(Constants.EXTRA_ABSOLUTE_PATH);
 			} else {
-				args.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);
+				args.putString(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);
 			}
 			//Log.d(TAG, "onViewCreated.dir " + dir);
 			if (savedInstanceState == null && args.getStringArrayList("dataSourceL1") != null) {
@@ -473,7 +474,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			setDirectoryButtons();
 			if (dataSourceL1.size() == 0) {//cannot use currentPathTitle for checking
 
-				currentPathTitle = savedInstanceState.getString(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+				currentPathTitle = savedInstanceState.getString(Constants.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 				curPath = (String) savedInstanceState.get("curPath");
 				
 				fake = savedInstanceState.getBoolean("fake", false);
@@ -553,7 +554,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		
 		outState.putParcelable("tempPreviewL2", tempPreviewL2);
 
-		outState.putString(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+		outState.putString(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
 		
 		outState.putBoolean("searchMode", searchMode);
 		outState.putString("searchVal", searchET.getText().toString());
@@ -585,7 +586,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	Map<String, Object> onSaveInstanceState() {
 		Map<String, Object> outState = new TreeMap<>();
 		//Log.d(TAG, "Map onSaveInstanceState " + dir + ", " + outState);
-		outState.put(ExplorerActivity.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
+		outState.put(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
 		
 		final ArrayList<ZipEntry> dataSource = new ArrayList<>(dataSourceL1.size());
 		dataSource.addAll(dataSourceL1);
@@ -614,7 +615,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 	void reload(Map<String, Object> savedInstanceState) {
 		Log.d(TAG, "reload currentPathTitle " + currentPathTitle + ", "  + savedInstanceState);
-		currentPathTitle = (String) savedInstanceState.get(ExplorerActivity.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
+		currentPathTitle = (String) savedInstanceState.get(Constants.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 		curPath = (String) savedInstanceState.get("curPath");
 		selectedInList1.clear();
 		selectedInList1.addAll((ArrayList<ZipEntry>) savedInstanceState.get("selectedInList1"));
@@ -746,7 +747,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			ib.setTag("/");
 			ib.setMinEms(2);
 			ib.setPadding(0, 4, 0, 4);
-			ib.setTextColor(ExplorerActivity.TEXT_COLOR);
+			ib.setTextColor(Constants.TEXT_COLOR);
 			// ib.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 			ib.setGravity(Gravity.CENTER);
 			ib.setOnClickListener(new View.OnClickListener() {
@@ -771,7 +772,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				b = (TextView) v.findViewById(R.id.name);
 				b.setText(parts[i]);
 				b.setTag(folder);
-				b.setTextColor(ExplorerActivity.TEXT_COLOR);
+				b.setTextColor(Constants.TEXT_COLOR);
 				b.setOnClickListener(new View.OnClickListener() {
 						public void onClick(View view) {
 							String dir2 = (String) view.getTag();
@@ -893,7 +894,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		super.onResume();
 		activity = (ExplorerActivity)getActivity();
 
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
 		if (mFileObserver != null) {
 			mFileObserver.stopWatching();
 		}
@@ -910,23 +911,23 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	}
 
 	public void updateColor(View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		icons.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		allName.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allDate.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allSize.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allType.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
-		rightStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
-		searchET.setTextColor(ExplorerActivity.TEXT_COLOR);
-		clearButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		searchButton.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		noFileImage.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		noFileText.setTextColor(ExplorerActivity.TEXT_COLOR);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
+		icons.setColorFilter(Constants.TEXT_COLOR);
+		allName.setTextColor(Constants.TEXT_COLOR);
+		allDate.setTextColor(Constants.TEXT_COLOR);
+		allSize.setTextColor(Constants.TEXT_COLOR);
+		allType.setTextColor(Constants.TEXT_COLOR);
+		selectionStatusTV.setTextColor(Constants.TEXT_COLOR);
+		rightStatus.setTextColor(Constants.TEXT_COLOR);
+		searchET.setTextColor(Constants.TEXT_COLOR);
+		clearButton.setColorFilter(Constants.TEXT_COLOR);
+		searchButton.setColorFilter(Constants.TEXT_COLOR);
+		noFileImage.setColorFilter(Constants.TEXT_COLOR);
+		noFileText.setTextColor(Constants.TEXT_COLOR);
 		
-		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
+		horizontalDivider0.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider12.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider7.setBackgroundColor(Constants.DIVIDER_COLOR);
 	}
 
 	void updateL2() {
@@ -965,7 +966,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			deletePastesBtn.setCompoundDrawablesWithIntrinsicBounds(null, drawablePaste, null, null);
 			deletePastesBtn.setText("Paste");
 		}
-		deletePastesBtn.getCompoundDrawables()[1].setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+		deletePastesBtn.getCompoundDrawables()[1].setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 	}
 
 

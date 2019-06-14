@@ -65,6 +65,7 @@ import android.view.Gravity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.GridLayoutManager;
 import android.graphics.PorterDuff;
+import net.gnu.common.*;
 
 public class DataTrackerFrag extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -517,19 +518,19 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 
 	@Override
 	public void updateColor(View rootView) {
-		getView().setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
-		icons.setColorFilter(ExplorerActivity.TEXT_COLOR);
-		allName.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allDate.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allSize.setTextColor(ExplorerActivity.TEXT_COLOR);
-		allType.setTextColor(ExplorerActivity.TEXT_COLOR);
-		selectionStatusTV.setTextColor(ExplorerActivity.TEXT_COLOR);
-		totalTransferTV.setTextColor(ExplorerActivity.TEXT_COLOR);
-		appStatus.setTextColor(ExplorerActivity.TEXT_COLOR);
-		interval.setTextColor(ExplorerActivity.TEXT_COLOR);
-		unit.setTextColor(ExplorerActivity.TEXT_COLOR);
+		getView().setBackgroundColor(Constants.BASE_BACKGROUND);
+		icons.setColorFilter(Constants.TEXT_COLOR);
+		allName.setTextColor(Constants.TEXT_COLOR);
+		allDate.setTextColor(Constants.TEXT_COLOR);
+		allSize.setTextColor(Constants.TEXT_COLOR);
+		allType.setTextColor(Constants.TEXT_COLOR);
+		selectionStatusTV.setTextColor(Constants.TEXT_COLOR);
+		totalTransferTV.setTextColor(Constants.TEXT_COLOR);
+		appStatus.setTextColor(Constants.TEXT_COLOR);
+		interval.setTextColor(Constants.TEXT_COLOR);
+		unit.setTextColor(Constants.TEXT_COLOR);
 
-		if (ExplorerActivity.BASE_BACKGROUND < 0xff808080) {
+		if (Constants.BASE_BACKGROUND < 0xff808080) {
 //			networkSpinner.setPopupBackgroundResource(R.drawable.textfield_black);
 			statusSpinner.setPopupBackgroundResource(R.drawable.textfield_black);
 			intervalSpinner.setPopupBackgroundResource(R.drawable.textfield_black);
@@ -541,11 +542,11 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 			unitSpinner.setPopupBackgroundResource(R.drawable.textfield_default_old);
 		}
 
-		horizontalDivider0.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider12.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		horizontalDivider7.setBackgroundColor(ExplorerActivity.DIVIDER_COLOR);
-		noFileText.setTextColor(ExplorerActivity.TEXT_COLOR);
-		noFileImage.setColorFilter(ExplorerActivity.TEXT_COLOR);
+		horizontalDivider0.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider12.setBackgroundColor(Constants.DIVIDER_COLOR);
+		horizontalDivider7.setBackgroundColor(Constants.DIVIDER_COLOR);
+		noFileText.setTextColor(Constants.TEXT_COLOR);
+		noFileImage.setColorFilter(Constants.TEXT_COLOR);
 	}
 
 	private void update_labels() {
@@ -798,13 +799,13 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 				optionsMenu.setForceShowIcon(true);
 				
 				MenuItem mi = menuBuilder.findItem(R.id.properties);
-				mi.getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				mi.getIcon().setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 				
 				mi = menuBuilder.findItem(R.id.shortcut);
-				mi.getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				mi.getIcon().setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 				
 				mi = menuBuilder.findItem(R.id.play);
-				mi.getIcon().setColorFilter(ExplorerActivity.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
+				mi.getIcon().setColorFilter(Constants.TEXT_COLOR, PorterDuff.Mode.SRC_IN);
 
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
@@ -951,19 +952,19 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 			holder.cbx.setTag(appStat);
 			holder.more.setTag(appStat);
 
-			holder.more.setColorFilter(ExplorerActivity.TEXT_COLOR);
-			holder.name.setTextColor(ExplorerActivity.DIR_COLOR);
-			holder.items.setTextColor(ExplorerActivity.TEXT_COLOR);
-			holder.attr.setTextColor(ExplorerActivity.TEXT_COLOR);
-			holder.lastModified.setTextColor(ExplorerActivity.TEXT_COLOR);
-			holder.type.setTextColor(ExplorerActivity.TEXT_COLOR);
+			holder.more.setColorFilter(Constants.TEXT_COLOR);
+			holder.name.setTextColor(Constants.DIR_COLOR);
+			holder.items.setTextColor(Constants.TEXT_COLOR);
+			holder.attr.setTextColor(Constants.TEXT_COLOR);
+			holder.lastModified.setTextColor(Constants.TEXT_COLOR);
+			holder.type.setTextColor(Constants.TEXT_COLOR);
 
 			if (appStat.idle) {
-				holder.name.setTextColor(ExplorerActivity.TEXT_COLOR);
-				holder.attr.setTextColor(ExplorerActivity.TEXT_COLOR);
-				holder.type.setTextColor(ExplorerActivity.TEXT_COLOR);
-				holder.lastModified.setTextColor(ExplorerActivity.TEXT_COLOR);
-				holder.items.setTextColor(ExplorerActivity.TEXT_COLOR);
+				holder.name.setTextColor(Constants.TEXT_COLOR);
+				holder.attr.setTextColor(Constants.TEXT_COLOR);
+				holder.type.setTextColor(Constants.TEXT_COLOR);
+				holder.lastModified.setTextColor(Constants.TEXT_COLOR);
+				holder.items.setTextColor(Constants.TEXT_COLOR);
 			} else {
 				holder.name.setTextColor(Color.RED);
 				holder.attr.setTextColor(Color.RED);
@@ -1014,11 +1015,11 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 
 			final boolean checked = myChecked.contains(appStat);
 			if (checked) {
-				holder.ll.setBackgroundColor(ExplorerActivity.IN_DATA_SOURCE_2);
+				holder.ll.setBackgroundColor(Constants.IN_DATA_SOURCE_2);
 				holder.cbx.setSelected(true);
 				holder.cbx.setImageResource(R.drawable.ic_accept);
 			} else if (myChecked.size() > 0) {
-				holder.ll.setBackgroundColor(ExplorerActivity.BASE_BACKGROUND);
+				holder.ll.setBackgroundColor(Constants.BASE_BACKGROUND);
 				holder.cbx.setSelected(false);
 				holder.cbx.setImageResource(R.drawable.ready);
 			} else {

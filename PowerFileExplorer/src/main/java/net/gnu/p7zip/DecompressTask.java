@@ -218,8 +218,12 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 	protected void onCancelled(String result) {
 		Log.i(TAG, "onCancelled");
 		mNotifyMgr.cancel(mNotificationId);
-		andro7za.command.stopAll();
-		zpaq.command.stopAll();
+		if (andro7za.command != null) {
+			andro7za.command.stopAll();
+		}
+		if (zpaq.command != null) {
+			zpaq.command.stopAll();
+		}
 		if (wl != null && wl.isHeld()) {
 			wl.release();
 		}
@@ -248,7 +252,7 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 		//Toast.makeText(activity, "Operation took " + Util.nf.format(System.currentTimeMillis() - start) + " milliseconds", Toast.LENGTH_LONG).show();
 		if (decompFrag != null) {
 			decompFrag.stopService();
-			decompFrag.mBtnOK.setText("Decompress");
+			decompFrag.mBtnOK.setEnabled(false);//.setText("Decompress");
 			decompFrag.adapter.add(result);
 			decompFrag.adapter.add("Operation took " + elapseTime + " milliseconds");
 			decompFrag.adapter.notifyDataSetChanged();

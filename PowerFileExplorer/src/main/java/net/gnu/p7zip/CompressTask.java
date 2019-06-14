@@ -319,11 +319,11 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 	protected void onCancelled(String result) {
 		Log.d(TAG, "onCancelled zpaq.command " + zpaq.command + ", andro7za.command " + andro7za.command);
 		mNotifyMgr.cancel(mNotificationId);
-		if (zpaq.command != null) {
-			zpaq.command.stopAll();
-		}
 		if (andro7za.command != null) {
 			andro7za.command.stopAll();
+		}
+		if (zpaq.command != null) {
+			zpaq.command.stopAll();
 		}
 		if (wl != null && wl.isHeld()) {
 			wl.release();
@@ -336,7 +336,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 		Log.i(TAG, "onPostExecute " + result);
 		final String elapseTime = Util.nf.format(System.currentTimeMillis() - start);
 		mNotifyMgr.cancel(mNotificationId);
-		compressFrag.mBtnOK.setText("Compress");
+		compressFrag.mBtnOK.setEnabled(false);//.setText("Compress");
 		if (result.length() > 0) {
 			compressFrag.adapter.add(result);
 			compressFrag.adapter.add("Operation took " + elapseTime + " milliseconds");
