@@ -1026,12 +1026,12 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
 				slidingTabsFragment.addTab(Frag.TYPE.PHOTO, fPath);
-//				contentFrag.listView.postDelayed(new Runnable() {
-//						@Override
-//						public void run() {
-//							pagerAdapter.getItem(slidingTabsFragment.pageSelected).open(pos, mDataset);
-//						}
-//					}, 100);
+				contentFrag.listView.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							pagerAdapter.getItem(slidingTabsFragment.pageSelected).open(pos, mDataset);
+						}
+					}, 100);
 			}
 		} else if (mime.startsWith("audio")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.MEDIA.ordinal()).load(fPath);
