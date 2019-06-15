@@ -21,10 +21,7 @@
 		android:layout_height="wrap_content"
 		android:background="#80303030"
 		android:orientation="horizontal"
-		android:layout_alignParentTop="true"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentStart="true"
-		android:visibility="visible"
+		android:layout_gravity="top"
 	>
 
 		<LinearLayout 

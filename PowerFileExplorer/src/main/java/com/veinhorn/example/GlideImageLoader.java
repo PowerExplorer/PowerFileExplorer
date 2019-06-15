@@ -151,9 +151,9 @@ public class GlideImageLoader {
 						.dontAnimate()
 						.skipMemoryCache(true)
 						.diskCacheStrategy(strategy)
-						.fitCenter()
+						//.fitCenter()
 						//.crossFade()
-						.placeholder(R.drawable.image_error)
+						.placeholder(R.drawable.transparent_256)
 						.error(R.drawable.image_error);
 					//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					if (strategy != DiskCacheStrategy.NONE) {
@@ -191,9 +191,9 @@ public class GlideImageLoader {
 					.dontAnimate()
 					.skipMemoryCache(true)
 					.diskCacheStrategy(DiskCacheStrategy.NONE)
-					.fitCenter()
+					//.fitCenter()
 					//.crossFade()
-					.placeholder(R.drawable.image_error)
+					.placeholder(R.drawable.transparent_256)
 					.error(R.drawable.image_error)
 					//.override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 					.into(imageView);

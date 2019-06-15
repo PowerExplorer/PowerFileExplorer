@@ -55,12 +55,14 @@ import java.util.HashSet;
 import java.util.regex.Pattern;
 import com.amaze.filemanager.ui.LayoutElement;
 import java.io.FileNotFoundException;
+import com.ortiz.touch.*;
+import com.veinhorn.example.*;
 
 public class PhotoFragment extends Frag {
 	private static final String TAG = "PhotoFragment";
 	private ArrayList<File> infos;
     private ScrollGalleryView scrollGalleryView;
-	private ImageView image;
+	private TouchImageView image;
 	
 	public static final Pattern IMAGE_PATTERN = Pattern.compile("^[^\n]*?\\.(jpg|jpeg|gif|png|avi|mpg|mpeg|mp4|3gpp|3gp|3gpp2|vob|asf|wmv|flv|mkv|asx|qt|mov|webm|bmp|ico|tiff|tif|psd|cur|pcx|svg|dwg|pct|pic|jpe|mpe|3g2|m4v|wm|wmx|mpa)$", Pattern.CASE_INSENSITIVE);
 
@@ -86,23 +88,9 @@ public class PhotoFragment extends Frag {
 		Log.d(TAG, "onViewCreated " + currentPathTitle + ", " + "args=" + args + ", " + savedInstanceState);
 
 		scrollGalleryView = (ScrollGalleryView) v.findViewById(R.id.scroll_gallery_view);
-		image = (ImageView) v.findViewById(R.id.image);
+		image = (TouchImageView) v.findViewById(R.id.image);
+		scrollGalleryView.setThumbnailSize(AndroidUtils.dpToPx(56, fragActivity));
 		
-//		if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO) {
-//			scrollGalleryView.setOnDoubleTapListener(this);
-//		} 
-		//image_view.setVisibility( View.GONE );
-
-
-		//setInstanceRetain
-//		if (args != null) {
-//			title = args.getString("title");
-//			CURRENT_PATH = args.getString("path");
-//		}
-//		if (savedInstanceState != null) {
-//			title = savedInstanceState.getString("title");
-//			CURRENT_PATH = savedInstanceState.getString("path");
-//		}
 		updateColor(v);
 		Log.d(TAG, "currentPathTitle " + currentPathTitle);
         final Intent intent = fragActivity.getIntent();
@@ -112,7 +100,7 @@ public class PhotoFragment extends Frag {
 			if (uri != null) {
 				final String scheme = uri.getScheme();
 				if (ContentResolver.SCHEME_FILE.equals(scheme)) {
-					File f = new File(uri.getPath());
+					File f = new File(Uri.decode(uri.getPath()));
 					if (f.exists()) {
 						load(f.getAbsolutePath());
 					} else {
@@ -122,32 +110,48 @@ public class PhotoFragment extends Frag {
 					load(uri);
 				}
 			} else {
-				ArrayList<Uri> arrList = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+				final ArrayList<Uri> arrList = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
 				if (arrList != null) {
 					final int size = arrList.size();
-					if (size == 1) {
-						File f = new File(arrList.get(0).getPath());
-						if (f.exists()) {
-							load(f.getAbsolutePath());
-						} else {
-							Toast.makeText(fragActivity, f.getAbsolutePath() + " is not existed", Toast.LENGTH_LONG).show();
-						}
-					} else {
-						String[] arr = new String[arrList.size()];
-						int i = 0;
-						for (Uri u : arrList) {
-							arr[i++] = u.getPath();
-						}
-						open(0, arr);
+					if (size >= 1) {
+						final String[] arr = new String[arrList.size()];
+//						final Uri uri2 = arrList.get(0);
+//						if (ContentResolver.SCHEME_FILE.equals(uri2.getScheme())) {
+							int i = 0;
+							for (Uri u : arrList) {
+								arr[i++] = Uri.decode(u.getPath());
+							}
+							open(0, arr);
+//						} else {
+//							scrollGalleryView.setUriMedia(arrList);
+//						}
 					}
-				} 
+				} else {
+					final Bundle extras = intent.getExtras();
+					if (extras != null) {
+						final Object get = extras.get(Intent.EXTRA_STREAM);
+						if (get instanceof Uri) {
+							final Uri uri2 = (Uri)get;
+							if (ContentResolver.SCHEME_FILE.equals(uri2.getScheme())) {
+								final File f = new File(Uri.decode(uri2.getPath()));
+								if (f.exists()) {
+									load(f.getAbsolutePath());
+								} else {
+									Toast.makeText(fragActivity, f.getAbsolutePath() + " is not existed", Toast.LENGTH_LONG).show();
+								}
+							} else {
+								load(uri2);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 
 	@Override
 	public void open(final int curPos, final List<LayoutElement> paths) {
-		Log.d(TAG, "open list " + curPos);// + ", " + paths);
+		Log.d(TAG, "open list curPos " + curPos + ", paths.size() " + paths.size());
 		image.setVisibility(View.GONE);
 		scrollGalleryView.setVisibility(View.VISIBLE);
 		if (paths != null) {
@@ -170,9 +174,9 @@ public class PhotoFragment extends Frag {
 
 			final int foundFinal = found;
 			//showWait();
+			infos.trimToSize();
 			scrollGalleryView
-				.setThumbnailSize(AndroidUtils.dpToPx(56, fragActivity))
-				.setMedia(infos);
+				.setFileMedia(infos);
 			scrollGalleryView.postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -184,14 +188,14 @@ public class PhotoFragment extends Frag {
 						//hideWait();
 					}
 				}, 10);
-			infos.trimToSize();
 		}
 	}
 
 	public void open(final int curPos, final String... paths) {
 		Log.d(TAG, "open String..." + curPos);
+		image.setVisibility(View.GONE);
+		scrollGalleryView.setVisibility(View.VISIBLE);
 		if (paths != null) {
-
 			File f;
 			infos = new ArrayList<>(paths.length);
 			for (String st : paths) {
@@ -203,9 +207,9 @@ public class PhotoFragment extends Frag {
 				}
 			}
 			//showWait();
+			infos.trimToSize();
 			scrollGalleryView
-				.setThumbnailSize(AndroidUtils.dpToPx(56, fragActivity))
-				.setMedia(infos);
+				.setFileMedia(infos);
 			scrollGalleryView.postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -217,32 +221,31 @@ public class PhotoFragment extends Frag {
 						//hideWait();
 					}
 				}, 10);
-			infos.trimToSize();
 		}
 	}
 
-	//@Override
 	public void load(final Uri uri) {
-		Log.d(TAG, "path " + uri);
+		Log.d(TAG, "load uri " + uri);
 		if (uri != null) {
-			scrollGalleryView
-				.setThumbnailSize(AndroidUtils.dpToPx(56, fragActivity))
-				.setMedia(new ArrayList<File>(0));
 			final String scheme = uri.getScheme();
 			InputStream is = null;
 			try {
 				if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-					ContentResolver cr = fragActivity.getContentResolver();
-					is = cr.openInputStream(uri);
-					image.setVisibility(View.VISIBLE);
+//					ContentResolver cr = fragActivity.getContentResolver();
+//					is = cr.openInputStream(uri);
+//					Bitmap bmp = BitmapFactory.decodeStream(is);
+//					image.setImageBitmap(bmp);
 					scrollGalleryView.setVisibility(View.GONE);
-					Bitmap bmp = BitmapFactory.decodeStream(is);
-					image.setImageBitmap(bmp);
+					image.setVisibility(View.VISIBLE);
+					GlideImageLoader.loadMedia(uri, getContext(), image, DiskCacheStrategy.NONE);
+					
 				} else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
-					load(uri.getPath());
+					load(Uri.decode(uri.getPath()));
 				}
 			} catch (Throwable e) {
 				e.printStackTrace();
+			} finally {
+				FileUtil.close(is);
 			}
 		}
     }
@@ -250,8 +253,8 @@ public class PhotoFragment extends Frag {
 	@Override
 	public void load(final String path) {
 		Log.d(TAG, "path " + path);
+		image.setVisibility(View.GONE);
 		if (path != null) {
-			image.setVisibility(View.GONE);
 			scrollGalleryView.setVisibility(View.VISIBLE);
 			this.currentPathTitle = path;
 			final File file = new File(path);
@@ -259,11 +262,10 @@ public class PhotoFragment extends Frag {
 			long lastModified2;
 			if (file.isFile()) {
 				parentFile = file.getParentFile();
-				lastModified2 = parentFile.lastModified();
 			} else {
 				parentFile = file;
-				lastModified2 = parentFile.lastModified();
 			}
+			lastModified2 = parentFile.lastModified();
 			Log.d(TAG, "parentFile " + parentFile.getAbsolutePath());
 			if (!parentFile.equals(lastParentFolder) || lastModified != lastModified2) {
 				lastParentFolder = parentFile;
@@ -285,12 +287,11 @@ public class PhotoFragment extends Frag {
 				} else {
 					cur = 0;
 				}
-				Log.d(TAG, "cur " + cur);
+				Log.d(TAG, "cur1 " + cur);
 				if (fs.length > 0) {
 					//showWait();
 					scrollGalleryView
-						.setThumbnailSize(AndroidUtils.dpToPx(56, fragActivity))
-						.setMedia(infos);
+						.setFileMedia(infos);
 					scrollGalleryView.postDelayed(new Runnable() {
 							@Override
 							public void run() {
@@ -317,9 +318,12 @@ public class PhotoFragment extends Frag {
 						}
 						i++;
 					}
+					if (infos.size() > 1) {
+						cur = cur + 1;
+					}
 				}
-				Log.d(TAG, "cur " + cur);
-				scrollGalleryView.setCurrentItem(cur + 1, true);
+				Log.d(TAG, "cur2 " + cur);
+				scrollGalleryView.setCurrentItem(cur, true);
 			}
 		}
     }
@@ -327,6 +331,5 @@ public class PhotoFragment extends Frag {
 	public void updateColor(final View rootView) {
 		getView().setBackgroundColor(0xff000000);
 	}
-
-
+	
 }

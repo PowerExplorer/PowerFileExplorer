@@ -106,7 +106,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 	private int sizeMediaFiles;
 
     private int thumbnailSize = 54; // width and height in pixels
-    private boolean thumbnailsHiddenEnabled = true;
+    private boolean hidden = false;
 	private int pageSelected;
 
     // Views
@@ -222,6 +222,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		scanButton.setOnClickListener(this);
 
 		viewPager.addOnPageChangeListener(viewPagerChangeListener);
+		viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
 		mLayoutManager = new LinearLayoutManager(context);
 		mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 		thumbnailsRecyclerView.setLayoutManager(mLayoutManager);
@@ -279,8 +280,8 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		public void run() {
 			final int newpos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
 			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
-			scroll(newpos, childAt);
-			setupBar(newpos);
+			scrollRecycler(newpos, childAt);
+			//setupBar(newpos);
 		}
 	};
 
@@ -314,56 +315,45 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		@Override 
 		public void onPageSelected(int position) {
 			scrolledByViewPager = true;
-			final int newpos = position == 0 ? (sizeMediaFiles - 1) : position == (sizeMediaFiles + 1) ? 0 : (position - 1);
+			final int mediaPos = position == 0 ? (sizeMediaFiles - 1) : position == (sizeMediaFiles + 1) ? 0 : (position - 1);
 			final int childCount = thumbnailsRecyclerView.getLayoutManager().getChildCount();
 			final int measuredWidth = getMeasuredWidth();
 			final int mid = (measuredWidth - thumbnailSize) / 2;
-			Log.d(TAG, "onPageSelected position " + position + ", newpos " + newpos + ", mid " + mid + ", childCount " + childCount);
-			if ((newpos) <= childCount / 2 || sizeMediaFiles == 1) {
-				thumbnailsRecyclerView.setPadding(Math.max(mid - (newpos) * thumbnailSize, 0), 0, 0, 0);
-			} else if ((sizeMediaFiles - 1 - (newpos)) <= childCount / 2) {
-				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (sizeMediaFiles - 1 - (newpos)) * thumbnailSize, 0), 0);
+			Log.d(TAG, "onPageSelected position " + position + ", newpos " + mediaPos + ", mid " + mid + ", childCount " + childCount);
+			if ((mediaPos) <= childCount / 2 || sizeMediaFiles == 1) {
+				thumbnailsRecyclerView.setPadding(Math.max(mid - (mediaPos) * thumbnailSize, 0), 0, 0, 0);
+			} else if ((sizeMediaFiles - 1 - (mediaPos)) <= childCount / 2) {
+				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (sizeMediaFiles - 1 - (mediaPos)) * thumbnailSize, 0), 0);
 			} else {
 				thumbnailsRecyclerView.setPadding(0, 0, 0, 0);
 			}
-//			if (targetPos <= (childCount) / 2) {
-//				mRecyclerView.setPadding(Math.max((mLength - itemLength) / 2 - (targetPos * itemLength), 0), 0, 0, 0);
-//			} else if ((itemCount - 1 - targetPos) <= (childCount) / 2) {
-//				mRecyclerView.setPadding(0, 0, Math.max((mLength + itemLength) / 2 - ((itemCount - targetPos) * itemLength), 0), 0);
-//			}
-//			if ((newpos - 1) * thumbnailSize < mid) {
-//				//thumbnailsRecyclerView.startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
-//				thumbnailsRecyclerView.setPadding(Math.max(mid - (newpos) * thumbnailSize, 0), 0, 0, 0);
-//			} else if (thumbnailSize * (size - 1 - (newpos + 1)) < mid) {
-//				//thumbnailsRecyclerView.startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
-//				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (size - (newpos + 1)) * thumbnailSize, 0), 0);
-//			}
-			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
-			scroll(newpos, childAt);
-			setupBar(newpos);
+			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
+			scrollRecycler(mediaPos, childAt);
 			pageSelected = position;
 		}
 
+		
 		@Override 
-		public void onPageScrollStateChanged(int state) {
+		public void onPageScrollStateChanged(final int state) {
 			Log.d(TAG, "onPageScrollStateChanged state " + state + ", pageSelected " + pageSelected);
-			int newpos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
-			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
-			if (state == 2) {
-				if (childAt != null) {
-					childAt.setBackgroundColor(0x80808080);
-				}
-			} else if (state == 0) {
+			final int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
+			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
+			if (state == ViewPager.SCROLL_STATE_IDLE) {// && scrolledByViewPager
+				scrollRecycler(mediaPos, childAt);
 				if (pageSelected == 0) {
 					viewPager.setPageTransformer(true, null);
-					setCurrentItem(sizeMediaFiles, false);
+					viewPager.setCurrentItem(sizeMediaFiles, false);
 					pageSelected = sizeMediaFiles;
 					viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
 				} else if (pageSelected == sizeMediaFiles + 1) {
 					viewPager.setPageTransformer(true, null);
-					setCurrentItem(1, false);
+					viewPager.setCurrentItem(1, false);
 					pageSelected = 1;
 					viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
+				}
+			} else { // if (state == ViewPager.SCROLL_STATE_SETTLING) 
+				if (childAt != null) {
+					childAt.setBackgroundColor(0x80808080);
 				}
 			}
 		}
@@ -376,76 +366,39 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 				scrolledByViewPager = false;
 				return;
 			}
-            int dl = thumbnailsRecyclerView.getPaddingLeft();
+            // dx am: index lon xuong nho, photo di sang phai, tay qua phai, scrollbar qua trai
+			final int paddingLeft = thumbnailsRecyclerView.getPaddingLeft();
 			final int measuredWidth = getMeasuredWidth();
-			final int childCount = thumbnailsRecyclerView.getLayoutManager().getChildCount();
-			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + dl + ", measuredWidth " + measuredWidth + ", thumbnailSize " + thumbnailSize + ", pageSelected " + pageSelected + ", childCount " + childCount);
-			if (dl > 0) {
-				thumbnailsRecyclerView.setPadding(Math.min(Math.max(dl - dx, 0), (measuredWidth - thumbnailSize) / 2), 0, 0, 0);
-//			} else {
-//				if (dx < 0) {
-//					thumbnailsRecyclerView.setPadding(Math.min(Math.max(-dx/thumbnailSize*thumbnailSize+((measuredWidth - thumbnailSize) / 2)%thumbnailSize, 0), (measuredWidth - thumbnailSize) / 2), 0, 0, 0);
-//				}
+			final int childCount = mLayoutManager.getChildCount();
+			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + paddingLeft + ", measuredWidth " + measuredWidth + ", thumbnailSize " + thumbnailSize + ", pageSelected " + pageSelected + ", childCount " + childCount);
+			if (paddingLeft > 0) {
+				thumbnailsRecyclerView.setPadding(Math.min(Math.max(paddingLeft - dx, 0), (measuredWidth - thumbnailSize) / 2), 0, 0, 0);
 			}
-			dl = thumbnailsRecyclerView.getPaddingRight();
-			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingRight " + dl + ", pageSelected " + pageSelected);
-			if (dl > 0) {
+			int paddingRight = thumbnailsRecyclerView.getPaddingRight();
+			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingRight " + paddingLeft + ", pageSelected " + pageSelected);
+			if (paddingRight > 0) {
 				//Log.d(TAG, "(measuredWidth - thumbnailSize) / 2) " + (measuredWidth - thumbnailSize) / 2);
 				///Log.d(TAG, "Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2) " + Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2));
-				thumbnailsRecyclerView.setPadding(0, 0, Math.min(Math.max(dl + dx, 0), (measuredWidth - thumbnailSize) / 2), 0);
+				thumbnailsRecyclerView.setPadding(0, 0, Math.min(Math.max(paddingRight + dx, 0), (measuredWidth - thumbnailSize) / 2), 0);
 			}
-			dl = thumbnailsRecyclerView.getPaddingLeft();
-			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + dl + ", PaddingRight " + thumbnailsRecyclerView.getPaddingRight());
+			//paddingLeft = thumbnailsRecyclerView.getPaddingLeft();
+			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + paddingLeft + ", PaddingRight " + thumbnailsRecyclerView.getPaddingRight());
 			final int mid;
-			if (dl > thumbnailSize / 2) {
-				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;//
+			if (paddingLeft > thumbnailSize / 2) {
+				mid = ((measuredWidth) / 2 - paddingLeft) / thumbnailSize;//
 			} else {
-				//if (dx < 0) {
-				mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else if (dx > 0) {
-//					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else {
-//					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-				//}
+				mid = ((measuredWidth + thumbnailSize) / 2 - paddingLeft) / thumbnailSize;
 			}
-//			if (dl > thumbnailSize / 2) {
-//				mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-//			} else {
-//				if (dx > 0) {
-//					mid = ((measuredWidth + thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else if (dx < 0) {
-//					mid = ((measuredWidth - thumbnailSize) / 2 - dl) / thumbnailSize;
-//				} else {
-//					mid = ((measuredWidth) / 2 - dl) / thumbnailSize;
-//				}
-//			}
 			ImageView childAt = (ImageView) mLayoutManager.getChildAt(mid);
 			if (childAt == null) {
-				Log.d(TAG, "onScrolled childAt == null, pageSelected " + pageSelected + ", mid " + mid + ", ChildCount " + mLayoutManager.getChildCount());
+				Log.d(TAG, "onScrolled childAt == null, pageSelected " + pageSelected + ", mid " + mid + ", ChildCount " + childCount);
 				thumbnailsRecyclerView.setPadding(measuredWidth / 2 - (sizeMediaFiles - 1 - pageSelected) * thumbnailSize / 2, 0, 0, 0);
 				childAt = (ImageView) mLayoutManager.getChildAt(mid - 1);
 			}
-			int targetPos = Integer.valueOf(childAt.getContentDescription() + "");
-//			if (dx != 0) {
-//				if (targetPos <= (childCount) / 2) {
-//					thumbnailsRecyclerView.setPadding(Math.max((measuredWidth - thumbnailSize) / 2 - (targetPos * thumbnailSize), 0), 0, 0, 0);
-//				} else if ((size - 1 - targetPos) <= (childCount) / 2) {
-//					thumbnailsRecyclerView.setPadding(0, 0, Math.max((measuredWidth + thumbnailSize) / 2 - ((size - targetPos) * thumbnailSize), 0), 0);
-//				}
-//			}
-			Log.d(TAG, "onScrolled dl " + dl + ", mid  " + mid + ", pos " + targetPos + ", childAt " + childAt);
-			//scroll(pos, childAt);
-			//if (pageSelected > mid) {//  && pageSelected < size - mid + 1
-			setCurrentItem(targetPos + 1, false);//pos + 1
-			//pageSelected = pos + 1;
-			//setupBar(pos);
-//			} else {
-//				childAt = (ImageView) mLayoutManager.getChildAt(dl/thumbnailSize);
-//				pos = Integer.valueOf(childAt.getContentDescription() + "");
-//				setCurrentItem(pos + 1, true);
-////				pageSelected = pos + 1;
-////				setupBar(pos);
-//			} 
+			int mediaPos = Integer.valueOf(childAt.getContentDescription() + "");
+			Log.d(TAG, "onScrolled paddingLeft " + paddingLeft + ", mid  " + mid + ", mediaPos " + mediaPos + ", childAt " + childAt);
+			setCurrentItem(mediaPos + 1, false);//pos + 1
+
         }
 
         @Override
@@ -460,9 +413,9 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					final ImageView childAt = (ImageView) mLayoutManager.getChildAt(mid / thumbnailSize);
 					final int pos = Integer.valueOf(childAt.getContentDescription() + "");
 					//Log.d(TAG, "onScrollStateChanged newState " + newState + ", mid  " + mid + ", thumbnailSize " + thumbnailSize + ", pos " + pos);
-					scroll(pos, childAt);
+					scrollRecycler(pos, childAt);
 					setCurrentItem(pos + 1, false);
-					setupBar(pos);
+					//setupBar(pos);
 					break;
 //				case RecyclerView.SCROLL_STATE_SETTLING:
 //					break;
@@ -472,11 +425,14 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 
     private final OnClickListener thumbnailOnClickListener = new OnClickListener() {
         @Override public void onClick(final View v) {
-            final int pos = Integer.valueOf(v.getContentDescription() + "");
+            final int mediaPos = Integer.valueOf(v.getContentDescription() + "");
+			Log.d(TAG, "thumbnailOnClickListener mediaPos " + mediaPos + ", cur pageSelected " + pageSelected);
 			scrolledByViewPager = false;
-			scroll(pos, v);
-            setCurrentItem(pos + 1, false);
-			setupBar(pos);
+			scrollRecycler(mediaPos, v);
+			viewPager.setPageTransformer(true, null);
+            setCurrentItem(mediaPos + 1, false);
+			viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
+			//setupBar(pos);
         }
     };
 
@@ -515,8 +471,8 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			}
 		} else {
 			SLIDESHOW = false;
-			thumbnailsHiddenEnabled = !thumbnailsHiddenEnabled;
-			hideThumbnails(thumbnailsHiddenEnabled);
+			hidden = !hidden;
+			hideThumbnails(hidden);
 			final int newpos = pageSelected == 0 ? sizeMediaFiles - 1 : pageSelected == sizeMediaFiles + 1 ? 0 : pageSelected - 1;
 			final File f = mListOfMedia.get(newpos);
 			final String mimeType = MimeTypes.getMimeType(f);
@@ -536,10 +492,42 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
         return false;
     }
 
-    public ScrollGalleryView setMedia(final List<File> infos) {//, final List<String> mimes, final String parentPath
-		if (infos == null) {
-            throw new NullPointerException("Infos may not be null!");
-        }
+//    private void setFileMedia(final List<File> infos) {
+//		final List<Uri> uriInfos = new ArrayList<>(infos.size());
+//		for (File f : infos) {
+//			uriInfos.add(Uri.fromFile(f));
+//		}
+//		setUriMedia(uriInfos);
+//		infoLayout.setVisibility(View.VISIBLE);
+//		thumbnailsRecyclerView.setVisibility(View.VISIBLE);
+//	}
+
+//    public void setUriMedia(final List<Uri> infos) {
+//		SLIDESHOW = false;
+//		mListOfMedia = infos;
+//		sizeMediaFiles = mListOfMedia.size();
+//		if (sizeMediaFiles == 1) {
+//			pageSelected = 0;
+//		} else {
+//			pageSelected = 1;
+//		}
+//		initializeViewPager();
+//	}
+
+//    private void initializeViewPager() {
+//		if (fragmentManager == null) {
+//			fragmentManager = fragActivity.getSupportFragmentManager();
+//		}
+//        viewPagerAdapter = new ScreenSlidePagerAdapter(fragmentManager, viewPager, mListOfMedia, this);
+//        viewPager.setAdapter(viewPagerAdapter);
+//		recyclerAdapter = new ThumbnailAdapter(getContext(), mListOfMedia, thumbnailOnClickListener, thumbnailSize);//mimes, parentPath, 
+//        thumbnailsRecyclerView.setAdapter(recyclerAdapter);
+//		final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(((infoLayout.getMeasuredWidth() - thumbnailSize) / 2), ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+////		leftRecycler.setLayoutParams(lp);
+////		rightRecycler.setLayoutParams(lp);
+//	}
+
+    public ScrollGalleryView setFileMedia(final List<File> infos) {//, final List<String> mimes, final String parentPath
 		SLIDESHOW = false;
 		mListOfMedia = infos;
 		sizeMediaFiles = mListOfMedia.size();
@@ -549,6 +537,8 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			pageSelected = 1;
 		}
 		initializeViewPager();
+		infoLayout.setVisibility(View.VISIBLE);
+		thumbnailsRecyclerView.setVisibility(View.VISIBLE);
 		return this;
 	}
 
@@ -558,25 +548,43 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		}
         imageViewPagerAdapter = new ScreenSlidePagerAdapter(fragmentManager, viewPager, mListOfMedia, this);
         viewPager.setAdapter(imageViewPagerAdapter);
-		viewPager.setPageTransformer(true, transforms[ImageFragment.curTransform]);
 		thumbnailRecyclerAdapter = new ThumbnailAdapter(mContext, mListOfMedia, thumbnailOnClickListener, thumbnailSize);//mimes, parentPath, 
         thumbnailsRecyclerView.setAdapter(thumbnailRecyclerAdapter);
-		if (sizeMediaFiles == 1) {
-			thumbnailsRecyclerView.setPadding((getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
-		}
+		//if (sizeMediaFiles == 1) {
+		//	thumbnailsRecyclerView.setPadding((getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
+		//}
 	}
 
-    public ScrollGalleryView setCurrentItem(final int position, boolean smoothScroll) {
-		Log.d(TAG, pageSelected + " setCurrentItem to " + position);
-		int newpos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
-		ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
+//    private void setCurrentItem(final int newPagerPos, boolean smoothScroll) {
+//		if (sizeMediaFiles < 1) {
+//			return;
+//		}
+//		Log.d(TAG, "setCurrentItem curPagerPos " + pageSelected + " to newPagerPos " + newPagerPos);
+//		int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
+//		ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
+//		if (childAt != null) {
+//			childAt.setBackgroundColor(0x80808080);
+//		}
+//		viewPager.setCurrentItem(newPagerPos, smoothScroll);
+//
+//		mediaPos = newPagerPos == 0 ? (sizeMediaFiles - 1) : newPagerPos == (sizeMediaFiles + 1) ? 0 : (newPagerPos - 1);
+//		childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
+//		if (childAt != null) {
+//			childAt.setBackgroundColor((0xc0ffffff));
+//		}
+//    }
+
+    public ScrollGalleryView setCurrentItem(final int newPagerPos, boolean smoothScroll) {
+		Log.d(TAG, "setCurrentItem curPagerPos " + pageSelected + " to newPagerPos " + newPagerPos);
+		int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
+		ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
 		if (childAt != null) {
 			childAt.setBackgroundColor(0x80808080);
 		}
-		viewPager.setCurrentItem(position, smoothScroll);
+		viewPager.setCurrentItem(newPagerPos, smoothScroll);
 
-		newpos = position == 0 ? (sizeMediaFiles - 1) : position == (sizeMediaFiles + 1) ? 0 : (position - 1);
-		childAt = (ImageView) mLayoutManager.findViewByPosition(newpos);
+		mediaPos = newPagerPos == 0 ? (sizeMediaFiles - 1) : newPagerPos == (sizeMediaFiles + 1) ? 0 : (newPagerPos - 1);
+		childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
 		if (childAt != null) {
 			childAt.setBackgroundColor((0xc0ffffff));
 		}
@@ -589,7 +597,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
     }
 
     public ScrollGalleryView hideThumbnails(final boolean thumbnailsHiddenEnabled) {
-        this.thumbnailsHiddenEnabled = thumbnailsHiddenEnabled;
+        this.hidden = thumbnailsHiddenEnabled;
 		if (thumbnailsHiddenEnabled) {
 			thumbnailsRecyclerView.setVisibility(GONE);
 			infoLayout.setVisibility(GONE);
@@ -601,25 +609,48 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
         return this;
     }
 
-    private void scroll(final int pos, final View thumbnail) {
-        Log.d(TAG, "scroll pos " + pos + ", thumbnailSize " + thumbnailSize + ", PaddingLeft " + thumbnailsRecyclerView.getPaddingLeft() + ", PaddingRight " + thumbnailsRecyclerView.getPaddingRight() + ", thumbnail " + thumbnail);
+//    private void scrollRecycler(final int mediaPos, final View thumbnail) {
+//        Log.d(TAG, "scrollRecycler mediaPos " + mediaPos + ", thumbnailSize " + thumbnailSize + ", paddingLeft " + thumbnailsRecyclerView.getPaddingLeft() + ", paddingRight " + thumbnailsRecyclerView.getPaddingRight());
+//		//mLayoutManager.scrollToPositionWithOffset(pos, (getMeasuredWidth() - thumbnailSize) / 2);
+//		//int itemLength = thumbnailSize;//thumbnailsRecyclerView.getLayoutManager().getChildAt(0).getMeasuredWidth();
+//		int length = infoLayout.getMeasuredWidth();
+//		mLayoutManager.scrollToPositionWithOffset(mediaPos, (length - thumbnailSize) / 2);//(mediaPos * thumbnailSize < (length - thumbnailSize) / 2) ? mediaPos * thumbnailSize : (length - thumbnailSize) / 2);
+//		if (thumbnail != null) {
+//			thumbnail.setBackgroundColor(0xc0ffffff);
+//		} else {
+//			infoLayout.postDelayed(new Runnable() {
+//					@Override
+//					public void run() {
+//						final View findViewByPosition = mLayoutManager.findViewByPosition(mediaPos);
+//						if 	(findViewByPosition != null) {
+//							findViewByPosition.setBackgroundColor(0xc0ffffff);
+//						}
+//					}
+//				}, 20);
+//		}
+//		setupBar(mediaPos);
+//    }
+
+    private void scrollRecycler(final int mediaPos, final View thumbnail) {
+        Log.d(TAG, "scrollRecycler mediaPos " + mediaPos + ", thumbnailSize " + thumbnailSize + ", paddingLeft " + thumbnailsRecyclerView.getPaddingLeft() + ", paddingRight " + thumbnailsRecyclerView.getPaddingRight());
 		//mLayoutManager.scrollToPositionWithOffset(pos, (getMeasuredWidth() - thumbnailSize) / 2);
 		//int itemLength = thumbnailSize;//thumbnailsRecyclerView.getLayoutManager().getChildAt(0).getMeasuredWidth();
 		int length = getMeasuredWidth();
-		mLayoutManager.scrollToPositionWithOffset(pos, (pos * thumbnailSize < (length - thumbnailSize) / 2) ? pos * thumbnailSize : (length - thumbnailSize) / 2);
+		mLayoutManager.scrollToPositionWithOffset(mediaPos, Math.min(mediaPos * thumbnailSize, (length - thumbnailSize) / 2));// ? mediaPos * thumbnailSize : (length - thumbnailSize) / 2);
 		if (thumbnail != null) {
 			thumbnail.setBackgroundColor(0xc0ffffff);
 		} else {
 			postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						final View findViewByPosition = mLayoutManager.findViewByPosition(pos);
+						final View findViewByPosition = mLayoutManager.findViewByPosition(mediaPos);
 						if 	(findViewByPosition != null) {
 							findViewByPosition.setBackgroundColor(0xc0ffffff);
 						}
 					}
 				}, 20);
 		}
+		setupBar(mediaPos);
     }
 
 	private void setupBar(final int pos) {
@@ -638,9 +669,9 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 
 	@Override
 	public void onClick(final View p1) {
-		final int newpos = pageSelected == 0 ? sizeMediaFiles - 1 : pageSelected == sizeMediaFiles + 1 ? 0 : pageSelected - 1;
-		final File f = mListOfMedia.get(newpos);
-		Log.d(TAG, "onClick pageSelected " + pageSelected + ", newpos " + newpos + ", ContentDescription " + p1.getContentDescription());// + ", " + viewPager.getCurrentItem());// + ", " + pagerAdapter.getItem(pageSelected));
+		final int mediaPos = pageSelected == 0 ? sizeMediaFiles - 1 : pageSelected == sizeMediaFiles + 1 ? 0 : pageSelected - 1;
+		final File f = mListOfMedia.get(mediaPos);
+		Log.d(TAG, "onClick pageSelected " + pageSelected + ", mediaPos " + mediaPos + ", ContentDescription " + p1.getContentDescription());// + ", " + viewPager.getCurrentItem());// + ", " + pagerAdapter.getItem(pageSelected));
 		if (f.exists()) {
 			switch (p1.getId()) {
 				case R.id.shareButton:
@@ -658,7 +689,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					break;
 					//}
 				case R.id.clockwiseButton:
-					new RotateTask(imageViewPagerAdapter.fragMap.get(pageSelected).getImage().getDrawable(), true).execute();
+					new RotateTask(((ImageFragment)imageViewPagerAdapter.getItem(pageSelected)).getImage().getDrawable(), true).execute();
 //					Glide
 //						.with(mContext)
 //						.load(f)
@@ -666,7 +697,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 //						.into(pagerAdapter.fragMap.get(pageSelected).getBackgroundImage());
 					break;
 				case R.id.counterClockwiseButton:
-					new RotateTask(imageViewPagerAdapter.fragMap.get(pageSelected).getImage().getDrawable(), false).execute();
+					new RotateTask(((ImageFragment)imageViewPagerAdapter.getItem(pageSelected)).getImage().getDrawable(), false).execute();
 //					Glide
 //						.with(mContext)
 //						.load(f)
@@ -736,8 +767,8 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 								final String newName = f.getParent() + "/" + name;
 								MainActivityHelper.rename(OpenMode.FILE, f.getAbsolutePath(),//mListOfMedia.get(pageSelected).getAbsolutePath(),
 														  newName, (ThemedActivity)mContext, ThemedActivity.rootMode);
-								mListOfMedia.remove(newpos);
-								mListOfMedia.add(newpos, new File(newName));
+								mListOfMedia.remove(mediaPos);
+								mListOfMedia.add(mediaPos, new File(newName));
 								fileNameTV.setText(name);
 							}
 
@@ -813,7 +844,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 						Collections.sort(mListOfMedia, new FileSorter(FileSorter.DIR_TOP, FileSorter.NAME, FileSorter.ASCENDING));
 					}
 					int t = pageSelected;
-					setMedia(mListOfMedia);
+					setFileMedia(mListOfMedia);
 					pageSelected = t;
 					postDelayed(runNoti, 20);
 					break;
@@ -832,7 +863,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 						Collections.sort(mListOfMedia, new FileSorter(FileSorter.DIR_TOP, FileSorter.SIZE, FileSorter.ASCENDING));
 					}
 					t = pageSelected;
-					setMedia(mListOfMedia);
+					setFileMedia(mListOfMedia);
 					pageSelected = t;
 					postDelayed(runNoti, 20);
 					break;
@@ -851,7 +882,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 						Collections.sort(mListOfMedia, new FileSorter(FileSorter.DIR_TOP, FileSorter.DATE, FileSorter.ASCENDING));
 					}
 					t = pageSelected;
-					setMedia(mListOfMedia);
+					setFileMedia(mListOfMedia);
 					pageSelected = t;
 					postDelayed(runNoti, 20);
 					break;
@@ -915,8 +946,9 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
             //Log.v( TAG, "Bitmap is ready" );
             //hideWait();
             if (bmp != null) {
-                imageViewPagerAdapter.fragMap.get(pageSelected).getImage().setVisibility(View.VISIBLE);
-                imageViewPagerAdapter.fragMap.get(pageSelected).getImage().setImageBitmap(bmp);
+                TouchImageView image = ((ImageFragment)imageViewPagerAdapter.getItem(pageSelected)).getImage();
+				image.setVisibility(View.VISIBLE);
+                image.setImageBitmap(bmp);
 
                 return;
             }

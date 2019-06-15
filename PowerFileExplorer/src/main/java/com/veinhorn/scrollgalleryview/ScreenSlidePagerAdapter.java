@@ -16,13 +16,13 @@ import android.view.View;
 import android.view.GestureDetector;
 import com.ortiz.touch.TouchImageView;
 
-public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter implements Runnable {
+public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}implements Runnable {
 
     private static final String TAG = "ScreenSlidePagerAdapter";
 
 	private final List<File> mListOfMedia;
 	private final ViewPager viewPager;
-	TreeMap<Integer, ImageFragment> fragMap = new TreeMap<>();
+//	TreeMap<Integer, ImageFragment> fragMap = new TreeMap<>();
 	final GestureDetector.OnDoubleTapListener onDoubleTapListener;
 	static int numOfPages = 1;
 
@@ -42,7 +42,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter implement
 		ImageFragment fragment = null;
         final int size = mListOfMedia.size();
 		int position = positionOri;
-		Log.d(TAG, "getItem positionOri " + positionOri + ", size " + size + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem() + ", " + fragMap.get(viewPager.getCurrentItem()));
+		Log.d(TAG, "getItem positionOri " + positionOri + ", size " + size + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
 		if (position == 0) {
 			position = size - 1;
 		} else if (position == size + 1) {
@@ -50,11 +50,11 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter implement
 		} else {
 			position--;
 		}
-        if (position < size) {
+        //if (position < size) {
             fragment = loadImageFragment(mListOfMedia.get(position));//, mimes.get(position)new File(parentPath, 
-			fragMap.put(Integer.valueOf(positionOri), fragment);
-        }
-		Log.d(TAG, "getItem positionOri " + positionOri + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem() + ", " + fragMap.get(viewPager.getCurrentItem()));
+			//fragMap.put(Integer.valueOf(positionOri), fragment);
+        //}
+		Log.d(TAG, "getItem positionOri " + positionOri + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
 		return fragment;
     }
 
@@ -62,54 +62,54 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter implement
         final ImageFragment fragment = new ImageFragment();
         fragment.setMediaInfo(mediaInfo);
 		fragment.setOnDoubleTapListener(onDoubleTapListener);
-		fragment.setCallback(this);
+		//fragment.setCallback(this);
         return fragment;
     }
 
-	@Override
-	public void run() {
-		final int currentItem = viewPager.getCurrentItem();
-		final int count = getCount();
-		if (count > 1) {
-			ImageFragment img;
-			if (currentItem == 0) {
-				for (int i = currentItem; i < Math.min(count - 2, numOfPages); i++) {
-					Log.d(TAG, "setZoom " + (i+1));
-					img = fragMap.get(i + 1);
-					if (img != null) {
-						final TouchImageView image = img.getImage();
-						image.setZoom(ImageFragment.curZoom);
-					}
-				}
-//				final TouchImageView image = fragMap.get(currentItem + 1).getImage();
-//				image.setZoom(ImageFragment.curZoom);
-			} else if (currentItem == count - 1) {
-				for (int i = currentItem; i > Math.max(0, count - 1 - numOfPages); i--) {
-					Log.d(TAG, "setZoom " + (i-1));
-					img = fragMap.get(i - 1);
-					if (img != null) {
-						final TouchImageView image = img.getImage();
-						image.setZoom(ImageFragment.curZoom);
-					}
-				}
-//				final TouchImageView image = fragMap.get(currentItem - 1).getImage();
-//				image.setZoom(ImageFragment.curZoom);
-			} else {
-				for (int i = Math.max(0, currentItem - numOfPages/2-1); i < Math.min(count - 2, currentItem+numOfPages/2+1); i++) {
-					Log.d(TAG, "setZoom " + i);
-					img = fragMap.get(i);
-					if (img != null) {
-						final TouchImageView image = img.getImage();
-						image.setZoom(ImageFragment.curZoom);
-					}
-				}
-//				TouchImageView image = fragMap.get(currentItem - 1).getImage();
-//				image.setZoom(ImageFragment.curZoom);
-//				image = fragMap.get(currentItem + 1).getImage();
-//				image.setZoom(ImageFragment.curZoom);
-			}
-		}
-	}
+//	@Override
+//	public void run() {
+//		final int currentItem = viewPager.getCurrentItem();
+//		final int count = getCount();
+//		if (count > 1) {
+//			ImageFragment img;
+//			if (currentItem == 0) {
+//				for (int i = currentItem; i < Math.min(count - 2, numOfPages); i++) {
+//					Log.d(TAG, "setZoom " + (i+1));
+//					img = fragMap.get(i + 1);
+//					if (img != null) {
+//						final TouchImageView image = img.getImage();
+//						image.setZoom(ImageFragment.curZoom);
+//					}
+//				}
+////				final TouchImageView image = fragMap.get(currentItem + 1).getImage();
+////				image.setZoom(ImageFragment.curZoom);
+//			} else if (currentItem == count - 1) {
+//				for (int i = currentItem; i > Math.max(0, count - 1 - numOfPages); i--) {
+//					Log.d(TAG, "setZoom " + (i-1));
+//					img = fragMap.get(i - 1);
+//					if (img != null) {
+//						final TouchImageView image = img.getImage();
+//						image.setZoom(ImageFragment.curZoom);
+//					}
+//				}
+////				final TouchImageView image = fragMap.get(currentItem - 1).getImage();
+////				image.setZoom(ImageFragment.curZoom);
+//			} else {
+//				for (int i = Math.max(0, currentItem - numOfPages/2-1); i < Math.min(count - 2, currentItem+numOfPages/2+1); i++) {
+//					Log.d(TAG, "setZoom " + i);
+//					img = fragMap.get(i);
+//					if (img != null) {
+//						final TouchImageView image = img.getImage();
+//						image.setZoom(ImageFragment.curZoom);
+//					}
+//				}
+////				TouchImageView image = fragMap.get(currentItem - 1).getImage();
+////				image.setZoom(ImageFragment.curZoom);
+////				image = fragMap.get(currentItem + 1).getImage();
+////				image.setZoom(ImageFragment.curZoom);
+//			}
+//		}
+//	}
 	
 	@Override
     public float getPageWidth(int position) {
