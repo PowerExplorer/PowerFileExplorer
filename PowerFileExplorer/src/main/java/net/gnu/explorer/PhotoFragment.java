@@ -89,7 +89,7 @@ public class PhotoFragment extends Frag {
 
 		scrollGalleryView = (ScrollGalleryView) v.findViewById(R.id.scroll_gallery_view);
 		image = (TouchImageView) v.findViewById(R.id.image);
-		scrollGalleryView.setThumbnailSize(AndroidUtils.dpToPx(56, fragActivity));
+		scrollGalleryView.setThumbnailSize(AndroidUtils.dpToPx(54, fragActivity));
 		
 		updateColor(v);
 		Log.d(TAG, "currentPathTitle " + currentPathTitle);

@@ -50,8 +50,7 @@ public class ImageFragment extends Fragment {
 	private static final String TAG = "ImageFragment";
 
     private static final Pattern VIDEO_PATTERN = Pattern.compile("^[^\n]*?\\.(avi|mpg|mpeg|mp4|3gpp|3gp|3gpp2|vob|asf|wmv|flv|mkv|asx|qt|mov|webm|mpe|3g2|m4v|wm|wmx|mpa)$", Pattern.CASE_INSENSITIVE);
-	private ProgressDialog pd; 
-
+	
 	private File mMediaInfo;
 
     private TouchImageView image;

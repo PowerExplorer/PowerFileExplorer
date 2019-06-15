@@ -38,23 +38,21 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}imple
     }
 
 	@Override
-    public Fragment getItem(final int positionOri) {
-		ImageFragment fragment = null;
-        final int size = mListOfMedia.size();
-		int position = positionOri;
-		Log.d(TAG, "getItem positionOri " + positionOri + ", size " + size + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
-		if (position == 0) {
-			position = size - 1;
-		} else if (position == size + 1) {
-			position = 0;
+    public Fragment getItem(final int pagerPos) {
+		final int size = mListOfMedia.size();
+		int mediaPos = pagerPos;
+		if (mediaPos == 0) {
+			mediaPos = size - 1;
+		} else if (mediaPos == size + 1) {
+			mediaPos = 0;
 		} else {
-			position--;
+			mediaPos--;
 		}
         //if (position < size) {
-            fragment = loadImageFragment(mListOfMedia.get(position));//, mimes.get(position)new File(parentPath, 
+		final ImageFragment fragment = loadImageFragment(mListOfMedia.get(mediaPos));
 			//fragMap.put(Integer.valueOf(positionOri), fragment);
         //}
-		Log.d(TAG, "getItem positionOri " + positionOri + ", position " + position + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
+		Log.d(TAG, "getItem pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
 		return fragment;
     }
 

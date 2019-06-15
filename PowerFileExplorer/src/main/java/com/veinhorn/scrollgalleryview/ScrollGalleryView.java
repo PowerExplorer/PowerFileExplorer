@@ -95,6 +95,7 @@ import com.amaze.filemanager.utils.MainActivityHelper;
 import com.amaze.filemanager.utils.color.ColorUsage;
 import net.gnu.explorer.MediaPlayerActivity;
 import java.util.LinkedList;
+import android.os.*;
 
 public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListener, OnClickListener {//OnTouchListener, 
 
@@ -253,22 +254,29 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 
 	}
 
-//    @Override
-//    public Parcelable onSaveInstanceState() {
-//        Parcelable superState = super.onSaveInstanceState();
-//		Parcel p = new Parcel();
-//		p.writeSerializable(SLIDESHOW);
-//		superState.writeToParcel(p, 1);
-//		return superState;
-//	}
-//	
-//    @Override
-//    public void onRestoreInstanceState(Parcelable state) {
-//        super.onRestoreInstanceState(state);
-//        SLIDESHOW = state.
-//	}
+    @Override
+    public Parcelable onSaveInstanceState() {
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putBoolean("SLIDESHOW", SLIDESHOW);
+		removeCallbacks(runSlideshow);
+        return bundle;
+	}
 
-	private Runnable runNoti = new Runnable() {
+	@Override
+    public void onRestoreInstanceState(Parcelable state) {
+        Log.d(TAG, "onRestoreInstanceState " + state);
+		if (state != null && state instanceof Bundle) {
+			final Bundle bundle = (Bundle) state;
+			SLIDESHOW = bundle.getBoolean("SLIDESHOW", false);
+			postDelayed(runSlideshow, ImageFragment.curDelay);
+            super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
+		} else {
+			super.onRestoreInstanceState(state);
+		}
+	}
+
+	private Runnable runSorting = new Runnable() {
 		@Override
 		public void run() {
 			setCurrentItem(pageSelected, false);
@@ -285,7 +293,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		}
 	};
 
-	private Runnable run = new Runnable() {
+	private Runnable runSlideshow = new Runnable() {
 		@Override
 		public void run() {
 			if (SLIDESHOW) {
@@ -300,8 +308,8 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 	};
 
 	public void resetDelay() {
-		removeCallbacks(run);
-		postDelayed(run, ImageFragment.curDelay);
+		removeCallbacks(runSlideshow);
+		postDelayed(runSlideshow, ImageFragment.curDelay);
 	}
 
     private final ViewPager.SimpleOnPageChangeListener viewPagerChangeListener = new ViewPager.SimpleOnPageChangeListener() {
@@ -384,20 +392,20 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			//paddingLeft = thumbnailsRecyclerView.getPaddingLeft();
 			Log.d(TAG, "onScrolled dx " + dx + ", dy " + dy + ", PaddingLeft " + paddingLeft + ", PaddingRight " + thumbnailsRecyclerView.getPaddingRight());
 			final int mid;
-			if (paddingLeft > thumbnailSize / 2) {
+			//if (paddingLeft > thumbnailSize / 2) {
 				mid = ((measuredWidth) / 2 - paddingLeft) / thumbnailSize;//
-			} else {
-				mid = ((measuredWidth + thumbnailSize) / 2 - paddingLeft) / thumbnailSize;
-			}
+			//} else {
+			//	mid = ((measuredWidth + thumbnailSize) / 2 - paddingLeft) / thumbnailSize;
+			//}
 			ImageView childAt = (ImageView) mLayoutManager.getChildAt(mid);
 			if (childAt == null) {
 				Log.d(TAG, "onScrolled childAt == null, pageSelected " + pageSelected + ", mid " + mid + ", ChildCount " + childCount);
-				thumbnailsRecyclerView.setPadding(measuredWidth / 2 - (sizeMediaFiles - 1 - pageSelected) * thumbnailSize / 2, 0, 0, 0);
+				//thumbnailsRecyclerView.setPadding(measuredWidth / 2 - (sizeMediaFiles - 1 - pageSelected) * thumbnailSize / 2, 0, 0, 0);
 				childAt = (ImageView) mLayoutManager.getChildAt(mid - 1);
 			}
 			int mediaPos = Integer.valueOf(childAt.getContentDescription() + "");
 			Log.d(TAG, "onScrolled paddingLeft " + paddingLeft + ", mid  " + mid + ", mediaPos " + mediaPos + ", childAt " + childAt);
-			setCurrentItem(mediaPos + 1, false);//pos + 1
+			setCurrentItem(mediaPos + 1, false);
 
         }
 
@@ -527,7 +535,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 ////		rightRecycler.setLayoutParams(lp);
 //	}
 
-    public ScrollGalleryView setFileMedia(final List<File> infos) {//, final List<String> mimes, final String parentPath
+    public void setFileMedia(final List<File> infos) {//, final List<String> mimes, final String parentPath
 		SLIDESHOW = false;
 		mListOfMedia = infos;
 		sizeMediaFiles = mListOfMedia.size();
@@ -539,7 +547,6 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		initializeViewPager();
 		infoLayout.setVisibility(View.VISIBLE);
 		thumbnailsRecyclerView.setVisibility(View.VISIBLE);
-		return this;
 	}
 
     private void initializeViewPager() {
@@ -555,26 +562,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		//}
 	}
 
-//    private void setCurrentItem(final int newPagerPos, boolean smoothScroll) {
-//		if (sizeMediaFiles < 1) {
-//			return;
-//		}
-//		Log.d(TAG, "setCurrentItem curPagerPos " + pageSelected + " to newPagerPos " + newPagerPos);
-//		int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
-//		ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
-//		if (childAt != null) {
-//			childAt.setBackgroundColor(0x80808080);
-//		}
-//		viewPager.setCurrentItem(newPagerPos, smoothScroll);
-//
-//		mediaPos = newPagerPos == 0 ? (sizeMediaFiles - 1) : newPagerPos == (sizeMediaFiles + 1) ? 0 : (newPagerPos - 1);
-//		childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
-//		if (childAt != null) {
-//			childAt.setBackgroundColor((0xc0ffffff));
-//		}
-//    }
-
-    public ScrollGalleryView setCurrentItem(final int newPagerPos, boolean smoothScroll) {
+    public void setCurrentItem(final int newPagerPos, boolean smoothScroll) {
 		Log.d(TAG, "setCurrentItem curPagerPos " + pageSelected + " to newPagerPos " + newPagerPos);
 		int mediaPos = pageSelected == 0 ? (sizeMediaFiles - 1) : pageSelected == (sizeMediaFiles + 1) ? 0 : (pageSelected - 1);
 		ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
@@ -588,15 +576,13 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		if (childAt != null) {
 			childAt.setBackgroundColor((0xc0ffffff));
 		}
-		return this;
     }
 
-    public ScrollGalleryView setThumbnailSize(final int thumbnailSize) {
+    public void setThumbnailSize(final int thumbnailSize) {
         this.thumbnailSize = thumbnailSize;
-        return this;
     }
 
-    public ScrollGalleryView hideThumbnails(final boolean thumbnailsHiddenEnabled) {
+    public void hideThumbnails(final boolean thumbnailsHiddenEnabled) {
         this.hidden = thumbnailsHiddenEnabled;
 		if (thumbnailsHiddenEnabled) {
 			thumbnailsRecyclerView.setVisibility(GONE);
@@ -606,7 +592,6 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			infoLayout.setVisibility(VISIBLE);
 			postDelayed(runUpdateInfo, 10);
 		}
-        return this;
     }
 
 //    private void scrollRecycler(final int mediaPos, final View thumbnail) {
@@ -732,7 +717,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					if (sizeMediaFiles > 1) {
 						SLIDESHOW = true;
 						hideThumbnails(true);
-						postDelayed(run, ImageFragment.curDelay);
+						postDelayed(runSlideshow, ImageFragment.curDelay);
 					}
 					break;
 				case R.id.wallpaperButton:
@@ -846,7 +831,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					int t = pageSelected;
 					setFileMedia(mListOfMedia);
 					pageSelected = t;
-					postDelayed(runNoti, 20);
+					postDelayed(runSorting, 20);
 					break;
 				case R.id.fileSize:
 					if (orderType.equals("Size")) {
@@ -865,7 +850,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					t = pageSelected;
 					setFileMedia(mListOfMedia);
 					pageSelected = t;
-					postDelayed(runNoti, 20);
+					postDelayed(runSorting, 20);
 					break;
 				case R.id.fileDate:
 					if (orderType.equals("Date")) {
@@ -884,7 +869,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					t = pageSelected;
 					setFileMedia(mListOfMedia);
 					pageSelected = t;
-					postDelayed(runNoti, 20);
+					postDelayed(runSorting, 20);
 					break;
 				case R.id.addshortcut:
 					AndroidUtils.addShortcut(mContext, f);
