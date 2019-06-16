@@ -256,7 +256,8 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 
     @Override
     public Parcelable onSaveInstanceState() {
-        final Bundle bundle = new Bundle();
+        Log.d(TAG, "onSaveInstanceState ");
+		final Bundle bundle = new Bundle();
         bundle.putParcelable("instanceState", super.onSaveInstanceState());
         bundle.putBoolean("SLIDESHOW", SLIDESHOW);
 		removeCallbacks(runSlideshow);
@@ -321,13 +322,13 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 		}
 
 		@Override 
-		public void onPageSelected(int position) {
+		public void onPageSelected(int pagerPos) {
 			scrolledByViewPager = true;
-			final int mediaPos = position == 0 ? (sizeMediaFiles - 1) : position == (sizeMediaFiles + 1) ? 0 : (position - 1);
+			final int mediaPos = pagerPos == 0 ? (sizeMediaFiles - 1) : pagerPos == (sizeMediaFiles + 1) ? 0 : (pagerPos - 1);
 			final int childCount = thumbnailsRecyclerView.getLayoutManager().getChildCount();
 			final int measuredWidth = getMeasuredWidth();
 			final int mid = (measuredWidth - thumbnailSize) / 2;
-			Log.d(TAG, "onPageSelected position " + position + ", newpos " + mediaPos + ", mid " + mid + ", childCount " + childCount);
+			Log.d(TAG, "onPageSelected pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", mid " + mid + ", childCount " + childCount);
 			if ((mediaPos) <= childCount / 2 || sizeMediaFiles == 1) {
 				thumbnailsRecyclerView.setPadding(Math.max(mid - (mediaPos) * thumbnailSize, 0), 0, 0, 0);
 			} else if ((sizeMediaFiles - 1 - (mediaPos)) <= childCount / 2) {
@@ -337,7 +338,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			}
 			final ImageView childAt = (ImageView) mLayoutManager.findViewByPosition(mediaPos);
 			scrollRecycler(mediaPos, childAt);
-			pageSelected = position;
+			pageSelected = pagerPos;
 		}
 
 		
@@ -674,7 +675,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 					break;
 					//}
 				case R.id.clockwiseButton:
-					new RotateTask(((ImageFragment)imageViewPagerAdapter.getItem(pageSelected)).getImage().getDrawable(), true).execute();
+					new RotateTask(imageViewPagerAdapter.getCurrentItem().getImage().getDrawable(), true).execute();
 //					Glide
 //						.with(mContext)
 //						.load(f)
@@ -682,7 +683,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 //						.into(pagerAdapter.fragMap.get(pageSelected).getBackgroundImage());
 					break;
 				case R.id.counterClockwiseButton:
-					new RotateTask(((ImageFragment)imageViewPagerAdapter.getItem(pageSelected)).getImage().getDrawable(), false).execute();
+					new RotateTask(imageViewPagerAdapter.getCurrentItem().getImage().getDrawable(), false).execute();
 //					Glide
 //						.with(mContext)
 //						.load(f)
@@ -931,7 +932,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
             //Log.v( TAG, "Bitmap is ready" );
             //hideWait();
             if (bmp != null) {
-                TouchImageView image = ((ImageFragment)imageViewPagerAdapter.getItem(pageSelected)).getImage();
+                TouchImageView image = ((ImageFragment)imageViewPagerAdapter.getCurrentItem()).getImage();
 				image.setVisibility(View.VISIBLE);
                 image.setImageBitmap(bmp);
 

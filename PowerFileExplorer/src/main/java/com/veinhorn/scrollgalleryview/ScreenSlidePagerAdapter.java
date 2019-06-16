@@ -15,6 +15,8 @@ import java.util.TreeMap;
 import android.view.View;
 import android.view.GestureDetector;
 import com.ortiz.touch.TouchImageView;
+import java.util.*;
+import net.gnu.util.*;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}implements Runnable {
 
@@ -22,10 +24,11 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}imple
 
 	private final List<File> mListOfMedia;
 	private final ViewPager viewPager;
-//	TreeMap<Integer, ImageFragment> fragMap = new TreeMap<>();
+	List<ComparableEntry<Integer, ImageFragment>> fragMap = new ArrayList<>(3);
 	final GestureDetector.OnDoubleTapListener onDoubleTapListener;
 	static int numOfPages = 1;
-
+	private final int sizeMediaFiles;
+	
     public ScreenSlidePagerAdapter(final FragmentManager fm, 
 								   final ViewPager vp,
 								   final List<File> listOfMedia, 
@@ -35,34 +38,39 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}imple
 		this.viewPager = vp;
         this.mListOfMedia = listOfMedia;
 		this.onDoubleTapListener = onDoubleTapListener;
+		sizeMediaFiles = mListOfMedia.size();
     }
 
 	@Override
     public Fragment getItem(final int pagerPos) {
-		final int size = mListOfMedia.size();
-		int mediaPos = pagerPos;
-		if (mediaPos == 0) {
-			mediaPos = size - 1;
-		} else if (mediaPos == size + 1) {
-			mediaPos = 0;
-		} else {
-			mediaPos--;
+		final int mediaPos = pagerPos == 0 ? (sizeMediaFiles - 1) : pagerPos == (sizeMediaFiles + 1) ? 0 : (pagerPos - 1);
+		final ImageFragment curFrag = loadImageFragment(mListOfMedia.get(mediaPos));
+		if (fragMap.size() >= 3) {
+			fragMap.remove(0);
 		}
-        //if (position < size) {
-		final ImageFragment fragment = loadImageFragment(mListOfMedia.get(mediaPos));
-			//fragMap.put(Integer.valueOf(positionOri), fragment);
-        //}
+        fragMap.add(new ComparableEntry<Integer, ImageFragment>(Integer.valueOf(pagerPos), curFrag));
 		Log.d(TAG, "getItem pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
-		return fragment;
+		return curFrag;
     }
 
-    private ImageFragment loadImageFragment(final File mediaInfo) {//, final String mime
+	private ImageFragment loadImageFragment(final File mediaInfo) {
         final ImageFragment fragment = new ImageFragment();
         fragment.setMediaInfo(mediaInfo);
 		fragment.setOnDoubleTapListener(onDoubleTapListener);
 		//fragment.setCallback(this);
         return fragment;
     }
+	
+	public ImageFragment getCurrentItem() {
+		final int pagerPos = viewPager.getCurrentItem();
+		for (ComparableEntry<Integer, ImageFragment> e : fragMap) {
+			//Log.d(TAG, "getCurrentItem pagerPos " + pagerPos + ", key " + e.getKey() + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
+			if (e.getKey().intValue() == pagerPos) {
+				return e.getValue();
+			}
+		}
+		return null;
+	}
 
 //	@Override
 //	public void run() {
