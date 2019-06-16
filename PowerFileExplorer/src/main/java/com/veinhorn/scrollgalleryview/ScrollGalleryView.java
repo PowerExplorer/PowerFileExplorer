@@ -329,7 +329,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			final int measuredWidth = getMeasuredWidth();
 			final int mid = (measuredWidth - thumbnailSize) / 2;
 			Log.d(TAG, "onPageSelected pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", mid " + mid + ", childCount " + childCount);
-			if ((mediaPos) <= childCount / 2 || sizeMediaFiles == 1) {
+			if ((mediaPos) <= mid / thumbnailSize || sizeMediaFiles == 1) {
 				thumbnailsRecyclerView.setPadding(Math.max(mid - (mediaPos) * thumbnailSize, 0), 0, 0, 0);
 			} else if ((sizeMediaFiles - 1 - (mediaPos)) <= childCount / 2) {
 				thumbnailsRecyclerView.setPadding(0, 0, Math.max(mid - (sizeMediaFiles - 1 - (mediaPos)) * thumbnailSize, 0), 0);
@@ -558,9 +558,9 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
         viewPager.setAdapter(imageViewPagerAdapter);
 		thumbnailRecyclerAdapter = new ThumbnailAdapter(mContext, mListOfMedia, thumbnailOnClickListener, thumbnailSize);//mimes, parentPath, 
         thumbnailsRecyclerView.setAdapter(thumbnailRecyclerAdapter);
-		//if (sizeMediaFiles == 1) {
-		//	thumbnailsRecyclerView.setPadding((getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
-		//}
+		if (sizeMediaFiles == 1) {
+			thumbnailsRecyclerView.setPadding((getMeasuredWidth() - thumbnailSize) / 2, 0, 0, 0);
+		}
 	}
 
     public void setCurrentItem(final int newPagerPos, boolean smoothScroll) {
