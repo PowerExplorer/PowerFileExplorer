@@ -207,6 +207,7 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 		if ((fragActivity = getActivity()) instanceof ExplorerActivity) {
 			activity = (ExplorerActivity)fragActivity;
 		}
@@ -221,7 +222,6 @@ public abstract class Frag extends Fragment implements View.OnTouchListener, Clo
 			activity = (ExplorerActivity)fragActivity;
 		}
 
-		setRetainInstance(true);
 		AndroidUtils.setOnTouchListener(view, this);
 		final Bundle args = getArguments();
 		if ((currentPathTitle == null || currentPathTitle.length() == 0) && args != null) {

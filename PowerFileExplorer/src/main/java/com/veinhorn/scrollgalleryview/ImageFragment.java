@@ -78,12 +78,12 @@ public class ImageFragment extends Fragment {
 
 	private TextView centerInfo;
 	private boolean mIsFirstBrightnessGesture = true;
-	private View rootView;
+	
 	private float minZoom;
 	private float maxZoom;
 	static float DEFAULT_ZOOM = 2f;
 	static float curZoom = DEFAULT_ZOOM;
-	static int curDelay = 1000;//ScrollGalleryView.DELAY;
+	static int curDelay = 1000;
 	static int curTransform = 12;
 
 	private ViewPager viewPager;
@@ -94,12 +94,16 @@ public class ImageFragment extends Fragment {
 	@Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-		
-        rootView = inflater.inflate(R.layout.image_fragment, container, false);
+        return inflater.inflate(R.layout.image_fragment, container, false);
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		context = getContext();
-		
-        image = (TouchImageView) rootView.findViewById(R.id.image);
-        videoPlayImage = (ImageView) rootView.findViewById(R.id.videoPlayImage);
+
+        image = (TouchImageView) view.findViewById(R.id.image);
+        videoPlayImage = (ImageView) view.findViewById(R.id.videoPlayImage);
 		minZoom = TouchImageView.SUPER_MIN_MULTIPLIER * image.getMinZoom();
 		maxZoom = TouchImageView.SUPER_MAX_MULTIPLIER * image.getMaxZoom();
 		image.setZoom(curZoom);
@@ -117,12 +121,12 @@ public class ImageFragment extends Fragment {
 					return false;//performClick();
 				}
 			});
-        rootView.setOnTouchListener(onTouch);
+        view.setOnTouchListener(onTouch);
 		//videoPlayImage.setOnTouchListener(onTouch);
 		image.setOnTouchListener(onTouch);
 		//rootView.setOnDoubleTapListener(onDoubleTapListener);
 		//image.setOnDoubleTapListener(onDoubleTapListener);
-		centerInfo = (TextView) rootView.findViewById(R.id.centerInfo);
+		centerInfo = (TextView) view.findViewById(R.id.centerInfo);
 		//backgroundImage.setZoom(1.5f);
 		//backgroundImage.setMinZoom(1.0f);
 		//backgroundImage.setMaxZoom(3.0f);
@@ -130,9 +134,7 @@ public class ImageFragment extends Fragment {
 		//backgroundImage.setZoom(1);
 
         loadImageToView();
-
-        return rootView;
-    }
+	}
 
 	public TouchImageView getImage() {
 		return image;
@@ -155,9 +157,10 @@ public class ImageFragment extends Fragment {
 	private boolean dispatchCenterWrapperTouchEvent(final View p1, final MotionEvent event) {
 		//Log.d(TAG, "dispatchCenterWrapperTouchEvent " + event);
 
-		final int measuredWidth = rootView.getMeasuredWidth();
+		final View view = getView();
+		final int measuredWidth = view.getMeasuredWidth();
 		if (mSurfaceYDisplayRange == 0) {
-            mSurfaceYDisplayRange = Math.min(measuredWidth, rootView.getMeasuredHeight());
+            mSurfaceYDisplayRange = Math.min(measuredWidth, view.getMeasuredHeight());
         }
 
         float x_changed, y_changed;

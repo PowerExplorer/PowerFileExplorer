@@ -124,11 +124,10 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}imple
 	
     @Override
     public int getCount() {
-		final int size = mListOfMedia.size();
-		if(size == 1) {
+		if(sizeMediaFiles == 1) {
 			return 1;
 		} else {
-			return size + 2;
+			return sizeMediaFiles + 2;
 		}
     }
 }

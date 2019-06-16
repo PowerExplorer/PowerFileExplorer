@@ -18,6 +18,7 @@
 		android:minWidth="480dp"
         android:minHeight="480dp"
         android:src="@drawable/placeholder_image" />
+        
 	<ImageView
 		android:id="@+id/videoPlayImage"
 		android:layout_width="wrap_content"
@@ -27,6 +28,7 @@
 		android:scaleType="fitCenter"
 		android:minWidth="128dp"
         android:minHeight="128dp"
+        android:visibility="gone" 
 	/> 
 
 	<TextView

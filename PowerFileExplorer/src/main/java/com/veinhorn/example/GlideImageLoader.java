@@ -51,7 +51,7 @@ public class GlideImageLoader {
 		try {
 			if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
 				final File f = new File(Uri.decode(uri.getPath()));
-				Log.d("GlideImageLoader", "SCHEME_FILE loadMedia " + f.getAbsolutePath());
+				//Log.d("GlideImageLoader", "SCHEME_FILE loadMedia " + f.getAbsolutePath());
 				final String name = f.getName();
 				if (GIF_PATTERN.matcher(name).matches()) {
 					RequestListener<File, GifDrawable> listener = new RequestListener<File, GifDrawable>() {
@@ -130,7 +130,7 @@ public class GlideImageLoader {
 						public boolean onException (Exception e, File model, Target <Bitmap> target, boolean isFirstResource) {
 // todo log exception
 // important to return false so the error placeholder can be placed
-							e.printStackTrace();
+							Log.e(TAG, e.getMessage(), e);
 							return false;
 						}
 						@Override
@@ -138,7 +138,8 @@ public class GlideImageLoader {
 							Bitmap resource, File model, Target <Bitmap> target,
 							boolean isFromMemoryCache, boolean
 							isFirstResource ) {
-							Log.d(TAG, "onResourceReady " + model);
+
+							Log.d(TAG, "onResourceReady " + imageView.getMeasuredWidth() + ", " + imageView.getMeasuredHeight() + ", " + model);
 							return false;
 						}
 					};

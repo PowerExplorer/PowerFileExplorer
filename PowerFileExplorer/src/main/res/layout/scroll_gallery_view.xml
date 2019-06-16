@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:id="@+id/frame"
 >
 
 	<!--com.veinhorn.scrollgalleryview.HackyViewPager-->
@@ -20,14 +20,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="#80303030"
-		android:orientation="horizontal"
 		android:layout_gravity="top"
-	>
-
-		<LinearLayout 
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
+		android:orientation="vertical"
 		>
 			<TextView 
 				android:id="@+id/fileName"
@@ -229,7 +223,7 @@
 				</LinearLayout>
 			</HorizontalScrollView>
 
-		</LinearLayout>
+		
 
 	</LinearLayout>
 
