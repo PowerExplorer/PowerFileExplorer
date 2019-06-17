@@ -9,7 +9,7 @@ Copy attached android.jar onto %your-android-sdk%/platforms/android-23/ (needs o
 
 # Power File Manager
 
-[<img alt="Get it on AFH" height="80" width="207" src="https://www.androidfilehost.com/images/afh.png">](https://www.androidfilehost.com/?w=files&flid=73967)
+[<img alt="Get it on Github" height="80" width="207" src="https://github.com/">](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/PowerFileExplorer.apk.zip)
 
 This project is still in developement phase . I would love if other developers improve the code and make it a better
 explorer than it's now. 
