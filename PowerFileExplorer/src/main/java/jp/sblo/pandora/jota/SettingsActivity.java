@@ -1997,7 +1997,7 @@ public class SettingsActivity extends PreferenceActivity implements OnPreference
 				}
                 if ( lastversion < 2 ){
                     editor.putString(KEY_FONT, "NORMAL");
-                    editor.putString(KEY_FONT_SIZE, "16");
+                    editor.putString(KEY_FONT_SIZE, "14");
                     editor.putString(KEY_DEFAULT_FOLDER, Environment.getExternalStorageDirectory().getPath());
 				}
                 if ( lastversion < 3 ){

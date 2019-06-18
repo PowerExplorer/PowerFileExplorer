@@ -111,7 +111,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	private static final int REQUEST_CODE_STORAGE_PERMISSION = 101;
 	
 	private ScaleGestureDetector mScaleGestureDetector;
-	//private ImageButton dirMore;
+	private ImageButton dirMore;
 	private TextView mMessageView;
 	
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
@@ -310,20 +310,22 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 		scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
 		mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
-
+		dirMore = (ImageButton) view.findViewById(R.id.dirMore);
+		
 		drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
 		drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
 		deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
-
+		
 		view.findViewById(R.id.copys).setOnClickListener(this);
 		view.findViewById(R.id.cuts).setOnClickListener(this);
 		deletePastesBtn.setOnClickListener(this);
 		view.findViewById(R.id.renames).setOnClickListener(this);
 		view.findViewById(R.id.shares).setOnClickListener(this);
-
+		dirMore.setOnClickListener(this);
+		
 		view.findViewById(R.id.moreLeft).setVisibility(View.GONE);
 		view.findViewById(R.id.moreRight).setVisibility(View.GONE);
-		view.findViewById(R.id.dirMore).setVisibility(View.GONE);
+		//view.findViewById(R.id.dirMore).setVisibility(View.GONE);
 		view.findViewById(R.id.infos).setOnClickListener(this);
 
 		final View compresssBtn = view.findViewById(R.id.compresss);
@@ -372,7 +374,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
-
+		
 		searchET.addTextChangedListener(textSearch);
 		mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
@@ -1099,6 +1101,69 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			case R.id.clear:
 				searchET.setText("");
 				break;
+			case R.id.dirMore:
+				MenuBuilder menuBuilder = new MenuBuilder(activity);
+				
+				if (activity.multiFiles) {
+					
+					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.right.getVisibility() == View.VISIBLE
+						|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.left.getVisibility() == View.VISIBLE) {
+						menuBuilder.add("Hide");
+					} else {
+						menuBuilder.add("2 panels");
+					}
+					menuBuilder.add("Swap panels");
+					
+					if (activity.left.getVisibility() == View.VISIBLE && activity.right.getVisibility() == View.VISIBLE) {
+						if (slidingTabsFragment.width <= 0) {
+							menuBuilder.add("Wider panel");
+						} else {
+							menuBuilder.add("2 panels equal");
+						}
+					}
+					
+					if (activity.COPY_PATH != null || activity.MOVE_PATH != null || activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {
+						menuBuilder.add("Clear Clipboard");
+					}
+				}
+
+				MenuPopupHelper optionsMenu = new MenuPopupHelper(activity , menuBuilder, dirMore);
+				
+				menuBuilder.setCallback(new MenuBuilder.Callback() {
+						@Override
+						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
+							Log.d(TAG, item.getTitle() + ".");
+							if ("Hide".equals(item.getTitle()) || "2 panels".equals(item.getTitle())) {
+								hide();
+							} else if ("Wider panel".equals(item.getTitle()) || "2 panels equal".equals(item.getTitle())) {
+								biggerequalpanel();
+							} else if ("Swap panels".equals(item.getTitle())) {
+								swap(v);
+							} else if ("Clear Clipboard".equals(item.getTitle())) {
+								activity.COPY_PATH = null;
+								activity.MOVE_PATH = null;
+								activity.EXTRACT_PATH = null;
+								activity.EXTRACT_MOVE_PATH = null;
+								if (activity.curExplorerFrag.selectedInList1.size() == 0 && activity.curExplorerFrag.commands.getVisibility() == View.VISIBLE) {
+									activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+									activity.curExplorerFrag.commands.setVisibility(View.GONE);
+									activity.curExplorerFrag.horizontalDivider6.setVisibility(View.GONE);
+									activity.curExplorerFrag.updateDelPaste();
+								} 
+								if (activity.curContentFrag.selectedInList1.size() == 0 && activity.curContentFrag.commands.getVisibility() == View.VISIBLE) {
+									activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
+									activity.curContentFrag.commands.setVisibility(View.GONE);
+									activity.curContentFrag.horizontalDivider6.setVisibility(View.GONE);
+									activity.curContentFrag.updateDelPaste();
+								}
+							} 
+							return true;
+						}
+						@Override
+						public void onMenuModeChange(MenuBuilder menu) {}
+					});
+				optionsMenu.show();
+				break;
 			case R.id.copys:
 				activity.COPY_PATH = null;
 				activity.MOVE_PATH = null;
@@ -1667,24 +1732,24 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		} else {
 			mi.setEnabled(false);
 		}
-        mi = menu.findItem(R.id.hide);
-		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.multiFiles && activity.right.getVisibility() == View.VISIBLE
-			|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.left.getVisibility() == View.VISIBLE) {
-			mi.setTitle("Hide");
-		} else {
-			mi.setTitle("2 panels");
-		}
-        mi = menu.findItem(R.id.biggerequalpanel);
-		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
-			mi.setEnabled(false);
-		} else {
-			mi.setEnabled(true);
-			if (slidingTabsFragment.width <= 0) {
-				mi.setTitle("Wider panel");
-			} else {
-				mi.setTitle("2 panels equal");
-			}
-		}
+//        mi = menu.findItem(R.id.hide);
+//		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.multiFiles && activity.right.getVisibility() == View.VISIBLE
+//			|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.left.getVisibility() == View.VISIBLE) {
+//			mi.setTitle("Hide");
+//		} else {
+//			mi.setTitle("2 panels");
+//		}
+//        mi = menu.findItem(R.id.biggerequalpanel);
+//		if (activity.left.getVisibility() == View.GONE || activity.right.getVisibility() == View.GONE) {
+//			mi.setEnabled(false);
+//		} else {
+//			mi.setEnabled(true);
+//			if (slidingTabsFragment.width <= 0) {
+//				mi.setTitle("Wider panel");
+//			} else {
+//				mi.setTitle("2 panels equal");
+//			}
+//		}
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					Log.d(TAG, item.getTitle() + ".");

@@ -138,7 +138,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_alignParentLeft="true"
-						android:text="File "
+						android:text="Archive "
 						android:minEms="4"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:paddingLeft="6dp"
@@ -216,7 +216,12 @@
 							android:textSize="14sp" 
 							android:checked="true"
 							android:textAppearance="?android:attr/textAppearanceLarge" />
-
+						<RadioButton
+							android:text="zpaq "
+							android:tag="zpaq"
+							android:id="@+id/zpaq"
+							android:textSize="14sp" 
+							android:textAppearance="?android:attr/textAppearanceLarge" />
 						<RadioButton
 							android:text="tbz2 "
 							android:tag="tbz2"
@@ -243,12 +248,7 @@
 							android:id="@+id/tar"
 							android:textSize="14sp"  
 							android:textAppearance="?android:attr/textAppearanceLarge"/>
-						<RadioButton
-							android:text="zpaq "
-							android:tag="zpaq"
-							android:id="@+id/zpaq"
-							android:textSize="14sp" 
-							android:textAppearance="?android:attr/textAppearanceLarge" />
+						
 					</RadioGroup>
 				</LinearLayout>
 
