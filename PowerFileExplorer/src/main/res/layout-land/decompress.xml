@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent" 
+	android:fillViewport="true"
+>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+
+	<LinearLayout
+		android:id="@+id/titleLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" 
+		android:layout_weight="1"
+		android:paddingLeft="12dp"
+		android:paddingRight="12dp"
+		android:layout_gravity="center_vertical"
+		android:paddingTop="2dp"
+		android:paddingBottom="2dp"
+		android:gravity="center"
+	>
+
+		<TextView
+            android:id="@+id/titleLbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+			android:paddingRight="12dp"
+			android:paddingTop="8dp"
+			android:paddingBottom="8dp"
+			android:text="Decompression"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="20sp" />
+
+
+	</LinearLayout>
+
+	<View
+		android:id="@+id/horizontalDivider0"
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:background="#ff0000ff" />
+
+	
+
+		<LinearLayout
+			android:id="@+id/config"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:orientation="vertical" >
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:paddingTop="0dp"
+				android:paddingBottom="0dp"
+				android:paddingLeft="6dp"
+				android:paddingRight="12dp"
+			>
+
+				<RelativeLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+				>
+
+					<TextView
+						android:id="@+id/filesLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentLeft="true"
+						android:minEms="4"
+						android:text="Files "
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:paddingLeft="6dp"
+						android:layout_alignBaseline="@+id/files"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/files"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_toRightOf="@+id/filesLbl"
+						android:layout_toLeftOf="@+id/filesBtn"
+						android:singleLine="true"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+
+					<ImageButton
+						android:id="@+id/filesBtn"
+						android:layout_width="54dp"
+						android:layout_height="40dp"
+						android:scaleType="fitCenter"
+						android:layout_toLeftOf="@+id/historyBtn"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:src="@drawable/ic_more_horizontal_black_48dp"
+						android:text=" ... " />
+
+					<ImageButton
+						android:id="@+id/historyBtn"
+						android:layout_width="54dp"
+						android:layout_height="40dp"
+						android:scaleType="fitCenter"
+						android:layout_alignParentRight="true"
+						android:src="@drawable/ic_history_black_36dp"
+					/>
+				</RelativeLayout>
+
+				<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+				>
+
+					<TextView
+						android:id="@+id/saveToLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Extract to "
+						android:minEms="4"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:paddingLeft="6dp"
+						android:layout_alignBaseline="@+id/saveTo"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/saveTo"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_toRightOf="@+id/saveToLbl"
+						android:layout_toLeftOf="@+id/saveToBtn"
+						android:singleLine="true"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+
+					<ImageButton
+						android:id="@+id/saveToBtn"
+						android:layout_width="54dp"
+						android:layout_height="40dp"
+						android:scaleType="fitCenter"
+						android:layout_toLeftOf="@+id/historySaveBtn"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:src="@drawable/ic_more_horizontal_black_48dp"
+						android:text=" ... " />
+
+					<ImageButton
+						android:id="@+id/historySaveBtn"
+						android:layout_width="54dp"
+						android:layout_height="40dp"
+						android:scaleType="fitCenter"
+						android:layout_alignParentRight="true"
+						android:src="@drawable/ic_history_black_36dp"
+					/>
+				</RelativeLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:layout_gravity="bottom"
+					android:gravity="bottom"
+
+				>
+					<TextView
+						android:id="@+id/passwordCB"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentLeft="true"
+						android:text="Password "
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="4"
+						android:layout_gravity="center_vertical"
+						android:gravity="center_vertical"
+						android:paddingLeft="6dp"
+						android:textSize="14sp" />
+
+					<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_gravity="bottom"
+						android:gravity="bottom"
+						android:orientation="horizontal" >
+
+						<net.gnu.p7zip.ShowHidePasswordEditText
+							android:id="@+id/password"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:singleLine="true"
+							app:drawable_hide="@drawable/ic_visibility_off_black_48dp"
+							app:drawable_show="@drawable/ic_visibility_black_48dp"
+							app:showPasswordVisibilityIndicator="true"
+							android:textAppearance="?android:attr/textAppearanceLarge"
+							android:layout_gravity="bottom"
+							android:gravity="bottom"
+							android:textSize="14sp" />
+					</LinearLayout>
+
+				</LinearLayout>
+
+				<CheckBox
+					android:id="@+id/extractWithFullPathsCB"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Extract with full paths"
+					android:checked="true"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:textSize="14sp" />
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+				>
+					<TextView
+						android:id="@+id/overwriteLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentLeft="true"
+						android:text="Overwrite Mode "
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="7"
+						android:paddingLeft="6dp"
+						android:textSize="14sp" />
+
+					<Spinner
+						android:id="@+id/overwrite"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_alignParentRight="true"
+						android:layout_toRightOf="@+id/overwriteLbl"
+						android:drawSelectorOnTop="true"
+					/>
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+				>
+					<TextView
+						android:id="@+id/IncludeLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Include"
+						android:minEms="7"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:paddingLeft="6dp"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/include"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text=""
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+				>
+					<TextView
+						android:id="@+id/ExcludeLbl"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Exclude"
+						android:minEms="7"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:paddingLeft="6dp"
+						android:textSize="14sp" />
+
+					<EditText
+						android:id="@+id/exclude"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text=""
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal" 
+					android:paddingTop="0dp"
+					android:paddingBottom="0dp"
+				>
+					<TextView
+						android:id="@+id/otherParametersCB"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Other Parameters"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:minEms="7"
+						android:paddingLeft="6dp"
+						android:textSize="14sp" />
+					<EditText
+						android:id="@+id/otherParametersET"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:singleLine="true"
+						android:text=""
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:textSize="14sp" />
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+
+	
+
+	<ListView
+		android:id="@+id/status"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:minWidth="480dp"
+        android:minHeight="480dp"
+        android:layout_weight="100"
+		android:visibility="gone"
+		android:paddingTop="12dp"
+		android:paddingLeft="12dp"
+		android:paddingRight="12dp"
+		android:divider="@null"
+	/>
+
+	<LinearLayout
+		android:id="@+id/buttons"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+
+		<Button
+			android:id="@+id/cancelDir"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Hide"
+			android:textSize="20sp" />
+
+		<Button
+			android:id="@+id/okDir"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Compress"
+			android:textSize="20sp" />
+	</LinearLayout>
+
+</LinearLayout>
+</ScrollView>
