@@ -262,7 +262,12 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
         bundle.putParcelable("instanceState", super.onSaveInstanceState());
         bundle.putBoolean("SLIDESHOW", SLIDESHOW);
 		bundle.putBoolean("hidden", hidden);
-		bundle.putSerializable("mListOfMedia", mListOfMedia);
+		//bundle.putSerializable("mListOfMedia", mListOfMedia);
+		final ArrayList<String> ml = new ArrayList<>(mListOfMedia.size());
+		for (File f : mListOfMedia) {
+			ml.add(f.getAbsolutePath());
+		}
+		bundle.putStringArrayList("mListOfMedia", ml);
 		bundle.putInt("thumbnailSize", thumbnailSize);
 		bundle.putInt("pageSelected", pageSelected);
 		removeCallbacks(runSlideshow);
@@ -276,7 +281,12 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			final Bundle bundle = (Bundle) state;
 			SLIDESHOW = bundle.getBoolean("SLIDESHOW", false);
 			hidden = bundle.getBoolean("hidden", false);
-			mListOfMedia = (ArrayList<File>) bundle.getSerializable("mListOfMedia");
+			final ArrayList<String> lm = (ArrayList<String>) bundle.getStringArrayList("mListOfMedia");
+			if (lm != null && lm.size() > 0) {
+				for (String st : lm) {
+					mListOfMedia.add(new File(st));
+				}
+			}
 			sizeMediaFiles = mListOfMedia.size();
 			thumbnailSize = bundle.getInt("thumbnailSize", 54);
 			pageSelected = bundle.getInt("pageSelected", pageSelected);
