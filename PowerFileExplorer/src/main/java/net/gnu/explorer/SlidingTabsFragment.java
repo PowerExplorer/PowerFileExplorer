@@ -65,6 +65,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
 							 final Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
+		setRetainInstance(true);
 		Log.d(TAG, "onCreateView " + savedInstanceState);
 		return inflater.inflate(R.layout.fragment_sample, container, false);
 	}
@@ -72,13 +73,19 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	@Override
 	public void onViewCreated(final View view, final Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		final Bundle args = getArguments();
-		Log.d(TAG, "onViewCreated side " + side + ", args " + args + ", savedInstanceState " + savedInstanceState);
-		setRetainInstance(true);
 		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
+		// Give the SlidingTabLayout the ViewPager, this must be done AFTER the
+		// ViewPager has had it's PagerAdapter set.
+		mSlidingHorizontalScroll = (SlidingHorizontalScroll) view.findViewById(R.id.sliding_tabs);
+	}
+	
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		childFragmentManager = getChildFragmentManager();
 		final Activity activ = getActivity();
 		activ.getWindow().getDecorView().setBackgroundColor(Constants.BASE_BACKGROUND_LIGHT);
+		final Bundle args = getArguments();
+		Log.d(TAG, "onActivityCreated side " + side + ", args " + args + ", savedInstanceState " + savedInstanceState);
 		
 		if (savedInstanceState == null) {
 			if (args == null) {
@@ -86,7 +93,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 			} else {
 				final int no = args.getInt("no");
 				for (int i = 0; i < no; i++) {
-					Log.d(TAG, no + " onViewCreated args.getString(Constants.EXTRA_DIR_PATH" + i + ")=" + args.getString(Constants.EXTRA_ABSOLUTE_PATH + i));
+					Log.d(TAG, no + " onActivityCreated args.getString(Constants.EXTRA_DIR_PATH" + i + ")=" + args.getString(Constants.EXTRA_ABSOLUTE_PATH + i));
 					ContentFragment cf = ContentFragment.newInstance(SlidingTabsFragment.this, 
 																	 args.getString(Constants.EXTRA_ABSOLUTE_PATH + i),
 																	 args.getString(Constants.EXTRA_FILTER_FILETYPE + i),
@@ -99,7 +106,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 
 			pagerAdapter = new PagerAdapter(childFragmentManager);
 			mViewPager.setAdapter(pagerAdapter);
-			Log.d(TAG, "onViewCreated mViewPager " + mViewPager + ", mTabs " + mTabs);
+			Log.d(TAG, "onActivityCreated mViewPager " + mViewPager + ", mTabs " + mTabs);
 			if (args != null) {
 				mViewPager.setCurrentItem(args.getInt("pos", pageSelected), true);
 			} else {
@@ -139,10 +146,6 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		}
 		mViewPager.setOffscreenPageLimit(16);
 
-		// Give the SlidingTabLayout the ViewPager, this must be done AFTER the
-		// ViewPager has had it's PagerAdapter set.
-		mSlidingHorizontalScroll = (SlidingHorizontalScroll) view.findViewById(R.id.sliding_tabs);
-		
 		final TextEditorActivity textActivity;
 		if (activ instanceof TextEditorActivity) {
 			textActivity = (TextEditorActivity)activ;
@@ -251,38 +254,38 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 									((ContentFragment)createFragment).updateDelPaste();
 								}
 							}
-							if (fileFrag instanceof ContentFragment) {
-								if (activity.balance == 0) {
-									if (side == SlidingTabsFragment.Side.LEFT && !activity.swap
-										|| side == SlidingTabsFragment.Side.RIGHT && activity.swap) {
-										((ContentFragment)fileFrag).moreLeft.setVisibility(View.VISIBLE);
-										((ContentFragment)fileFrag).moreRight.setVisibility(View.GONE);
-									} else {
-										((ContentFragment)fileFrag).moreLeft.setVisibility(View.GONE);
-										((ContentFragment)fileFrag).moreRight.setVisibility(View.VISIBLE);
-									}
-									View findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.book);
-									findViewById.setVisibility(View.GONE);
-
-									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
-									findViewById.setVisibility(View.GONE);
-
-									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
-									findViewById.setVisibility(View.GONE);
-								} else {
-									((ContentFragment)fileFrag).moreLeft.setVisibility(View.GONE);
-									((ContentFragment)fileFrag).moreRight.setVisibility(View.GONE);
-
-									View findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.book);
-									findViewById.setVisibility(View.VISIBLE);
-
-									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
-									findViewById.setVisibility(View.VISIBLE);
-
-									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
-									findViewById.setVisibility(View.VISIBLE);
-								}
-							} 
+//							if (fileFrag instanceof ContentFragment) {
+//								if (activity.balance == 0) {
+//									if (side == SlidingTabsFragment.Side.LEFT && !activity.swap
+//										|| side == SlidingTabsFragment.Side.RIGHT && activity.swap) {
+//										((ContentFragment)fileFrag).moreLeft.setVisibility(View.VISIBLE);
+//										((ContentFragment)fileFrag).moreRight.setVisibility(View.GONE);
+//									} else {
+//										((ContentFragment)fileFrag).moreLeft.setVisibility(View.GONE);
+//										((ContentFragment)fileFrag).moreRight.setVisibility(View.VISIBLE);
+//									}
+//									View findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.book);
+//									findViewById.setVisibility(View.GONE);
+//
+//									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
+//									findViewById.setVisibility(View.GONE);
+//
+//									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
+//									findViewById.setVisibility(View.GONE);
+//								} else {
+//									((ContentFragment)fileFrag).moreLeft.setVisibility(View.GONE);
+//									((ContentFragment)fileFrag).moreRight.setVisibility(View.GONE);
+//
+//									View findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.book);
+//									findViewById.setVisibility(View.VISIBLE);
+//
+//									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.hiddenfiles);
+//									findViewById.setVisibility(View.VISIBLE);
+//
+//									findViewById = ((ContentFragment)fileFrag).getView().findViewById(R.id.shortcuts);
+//									findViewById.setVisibility(View.VISIBLE);
+//								}
+//							} 
 						} 
 					} // end if (activ instanceof ExplorerActivity) 
 				}
@@ -784,11 +787,12 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		//Log.d(TAG, "onSaveInstanceState1 " + outState + ", " + childFragmentManager.getFragments());
 		try {
-			if (mTabs != null && mTabs.size() > 0) {
+			final int size = mTabs.size();
+			if (mTabs != null && size > 0) {
 				int i = 0;
 				for (PagerItem pi : mTabs) {
 					Log.d(TAG, "onSaveInstanceState pi.frag.getTag() " + pi.frag.getTag() + ", " + side + ", " + pi);
@@ -796,11 +800,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 					outState.putString(i++ + "", pi.frag.getTag());
 					outState.putString(pi.frag.getTag(), pi.frag.currentPathTitle);
 				}
-				if (mTabs.size() > 1) {
+	 			if (size > 1) {
 					//Log.d(TAG, "fakeStart 0 tag" + mTabs.get(0).fakeFrag.getTag());
 					outState.putString("fake0", mTabs.get(0).fakeFrag.getTag());
 					//Log.d(TAG, "fakeEnd tag  " + mTabs.get(mTabs.size()-1).fakeFrag.getTag());
-					outState.putString("fakeEnd", mTabs.get(mTabs.size() - 1).fakeFrag.getTag());
+		 			outState.putString("fakeEnd", mTabs.get(size - 1).fakeFrag.getTag());
 				}
 			}
 			outState.putInt("width", width);

@@ -46,6 +46,7 @@ import net.gnu.androidutil.AndroidUtils;
 import net.gnu.util.FileUtil;
 import net.gnu.util.Util;
 import net.gnu.common.*;
+import java.util.*;
 
 public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHolder> {
 
@@ -53,7 +54,8 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 
 	private final int backgroundResource;
 	private final ContentFragment contentFrag;
-
+	List<LayoutElement> dataSourceL2;
+	
 	public void toggleChecked(final boolean checked) {
 		if (checked) {
 			contentFrag.allCbx.setSelected(true);
@@ -108,6 +110,13 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 	public ArrAdapter(final ContentFragment fileFrag, final List<LayoutElement> objects) {
 		super(objects);
 		this.contentFrag = fileFrag;
+		if (fileFrag.type == Frag.TYPE.EXPLORER) {
+			if (fileFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+				dataSourceL2 = fileFrag.activity.dataSourceL2OfLeft;
+			} else {
+				dataSourceL2 = fileFrag.activity.dataSourceL2OfRight;
+			}
+		} 
 
 		final int[] attrs = new int[]{R.attr.selectableItemBackground};
 		final TypedArray typedArray = fileFrag.activity.obtainStyledAttributes(attrs);
@@ -209,10 +218,10 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			boolean inDataSource2 = false;
 			boolean isPartial = false;
 			//Log.d(TAG, "dataSource2" + Util.collectionToString(dataSourceL2, true, "\n"));
-			if (contentFrag.multiFiles && contentFrag.dataSourceL2 != null) {
+			if (contentFrag.multiFiles && dataSourceL2 != null) {
 				final String fPathD = fPath + "/";
 				String f2Path;
-				for (LayoutElement f2 : contentFrag.dataSourceL2) {
+				for (LayoutElement f2 : dataSourceL2) {
 					f2Path = f2.path;
 					if (f2.equals(le) || fPath.startsWith(f2Path + "/")) {
 						inDataSource2 = true;
@@ -632,15 +641,15 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				} else {
 					final int id = v.getId();
 					if (contentFrag.multiFiles) {// || fileFrag.suffix != null && fileFrag.suffix.length() == 0
-						boolean inSelected = false;
-						if (contentFrag.dataSourceL2 != null)
-							for (LayoutElement st : contentFrag.dataSourceL2) {
-								if (rowItem.path.equals(st.path) || fPath.startsWith(st.path + "/")) {
-									inSelected = true;
-									break;
-								}
-							}
-						if (!inSelected) {
+//						boolean inSelected = false;
+//						if (dataSourceL2 != null)
+//							for (LayoutElement st : dataSourceL2) {
+//								if (rowItem.path.equals(st.path) || fPath.startsWith(st.path + "/")) {
+//									inSelected = true;
+//									break;
+//								}
+//							}
+//						if (!inSelected) {
 							if (id == R.id.icon) {
 								contentFrag.tempPreviewL2 = rowItem;
 								notifyDataSetChanged();
@@ -726,41 +735,41 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 								contentFrag.selectionStatusTV.setText(contentFrag.selectedInList1.size() 
 																	+ "/" + contentFrag.dataSourceL1.size());
 							}
-						} else { // inselected
-							if (id == R.id.icon) { //dir
-								contentFrag.tempPreviewL2 = rowItem;
-								notifyDataSetChanged();
-								if (f.isFile()) {
-									load(rowItem, f, fPath, pos);
-								} else if (contentFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//ContentFragment dir//fileFrag.type == -1
-									if (contentFrag.activity.slideFrag2 != null) {
-										Frag frag = contentFrag.activity.slideFrag2.getCurrentFragment();
-										if (frag.type == Frag.TYPE.EXPLORER) {
-											((ContentFragment)frag).changeDir(path, true);
-										} else {
-											contentFrag.activity.slideFrag2.setCurrentItem(contentFrag.activity.slideFrag2.indexOfAdapter(contentFrag.activity.curExplorerFrag), true);
-											contentFrag.activity.curExplorerFrag.changeDir(path, true);
-										}
-									}
-								} else {//dir
-									//if (fileFrag.activity.slideFrag2 != null) {
-									Frag frag = contentFrag.activity.slideFrag.getCurrentFragment();
-									if (frag.type == Frag.TYPE.EXPLORER) {
-										((ContentFragment)frag).changeDir(path, true);
-									} else {
-										contentFrag.activity.slideFrag.setCurrentItem(contentFrag.activity.slideFrag.indexOfAdapter(contentFrag.activity.curContentFrag), true);
-										contentFrag.activity.curContentFrag.changeDir(path, true);
-									}
-								}
-							} else if (f.isFile()) {
-//								if (v.getId() == R.id.icon) {
-//									contentFrag.tempPreviewL2 = rowItem;
+//						} else { // inselected
+//							if (id == R.id.icon) { //dir
+//								contentFrag.tempPreviewL2 = rowItem;
+//								notifyDataSetChanged();
+//								if (f.isFile()) {
 //									load(rowItem, f, fPath, pos);
-//								} else {
-								openFile(rowItem, f, fPath);
+//								} else if (contentFrag.slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {//ContentFragment dir//fileFrag.type == -1
+//									if (contentFrag.activity.slideFrag2 != null) {
+//										Frag frag = contentFrag.activity.slideFrag2.getCurrentFragment();
+//										if (frag.type == Frag.TYPE.EXPLORER) {
+//											((ContentFragment)frag).changeDir(path, true);
+//										} else {
+//											contentFrag.activity.slideFrag2.setCurrentItem(contentFrag.activity.slideFrag2.indexOfAdapter(contentFrag.activity.curExplorerFrag), true);
+//											contentFrag.activity.curExplorerFrag.changeDir(path, true);
+//										}
+//									}
+//								} else {//dir
+//									//if (fileFrag.activity.slideFrag2 != null) {
+//									Frag frag = contentFrag.activity.slideFrag.getCurrentFragment();
+//									if (frag.type == Frag.TYPE.EXPLORER) {
+//										((ContentFragment)frag).changeDir(path, true);
+//									} else {
+//										contentFrag.activity.slideFrag.setCurrentItem(contentFrag.activity.slideFrag.indexOfAdapter(contentFrag.activity.curContentFrag), true);
+//										contentFrag.activity.curContentFrag.changeDir(path, true);
+//									}
 //								}
-							} 
-						}
+//							} else if (f.isFile()) {
+////								if (v.getId() == R.id.icon) {
+////									contentFrag.tempPreviewL2 = rowItem;
+////									load(rowItem, f, fPath, pos);
+////								} else {
+//								openFile(rowItem, f, fPath);
+////								}
+//							} 
+//						}
 					} else { //!multifile no preview
 						if (id == R.id.cbx) {
 							// chọn mới đầu tiên
@@ -1144,8 +1153,8 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 			Log.d(TAG, "multiFiles " + contentFrag.multiFiles);
 
 			boolean inSelectedFiles = false;
-			if (contentFrag.dataSourceL2 != null)
-				for (LayoutElement st : contentFrag.dataSourceL2) {
+			if (dataSourceL2 != null)
+				for (LayoutElement st : dataSourceL2) {
 					if (f.equals(st) || fPath.startsWith(st.path + "/")) {
 						inSelectedFiles = true;
 						break;

@@ -246,8 +246,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		searchET = (EditText) v.findViewById(R.id.search_box);
 		topflipper = (ViewFlipper) v.findViewById(R.id.flipper_top);
 		quickLayout = (LinearLayout) v.findViewById(R.id.quicksearch);
-
-		listView.setHasFixedSize(true);
+		
 		icons.setOnClickListener(this);
 		allCbx.setOnClickListener(this);
 		allName.setOnClickListener(this);
@@ -293,7 +292,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 
 	public void clone(final Frag frag, final boolean fake) {
 		super.clone(frag, fake);
-
+		Log.i(TAG, "clone " + this + " from " + frag);
 		if (frag instanceof FileFrag && ((FileFrag)frag).gridLayoutManager != null) {
 			final FileFrag fileFrag = (FileFrag)frag;
 
@@ -382,31 +381,31 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		activity.balance = -activity.balance;
 		if (this instanceof ContentFragment) {
 			if (activity.balance == 0) {
-				if (!activity.swap) {
-					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-						activity.curExplorerFrag.moreLeft.setVisibility(View.GONE);
-						activity.curExplorerFrag.moreRight.setVisibility(View.VISIBLE);
-						((ContentFragment)this).moreLeft.setVisibility(View.VISIBLE);
-						((ContentFragment)this).moreRight.setVisibility(View.GONE);
-					} else {
-						activity.curContentFrag.moreLeft.setVisibility(View.VISIBLE);
-						activity.curContentFrag.moreRight.setVisibility(View.GONE);
-						((ContentFragment)this).moreLeft.setVisibility(View.GONE);
-						((ContentFragment)this).moreRight.setVisibility(View.VISIBLE);
-					}
-				} else {
-					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
-						activity.curExplorerFrag.moreLeft.setVisibility(View.VISIBLE);
-						activity.curExplorerFrag.moreRight.setVisibility(View.GONE);
-						((ContentFragment)this).moreLeft.setVisibility(View.GONE);
-						((ContentFragment)this).moreRight.setVisibility(View.VISIBLE);
-					} else {
-						activity.curContentFrag.moreLeft.setVisibility(View.GONE);
-						activity.curContentFrag.moreRight.setVisibility(View.VISIBLE);
-						((ContentFragment)this).moreLeft.setVisibility(View.VISIBLE);
-						((ContentFragment)this).moreRight.setVisibility(View.GONE);
-					}
-				}
+//				if (!activity.swap) {
+//					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+//						activity.curExplorerFrag.moreLeft.setVisibility(View.GONE);
+//						activity.curExplorerFrag.moreRight.setVisibility(View.VISIBLE);
+//						((ContentFragment)this).moreLeft.setVisibility(View.VISIBLE);
+//						((ContentFragment)this).moreRight.setVisibility(View.GONE);
+//					} else {
+//						activity.curContentFrag.moreLeft.setVisibility(View.VISIBLE);
+//						activity.curContentFrag.moreRight.setVisibility(View.GONE);
+//						((ContentFragment)this).moreLeft.setVisibility(View.GONE);
+//						((ContentFragment)this).moreRight.setVisibility(View.VISIBLE);
+//					}
+//				} else {
+//					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
+//						activity.curExplorerFrag.moreLeft.setVisibility(View.VISIBLE);
+//						activity.curExplorerFrag.moreRight.setVisibility(View.GONE);
+//						((ContentFragment)this).moreLeft.setVisibility(View.GONE);
+//						((ContentFragment)this).moreRight.setVisibility(View.VISIBLE);
+//					} else {
+//						activity.curContentFrag.moreLeft.setVisibility(View.GONE);
+//						activity.curContentFrag.moreRight.setVisibility(View.VISIBLE);
+//						((ContentFragment)this).moreLeft.setVisibility(View.VISIBLE);
+//						((ContentFragment)this).moreRight.setVisibility(View.GONE);
+//					}
+//				}
 			}
 		}
 		AndroidUtils.setSharedPreference(activity, "swap", activity.swap);
@@ -511,10 +510,10 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 			activity.curContentFrag.getView().findViewById(R.id.shortcuts).setVisibility(View.VISIBLE);
 			activity.curExplorerFrag.getView().findViewById(R.id.shortcuts).setVisibility(View.VISIBLE);
 
-			activity.curContentFrag.moreLeft.setVisibility(View.GONE);
-			activity.curContentFrag.moreRight.setVisibility(View.GONE);
-			activity.curExplorerFrag.moreLeft.setVisibility(View.GONE);
-			activity.curExplorerFrag.moreRight.setVisibility(View.GONE);
+//			activity.curContentFrag.moreLeft.setVisibility(View.GONE);
+//			activity.curContentFrag.moreRight.setVisibility(View.GONE);
+//			activity.curExplorerFrag.moreLeft.setVisibility(View.GONE);
+//			activity.curExplorerFrag.moreRight.setVisibility(View.GONE);
 
 		} else {
 			LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)activity.left.getLayoutParams();
@@ -527,17 +526,17 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 			activity.slideFrag.width = 0;
 			activity.slideFrag2.width = 0;
 
-			if (!activity.swap) {
-				activity.curContentFrag.moreLeft.setVisibility(View.VISIBLE);
-				activity.curContentFrag.moreRight.setVisibility(View.GONE);
-				activity.curExplorerFrag.moreLeft.setVisibility(View.GONE);
-				activity.curExplorerFrag.moreRight.setVisibility(View.VISIBLE);
-			} else {
-				activity.curExplorerFrag.moreLeft.setVisibility(View.VISIBLE);
-				activity.curExplorerFrag.moreRight.setVisibility(View.GONE);
-				activity.curContentFrag.moreLeft.setVisibility(View.GONE);
-				activity.curContentFrag.moreRight.setVisibility(View.VISIBLE);
-			}
+//			if (!activity.swap) {
+//				activity.curContentFrag.moreLeft.setVisibility(View.VISIBLE);
+//				activity.curContentFrag.moreRight.setVisibility(View.GONE);
+//				activity.curExplorerFrag.moreLeft.setVisibility(View.GONE);
+//				activity.curExplorerFrag.moreRight.setVisibility(View.VISIBLE);
+//			} else {
+//				activity.curExplorerFrag.moreLeft.setVisibility(View.VISIBLE);
+//				activity.curExplorerFrag.moreRight.setVisibility(View.GONE);
+//				activity.curContentFrag.moreLeft.setVisibility(View.GONE);
+//				activity.curContentFrag.moreRight.setVisibility(View.VISIBLE);
+//			}
 			activity.curContentFrag.getView().findViewById(R.id.book).setVisibility(View.GONE);
 			activity.curExplorerFrag.getView().findViewById(R.id.book).setVisibility(View.GONE);
 

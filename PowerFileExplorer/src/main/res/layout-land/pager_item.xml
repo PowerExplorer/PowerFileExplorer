@@ -369,6 +369,7 @@
 	/-->
 
 	<FrameLayout
+	    android:id="@+id/frame"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_below="@+id/horizontalDivider12"
@@ -455,6 +456,7 @@
 				android:gravity="center"
 				android:layout_weight="1"
 				android:layout_alignBaseline="@+id/compresss"
+				android:visibility="gone"
 			/>
 		
 			<Button
@@ -579,7 +581,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				android:visibility="gone"
+				
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
@@ -598,7 +600,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				android:visibility="gone"
+				
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
@@ -617,7 +619,7 @@
 				android:gravity="center"
 				android:textSize="10sp"
 				android:textStyle="normal"
-				android:visibility="gone"
+				
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
@@ -670,6 +672,7 @@
 				android:src="@drawable/ic_more_vert_black_48dp"
 				android:gravity="center"
 				android:layout_alignBaseline="@+id/compresss"
+				android:visibility="gone"
 			/>
 
 		</LinearLayout>

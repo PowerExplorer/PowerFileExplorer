@@ -382,6 +382,7 @@
 	/-->
 
 	<FrameLayout
+		android:id="@+id/frame"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_below="@+id/horizontalDivider12"
@@ -477,6 +478,7 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="10dp"
 				android:drawablePadding="2dp"
+				android:visibility="gone"
 			/>
 
 			<Button
@@ -599,7 +601,7 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
-				android:visibility="gone"
+				
 			/>
 
 			<Button
@@ -618,7 +620,7 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
-				android:visibility="gone"
+				
 			/>
 
 			<Button
@@ -637,7 +639,7 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="8dp"
 				android:drawablePadding="0dp"
-				android:visibility="gone"
+				
 			/>
 
 			<!--<Button
@@ -693,6 +695,7 @@
 				android:paddingBottom="0dp"
 				android:paddingTop="10dp"
 				android:drawablePadding="2dp"
+				android:visibility="gone"
 			/>
 
 		</LinearLayout>

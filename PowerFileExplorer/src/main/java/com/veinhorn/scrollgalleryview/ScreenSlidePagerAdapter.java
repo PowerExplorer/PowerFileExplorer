@@ -22,7 +22,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}imple
 
     private static final String TAG = "ScreenSlidePagerAdapter";
 
-	private final List<File> mListOfMedia;
+	private final ArrayList<File> mListOfMedia;
 	private final ViewPager viewPager;
 	List<ComparableEntry<Integer, ImageFragment>> fragMap = new ArrayList<>(3);
 	final GestureDetector.OnDoubleTapListener onDoubleTapListener;
@@ -31,7 +31,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}imple
 	
     public ScreenSlidePagerAdapter(final FragmentManager fm, 
 								   final ViewPager vp,
-								   final List<File> listOfMedia, 
+								   final ArrayList<File> listOfMedia, 
 								   final GestureDetector.OnDoubleTapListener onDoubleTapListener
 								   ) {
         super(fm);

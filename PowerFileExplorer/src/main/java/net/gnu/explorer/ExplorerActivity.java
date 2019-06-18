@@ -195,6 +195,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 	public ContentFragment curExplorerFrag;
 	int curExplorerFragIndex = 1;
 	
+	ArrayList<LayoutElement> dataSourceL2OfLeft = new ArrayList<>();
+	ArrayList<LayoutElement> dataSourceL2OfRight = new ArrayList<>();
+	
     public static final int INTENT_WRITE_REQUEST_CODE = 1;
 
 	OpenMode mode;
@@ -603,6 +606,17 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			operation = savedInstanceState.getInt("operation");
 			selectedStorage = savedInstanceState.getInt("selectitem", SELECT_0);
 			
+			ArrayList<LayoutElement> parcelableArrayList = (ArrayList<LayoutElement>)savedInstanceState.getParcelableArrayList("dataSourceL2OfRight");
+			if (parcelableArrayList != null) {
+				dataSourceL2OfRight.clear();
+				dataSourceL2OfRight.addAll(parcelableArrayList);
+			}
+			parcelableArrayList = (ArrayList<LayoutElement>)savedInstanceState.getParcelableArrayList("dataSourceL2OfLeft");
+			if (parcelableArrayList != null) {
+				dataSourceL2OfLeft.clear();
+				dataSourceL2OfLeft.addAll(parcelableArrayList);
+			}
+			
 			if (adapter != null) {
 				adapter.toggleChecked(selectedStorage);
 			}
@@ -1002,10 +1016,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
     public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		configurationChanged = true;
-        Log.d(TAG, "configurationChanged " + configurationChanged);
+        Log.i(TAG, "configurationChanged " + configurationChanged);
         // Pass any configuration change to the drawer toggls
-        if (mDrawerToggle != null) 
+        if (mDrawerToggle != null) {
 			mDrawerToggle.onConfigurationChanged(newConfig);
+		}
     }
 
 	@Override
@@ -1028,6 +1043,13 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			outState.putInt("curExplorerFragIndex", (curExplorerFragIndex=slideFrag2.realFragCount() == 1 ? 0 : slideFrag2.indexOfMTabs(curExplorerFrag)+1));
 			AndroidUtils.setSharedPreference(this, "curExplorerFragPath", curExplorerFrag.currentPathTitle);
 			//outState.putInt("curSelectionFragIndex2", (curSelectionFragIndex2 = curSelectionFrag2 != null ? slideFrag2.indexOfMTabs(curSelectionFrag2) + 1: -1));
+		}
+		
+		if (curSelectionFrag != null) {
+			outState.putParcelableArrayList("dataSourceL2OfRight", dataSourceL2OfRight);//new ArrayList<LayoutElement>(curSelectionFrag.dataSourceL1));
+		}
+		if (curSelectionFrag2 != null) {
+			outState.putParcelableArrayList("dataSourceL2OfLeft", dataSourceL2OfLeft);//new ArrayList<LayoutElement>(curSelectionFrag2.dataSourceL1));
 		}
 		
         if (selectedStorage != NO_VALUE)

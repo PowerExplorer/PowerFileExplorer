@@ -24,8 +24,10 @@ import android.os.Parcelable;
 import com.amaze.filemanager.filesystem.BaseFile;
 import com.amaze.filemanager.utils.OpenMode;
 import java.io.File;
+import java.io.*;
+import android.support.v4.content.*;
 
-public class LayoutElement implements Parcelable {
+public class LayoutElement implements Parcelable, Serializable {
 
     //private static final String CURRENT_YEAR = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 
@@ -149,6 +151,7 @@ public class LayoutElement implements Parcelable {
 //        lastModifiedStr = im.readString();
         //lengthStr = im.readString();
         length = im.readLong();
+		mode = OpenMode.getOpenMode(im.readInt());
 		bf = generateBaseFile();
     }
 
@@ -175,6 +178,7 @@ public class LayoutElement implements Parcelable {
 //        p1.writeString(lastModifiedStr);
         //p1.writeString(lengthStr);
         p1.writeLong(length);
+		p1.writeInt(mode.ordinal());
     }
 
     public static final Parcelable.Creator<LayoutElement> CREATOR =
