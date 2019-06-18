@@ -68,7 +68,9 @@ public class PhotoFragment extends Frag {
 
 	private long lastModified = 0;
 	private File lastParentFolder;
-
+	private List<LayoutElement> paths = null;
+	private int initPos = 0;
+	
     public PhotoFragment() {
 		super();
 		type = Frag.TYPE.PHOTO;
@@ -146,6 +148,23 @@ public class PhotoFragment extends Frag {
 					}
 				}
 			}
+		}
+	}
+
+	public void setInitPos(int initPos) {
+		this.initPos = initPos;
+	}
+
+	public void setPaths(List<LayoutElement> paths) {
+		this.paths = paths;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (paths != null) {
+			open(initPos, paths);
+			paths = null;
 		}
 	}
 

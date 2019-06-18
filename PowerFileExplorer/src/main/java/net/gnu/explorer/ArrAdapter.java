@@ -1034,13 +1034,17 @@ public class ArrAdapter extends RecyclerAdapter<LayoutElement, ArrAdapter.ViewHo
 				pagerAdapter.getItem(tabIndex2).open(pos, mDataset);
 				slidingTabsFragment.setCurrentItem(tabIndex2, true);
 			} else {
-				slidingTabsFragment.addTab(Frag.TYPE.PHOTO, fPath);
-				contentFrag.listView.postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							pagerAdapter.getItem(slidingTabsFragment.pageSelected).open(pos, mDataset);
-						}
-					}, 100);
+				final PhotoFragment frag = (PhotoFragment) Frag.getFrag(slidingTabsFragment, Frag.TYPE.PHOTO, fPath);
+				frag.setInitPos(pos);
+				frag.setPaths(mDataset);
+				slidingTabsFragment.addTab(frag);
+//				slidingTabsFragment.addTab(Frag.TYPE.PHOTO, fPath);
+//				contentFrag.listView.postDelayed(new Runnable() {
+//						@Override
+//						public void run() {
+//							pagerAdapter.getItem(slidingTabsFragment.pageSelected).open(pos, mDataset);
+//						}
+//					}, 100);
 			}
 		} else if (mime.startsWith("audio")) {
 			//pagerAdapter.getItem(i = Frag.TYPE.MEDIA.ordinal()).load(fPath);

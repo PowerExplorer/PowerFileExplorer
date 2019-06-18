@@ -453,7 +453,11 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		addFrag(frag, pagerItem);
 	}
 
-	public void addTab(final Frag.TYPE t, final String path) {
+	public void addTab(final Frag frag) {
+		addFrag(frag, new PagerItem(frag));
+	}
+	
+	public Frag addTab(final Frag.TYPE t, final String path) {
 		Log.d(TAG, "addTab TYPE " + t + ", path=" + path + ", mTabs=" + mTabs);
 		final PagerItem pagerItem;
 		final Frag frag;
@@ -463,19 +467,20 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 				final TextFrag main = TextFrag.newInstance(null, "Untitled " + ++TextFrag.no + ".txt", path);
 				main.slidingTabsFragment = this;
 				pagerItem = new PagerItem(main);
-			} else if (frag.type == Frag.TYPE.EXPLORER) {
+			} else {//}if (frag.type == Frag.TYPE.EXPLORER) {
 				final Frag clone = frag.clone(false);
 				//Log.e(TAG, "addTab frag " + frag);
 				//Log.e(TAG, "addTab clone " + clone);
 				pagerItem = new PagerItem(clone);
-			} else {
-				return;
+			//} else {
+			//	return;
 			}
 		} else {
 			frag = Frag.getFrag(this, t, path);
 			pagerItem = new PagerItem(frag);
 		}
 		addFrag(frag, pagerItem);
+		return frag;
 	}
 
 	private void addFrag(final Frag frag, final PagerItem pagerItem) {

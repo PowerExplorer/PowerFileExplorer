@@ -10,7 +10,7 @@ public interface TabAction {
 	public void closeCurTab();
 	public void closeTab(Frag m);
 	public void closeOtherTabs();
-	public void addTab(final Frag.TYPE t, final String path);//String dir, String suffix, boolean multi, Bundle bundle
+	public Frag addTab(final Frag.TYPE t, final String path);//String dir, String suffix, boolean multi, Bundle bundle
 	public void addTextTab(final Intent intent, final String title);
 	public int realFragCount();
 	public int getFragIndex(final Frag.TYPE t);

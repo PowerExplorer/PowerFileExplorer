@@ -283,6 +283,7 @@ public class ScrollGalleryView extends LinearLayout implements OnDoubleTapListen
 			hidden = bundle.getBoolean("hidden", false);
 			final ArrayList<String> lm = (ArrayList<String>) bundle.getStringArrayList("mListOfMedia");
 			if (lm != null && lm.size() > 0) {
+				mListOfMedia = new ArrayList<>();
 				for (String st : lm) {
 					mListOfMedia.add(new File(st));
 				}
