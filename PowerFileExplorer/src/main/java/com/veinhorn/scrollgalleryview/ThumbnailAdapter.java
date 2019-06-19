@@ -69,7 +69,7 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         //final long start= System.currentTimeMillis();
         viewHolder.itemView.setContentDescription(position + "");
-		GlideImageLoader.loadMedia(Uri.fromFile(mDataSet.get(position)), ctx, (ImageView)viewHolder.itemView, DiskCacheStrategy.RESULT);//, thumbnailSize);// , callback, mimes.get(position)new File(parentPath, 
+		GlideImageLoader.loadMedia(mDataSet.get(position), ctx, (ImageView)viewHolder.itemView, DiskCacheStrategy.RESULT);//, thumbnailSize);// , callback, mimes.get(position)new File(parentPath, 
         //Log.d(TAG, "onBindViewHolder " + Util.nf.format(System.currentTimeMillis() - start));
 	}
 

@@ -439,7 +439,7 @@ public class ImageFragment extends Fragment {
 				videoPlayImage.setVisibility(View.GONE);
 			}
 			//showWait();
-            GlideImageLoader.loadMedia(Uri.fromFile(mMediaInfo), context, image, DiskCacheStrategy.NONE);//, callback);//, mimenew MediaLoader.SuccessCallback() {
+            GlideImageLoader.loadMedia(mMediaInfo, context, image, DiskCacheStrategy.NONE);//, callback);//, mimenew MediaLoader.SuccessCallback() {
 //                @Override
 //                public void onSuccess() {
 //                    //createViewAttacher(getArguments());

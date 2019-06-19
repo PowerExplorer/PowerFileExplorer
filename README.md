@@ -1,6 +1,7 @@
 # PowerFileExplorer
 An extreme powerful file explorer, two custom panels, built-in images/document preview, media player, pdf/image viewer, text editor, apps, processes, traffic manager, compress/descompress zip, 7z, zpaq, gz, xz, bz2, tgz, txz, tbz2...
 
+Github: https://github.com/PowerExplorer/PowerFileExplorer/
 
 # Prepare for build
 Copy attached android.jar onto %your-android-sdk%/platforms/android-23/ (needs overwrite)
@@ -55,9 +56,6 @@ Other Features
 * Complete App is designed from scratch using material design principles
 * Acts as a Standalone File Picker from other applications such as attaching document files from gmail
 * Has high quality thumbnail support in list / gridview for all types of file like images, videos, album art for music files and applications
-
-
-
 
 
 ###License: 
