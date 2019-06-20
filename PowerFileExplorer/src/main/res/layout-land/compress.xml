@@ -4,10 +4,11 @@
 	xmlns:app="http://schemas.android.com/apk/res"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="wrap_content"
-	android:layout_height="match_parent"
-	android:layout_gravity="top"
-	android:fillViewport="true"
-	android:scrollbars="none">
+	android:layout_height="wrap_content" 
+	android:minWidth="480dp"
+    android:minHeight="480dp"
+	android:fillViewport="true" >
+	
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res"
@@ -654,9 +655,6 @@
 				android:id="@+id/status"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:minWidth="480dp"
-				android:minHeight="480dp"
-				android:layout_weight="100"
 				android:visibility="gone"
 				android:paddingTop="12dp"
 				android:paddingLeft="12dp"

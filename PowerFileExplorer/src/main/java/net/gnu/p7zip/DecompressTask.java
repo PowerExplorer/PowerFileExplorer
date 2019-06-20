@@ -278,6 +278,8 @@ public class DecompressTask extends AsyncTask<String, String, String> implements
 			//sb.append(progress[0]).append("\n");
 			decompFrag.adapter.add(progress[0]);
 			decompFrag.adapter.notifyDataSetChanged();
+
+			decompFrag.statusLV.setSelection(decompFrag.adapter.getCount() - 1);
 			//Log.d(TAG, progress[0]);
 		}
 	}

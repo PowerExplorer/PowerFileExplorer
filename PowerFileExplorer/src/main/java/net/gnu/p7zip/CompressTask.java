@@ -368,6 +368,7 @@ public class CompressTask extends AsyncTask<String, String, String> implements U
 			compressFrag.adapter.add(progress[0]);
 			compressFrag.adapter.notifyDataSetChanged();
 			Log.d(TAG, progress[0]);
+			compressFrag.statusLV.setSelection(compressFrag.adapter.getCount() - 1);
 		}
 	}
 }

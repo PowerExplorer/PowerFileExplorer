@@ -105,41 +105,40 @@ import net.gnu.p7zip.ZipEntry;
 import net.gnu.p7zip.ZipEntrySorter;
 import net.gnu.common.*;
 
-public class ZipFragment extends FileFrag implements View.OnClickListener {
+public class ZipFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "ZipFragment";
 	private static final int REQUEST_CODE_STORAGE_PERMISSION = 101;
-	
+
 	private ScaleGestureDetector mScaleGestureDetector;
 	private ImageButton dirMore;
-	private TextView mMessageView;
-	
+
 	private SearchFileNameTask searchTask = new SearchFileNameTask();
 	private TextSearch textSearch = new TextSearch();
-	
+
 	List<ZipEntry> dataSourceL1 = new LinkedList<>();
-	
+
 	ZipEntry tempPreviewL2 = null;
-	Button deletePastesBtn;
-	ZipAdapter srcAdapter;
-	
+	private Button deletePastesBtn;
+	private ZipAdapter srcAdapter;
+
 	private HorizontalScrollView scrolltext;
 	private LinearLayout mDirectoryButtons;
-	
+
 	private LoadFiles loadList = new LoadFiles();
 	private int file_count, folder_count, columns;
-	
+
 	private ZipEntrySorter zipListSorter;
 	private LinkedList<Map<String, Object>> backStack = new LinkedList<>();
 	//private LinkedList<String> history = new LinkedList<>();
 	private FileObserver mFileObserver;
 	private Drawable drawableDelete;
 	private Drawable drawablePaste;
-	
+
 	public boolean selection, results = false, SHOW_HIDDEN, CIRCULAR_IMAGES, SHOW_PERMISSIONS, SHOW_SIZE, SHOW_LAST_MODIFIED;
 
 	boolean mWriteableOnly;
-	
+
 	//int totalCount, progress;
 	private boolean noMedia = false;
 	private boolean displayHidden = true;
@@ -149,11 +148,11 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	private Zpaq zpaq;
 	public Zip zip;
 	private String curPath;
-	
+
 	public ZipFragment() {
 		type = TYPE.ZIP;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "type " + type + ", " + slidingTabsFragment.side + ", fake=" + fake + ", currentPathTitle " + currentPathTitle + ", " + super.toString();
@@ -166,11 +165,11 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			bundle = new Bundle();
 		}
 		bundle.putString(Constants.EXTRA_ABSOLUTE_PATH, zipPath);
-		
+
 		final ZipFragment zipFragment = new ZipFragment();
 		zipFragment.setArguments(bundle);
 		zipFragment.currentPathTitle = zipPath;
-		
+
 		zipFragment.slidingTabsFragment = sliding;
         Log.d(TAG, "newInstance " + zipFragment);
 		return zipFragment;
@@ -201,7 +200,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		//Log.i(TAG, "clone " + frag + ", " + contentFrag.currentPathTitle + ", " + contentFrag.currentPathTitle + ", listView " + listView + ", srcAdapter " + srcAdapter + ", gridLayoutManager " + gridLayoutManager);
 		type = zipFrag.type;
 		currentPathTitle = zipFrag.currentPathTitle;
-		
+
 		slidingTabsFragment = zipFrag.slidingTabsFragment;
 		this.fake = fake;
 		if (fake) {
@@ -220,7 +219,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			tempOriDataSourceL1.addAll(zipFrag.tempOriDataSourceL1);
 		}
 		spanCount = zipFrag.spanCount;
-		
+
 		tempPreviewL2 = zipFrag.tempPreviewL2;
 //		searchMode = contentFrag.searchMode;
 //		searchVal = contentFrag.searchVal;
@@ -238,7 +237,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				//mSwipeRefreshLayout.setVisibility(View.VISIBLE);
 			}
 			setDirectoryButtons();
-			
+
 			allName.setText(zipFrag.allName.getText());
 			allType.setText(zipFrag.allType.getText());
 			allDate.setText(zipFrag.allDate.getText());
@@ -254,7 +253,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			} else {
 				allCbx.setImageResource(R.drawable.dot);
 			}
-			
+
 			if (gridLayoutManager == null || gridLayoutManager.getSpanCount() != spanCount) {
 				listView.removeItemDecoration(dividerItemDecoration);
 				listView.invalidateItemDecorations();
@@ -311,21 +310,20 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		scrolltext = (HorizontalScrollView) view.findViewById(R.id.scroll_text);
 		mDirectoryButtons = (LinearLayout) view.findViewById(R.id.directory_buttons);
 		dirMore = (ImageButton) view.findViewById(R.id.dirMore);
-		
+
 		drawableDelete = activity.getDrawable(R.drawable.ic_delete_white_36dp);
 		drawablePaste = activity.getDrawable(R.drawable.ic_content_paste_white_36dp);
 		deletePastesBtn = (Button) view.findViewById(R.id.deletes_pastes);
-		
+
 		view.findViewById(R.id.copys).setOnClickListener(this);
 		view.findViewById(R.id.cuts).setOnClickListener(this);
 		deletePastesBtn.setOnClickListener(this);
 		view.findViewById(R.id.renames).setOnClickListener(this);
 		view.findViewById(R.id.shares).setOnClickListener(this);
 		dirMore.setOnClickListener(this);
-		
+
 		view.findViewById(R.id.moreLeft).setVisibility(View.GONE);
 		view.findViewById(R.id.moreRight).setVisibility(View.GONE);
-		//view.findViewById(R.id.dirMore).setVisibility(View.GONE);
 		view.findViewById(R.id.infos).setOnClickListener(this);
 
 		final View compresssBtn = view.findViewById(R.id.compresss);
@@ -343,7 +341,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			commands.setVisibility(View.VISIBLE);
 			horizontalDivider6.setVisibility(View.VISIBLE);
 		}
-		mSwipeRefreshLayout.setEnabled(false);
+		mSwipeRefreshLayout.setOnRefreshListener(this);
+		//mSwipeRefreshLayout.setEnabled(true);
 		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 					//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);
@@ -374,7 +373,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
-		
+
 		searchET.addTextChangedListener(textSearch);
 		mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
@@ -478,7 +477,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 				currentPathTitle = savedInstanceState.getString(Constants.EXTRA_ABSOLUTE_PATH);//EXTRA_DIR_PATH
 				curPath = (String) savedInstanceState.get("curPath");
-				
+
 				fake = savedInstanceState.getBoolean("fake", false);
 
 				searchMode = savedInstanceState.getBoolean("searchMode", false);
@@ -536,6 +535,16 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		//}
 	}
 
+	@Override
+    public void onRefresh() {
+        final Editable s = searchET.getText();
+		if (s.length() > 0) {
+			textSearch.afterTextChanged(s);
+//		} else {
+//			loadlist(false);
+		}
+    }
+
 	void notifyDataSetChanged() {
 		srcAdapter.notifyDataSetChanged();
 	}
@@ -553,11 +562,11 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		outState.putParcelableArrayList("selectedInList1", new ArrayList<ZipEntry>(selectedInList1));
 		outState.putParcelableArrayList("tempOriDataSourceL1", new ArrayList<ZipEntry>(tempOriDataSourceL1));
 		outState.putParcelableArrayList("tempSelectedInList1", new ArrayList<ZipEntry>(tempSelectedInList1));
-		
+
 		outState.putParcelable("tempPreviewL2", tempPreviewL2);
 
 		outState.putString(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
-		
+
 		outState.putBoolean("searchMode", searchMode);
 		outState.putString("searchVal", searchET.getText().toString());
 		outState.putBoolean("fake", fake);
@@ -589,29 +598,29 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		Map<String, Object> outState = new TreeMap<>();
 		//Log.d(TAG, "Map onSaveInstanceState " + dir + ", " + outState);
 		outState.put(Constants.EXTRA_ABSOLUTE_PATH, currentPathTitle);//EXTRA_DIR_PATH
-		
+
 		final ArrayList<ZipEntry> dataSource = new ArrayList<>(dataSourceL1.size());
 		dataSource.addAll(dataSourceL1);
 		outState.put("dataSourceL1", dataSource);
-		
+
 		final ArrayList<ZipEntry> selectedInList = new ArrayList<>(selectedInList1.size());
 		selectedInList.addAll(selectedInList1);
 		outState.put("selectedInList1", selectedInList);
-		
+
 		outState.put("searchMode", searchMode);
 		outState.put("searchVal", searchET.getText().toString());
 		//outState.put("currentPathTitle", currentPathTitle);
 		outState.put("allCbx.isEnabled", allCbx.isEnabled());
 		outState.put("allCbx.isSelected", allCbx.isSelected());
 		outState.put("curPath", curPath);
-		
+
 		final int index = gridLayoutManager.findFirstVisibleItemPosition();
         final View vi = listView.getChildAt(0); 
         final int top = (vi == null) ? 0 : vi.getTop();
 		outState.put("index", index);
 		outState.put("top", top);
 		outState.put("tempPreviewL2", tempPreviewL2);
-		
+
         return outState;
 	}
 
@@ -623,7 +632,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		selectedInList1.addAll((ArrayList<ZipEntry>) savedInstanceState.get("selectedInList1"));
 		dataSourceL1.clear();
 		dataSourceL1.addAll((ArrayList<ZipEntry>) savedInstanceState.get("dataSourceL1"));
-		
+
 		if (type == Frag.TYPE.SELECTION) {
 			tempOriDataSourceL1.clear();
 			tempOriDataSourceL1.addAll(dataSourceL1);
@@ -635,10 +644,10 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		allCbx.setEnabled(savedInstanceState.get("allCbx.isEnabled"));
 		allCbx.setSelected(savedInstanceState.get("allCbx.isSelected"));
 		srcAdapter.notifyDataSetChanged();
-		
+
 		setRecyclerViewLayoutManager();
 		gridLayoutManager.scrollToPositionWithOffset(savedInstanceState.get("index"), savedInstanceState.get("top"));
-		
+
 		if (allCbx.isSelected()) {
 			selectionStatusTV.setText(dataSourceL1.size() 
 									  + "/" + dataSourceL1.size());
@@ -646,7 +655,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			selectionStatusTV.setText(selectedInList1.size() 
 									  + "/" + dataSourceL1.size());
 		}
-		
+
 		setDirectoryButtons();
 	}
 
@@ -699,7 +708,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
                 break;
         }
     }
-	
+
 	public void refresh() {
         if (hasPermissions()) {
             // Cancel and GC previous scanner so that it doesn't load on top of the
@@ -736,7 +745,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			mDirectoryButtons.removeAllViews();
 			String[] parts = (curPath.startsWith("/") ? curPath : "/" + curPath).split("/");
 			Log.d(TAG, "setDirectoryButtons " + parts);
-			
+
 			final TextView ib = new TextView(activity);
 			final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -769,7 +778,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 					folder += "/" + parts[i];
 				}
 				Log.d(TAG, "setDirectoryButtons " + folder);
-				
+
 				v = activity.getLayoutInflater().inflate(R.layout.dir, null);
 				b = (TextView) v.findViewById(R.id.name);
 				b.setText(parts[i]);
@@ -859,7 +868,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 	public void updateDir() {
 		Log.d(TAG, "updateDir " + curPath);
 		setDirectoryButtons();
-		
+
 		if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT) {
 			activity.slideFrag.notifyTitleChange();
 		} else if (activity.slideFrag2 != null) {
@@ -904,7 +913,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		mFileObserver.startWatching();
 
 		selectionStatusTV.setText(selectedInList1.size()  + "/" + dataSourceL1.size());
-		
+
 		if (zip != null) {
 			rightStatus.setText(
 				"Free " + Formatter.formatFileSize(activity, zip.file.length())
@@ -926,7 +935,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		searchButton.setColorFilter(Constants.TEXT_COLOR);
 		noFileImage.setColorFilter(Constants.TEXT_COLOR);
 		noFileText.setTextColor(Constants.TEXT_COLOR);
-		
+
 		horizontalDivider0.setBackgroundColor(Constants.DIVIDER_COLOR);
 		horizontalDivider12.setBackgroundColor(Constants.DIVIDER_COLOR);
 		horizontalDivider7.setBackgroundColor(Constants.DIVIDER_COLOR);
@@ -998,7 +1007,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			sortBarLayout.setVisibility(View.VISIBLE);
 		}
 	}
-	
+
 	@Override
 	public void onClick(final View v) {
 		//Log.d(TAG, "onClick " + this + ", " + type);
@@ -1103,9 +1112,9 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				break;
 			case R.id.dirMore:
 				MenuBuilder menuBuilder = new MenuBuilder(activity);
-				
+
 				if (activity.multiFiles) {
-					
+
 					if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.right.getVisibility() == View.VISIBLE
 						|| slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.left.getVisibility() == View.VISIBLE) {
 						menuBuilder.add("Hide");
@@ -1113,7 +1122,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 						menuBuilder.add("2 panels");
 					}
 					menuBuilder.add("Swap panels");
-					
+
 					if (activity.left.getVisibility() == View.VISIBLE && activity.right.getVisibility() == View.VISIBLE) {
 						if (slidingTabsFragment.width <= 0) {
 							menuBuilder.add("Wider panel");
@@ -1121,14 +1130,14 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 							menuBuilder.add("2 panels equal");
 						}
 					}
-					
+
 					if (activity.COPY_PATH != null || activity.MOVE_PATH != null || activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {
 						menuBuilder.add("Clear Clipboard");
 					}
 				}
 
 				MenuPopupHelper optionsMenu = new MenuPopupHelper(activity , menuBuilder, dirMore);
-				
+
 				menuBuilder.setCallback(new MenuBuilder.Callback() {
 						@Override
 						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
@@ -1174,7 +1183,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				}
 				activity.zip = zip;
 				activity.EXTRACT_PATH = copies;
-				
+
 				if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.multiFiles && activity.curExplorerFrag.commands.getVisibility() == View.GONE) {//type == -1
 					activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
 					activity.curExplorerFrag.commands.setVisibility(View.VISIBLE);
@@ -1237,7 +1246,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 					GeneralDialogCreation.deleteFilesDialog(activity, //getLayoutElements(),
 															activity, zip, (List<ZipEntry>)selectedInList1, activity.getAppTheme(), activity.callback);
 				} else {
-					
+
 				}
 				break;
 			case R.id.renames:
@@ -1408,7 +1417,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			final View vi = listView.getChildAt(0); 
 			top = (vi == null) ? 0 : vi.getTop();
 		}
-		
+
 		gridLayoutManager = new GridLayoutManager(fragActivity, spanCount);
 		listView.setLayoutManager(gridLayoutManager);
 
@@ -1428,7 +1437,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 				spanCount = 6;
 			}
 		}
-		
+
 		srcAdapter = new ZipAdapter(this, dataSourceL1);
 		listView.setAdapter(srcAdapter);
 
@@ -1496,13 +1505,17 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		loadList = new LoadFiles();
 		loadList.execute(curDir, fromBeginZip, doScroll, run);
 	}
-	
+
 	private class LoadFiles extends AsyncTask<Object, String, List<ZipEntry>> {
-		
+
 		private boolean fromBeginZip;
 		private Boolean doScroll;
 		private Runnable run;
-		
+
+		protected void onPreExecute() {
+			mSwipeRefreshLayout.setRefreshing(true);
+		}
+
 		protected void onCancelled(List<ZipEntry> result) {
 			if (andro7za != null) {
 				andro7za.cancel();
@@ -1510,8 +1523,9 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			if (zpaq != null) {
 				zpaq.cancel();
 			}
+			mSwipeRefreshLayout.setRefreshing(false);
 		}
-		
+
 		@Override
 		protected List<ZipEntry> doInBackground(Object... params) {
 			String path = (String) params[0];
@@ -1592,21 +1606,21 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 					rightStatus.setText(
 						Formatter.formatFileSize(activity, zip.file.length())
 						+ "/" + Formatter.formatFileSize(activity, zip.unZipSize)
-						);
+					);
 				}
 				dataSourceL1.clear();
 				dataSourceL1.addAll(dataSourceL1a);
 				selectedInList1.clear();
 			}
 			showStatus();
-
+			mSwipeRefreshLayout.setRefreshing(false);
 			if (activity.COPY_PATH == null && activity.MOVE_PATH == null && 
 				activity.EXTRACT_PATH == null && activity.EXTRACT_MOVE_PATH == null && commands.getVisibility() == View.VISIBLE) {//commands != null && 
 				horizontalDivider6.setVisibility(View.GONE);
 				commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
 				commands.setVisibility(View.GONE);
 			} else if (activity.COPY_PATH != null || activity.MOVE_PATH != null
-				|| activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {//commands != null && 
+					   || activity.EXTRACT_PATH != null || activity.EXTRACT_MOVE_PATH != null) {//commands != null && 
 				if (commands.getVisibility() == View.GONE) {
 					horizontalDivider6.setVisibility(View.VISIBLE);
 					commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.grow_from_bottom));
@@ -1624,15 +1638,15 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 
 			if (allCbx.isSelected()) {
 				selectionStatusTV.setText(dataSourceL1.size() 
-										 + "/" + dataSourceL1.size());
+										  + "/" + dataSourceL1.size());
 			} else {
 				selectionStatusTV.setText(selectedInList1.size() 
-										 + "/" + dataSourceL1.size());
+										  + "/" + dataSourceL1.size());
 			}
 			Log.d(TAG, "LoadFiles.onPostExecute " + currentPathTitle + ", " + zip);
 
 			updateDir();
-			
+
 			if (dataSourceL1.size() == 0) {
 				nofilelayout.setVisibility(View.VISIBLE);
 			} else {
@@ -1649,8 +1663,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			showToast(message[0]);
 		}
 	}
-	
-	
+
+
 
 	private class SearchFileNameTask extends AsyncTask<String, Long, List<ZipEntry>> {
 		protected void onPreExecute() {
@@ -1658,6 +1672,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			showToast("Searching...");
 			dataSourceL1.clear();
 			srcAdapter.notifyDataSetChanged();
+
+			mSwipeRefreshLayout.setRefreshing(true);
 		}
 
 		@Override
@@ -1684,7 +1700,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			selectedInList1.clear();
 			srcAdapter.notifyDataSetChanged();
 			selectionStatusTV.setText(selectedInList1.size() 
-									 + "/" + dataSourceL1.size());
+									  + "/" + dataSourceL1.size());
 			rightStatus.setText(
 				Formatter.formatFileSize(activity, zip.file.length())
 				+ "/" + Formatter.formatFileSize(activity, zip.unZipSize));
@@ -1693,6 +1709,13 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 			} else {
 				nofilelayout.setVisibility(View.GONE);
 			}
+			mSwipeRefreshLayout.setRefreshing(false);
+		}
+
+		@Override
+		protected void onCancelled(List<ZipEntry> result) {
+			super.onCancelled(result);
+			mSwipeRefreshLayout.setRefreshing(false);
 		}
 	}
 
