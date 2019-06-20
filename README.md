@@ -1,10 +1,9 @@
-# PowerFileExplorer
+# Power File Manager
+
 An extreme powerful file explorer, two custom panels, built-in images/document preview, media player, pdf/image viewer, text editor, apps, processes, traffic manager, compress/descompress zip, 7z, zpaq, gz, xz, bz2, tgz, txz, tbz2...
 
 
-# Power File Manager
-
-[<img alt="Get it on Github" height="80" width="207" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png">](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.10/PowerFileExplorer.apk.zip)
+[<img alt="Get it on Github" height="40" width="100" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png">](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.10/PowerFileExplorer.apk.zip)
 
 This project is still in developement phase . I would love if other developers improve the code and make it a better
 explorer than it's now. 
