@@ -350,7 +350,8 @@
 		android:id="@+id/buttons"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal" >
+		android:orientation="horizontal" 
+		android:padding="0dp">
 
 		<Button
 			android:id="@+id/cancelDir"
@@ -358,7 +359,9 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:text="Hide"
-			android:textSize="20sp" />
+			android:textSize="20sp"
+			android:padding="0dp"
+			android:layout_margin="0dp" />
 
 		<Button
 			android:id="@+id/okDir"
@@ -366,7 +369,9 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:text="Compress"
-			android:textSize="20sp" />
+			android:textSize="20sp"
+			android:padding="0dp"
+			android:layout_margin="0dp" />
 	</LinearLayout>
 
 </LinearLayout>
