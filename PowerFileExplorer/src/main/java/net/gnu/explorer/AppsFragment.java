@@ -62,7 +62,7 @@ import java.util.HashSet;
 import android.graphics.PorterDuff;
 import net.gnu.common.*;
 
-public class AppsFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class AppsFragment extends FileFrag implements View.OnClickListener {
 
 	private static final String TAG = "AppsFragment";
 
@@ -144,8 +144,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
 		searchET.addTextChangedListener(textSearch);
-		mSwipeRefreshLayout.setOnRefreshListener(this);
-
+		
 		listView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 				@Override
@@ -904,7 +903,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener, Swip
 					cbx.setSelected(false);
 					cbx.setImageResource(R.drawable.ready);
 				} else {
-					ll.setBackgroundResource(R.drawable.ripple);
+					//ll.setBackgroundResource(R.drawable.ripple);
 					cbx.setSelected(false);
 					cbx.setImageResource(R.drawable.dot);
 				}

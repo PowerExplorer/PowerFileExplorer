@@ -55,7 +55,7 @@ import net.gnu.util.Util;
 import android.graphics.PorterDuff;
 import net.gnu.common.*;
 
-public class ProcessFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ProcessFragment extends FileFrag implements View.OnClickListener {
 
 	private static final String TAG = "ProcessFragment";
 
@@ -172,8 +172,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener, S
 		clearButton.setOnClickListener(this);
 		searchButton.setOnClickListener(this);
 		searchET.addTextChangedListener(textSearch);
-		mSwipeRefreshLayout.setOnRefreshListener(this);
-
+		
 		//listView.setFastScrollEnabled(true);
 		//mylist.setOnTouchListener(this);
 		listView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);

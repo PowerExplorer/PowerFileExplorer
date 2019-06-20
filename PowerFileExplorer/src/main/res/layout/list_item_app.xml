@@ -23,6 +23,7 @@
 		android:gravity="center"
 		android:paddingTop="2dp"
 		android:paddingBottom="2dp"
+		android:background="@drawable/ripple"
 	/>
 
 	<LinearLayout

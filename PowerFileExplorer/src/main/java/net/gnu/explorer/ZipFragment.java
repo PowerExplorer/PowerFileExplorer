@@ -105,7 +105,7 @@ import net.gnu.p7zip.ZipEntry;
 import net.gnu.p7zip.ZipEntrySorter;
 import net.gnu.common.*;
 
-public class ZipFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ZipFragment extends FileFrag implements View.OnClickListener {
 
     private static final String TAG = "ZipFragment";
 	private static final int REQUEST_CODE_STORAGE_PERMISSION = 101;
@@ -341,8 +341,6 @@ public class ZipFragment extends FileFrag implements View.OnClickListener, Swipe
 			commands.setVisibility(View.VISIBLE);
 			horizontalDivider6.setVisibility(View.VISIBLE);
 		}
-		mSwipeRefreshLayout.setOnRefreshListener(this);
-		//mSwipeRefreshLayout.setEnabled(true);
 		listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 				public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 					//Log.d(TAG, "onScrolled dx=" + dx + ", dy=" + dy + ", density=" + activity.density);

@@ -95,7 +95,7 @@ import java.util.Comparator;
 import net.gnu.p7zip.DecompressTask;
 import net.gnu.common.*;
 
-public class ContentFragment extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ContentFragment extends FileFrag implements View.OnClickListener {
 
     private static final String TAG = "ContentFragment";
 	
@@ -360,7 +360,6 @@ public class ContentFragment extends FileFrag implements View.OnClickListener, S
 		searchButton.setOnClickListener(this);
 
 		searchET.addTextChangedListener(textSearch);
-		mSwipeRefreshLayout.setOnRefreshListener(this);
 		
 		if (type == Frag.TYPE.SELECTION) {
 			removeBtn = (ImageButton) view.findViewById(R.id.remove);

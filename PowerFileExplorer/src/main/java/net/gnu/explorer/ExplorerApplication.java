@@ -124,7 +124,7 @@ public class ExplorerApplication extends JotaTextEditor {
 			AndroidUtils.createShortCut(getApplicationContext(), TextEditorActivity.class, "Text Editor", R.drawable.textpng);
 //			AndroidUtils.createShortCut(getApplicationContext(), MediaPlayerActivity.class, "Media Player", R.drawable.exo_banner);
 			AndroidUtils.createShortCut(getApplicationContext(), ExplorerActivity.class, "Power File Explorer", R.drawable.file_browser);
-			AndroidUtils.createShortCut(getApplicationContext(), LibraryActivity.class, "PDF Viewer", R.drawable.pdf_icon);
+			//AndroidUtils.createShortCut(getApplicationContext(), LibraryActivity.class, "PDF Viewer", R.drawable.pdf_icon);
 			AndroidUtils.setSharedPreference(this, "install_shortcut", true);
 		}
 

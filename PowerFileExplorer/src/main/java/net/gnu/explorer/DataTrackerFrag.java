@@ -67,7 +67,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.graphics.PorterDuff;
 import net.gnu.common.*;
 
-public class DataTrackerFrag extends FileFrag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class DataTrackerFrag extends FileFrag implements View.OnClickListener {
 
 	private static final String TAG = "DataTrackerFrag";
 
@@ -216,7 +216,6 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener, S
 		enabled.setOnClickListener(this);
 		totalBtn.setOnClickListener(this);
 
-		mSwipeRefreshLayout.setOnRefreshListener(this);
 		totalOn = totalBtn.isChecked();
 
 //		final ArrayAdapter<String> networkSpinnerAdapter = new ArrayAdapter<String>(

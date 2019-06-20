@@ -112,7 +112,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.support.v7.widget.PopupMenu;
 import net.gnu.common.*;
 
-public abstract class FileFrag extends Frag implements View.OnClickListener {
+public abstract class FileFrag extends Frag implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
 	private static final String TAG = "FileFrag";
 
@@ -225,6 +225,7 @@ public abstract class FileFrag extends Frag implements View.OnClickListener {
 		selectionStatusTV = (TextView) v.findViewById(R.id.selectionStatusTV);
 
 		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mSwipeRefreshLayout.setColorSchemeResources(
 			android.R.color.holo_blue_bright,
 			android.R.color.holo_red_light);
