@@ -68,13 +68,11 @@ Other Features
 
 ![9](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071507.png?raw=true)
 
-![10](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071355.png?raw=true)
+![10](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-154655.png?raw=true)
 
 ![11](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-134550.png?raw=true)
 
 ![12](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071247.png?raw=true)
-
-![13](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-172237.png?raw=true)
 
 
 # License: 
