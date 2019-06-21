@@ -204,12 +204,12 @@
 						android:layout_gravity="center_vertical"
 						android:gravity="center_vertical"
 						android:textSize="14sp" />
-					<!--<HorizontalScrollView
+					<HorizontalScrollView
 						android:id="@+id/toolbar"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_gravity="top"
-						android:scrollbars="none">-->
+						android:scrollbars="none">
 					<RadioGroup
 						android:id="@+id/type"
 						android:layout_width="wrap_content"
@@ -266,7 +266,7 @@
 							android:textAppearance="?android:attr/textAppearanceLarge"/>
 						
 					</RadioGroup>
-					<!--</HorizontalScrollView>-->
+					</HorizontalScrollView>
 				</LinearLayout>
 
 				<LinearLayout

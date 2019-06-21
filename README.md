@@ -5,7 +5,7 @@ An extreme powerful file explorer, two custom panels, built-in images/document p
 
 [<img alt="Get it on Github" height="40" width="100" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png">](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.10/PowerFileExplorer.apk.zip)
 
-Github: https://github.com/PowerExplorer/PowerFileExplorer/
+https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.12/PowerFileExplorer.apk.zip
 
 
 # Prepare for build
@@ -29,9 +29,6 @@ Overview
 - All features freely available without any ads
 - lots more...
 
-Warning
----
-Basic r/w operations might not work on external memory on Kitkat devices. Don't use cut/paste from or to external SD Card. You might lose your files.
 
 Top Features
 ============
@@ -80,7 +77,7 @@ Other Features
 ![13](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-172237.png?raw=true)
 
 
-###License: 
+# License: 
 ---
     This file is part of Power File Manager.
     Power File Manager is free software: you can redistribute it and/or modify

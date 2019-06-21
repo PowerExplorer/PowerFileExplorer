@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gnu.explorer"
     android:versionCode="64"
-    android:versionName="1.0.11"
+    android:versionName="1.0.12"
 >
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle 
