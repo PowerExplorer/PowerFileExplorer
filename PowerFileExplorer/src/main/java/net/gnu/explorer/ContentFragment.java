@@ -1921,23 +1921,24 @@ public class ContentFragment extends FileFrag implements View.OnClickListener {
 															activity, selectedInList1, activity.getAppTheme(), activity.callback);
 					activity.callback = null;
 				} else {
+					if (activity.curExplorerFrag.commands.getVisibility() == View.VISIBLE && activity.curExplorerFrag.selectedInList1.size() == 0) {
+						activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
+						activity.curExplorerFrag.commands.setVisibility(View.GONE);
+						activity.curExplorerFrag.horizontalDivider6.setVisibility(View.GONE);
+						activity.curExplorerFrag.updateDelPaste();
+					} 
+					if (activity.curContentFrag.commands.getVisibility() == View.VISIBLE && activity.curContentFrag.selectedInList1.size() == 0) {
+						activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
+						activity.curContentFrag.commands.setVisibility(View.GONE);
+						activity.curContentFrag.horizontalDivider6.setVisibility(View.GONE);
+						activity.curContentFrag.updateDelPaste();
+					}
 					if (activity.MOVE_PATH != null || activity.COPY_PATH != null) {
 						String path = currentPathTitle;
 						ArrayList<BaseFile> arrayList = activity.COPY_PATH != null ? activity.COPY_PATH: activity.MOVE_PATH;
 						boolean move = activity.MOVE_PATH != null;
 						new CopyFileCheck(this, path, move, activity, ThemedActivity.rootMode, activity.callback)
 							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
-						if (slidingTabsFragment.side == SlidingTabsFragment.Side.LEFT && activity.curExplorerFrag.commands.getVisibility() == View.VISIBLE && activity.curExplorerFrag.selectedInList1.size() == 0) {
-							activity.curExplorerFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-							activity.curExplorerFrag.commands.setVisibility(View.GONE);
-							activity.curExplorerFrag.horizontalDivider6.setVisibility(View.GONE);
-							activity.curExplorerFrag.updateDelPaste();
-						} else if (slidingTabsFragment.side == SlidingTabsFragment.Side.RIGHT && activity.curContentFrag.commands.getVisibility() == View.VISIBLE && activity.curContentFrag.selectedInList1.size() == 0) {
-							activity.curContentFrag.commands.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.shrink_from_top));
-							activity.curContentFrag.commands.setVisibility(View.GONE);
-							activity.curContentFrag.horizontalDivider6.setVisibility(View.GONE);
-							activity.curContentFrag.updateDelPaste();
-						}
 						activity.MOVE_PATH = null;
 						activity.COPY_PATH = null;
 						activity.callback = null;

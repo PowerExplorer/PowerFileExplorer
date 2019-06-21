@@ -3,14 +3,13 @@
 An extreme powerful file explorer, two custom panels, built-in images/document preview, media player, pdf/image viewer, text editor, apps, processes, traffic manager, compress/descompress zip, 7z, zpaq, gz, xz, bz2, tgz, txz, tbz2...
 
 
-[<img alt="Get it on Github" height="40" width="100" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png">](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.10/PowerFileExplorer.apk.zip)
+[<img alt="Get it on Github" height="40" width="100" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png">](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.12/PowerFileExplorer.apk.zip)
 
-https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.12/PowerFileExplorer.apk.zip
+Download https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.12/PowerFileExplorer.apk.zip
 
 
 # Prepare for build
 Copy attached android.jar onto %your-android-sdk%/platforms/android-23/ (needs overwrite)
-
 (You should backup original android.jar)
 
 
@@ -76,8 +75,8 @@ Other Features
 
 
 # License: 
----
-    This file is part of Power File Manager.
+
+    This file is a part of Power File Manager.
     Power File Manager is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or

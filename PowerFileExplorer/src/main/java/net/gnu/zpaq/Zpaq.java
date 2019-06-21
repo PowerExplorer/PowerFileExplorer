@@ -173,8 +173,11 @@ public class Zpaq {
 		CommandListener commandListener = new CommandListener(command, update);
 		command.setCommandListener(commandListener);
 		command.run();
-		int ret = commandListener.ret;
+		final int ret = commandListener.ret;
 		Log.d(TAG, "ret " + ret);
+		if (ret != 0) {
+			return null;
+		}
 		String line ="";
 		final Matcher m = patLn.matcher(sb.toString());
 		final Calendar cal = Calendar.getInstance();

@@ -1567,6 +1567,10 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 					}
 					curPath = "/";
 					activity.zip = zip;
+					if (zip == null) {
+						Toast.makeText(activity, "Archive error", Toast.LENGTH_LONG);
+						return dataSourceL1a;
+					}
 				} else {
 					curPath = path;
 				}
@@ -1599,7 +1603,7 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		@Override
 		protected void onPostExecute(List<ZipEntry> dataSourceL1a) {
 			//Log.d(TAG, "LoadFiles.onPostExecute.dataSourceL1a=" + Util.collectionToString(dataSourceL1a, false, "\n"));
-			if (currentPathTitle != null) {
+			if (currentPathTitle != null && zip != null) {
 				if (currentPathTitle.startsWith("/")) {
 					rightStatus.setText(
 						Formatter.formatFileSize(activity, zip.file.length())
