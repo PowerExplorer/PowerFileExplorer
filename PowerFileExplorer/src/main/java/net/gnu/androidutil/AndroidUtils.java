@@ -46,6 +46,7 @@ import javax.crypto.KeyGenerator;
 import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 import net.gnu.common.*;
+import android.content.Intent.*;
 
 
 public class AndroidUtils {
@@ -66,15 +67,62 @@ public class AndroidUtils {
 //		//displayProps = point;
 //        return point;
 //    }
-	
-	
+
+
 	public static void startService(final Activity activity, final Class<? extends Service> service, final String action, final String tag) {
 		Log.i(tag, "Starting service");
 		final Intent intent = new Intent(action);//ForegroundService.ACTION_FOREGROUND);//ACTION_BACKGROUND
 		intent.setClass(activity, service);
 		activity.startService(intent);
 	}
-	
+
+	public static boolean createShortCut(final Context context, final String packageName) {
+		final PackageManager pm = context.getPackageManager();
+		final Intent iMain = new Intent(Intent.ACTION_MAIN);
+		iMain.addCategory(Intent.CATEGORY_LAUNCHER);
+		final List<ResolveInfo> res = pm.queryIntentActivities(iMain, 0);
+		ActivityInfo ai = null;
+		ActivityInfo activityInfo;
+		for (ResolveInfo ri : res) {
+			activityInfo = ri.activityInfo;
+			//System.out.println("the application name is: " + activityInfo.loadLabel(pm) + ", " + activityInfo.packageName + ", " + activityInfo.name);
+			if (packageName.equalsIgnoreCase(activityInfo.packageName)) {
+				ai = activityInfo;
+				break;
+			}
+		}
+		if (ai != null) {
+			final Intent shortcutIntent = new Intent();
+			shortcutIntent.setClassName(ai.packageName, ai.name);
+			shortcutIntent.setAction(Intent.ACTION_MAIN);
+			shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+			shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+			final Intent intent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+			intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+			intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, ai.loadLabel(pm) + "");
+			intent.putExtra("duplicate", false);
+
+			final Drawable d = ai.loadIcon(pm);
+			System.out.println("d " + d);
+			if (d != null) {
+				final int size = (int) context.getResources().getDimension(android.R.dimen.app_icon_size);
+				final Bitmap icon = BitmapUtil.resizeKeepScale(BitmapUtil.drawableToBitmap(d), size);
+				intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, icon);
+			} else {
+				final Intent.ShortcutIconResource iconRes = Intent.ShortcutIconResource.fromContext(context.getApplicationContext(), R.drawable.ic_launcher);
+				intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
+			}
+			context.sendBroadcast(intent);
+			//Log.d(TAG, "in the shortcutapp on create method completed");
+			return true;
+		} else {
+			//Log.d(TAG, "appllicaton not found");
+			return false;
+		}
+	}
+
 	public static void createShortCut(final Context ctx, Class<? extends Activity> activity, String name, int resIcon){
 		//<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     	//<uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
@@ -117,7 +165,7 @@ public class AndroidUtils {
 			shortcutIntent = new Intent(context.getApplicationContext(),
 										context.getClass());
         }
-        
+
         shortcutIntent.setData(Uri.fromFile(f));
         shortcutIntent.putExtra(Constants.EXTRA_ABSOLUTE_PATH, absolutePath);
         shortcutIntent.setAction(Intent.ACTION_MAIN);
@@ -131,34 +179,8 @@ public class AndroidUtils {
         context.sendBroadcast(addIntent);
     }
 
-	// Creates shortcut on Android widget screen
-//	public static void createShortcutIcon(Context ctx, Activity act, String shortcutName) {
-//		String PREFS_NAME = "PREFS_NAME";
-//		String PREF_KEY_SHORTCUT_ADDED = "PREF_KEY_SHORTCUT_ADDED";
-//		// Checking if ShortCut was already added
-//		final SharedPreferences sharedPreferences = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-//		final boolean shortCutWasAlreadyAdded = sharedPreferences.getBoolean(PREF_KEY_SHORTCUT_ADDED, false);
-//		if (shortCutWasAlreadyAdded) 
-//			return;
-//
-//		final Intent shortcutIntent = new Intent(ctx.getApplicationContext(), act.getClass());
-//		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//		final Intent addIntent = new Intent();
-//		addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-//		addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutName);
-//		//addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(ctx.getApplicationContext(), R.drawable.ic_launcher));
-//		addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-//		ctx.getApplicationContext().sendBroadcast(addIntent);
-//
-//		// Remembering that ShortCut was already added
-//		final SharedPreferences.Editor editor = sharedPreferences.edit();
-//		editor.putBoolean(PREF_KEY_SHORTCUT_ADDED, true);
-//		editor.commit();
-//	}
 	
-	
+
 	public static void scanMedia(final Context ctx, final String root, final boolean includeSubFolder) {
 		if (Build.VERSION.SDK_INT >= 19) {
 			final Collection<File> fs = FileUtil.getFiles(root, includeSubFolder);
@@ -427,7 +449,7 @@ public class AndroidUtils {
 							sb.append("\nCertificate version: ").append(x509Cert.getVersion());
 							sb.append("\nCertificate not before: ").append(x509Cert.getNotBefore());
 							sb.append("\nCertificate not after: ").append(x509Cert.getNotAfter());
-							
+
 						} catch (CertificateException e) {
 							e.printStackTrace();
 						} finally {
@@ -1138,7 +1160,7 @@ public class AndroidUtils {
 			Log.d(TAG, "Package Name :" + applicationInfo.packageName);
 
 			Log.d(TAG, "Launch Intent For Package :"   +  
-							   pm.getLaunchIntentForPackage(applicationInfo.packageName));
+				  pm.getLaunchIntentForPackage(applicationInfo.packageName));
 
 			Log.d(TAG, "Application Label :"   + pm.getApplicationLabel(applicationInfo));
 

@@ -1305,7 +1305,7 @@ public class ProcessFragment extends FileFrag implements View.OnClickListener {
 									Futils.shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 									break;
 								case R.id.shortcut:
-									//AndroidUtils.createShortCut(AppsFragment.this.getContext(), rowItem.packageName, rowItem.label, image.setImageDrawable(packageManager.getApplicationIcon(appInfo.packageName)));
+									AndroidUtils.createShortCut(ProcessFragment.this.getContext(), pinfo.packageName);
 									return true;
 							}
 							return true;

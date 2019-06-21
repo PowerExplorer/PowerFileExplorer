@@ -61,6 +61,7 @@ import net.gnu.util.Util;
 import java.util.HashSet;
 import android.graphics.PorterDuff;
 import net.gnu.common.*;
+import android.content.pm.PackageManager.*;
 
 public class AppsFragment extends FileFrag implements View.OnClickListener {
 
@@ -1015,7 +1016,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener {
 									   rowItem.version);//, AppsFragment.this);
 								return true;
 							case R.id.shortcut:
-								//AndroidUtils.createShortCut(AppsFragment.this.getContext(), rowItem.packageName, rowItem.label, image.setImageDrawable(packageManager.getApplicationIcon(appInfo.packageName)));
+								AndroidUtils.createShortCut(AppsFragment.this.getContext(), rowItem.packageName);
 								return true;
 						}
 						return true;
@@ -1093,16 +1094,18 @@ public class AppsFragment extends FileFrag implements View.OnClickListener {
 	}
 
 	void backup(final String path, final String title, final String version) {
+		Log.d(TAG, "backup " + path + ", " + title + ", " + version);
 		//Toast.makeText(activity, activity.getResources().getString(R.string.copyingapk) + Environment.getExternalStorageDirectory().getPath() + "/app_backup", Toast.LENGTH_LONG).show();
 		File f = new File(path);
 		ArrayList<BaseFile> ab = new ArrayList<>();
 		File dst = new File(Environment.getExternalStorageDirectory().getPath() + "/app_backup");
-		if (!dst.exists() || !dst.isDirectory())dst.mkdirs();
-		Intent intent = new Intent(activity, CopyService.class);
+		if (!dst.exists() || !dst.isDirectory())
+			dst.mkdirs();
 		BaseFile baseFile=RootHelper.generateBaseFile(f, true);
 		baseFile.setName(title + "_" + version + ".apk");
 		ab.add(baseFile);
 
+		Intent intent = new Intent(activity, CopyService.class);
 		intent.putParcelableArrayListExtra(CopyService.TAG_COPY_SOURCES, ab);
 		intent.putExtra(CopyService.TAG_COPY_TARGET, dst.getPath());
 		intent.putExtra(CopyService.TAG_COPY_OPEN_MODE, 0);
@@ -1111,7 +1114,7 @@ public class AppsFragment extends FileFrag implements View.OnClickListener {
 	}
 
 	public static void backup(final String path, final String title, final String version, FileFrag fileFrag) {
-		Log.d("AppsFragment", path + ", " + title + ", " + version);
+		Log.d(TAG, "backup: " + path + ", " + title + ", " + version);
 		File f = new File(path);
 		ArrayList<BaseFile> ab = new ArrayList<>();
 

@@ -20,6 +20,27 @@ public class BitmapUtil {
 
 	private static final String TAG = "BitmapUtil";
 
+	public static Bitmap drawableToBitmap(final Drawable drawable) {
+		if (drawable instanceof BitmapDrawable ) {
+			return (( BitmapDrawable ) drawable).getBitmap();
+		}
+		// We ask for the bounds if they have been set as they would be most
+		// correct, then we check we are  > 0
+		final int width = !drawable.getBounds().isEmpty() ?
+            drawable.getBounds().width() : drawable.getIntrinsicWidth();
+		final int height = !drawable.getBounds().isEmpty() ?
+            drawable.getBounds().height() : drawable.getIntrinsicHeight();
+		// Now we check we are > 0
+		final Bitmap bitmap = Bitmap.createBitmap(
+				width <= 0 ? 1 : width, 
+				height <= 0 ? 1 : height, 
+				drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565);
+		final Canvas canvas = new Canvas(bitmap);
+		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+		drawable.draw(canvas);
+		return bitmap;
+	}
+
     public static Bitmap loadBitmapFromView(View v, final int w, final int h) {
 		final Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		final Canvas c = new  Canvas(b);
@@ -413,15 +434,6 @@ public class BitmapUtil {
 		Bitmap bitmap = drawable.getBitmap();
 		return bitmap;
 	}
-
-	public static Bitmap drawableToBitmap(Drawable drawable) {
-		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
-											drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565);
-		Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-		drawable.draw(canvas);
-		return bitmap;
-    }
 
 	public static Drawable bitmapToDrawable(Bitmap bitmap) {
 		return new BitmapDrawable(bitmap);

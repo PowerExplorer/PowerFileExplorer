@@ -912,6 +912,9 @@ public class DataTrackerFrag extends FileFrag implements View.OnClickListener {
 									//arrayList.add(new File(rowItem.getPath()));
 									Futils.shareFiles(arrayList2, activity, activity.getAppTheme(), accentColor);
 									break;
+								case R.id.shortcut:
+									AndroidUtils.createShortCut(DataTrackerFrag.this.getContext(), pinfo.packageName);
+									break;
 							}
 							return true;
 						}
