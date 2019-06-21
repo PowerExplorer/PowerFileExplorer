@@ -54,22 +54,34 @@ Other Features
 * Has high quality thumbnail support in list / gridview for all types of file like images, videos, album art for music files and applications
 
 ![1](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071159.png?raw=true)
+
 ![2](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-180905.png?raw=true)
+
 ![3](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-073231.png?raw=true)
+
 ![4](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072859.png?raw=true)
+
 ![5](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072151.png?raw=true)
+
 ![6](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072134.png?raw=true)
+
 ![7](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072051.png?raw=true)
+
 ![8](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071533.png?raw=true)
+
 ![9](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071507.png?raw=true)
+
 ![10](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071355.png?raw=true)
+
 ![11](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-134550.png?raw=true)
+
 ![12](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071247.png?raw=true)
+
 ![13](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-172237.png?raw=true)
 
 
 ###License: 
-
+---
     This file is part of Power File Manager.
     Power File Manager is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
