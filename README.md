@@ -5,9 +5,6 @@ An extreme powerful file explorer, two custom panels, built-in images/document p
 
 [<img alt="Get it on Github" height="40" width="100" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png">](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.10/PowerFileExplorer.apk.zip)
 
-This project is still in developement phase . I would love if other developers improve the code and make it a better
-explorer than it's now. 
-
 Github: https://github.com/PowerExplorer/PowerFileExplorer/
 
 
@@ -19,7 +16,7 @@ Copy attached android.jar onto %your-android-sdk%/platforms/android-23/ (needs o
 
 Overview
 ---
-- Open Source, light and smooth
+- Open Source
 - Basic features like cut, copy, delete, compress, extract etc. easily accessible
 - Work on multiple tabs at same time
 - Navigation drawer for quick navigation
@@ -52,11 +49,23 @@ Top Features
 
 Other Features
 ==============
-* The only app to Show Folder sizes across storages
 * Completely Open source project on github
-* Complete App is designed from scratch using material design principles
 * Acts as a Standalone File Picker from other applications such as attaching document files from gmail
 * Has high quality thumbnail support in list / gridview for all types of file like images, videos, album art for music files and applications
+
+![1](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071159.png?raw=true)
+![2](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-180905.png?raw=true)
+![3](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-073231.png?raw=true)
+![4](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072859.png?raw=true)
+![5](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072151.png?raw=true)
+![6](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072134.png?raw=true)
+![7](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072051.png?raw=true)
+![8](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071533.png?raw=true)
+![9](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071507.png?raw=true)
+![10](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071355.png?raw=true)
+![11](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071318.png?raw=true)
+![12](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071247.png?raw=true)
+![13](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-172237.png?raw=true)
 
 
 ###License: 
@@ -70,6 +79,10 @@ Other Features
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
+    The author is not responsible for any kind of damages or loss
+    while using or misusing this software, which is distributed
+    "AS IS". No warranty of any kind is expressed or implied.
+    You use AT YOUR OWN RISK.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
