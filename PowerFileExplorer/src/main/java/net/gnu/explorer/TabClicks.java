@@ -75,20 +75,20 @@ public class TabClicks {
 						menu.findItem(R.id.apps).setVisible(false);
 					} else if (frag.type == Frag.TYPE.PROCESS) {
 						menu.findItem(R.id.process).setVisible(false);
-					} else if (frag.type == Frag.TYPE.WEB) {
-						menu.findItem(R.id.web).setVisible(false);
-					} else if (frag.type == Frag.TYPE.MEDIA) {
-						menu.findItem(R.id.media).setVisible(false);
+//					} else if (frag.type == Frag.TYPE.WEB) {
+//						menu.findItem(R.id.web).setVisible(false);
+//					} else if (frag.type == Frag.TYPE.MEDIA) {
+//						menu.findItem(R.id.media).setVisible(false);
 					} else if (frag.type == Frag.TYPE.TRAFFIC_STATS) {
 						menu.findItem(R.id.traffic).setVisible(false);
 					} else if (frag.type == Frag.TYPE.TEXT) {
 						menu.findItem(R.id.text).setVisible(false);
-					} else if (frag.type == Frag.TYPE.PDF) {
-						menu.findItem(R.id.pdf).setVisible(false);
-					} else if (frag.type == Frag.TYPE.PHOTO) {
-						menu.findItem(R.id.photo).setVisible(false);
-					} else if (frag.type == Frag.TYPE.CHM) {
-						menu.findItem(R.id.chm).setVisible(false);
+//					} else if (frag.type == Frag.TYPE.PDF) {
+//						menu.findItem(R.id.pdf).setVisible(false);
+//					} else if (frag.type == Frag.TYPE.PHOTO) {
+//						menu.findItem(R.id.photo).setVisible(false);
+//					} else if (frag.type == Frag.TYPE.CHM) {
+//						menu.findItem(R.id.chm).setVisible(false);
 					} else if (frag.type == Frag.TYPE.FTP) {
 						menu.findItem(R.id.ftp).setVisible(false);
 					} else if (frag.type == Frag.TYPE.EXPLORER) {
@@ -120,18 +120,18 @@ public class TabClicks {
 							tabAction.addTab(Frag.TYPE.SELECTION, null);
 						} else if (R.id.text == itemId) {
 							tabAction.addTab(Frag.TYPE.TEXT, null);
-						} else if (R.id.web == itemId) {
-							tabAction.addTab(Frag.TYPE.WEB, null);
-						} else if (R.id.pdf == itemId) {
-							tabAction.addTab(Frag.TYPE.PDF, null);
+//						} else if (R.id.web == itemId) {
+//							tabAction.addTab(Frag.TYPE.WEB, null);
+//						} else if (R.id.pdf == itemId) {
+//							tabAction.addTab(Frag.TYPE.PDF, null);
 						} else if (R.id.ftp == itemId) {
 							tabAction.addTab(Frag.TYPE.FTP, null);
-						} else if (R.id.chm == itemId) {
-							tabAction.addTab(Frag.TYPE.CHM, null);
-						} else if (R.id.photo == itemId) {
-							tabAction.addTab(Frag.TYPE.PHOTO, null);
-						} else if (R.id.media == itemId) {
-							tabAction.addTab(Frag.TYPE.MEDIA, null);
+//						} else if (R.id.chm == itemId) {
+//							tabAction.addTab(Frag.TYPE.CHM, null);
+//						} else if (R.id.photo == itemId) {
+//							tabAction.addTab(Frag.TYPE.PHOTO, null);
+//						} else if (R.id.media == itemId) {
+//							tabAction.addTab(Frag.TYPE.MEDIA, null);
 						} else if (R.id.apps == itemId) {
 							tabAction.addTab(Frag.TYPE.APP, null);
 						} else if (R.id.traffic == itemId) {
