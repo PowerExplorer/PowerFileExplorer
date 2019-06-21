@@ -933,7 +933,8 @@ public class ZipFragment extends FileFrag implements View.OnClickListener {
 		searchButton.setColorFilter(Constants.TEXT_COLOR);
 		noFileImage.setColorFilter(Constants.TEXT_COLOR);
 		noFileText.setTextColor(Constants.TEXT_COLOR);
-
+		dirMore.setColorFilter(Constants.TEXT_COLOR);
+		
 		horizontalDivider0.setBackgroundColor(Constants.DIVIDER_COLOR);
 		horizontalDivider12.setBackgroundColor(Constants.DIVIDER_COLOR);
 		horizontalDivider7.setBackgroundColor(Constants.DIVIDER_COLOR);
