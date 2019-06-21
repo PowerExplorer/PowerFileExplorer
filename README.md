@@ -50,17 +50,17 @@ Other Features
 * Acts as a Standalone File Picker from other applications such as attaching document files from gmail
 * Has high quality thumbnail support in list / gridview for all types of file like images, videos, album art for music files and applications
 
-![1](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071159.png?raw=true)
+![1](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-151238.png?raw=true)
 
-![2](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-180905.png?raw=true)
+![2](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-071159.png?raw=true)
 
-![3](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-073231.png?raw=true)
+![3](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-180905.png?raw=true)
 
-![4](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072859.png?raw=true)
+![4](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-150303.png?raw=true)
 
-![5](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072151.png?raw=true)
+![5](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-150239.png?raw=true)
 
-![6](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072134.png?raw=true)
+![6](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072859.png?raw=true)
 
 ![7](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072051.png?raw=true)
 
