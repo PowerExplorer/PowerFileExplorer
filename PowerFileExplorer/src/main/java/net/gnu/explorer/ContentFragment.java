@@ -1960,6 +1960,7 @@ public class ContentFragment extends FileFrag implements View.OnClickListener {
 								new CopyFileCheck(ContentFragment.this, currentPathTitle, move, activity, ThemedActivity.rootMode, null)
 									.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arrayList);
 								activity.EXTRACT_MOVE_PATH = null;
+								activity.EXTRACT_PATH = null;
 								if (move) {
 									new DecompressTask(fragActivity,
 													   activity.zip.file.getAbsolutePath(),
