@@ -55,9 +55,9 @@ Other Features
 
 ![3](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-180905.png?raw=true)
 
-![4](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-150303.png?raw=true)
+![4](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-150239.png?raw=true)
 
-![5](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-150239.png?raw=true)
+![5](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.11/Screenshot_20190621-150303.png?raw=true)
 
 ![6](https://github.com/PowerExplorer/PowerFileExplorer/releases/download/V1.0.9/Screenshot_20190618-072859.png?raw=true)
 
