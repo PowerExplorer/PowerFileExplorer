@@ -2448,7 +2448,8 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			
 			setTheme(mCurTheme);
 			window.getDecorView().setBackgroundColor(Constants.BASE_BACKGROUND);
-
+			findViewById(R.id.buttons).setBackgroundColor(Constants.BASE_BACKGROUND);
+			
 			if (configurationChanged) {
 				configurationChanged = false;
 			} else if (slideFrag != null) {
