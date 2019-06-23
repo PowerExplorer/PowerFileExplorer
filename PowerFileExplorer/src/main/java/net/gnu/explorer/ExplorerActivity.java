@@ -132,6 +132,7 @@ import android.content.DialogInterface;
 import net.gnu.util.CommandUtils;
 import android.widget.ArrayAdapter;
 import net.gnu.common.*;
+import android.support.v4.content.FileProvider;
 
 
 public class ExplorerActivity extends StorageCheckActivity implements OnRequestPermissionsResultCallback,
@@ -434,10 +435,10 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		
 		if (resources.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			//setContentView(R.layout.activity_folder_chooser_vertical);
-			Log.d(TAG, "ORIENTATION_PORTRAIT");
+			Log.d(TAG, "ORIENTATION_PORTRAIT " + action);
 		} else {
 			//setContentView(R.layout.activity_folder_chooser);
-			Log.d(TAG, "ORIENTATION_LANDSCAPE");
+			Log.d(TAG, "ORIENTATION_LANDSCAPE " + action);
 		}
 		
 		final FragmentManager supportFragmentManager = getSupportFragmentManager();
@@ -512,7 +513,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				actionBar.setDisplayShowTitleEnabled(false);
 				actionBar.setDisplayHomeAsUpEnabled(true);
 				actionBar.setHomeButtonEnabled(true);
-				setTitle("Power File Explorer");
+				setTitle("File/Folder chooser");
 				actionBar.show();
 			}
 		}
@@ -2848,14 +2849,13 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
     }
 	
 	public void ok(View view) {
-		
 		if ((curSelectionFrag2 == null || curSelectionFrag2.dataSourceL1.size() == 0)
 			&& curContentFrag.selectedInList1.size() == 0 //&& !multiFiles
 			&& (".*".equals(suffix))) {
 			Toast.makeText(this, "Please select a file", Toast.LENGTH_LONG).show();
 			return;
 		}
-		Log.d("selected file", curSelectionFrag2!=null?Util.collectionToString(curSelectionFrag2.dataSourceL1, false, "\r\n") : "null");
+		//Log.d(TAG, "selected file " + curSelectionFrag2!=null?Util.collectionToString(curSelectionFrag2.dataSourceL1, false, "\r\n") : "null");
 		ArrayList<String> fileArr = null;
 		if (multiFiles) {
 			if (curSelectionFrag2.dataSourceL1.size() > 0) {
@@ -2872,6 +2872,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			if (curContentFrag.selectedInList1.size() > 0) {
 				fileArr = new ArrayList<String>(1);
 				fileArr.add(((LayoutElement)curContentFrag.selectedInList1.get(0)).path);
+			} else if ("".equals(suffix)) {
+				fileArr = new ArrayList<String>(1);
+				fileArr.add(curContentFrag.currentPathTitle);
 			} else {
 				Toast.makeText(this, "Please select a file", Toast.LENGTH_LONG).show();
 				return;
@@ -2880,15 +2883,22 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			}
 		}
 
-		Intent intent = this.getIntent();
+		final Intent intent = this.getIntent();
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            intent.setData(FileProvider.getUriForFile(this, "net.gnu.explorer.fileprovider", new File(fileArr.get(0))));//Uri.parse("content://net.gnu.explorer" + fileArr.get(0)));
+        } else {
+            intent.setData(Uri.fromFile(new File(fileArr.get(0))));
+		}
 		intent.putStringArrayListExtra(Constants.PREVIOUS_SELECTED_FILES, fileArr);
 		intent.putExtra(Constants.EXTRA_MULTI_SELECT, multiFiles);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		setResult(RESULT_OK, intent);
+		Log.d(TAG, "ok " + getIntent() + ", " + getIntent().getExtras());
 		this.finish();
 	}
 
 	public void cancel(View view) {
-		Log.d("select previous file",
+		Log.d(TAG, "select previous file " +
 			  Util.arrayToString(previousSelectedStr, true, "\r\n"));
 		Intent intent = this.getIntent();
 		if (previousSelectedStr != null && previousSelectedStr.length > 0) {

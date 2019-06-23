@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths>
-    <external-path path="Android/data/com.amaze.filemanager/" name="package_root" />
+<paths
+	xmlns:android="http://schemas.android.com/apk/res/android" >
+	>
+    <external-path path="Android/data/net.gnu.explorer/" name="package_root" />
     <external-path path="." name="storage_root" />
+	<external-path name="external_files" path = "." />
 </paths>
+

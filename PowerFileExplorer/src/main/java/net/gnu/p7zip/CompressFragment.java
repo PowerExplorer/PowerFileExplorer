@@ -303,7 +303,7 @@ public class CompressFragment extends DialogFragment implements Serializable, On
 
 		mBtnCancel.setOnClickListener(this);
 
-		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_MULTI_SELECT, "File/Folder", 
+		saveToBtn.setOnClickListener(new GetFileListener(this, Constants.ACTION_PICK_DIRECTORY, "File/Folder", 
 														 Constants.ZIP_SUFFIX, 
 														 "",
 														 saveToET, 
