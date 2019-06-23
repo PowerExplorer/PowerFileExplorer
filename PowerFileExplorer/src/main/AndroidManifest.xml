@@ -3,7 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gnu.explorer"
     android:versionCode="64"
-    android:versionName="1.0.13"
+    android:versionName="1.0.14"
 >
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle 
@@ -103,6 +103,7 @@
 				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.EDIT" />
 				<action android:name="android.intent.action.PICK" />
+				<action android:name="android.intent.action.MULTIPLE_PICK" />
                 <action android:name="org.openintents.action.PICK_FILE"/>
                 <action android:name="org.openintents.action.PICK_DIRECTORY"/>
 				<action android:name="android.intent.action.SEND" />
@@ -122,6 +123,7 @@
 				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.EDIT" />
 				<action android:name="android.intent.action.PICK" />
+				<action android:name="android.intent.action.MULTIPLE_PICK" />
                 <action android:name="org.openintents.action.PICK_FILE"/>
                 <action android:name="org.openintents.action.PICK_DIRECTORY"/>
 				<action android:name="android.intent.action.SEND" />
@@ -153,6 +155,7 @@
 				<action android:name="android.intent.action.VIEW" />
 				<action android:name="android.intent.action.EDIT" />
 				<action android:name="android.intent.action.PICK" />
+				<action android:name="android.intent.action.MULTIPLE_PICK" />
                 <action android:name="org.openintents.action.PICK_FILE"/>
                 <action android:name="org.openintents.action.PICK_DIRECTORY"/>
 				<action android:name="android.intent.action.SEND" />

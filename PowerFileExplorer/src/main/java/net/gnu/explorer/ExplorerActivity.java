@@ -133,6 +133,7 @@ import net.gnu.util.CommandUtils;
 import android.widget.ArrayAdapter;
 import net.gnu.common.*;
 import android.support.v4.content.FileProvider;
+import android.content.*;
 
 
 public class ExplorerActivity extends StorageCheckActivity implements OnRequestPermissionsResultCallback,
@@ -531,7 +532,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			suffix = intent.getStringExtra(Constants.EXTRA_FILTER_FILETYPE);
 			suffix = (suffix == null) ? "" : suffix.trim();
 			
-			multiFiles = intent.getBooleanExtra(Constants.EXTRA_MULTI_SELECT, true);
+			multiFiles = intent.getBooleanExtra(Constants.EXTRA_MULTI_SELECT, true)
+						&& intent.getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+						&& intent.getBooleanExtra("android.intent.action.MULTIPLE_PICK", true);
 			
 			mimes = intent.getStringExtra(Constants.EXTRA_FILTER_MIMETYPE);
 			//mimes = (mimes == null) ? "" : mimes;
@@ -546,13 +549,13 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				if (suffix.length() == 0) {
 					suffix = ".*";
 				}
-			} else if (Intent.ACTION_GET_CONTENT.equals(action)) {
+			} else if (Intent.ACTION_GET_CONTENT.equals(action) && !intent.getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)) {
 				multiFiles = false;
 				if (suffix.length() == 0) {
 					suffix = ".*";
 				}
 			} else {
-				suffix = "*";
+				suffix = ".*";
 			}
 			previousSelectedStr = intent.getStringArrayExtra(Constants.PREVIOUS_SELECTED_FILES);
 			Log.d(TAG, "previousSelectedStr " + Util.arrayToString(previousSelectedStr, true, "\n"));
@@ -2891,9 +2894,22 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		}
 		intent.putStringArrayListExtra(Constants.PREVIOUS_SELECTED_FILES, fileArr);
 		intent.putExtra(Constants.EXTRA_MULTI_SELECT, multiFiles);
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		final int size = fileArr.size();
+		if (size == 1) {
+			intent.setData(FileProvider.getUriForFile(this, "net.gnu.explorer.fileprovider", new File(fileArr.get(0))));
+		} else if (size > 1) {
+			final ClipData clipData = ClipData.newRawUri(
+				"", FileProvider.getUriForFile(this, "net.gnu.explorer.fileprovider", new File(fileArr.get(0))));
+			for (int i = 1; i < size; i ++) {
+				clipData.addItem(new ClipData.Item(FileProvider.getUriForFile(this, "net.gnu.explorer.fileprovider", new File(fileArr.get(i)))));
+			}
+			intent.setClipData(clipData);
+		}
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+		 | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+		 | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 		setResult(RESULT_OK, intent);
-		Log.d(TAG, "ok " + getIntent() + ", " + getIntent().getExtras());
+		Log.i(TAG, "ok " + intent + ", " + intent.getExtras());
 		this.finish();
 	}
 
