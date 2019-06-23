@@ -64,7 +64,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignParentBottom="true"
-			android:orientation="horizontal" >
+			android:orientation="horizontal" 
+					android:layout_margin="0dp" >
 
 			<ImageButton
 				android:id="@+id/cancelDir"
@@ -74,7 +75,8 @@
 				android:onClick="cancel"
 				android:text="Cancel"
 				android:src="@drawable/delete" 
-				android:textSize="14sp" />
+				android:textSize="14sp" 
+					android:layout_margin="0dp" />
 
 			<ImageButton
 				android:id="@+id/okDir"
@@ -84,7 +86,8 @@
 				android:onClick="ok"
 				android:text="OK"
 				android:src="@drawable/install" 
-				android:textSize="14sp" />
+				android:textSize="14sp" 
+					android:layout_margin="0dp" />
 		</LinearLayout>
 
 	</RelativeLayout>
