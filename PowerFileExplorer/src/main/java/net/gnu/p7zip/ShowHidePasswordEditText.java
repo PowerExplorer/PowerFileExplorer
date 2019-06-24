@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import net.gnu.explorer.R;
+import android.graphics.*;
 
 /**
  * Custom version of EditText that shows and hides password onClick of the visibility icon
@@ -137,6 +138,11 @@ public class ShowHidePasswordEditText extends EditText {
 
     public void setTintColor( int tintColor) {
         this.tintColor = tintColor;
+		final Drawable[] existingDrawables = getCompoundDrawables();
+		if (existingDrawables[0] != null)
+        	existingDrawables[0].setColorFilter(tintColor, PorterDuff.Mode.SRC_IN);
+        if (existingDrawables[2] != null)
+			existingDrawables[2].setColorFilter(tintColor, PorterDuff.Mode.SRC_IN);
     }
 
     @Override

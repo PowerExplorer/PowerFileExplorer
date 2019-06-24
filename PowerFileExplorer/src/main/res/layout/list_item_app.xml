@@ -65,7 +65,7 @@
 				android:background="@drawable/ripple"
 				android:layout_gravity="center_vertical"
 				android:paddingLeft="15dp"
-				android:paddingRight="15dp"
+				android:paddingRight="7dp"
 				android:src="@drawable/ic_more_vert_black_48dp"/>
 
 

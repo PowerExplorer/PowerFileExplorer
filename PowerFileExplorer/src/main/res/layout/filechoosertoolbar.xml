@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/buttons"
 	android:layout_width="wrap_content"
@@ -8,7 +8,22 @@
 	android:gravity="right"
 	android:orientation="horizontal"
 	android:layout_margin="0dp" >
-
+	
+	<TextView 
+		android:id="@+id/title"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_toLeftOf="@+id/cancelDir"
+		android:text="@string/pick_title"
+		android:singleLine="true"
+		android:ellipsize="middle"
+		android:gravity="left|center_vertical"
+		android:layout_gravity="left|center_vertical"
+		android:layout_centerVertical="true"
+		android:textSize="24sp"
+		android:textAppearance="?android:textAppearanceLarge"
+	/>
 	<ImageButton
 		android:id="@+id/cancelDir"
 		android:layout_width="64dp"
@@ -32,5 +47,5 @@
 		android:src="@drawable/install" 
 		android:textSize="14sp"
 		android:layout_margin="0dp" />
-</LinearLayout>
+</RelativeLayout>
 

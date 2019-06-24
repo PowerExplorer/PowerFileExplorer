@@ -134,6 +134,7 @@ import android.widget.ArrayAdapter;
 import net.gnu.common.*;
 import android.support.v4.content.FileProvider;
 import android.content.*;
+import android.widget.*;
 
 
 public class ExplorerActivity extends StorageCheckActivity implements OnRequestPermissionsResultCallback,
@@ -514,9 +515,9 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			} else {
 				//actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 				//actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
-				actionBar.setDisplayShowTitleEnabled(true);
-				actionBar.setDisplayHomeAsUpEnabled(true);
-				//actionBar.setHomeButtonEnabled(true);
+//				actionBar.setDisplayShowTitleEnabled(true);
+//				actionBar.setDisplayHomeAsUpEnabled(true);
+//				actionBar.setHomeButtonEnabled(true);
 				final View customView = getLayoutInflater().inflate(R.layout.filechoosertoolbar, null);
 				actionBar.setCustomView(customView);
 				actionBar.setDisplayShowCustomEnabled(true);
@@ -528,10 +529,11 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			density = (int)(resources.getDisplayMetrics().density);
 			
 			final String extraTitle = intent.getStringExtra(Constants.EXTRA_TITLE);
-			if (intent.hasExtra(Constants.EXTRA_TITLE)) {
-				setTitle(extraTitle);
-			} else {
-				setTitle(R.string.pick_title);
+			if (extraTitle != null) {//}intent.hasExtra(Constants.EXTRA_TITLE)) {
+				//setTitle(extraTitle);
+				((TextView)actionBar.getCustomView().findViewById(R.id.title)).setText(extraTitle);
+//			} else {
+//				setTitle(R.string.pick_title);
 			}
 
 			suffix = intent.getStringExtra(Constants.EXTRA_FILTER_FILETYPE);
