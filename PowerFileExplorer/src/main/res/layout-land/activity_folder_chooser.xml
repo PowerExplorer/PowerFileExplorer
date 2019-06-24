@@ -58,7 +58,7 @@
 
 			</FrameLayout>
 		</LinearLayout>
-		<LinearLayout
+		<!--<LinearLayout
 			android:id="@+id/buttons"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
 				android:src="@drawable/install" 
 				android:textSize="14sp"
 					android:layout_margin="0dp" />
-		</LinearLayout>
+		</LinearLayout>-->
 
 	</RelativeLayout>
 	<!-- The navigation drawer -->

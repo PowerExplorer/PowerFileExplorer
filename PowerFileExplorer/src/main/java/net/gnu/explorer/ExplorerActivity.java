@@ -423,7 +423,6 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		window.requestFeature(Window.FEATURE_ACTION_MODE_OVERLAY);
 		
 		resources = getResources();
-		final ActionBar actionBar = getSupportActionBar();
 		intent = getIntent();
 		final String action = intent.getAction();
 		
@@ -432,14 +431,18 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 
         dataUtils.registerOnDataChangedListener(this);
 		
+		if (!Intent.ACTION_MAIN.equals(action)) {
+			setTheme(R.style.Theme_AppCompat_DayNight);
+		}
 		setContentView(R.layout.activity_folder_chooser);
+		final ActionBar actionBar = getSupportActionBar();
 		
 		if (resources.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			//setContentView(R.layout.activity_folder_chooser_vertical);
-			Log.d(TAG, "ORIENTATION_PORTRAIT " + action);
+			Log.d(TAG, "ORIENTATION_PORTRAIT ");// + action + ", " + getTheme() + ", " + actionBar);
 		} else {
 			//setContentView(R.layout.activity_folder_chooser);
-			Log.d(TAG, "ORIENTATION_LANDSCAPE " + action);
+			Log.d(TAG, "ORIENTATION_LANDSCAPE ");// + action + ", " + getTheme() + ", " + actionBar);
 		}
 		
 		final FragmentManager supportFragmentManager = getSupportFragmentManager();
@@ -501,20 +504,22 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		imageView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		mDrawerList.addHeaderView(imageView);
 		
-		if (Intent.ACTION_MAIN.equals(action) || Intent.ACTION_VIEW.equals(action)) {
-			findViewById(R.id.buttons).setVisibility(View.GONE);
-		}
+//		if (Intent.ACTION_MAIN.equals(action) || Intent.ACTION_VIEW.equals(action)) {
+//			//findViewById(R.id.buttons).setVisibility(View.GONE);
+//		}
 
 		if (actionBar != null) {
 			if (Intent.ACTION_MAIN.equals(action)) {
 				actionBar.hide();
 			} else {
-				actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-				actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
-				actionBar.setDisplayShowTitleEnabled(false);
+				//actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+				//actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+				actionBar.setDisplayShowTitleEnabled(true);
 				actionBar.setDisplayHomeAsUpEnabled(true);
-				actionBar.setHomeButtonEnabled(true);
-				setTitle("File/Folder chooser");
+				//actionBar.setHomeButtonEnabled(true);
+				final View customView = getLayoutInflater().inflate(R.layout.filechoosertoolbar, null);
+				actionBar.setCustomView(customView);
+				actionBar.setDisplayShowCustomEnabled(true);
 				actionBar.show();
 			}
 		}
@@ -549,13 +554,17 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 				if (suffix.length() == 0) {
 					suffix = ".*";
 				}
-			} else if (Intent.ACTION_GET_CONTENT.equals(action) && !intent.getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)) {
-				multiFiles = false;
-				if (suffix.length() == 0) {
+			} else if (Intent.ACTION_GET_CONTENT.equals(action)) {
+				if (!intent.getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)) {
+					multiFiles = false;
+					if (suffix.length() == 0) {
+						suffix = ".*";
+					}
+				} else {
 					suffix = ".*";
 				}
 			} else {
-				suffix = ".*";
+				suffix = "*";
 			}
 			previousSelectedStr = intent.getStringArrayExtra(Constants.PREVIOUS_SELECTED_FILES);
 			Log.d(TAG, "previousSelectedStr " + Util.arrayToString(previousSelectedStr, true, "\n"));
@@ -2448,7 +2457,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 			
 			setTheme(mCurTheme);
 			window.getDecorView().setBackgroundColor(Constants.BASE_BACKGROUND);
-			findViewById(R.id.buttons).setBackgroundColor(Constants.BASE_BACKGROUND);
+			//findViewById(R.id.buttons).setBackgroundColor(Constants.BASE_BACKGROUND);
 			
 			if (configurationChanged) {
 				configurationChanged = false;
@@ -2896,9 +2905,7 @@ LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ListView.OnItemClic
 		intent.putStringArrayListExtra(Constants.PREVIOUS_SELECTED_FILES, fileArr);
 		intent.putExtra(Constants.EXTRA_MULTI_SELECT, multiFiles);
 		final int size = fileArr.size();
-		if (size == 1) {
-			intent.setData(FileProvider.getUriForFile(this, "net.gnu.explorer.fileprovider", new File(fileArr.get(0))));
-		} else if (size > 1) {
+		if (size > 1) {
 			final ClipData clipData = ClipData.newRawUri(
 				"", FileProvider.getUriForFile(this, "net.gnu.explorer.fileprovider", new File(fileArr.get(0))));
 			for (int i = 1; i < size; i ++) {
