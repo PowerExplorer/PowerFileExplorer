@@ -34,6 +34,7 @@
 		android:text="Cancel"
 		android:src="@drawable/delete" 
 		android:textSize="14sp"
+		android:background="@drawable/ripple"
 		android:layout_margin="0dp" />
 
 	<ImageButton
@@ -46,6 +47,7 @@
 		android:text="OK"
 		android:src="@drawable/install" 
 		android:textSize="14sp"
+		android:background="@drawable/ripple"
 		android:layout_margin="0dp" />
 </RelativeLayout>
 

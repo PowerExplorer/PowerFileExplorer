@@ -137,7 +137,7 @@ public class GlideImageLoader {
 						boolean isFromMemoryCache, boolean
 						isFirstResource ) {
 
-						Log.d(TAG, "onResourceReady " + imageView.getMeasuredWidth() + ", " + imageView.getMeasuredHeight() + ", " + model);
+						//Log.d(TAG, "onResourceReady " + imageView.getMeasuredWidth() + ", " + imageView.getMeasuredHeight() + ", " + model);
 						return false;
 					}
 				};
@@ -280,7 +280,7 @@ public class GlideImageLoader {
 							boolean isFromMemoryCache, boolean
 							isFirstResource ) {
 
-							Log.d(TAG, "onResourceReady " + imageView.getMeasuredWidth() + ", " + imageView.getMeasuredHeight() + ", " + model);
+							//Log.d(TAG, "onResourceReady " + imageView.getMeasuredWidth() + ", " + imageView.getMeasuredHeight() + ", " + model);
 							return false;
 						}
 					};

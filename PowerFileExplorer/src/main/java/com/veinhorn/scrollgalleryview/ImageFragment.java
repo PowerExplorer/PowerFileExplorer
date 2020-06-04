@@ -42,10 +42,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import com.bumptech.glide.load.engine.*;
 import android.net.*;
+import net.gnu.explorer.*;
 
-/**
- * Created by veinhorn on 29.8.15.
- */
 public class ImageFragment extends Fragment {
 	private static final String TAG = "ImageFragment";
 
@@ -57,7 +55,7 @@ public class ImageFragment extends Fragment {
     private ImageView videoPlayImage;
     private Runnable zoomCallback;
 
-	private OnDoubleTapListener onDoubleTapListener;
+	private PhotoFragment photoFragment;
 	private GestureDetector mGestureDetector;
 
 	//Touch Events
@@ -79,18 +77,16 @@ public class ImageFragment extends Fragment {
 	private TextView centerInfo;
 	private boolean mIsFirstBrightnessGesture = true;
 	
-	private float minZoom;
-	private float maxZoom;
+	//private float minZoom;
+	//private float maxZoom;
 	static float DEFAULT_ZOOM = 2f;
-	static float curZoom = DEFAULT_ZOOM;
-	static int curDelay = 1000;
-	static int curTransform = 12;
+	//static float curZoom = DEFAULT_ZOOM;
+	public static int curDelay = 1000;
+	public static int curTransform = 12;
 
 	private ViewPager viewPager;
 	private Context context;;
 	
-	private ScrollGalleryView scrollGalleryView;
-
 	@Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -104,19 +100,18 @@ public class ImageFragment extends Fragment {
 
         image = (TouchImageView) view.findViewById(R.id.image);
         videoPlayImage = (ImageView) view.findViewById(R.id.videoPlayImage);
-		minZoom = TouchImageView.SUPER_MIN_MULTIPLIER * image.getMinZoom();
-		maxZoom = TouchImageView.SUPER_MAX_MULTIPLIER * image.getMaxZoom();
-		image.setZoom(curZoom);
+//		minZoom = TouchImageView.SUPER_MIN_MULTIPLIER * image.getMinZoom();
+//		maxZoom = TouchImageView.SUPER_MAX_MULTIPLIER * image.getMaxZoom();
+//		image.setZoom(curZoom);
         final FragmentActivity activity = getActivity();
 		viewPager = (ViewPager) activity.findViewById(R.id.photoViewPager);
-		scrollGalleryView = (ScrollGalleryView) activity.findViewById(R.id.scroll_gallery_view);
-
+		
 		mGestureDetector = new GestureDetector(getContext(), new SimpleOnGestureListener() {
 				@Override
 				public boolean onSingleTapConfirmed(MotionEvent e) {
-					Log.d(TAG, "onSingleTapConfirmed " + e + onDoubleTapListener);
-					if (onDoubleTapListener != null) {
-						return onDoubleTapListener.onSingleTapConfirmed(e);
+					Log.d(TAG, "onSingleTapConfirmed " + e + photoFragment);
+					if (photoFragment != null) {
+						return photoFragment.onSingleTapConfirmed(e);
 					}
 					return false;//performClick();
 				}
@@ -136,7 +131,7 @@ public class ImageFragment extends Fragment {
         loadImageToView();
 	}
 
-	public TouchImageView getImage() {
+	public ImageView getImage() {//TouchImageView
 		return image;
 	}
 
@@ -177,7 +172,7 @@ public class ImageFragment extends Fragment {
             case MotionEvent.ACTION_DOWN:
                 mTouchAction = TOUCH_NONE;
                 touchX = event.getX();
-                curZoom = image.getCurrentZoom();
+                //curZoom = image.getCurrentZoom();
                 touchY = mInitTouchY = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -318,7 +313,7 @@ public class ImageFragment extends Fragment {
 				drawableId = R.drawable.ic_volume_down_white_36dp;
 			}
 			//ScrollGalleryView.DELAY = curDelay;
-			scrollGalleryView.resetDelay();
+			photoFragment.resetDelay();
 			//Log.d(TAG, "ScrollGalleryView.DELAY " + ScrollGalleryView.DELAY);
 			setInfo("Delay " + Util.nf.format(curDelay) + " ms", drawableId);
         }
@@ -423,8 +418,8 @@ public class ImageFragment extends Fragment {
         }
     }
 
-	public void setOnDoubleTapListener(final OnDoubleTapListener onDoubleTapListener) {
-		this.onDoubleTapListener = onDoubleTapListener;
+	public void setPhotoFragment(final PhotoFragment photoFragment) {
+		this.photoFragment = photoFragment;
 	}
 
     public void setCallback(final Runnable callback) {

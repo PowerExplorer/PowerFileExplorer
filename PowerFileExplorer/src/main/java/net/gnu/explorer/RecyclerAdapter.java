@@ -8,54 +8,54 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Arrays;
 
-public abstract class RecyclerAdapter<M, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> implements Filterable {
+public abstract class RecyclerAdapter<M, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {//}implements Filterable {
 
 	protected final List<M> mDataset;
-	private Filter planetFilter;
+	//private Filter planetFilter;
 
-	@Override
-	public Filter getFilter() {
-		if (planetFilter == null)
-			planetFilter = new PlanetFilter();
-		return planetFilter;
-	}
+//	@Override
+//	public Filter getFilter() {
+//		if (planetFilter == null)
+//			planetFilter = new PlanetFilter();
+//		return planetFilter;
+//	}
 
-	private class PlanetFilter extends Filter {
-		@Override
-		protected FilterResults performFiltering(CharSequence constraint) {
-			FilterResults results = new FilterResults();
-			// We implement here the filter logic
-			if (constraint == null || constraint.length() == 0) {
-				// No filter implemented we return all the list
-				results.values = mDataset;
-				results.count = mDataset.size();
-			} else {
-				// We perform filtering operation
-				List<M> nPlanetList = new ArrayList<M>();
-				for (M p : mDataset) {
-					if (p.toString().toUpperCase().contains(constraint.toString().toUpperCase()))
-						nPlanetList.add(p);
-				}
-				results.values = nPlanetList;
-				results.count = nPlanetList.size();
-			}
-			return results;
-		}
-
-		@Override
-		protected void publishResults(final CharSequence constraint,
-									  final FilterResults results) {
-			// Now we have to inform the adapter about the new list filtered
-			if (results.count == 0) {
-				mDataset.clear();
-				notifyDataSetChanged();
-			} else {
-				mDataset.clear();
-				mDataset.addAll((List<M>)results.values);
-				notifyDataSetChanged();
-			}
-		}
-	}
+//	private class PlanetFilter extends Filter {
+//		@Override
+//		protected FilterResults performFiltering(CharSequence constraint) {
+//			FilterResults results = new FilterResults();
+//			// We implement here the filter logic
+//			if (constraint == null || constraint.length() == 0) {
+//				// No filter implemented we return all the list
+//				results.values = mDataset;
+//				results.count = mDataset.size();
+//			} else {
+//				// We perform filtering operation
+//				List<M> nPlanetList = new ArrayList<M>();
+//				for (M p : mDataset) {
+//					if (p.toString().toUpperCase().contains(constraint.toString().toUpperCase()))
+//						nPlanetList.add(p);
+//				}
+//				results.values = nPlanetList;
+//				results.count = nPlanetList.size();
+//			}
+//			return results;
+//		}
+//
+//		@Override
+//		protected void publishResults(final CharSequence constraint,
+//									  final FilterResults results) {
+//			// Now we have to inform the adapter about the new list filtered
+//			if (results.count == 0) {
+//				mDataset.clear();
+//				notifyDataSetChanged();
+//			} else {
+//				mDataset.clear();
+//				mDataset.addAll((List<M>)results.values);
+//				notifyDataSetChanged();
+//			}
+//		}
+//	}
 
 	public RecyclerAdapter(final List<M> m) {
 		setHasStableIds(true);

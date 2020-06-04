@@ -17,6 +17,7 @@ import android.view.GestureDetector;
 import com.ortiz.touch.TouchImageView;
 import java.util.*;
 import net.gnu.util.*;
+import net.gnu.explorer.*;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}implements Runnable {
 
@@ -24,39 +25,40 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//}imple
 
 	private final ArrayList<File> mListOfMedia;
 	private final ViewPager viewPager;
-	List<ComparableEntry<Integer, ImageFragment>> fragMap = new ArrayList<>(3);
-	final GestureDetector.OnDoubleTapListener onDoubleTapListener;
-	static int numOfPages = 1;
+	private final List<ComparableEntry<Integer, ImageFragment>> fragMap = new ArrayList<>(3);
+	private final PhotoFragment onDoubleTapListener;
+	private int numOfPages = 1;
 	private final int sizeMediaFiles;
 	
     public ScreenSlidePagerAdapter(final FragmentManager fm, 
 								   final ViewPager vp,
 								   final ArrayList<File> listOfMedia, 
-								   final GestureDetector.OnDoubleTapListener onDoubleTapListener
+								   final PhotoFragment onDoubleTapListener
 								   ) {
         super(fm);
 		this.viewPager = vp;
         this.mListOfMedia = listOfMedia;
 		this.onDoubleTapListener = onDoubleTapListener;
 		sizeMediaFiles = mListOfMedia.size();
+		Log.i(TAG, "sizeMediaFiles " + sizeMediaFiles + ", this " + this + ", photoFrag " + onDoubleTapListener);
     }
 
 	@Override
     public Fragment getItem(final int pagerPos) {
 		final int mediaPos = pagerPos == 0 ? (sizeMediaFiles - 1) : pagerPos == (sizeMediaFiles + 1) ? 0 : (pagerPos - 1);
+		Log.d(TAG, "getItem pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", sizeMediaFiles " + sizeMediaFiles + ", this " + this + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem() + ", photoFrag " + onDoubleTapListener);
 		final ImageFragment curFrag = loadImageFragment(mListOfMedia.get(mediaPos));
 		if (fragMap.size() >= 3) {
 			fragMap.remove(0);
 		}
         fragMap.add(new ComparableEntry<Integer, ImageFragment>(Integer.valueOf(pagerPos), curFrag));
-		Log.d(TAG, "getItem pagerPos " + pagerPos + ", mediaPos " + mediaPos + ", viewPager.getCurrentItem() " + viewPager.getCurrentItem());
 		return curFrag;
     }
 
 	private ImageFragment loadImageFragment(final File mediaInfo) {
         final ImageFragment fragment = new ImageFragment();
         fragment.setMediaInfo(mediaInfo);
-		fragment.setOnDoubleTapListener(onDoubleTapListener);
+		fragment.setPhotoFragment(onDoubleTapListener);
 		//fragment.setCallback(this);
         return fragment;
     }

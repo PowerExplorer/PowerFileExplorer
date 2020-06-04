@@ -18,7 +18,7 @@ import android.provider.*;
 import android.support.annotation.*;
 import android.support.v7.view.menu.*;
 import android.telephony.*;
-import android.util.*;
+import android.util.Base64;
 import android.view.*;
 import android.widget.*;
 import net.gnu.explorer.*;

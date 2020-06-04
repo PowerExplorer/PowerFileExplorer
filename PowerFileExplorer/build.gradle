@@ -31,8 +31,8 @@ repositories {
 		//build-tools_r25.0.2-linux.zip
 		//build-tools_r25.0.2-windows.zip
 		//https://maven.google.com/com/android/support/support-annotations/27.1.1/support-annotations-27.1.1-sources.jar
-		//maven.google.com/ group_path / library / version / library - version . ext
-		//For example: maven.google.com/android/arch/lifecycle/compiler/1.0.0/compiler-1.0.0.pom .
+		//maven.google.com/group_path/library/version/library-version.ext
+		//maven.google.com/android/arch/lifecycle/compiler/1.0.0/compiler-1.0.0.pom .
 		
 		//url 'https://s3.amazonaws.com/repo.commonsware.com'
 		//url 'http://repo.commonsware.com' //
@@ -98,7 +98,19 @@ dependencies{
 		transitive = false
 	}
 	
-	//support-v4
+	
+	//compile 'androidx.core:core:1.2.0'
+    //compile 'androidx.legacy:legacy-support-core-utils:1.0.0'
+    //compile 'androidx.legacy:legacy-support-core-ui:1.0.0'
+    //compile 'androidx.media:media:1.1.0'
+    //compile 'androidx.fragment:fragment:1.2.2'
+    //compile 'androidx.recyclerview:recyclerview:1.1.0'
+    //compile 'androidx.viewpager:viewpager:1.0.0'
+	//compile 'com.google.android.material:material:1.1.0'
+    
+    
+	
+    //support-v4
 	//compile 'com.android.support:support-compat:25.3.1'
 	//compile 'com.android.support:support-media-compat:25.3.1'
 	//compile 'com.android.support:support-core-utils:25.3.1'
@@ -132,7 +144,9 @@ dependencies{
 	//compile 'com.android.support:support-dynamic-animation:27.1.1'
 	
 	
-	
+	    
+	//compile 'com.opencsv:opencsv:4.6'
+	//compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 	//compile 'com.newtronlabs.easypermissions:easypermissions:2.2.0'
 	//compile 'org.apache.james:apache-mime4j-core:+'
 	//compile 'org.apache.james:apache-mime4j-dom:+'
@@ -562,7 +576,6 @@ android {
     }
 }
 }
-
 
 
 
