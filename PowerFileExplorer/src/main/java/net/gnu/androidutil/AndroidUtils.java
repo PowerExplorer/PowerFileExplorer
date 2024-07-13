@@ -47,6 +47,8 @@ import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 import net.gnu.common.*;
 import android.content.Intent.*;
+import android.util.Log;
+import android.util.DisplayMetrics;
 
 
 public class AndroidUtils {

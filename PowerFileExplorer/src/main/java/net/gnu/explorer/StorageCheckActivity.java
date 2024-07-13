@@ -10,9 +10,10 @@ import android.view.*;
 import net.gnu.explorer.R;
 import android.*;
 import com.afollestad.materialdialogs.*;
-import android.support.v7.app.*;
+import android.support.v7.app.AlertDialog;
 import com.amaze.filemanager.activities.*;
 import com.amaze.filemanager.ui.dialogs.*;
+import android.content.*;
 
 public class StorageCheckActivity extends ThemedActivity {
 	
@@ -41,6 +42,28 @@ public class StorageCheckActivity extends ThemedActivity {
         // Verify that all required contact permissions have been granted.
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 			== PackageManager.PERMISSION_GRANTED;
+    }
+
+    protected boolean hasOrRequestPermission(final String permission, String explanation, final int requestCode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+            // Permission already granted
+            return true;
+        }
+        if (explanation != null && shouldShowRequestPermissionRationale(permission)) {
+            new AlertDialog.Builder(this)
+				.setTitle("Permission Required")
+				.setMessage(explanation)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						requestPermissions(new String[] {permission}, requestCode);}})
+				.show();
+            return false;
+        }
+        requestPermissions(new String[] {permission}, requestCode);
+        return false;
     }
 
     protected void requestStoragePermission() {

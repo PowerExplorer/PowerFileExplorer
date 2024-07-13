@@ -351,6 +351,7 @@ public class SlidingTabsFragment extends Fragment implements TabAction {
 		contentFrag.slidingTabsFragment = this;
 		mTabs.add(new PagerItem(contentFrag));
 
+		if (fs != null)
 		for (int i = fs.length - 1; i >= 0; i--) {
 			f = fs[i];
 			Log.d(TAG, f + ".");
